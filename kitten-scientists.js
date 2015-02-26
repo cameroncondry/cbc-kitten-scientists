@@ -254,7 +254,7 @@ Builds.prototype = {
         if (button.length === 0) return;
 
         button.click();
-        console.log('Built: ' + label);
+        //console.log('Built: ' + label);
     },
     isBuildable: function (name) {
         return this.getBuild(name).unlocked;
