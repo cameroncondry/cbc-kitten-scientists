@@ -1,6 +1,6 @@
 # Kitten Scientists
 
-Kitten Scientists is a simple automation script for the complex kittens.
+Kitten Scientists is a simple automation script for the complex kittens. [Kittens Game](http://bloodrizer.ru/games/kittens/)
 
 ## Basic Usage
 
