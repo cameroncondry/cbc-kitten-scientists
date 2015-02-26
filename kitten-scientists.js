@@ -191,10 +191,6 @@ Engine.prototype = {
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
             if (parchment.unlocked) game.craftAll(parchment.name);
 
-            if (blueprint.unlocked && crafts.getResource(compendium.name).value > stock.compendium) {
-                game.craftAll(blueprint.name);
-            }
-
             if (manuscript.unlocked && crafts.getResource(parchment.name).value > stock.parchment) {
                 game.craftAll(manuscript.name);
             }
@@ -234,7 +230,7 @@ Engine.prototype = {
             cost = crafts.getMaterials(craft.craft)[require.name];
 
             if (require.value / require.maxValue >= limits) {
-                crafts.craft(craft.name, (require.value * amount / cost));
+                crafts.craft(craft.craft, (require.value * amount / cost));
             }
         }
     }
@@ -252,13 +248,6 @@ Builds.prototype = {
     build: function (name) {
         if (!this.isBuildable(name)) return;
 
-        var currentTab = game.activeTabId;
-
-        if (currentTab != 'Bonfire') {
-            game.activeTabId = 'Bonfire';
-            game.render();
-        }
-
         var label = this.getBuild(name).label;
         var button = $(".nosel:not('.disabled'):contains('" + label + "')");
 
@@ -266,11 +255,6 @@ Builds.prototype = {
 
         button.click();
         console.log('Built: ' + label);
-
-        if (currentTab != 'Bonfire') {
-            game.activeTabId = currentTab;
-            game.render();
-        }
     },
     isBuildable: function (name) {
         return this.getBuild(name).unlocked;
@@ -287,8 +271,10 @@ var Crafts = function () {};
 
 Crafts.prototype = {
     craft: function (name, amount) {
-        if (amount < 1) return;
-        if (!this.isCraftable) return;
+        if (name === undefined || amount < 1) return;
+        if (!this.isCraftable(name, amount)) return;
+
+        amount = Math.floor(amount);
 
         game.craft(name, amount);
         console.log('Craft: ' + name + ' (' + amount + ')');

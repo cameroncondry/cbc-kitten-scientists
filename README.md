@@ -21,7 +21,7 @@ javascript:(function(){var d=document,s=d.createElement('script');s.src='https:/
 
 #### Resources
 
-Auto-crafts the following resources when resource is at 95% capacity:
+Auto-crafts the following resources when resource is at 95% capacity, will only use 50% of total resources:
 
 - wood
 - beam
@@ -31,7 +31,7 @@ Auto-crafts the following resources when resource is at 95% capacity:
 
 #### Buildings
 
-Auto-builds the following buildings when resource is at 75% capacity:
+Auto-builds the following buildings when resource is at 75% capacity, will only build when on the "Bonfire" tab:
 
 - field
 - pasture
@@ -52,7 +52,6 @@ Auto-builds the following buildings when they have a specific amount:
 - parchment
 - manuscript (2500 parchment)
 - compendium (500 manuscript)
-- blueprint (500 compendium)
 
 #### Religion
 
