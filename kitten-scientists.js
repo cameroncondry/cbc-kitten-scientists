@@ -3,6 +3,7 @@
 // Configure overall page display
 // ==============================
 
+var version = 'Kitten Scientists version 1.1.0';
 var container = $('#game');
 var column = $('.column');
 
@@ -46,15 +47,16 @@ right.css({
 
 var addRule = function (rule) {
     var sheets = document.styleSheets;
-
-    for (var i = 0; i < sheets.length; i++) {
-        var sheet = sheets[i];
-
-        sheet.insertRule(rule, 0);
-    }
+    sheets[0].insertRule(rule, 1);
 };
 
-addRule('#gameLog .msg { display: block; }');
+addRule('#gameLog .msg {'
++ 'display: block;'
++ '}');
+
+addRule('#resContainer .maxRes {'
++ 'color: #676766;'
++ '}');
 
 addRule('#game .btn {'
 + 'border-radius: 0px;'
@@ -63,22 +65,49 @@ addRule('#game .btn {'
 + 'margin: 0 0 5px 0;'
 + '}');
 
+addRule('#ks-options ul {'
++ 'list-style: none;'
++ 'margin: 0;'
++ 'padding: 0;'
++ '}');
+
 // Add options element
 // ===================
 
-var optionsElement = $('<div/>', {css: {marginBottom: '10px'}});
-var toggleEngine = $('<input/>', {
-    id: 'toggle-engine',
-    type: 'checkbox',
-    checked: 'checked'
-});
-var toggleEngineLabel = $('<label/>', {
-    'for': 'toggle-engine',
-    text: 'Toggle Kitten Scientists!'
+var getToggle = function (name, text) {
+    var li = $('<li/>');
+
+    var label = $('<label/>', {
+        'for': 'toggle-' + name,
+        text: text
+    });
+
+    var toggle = $('<input/>', {
+        id: 'toggle-' + name,
+        type: 'checkbox',
+        checked: 'checked'
+    });
+
+    return li.append(toggle, label);
+};
+
+var optionsElement = $('<div/>', {id: 'ks-options', css: {marginBottom: '10px'}});
+var optionsListElement = $('<ul/>');
+var optionsTitleElement = $('<div/>', {
+    css: { borderBottom: '1px solid gray', marginBottom: '5px' },
+    text: version
 });
 
-optionsElement.append(toggleEngine, toggleEngineLabel);
-right.prepend(optionsElement);
+optionsElement.append(optionsTitleElement);
+
+optionsListElement.append(getToggle('engine', 'Freeze Scientists'));
+optionsListElement.append(getToggle('craft', 'Auto Craft'));
+optionsListElement.append(getToggle('build', 'Auto Build'));
+optionsListElement.append(getToggle('hunt', 'Auto Hunt'));
+optionsListElement.append(getToggle('praise', 'Auto Praise'));
+
+// add the options above the game log
+right.prepend(optionsElement.append(optionsListElement));
 
 // ==========================================
 // Begin Kitten Scientist's Automation Engine
@@ -115,6 +144,9 @@ var options = {
         hunt: true,
         praise: true
     },
+    gameLog: {
+        color: '#aa50fe' // dark purple
+    },
     limit: {
         build: 0.75,
         craft: 0.95,
@@ -126,6 +158,20 @@ var options = {
         manuscript: 500,
         parchment: 2500
     }
+};
+
+// GameLog Modification
+// ====================
+
+var gameLog = com.nuclearunicorn.game.log.Console().static;
+
+var message = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args[1] = args[1] || 'ks-default';
+
+    // update the color of the message immediately after adding
+    gameLog.msg.apply(gameLog, args);
+    $('.type_' + args[1]).css('color', options.gameLog.color);
 };
 
 // Engine manager
@@ -143,17 +189,17 @@ Engine.prototype = {
     start: function () {
         if (this.loop) return;
 
-        this.loop = setInterval(this.iteration.bind(this), options.interval);
-        console.log('Starting the kitten scientists!');
+        this.loop = setInterval(this.iterate.bind(this), options.interval);
+        message('Starting the kitten scientists!');
     },
     stop: function () {
         if (!this.loop) return;
 
         clearInterval(this.loop);
         this.loop = false;
-        console.log('Letting the kitten scientists rest!');
+        message('Freezing the kitten scientists!');
     },
-    iteration: function () {
+    iterate: function () {
         this.observeGameLog();
         if (options.auto.praise) this.praiseSun();
         if (options.auto.hunt) this.sendHunters();
@@ -171,8 +217,8 @@ Engine.prototype = {
             game.activeTabId = 'Religion';
             game.render();
 
+            message('The sun has been praised!');
             $(".nosel:contains('Praise the sun!')").click();
-            console.log('The sun has been praised!');
 
             game.activeTabId = currentTab;
             game.render();
@@ -189,7 +235,9 @@ Engine.prototype = {
         var blueprint = workshop.getCraft('blueprint');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
-            if (parchment.unlocked) game.craftAll(parchment.name);
+            if (parchment.unlocked) {
+                game.craftAll(parchment.name);
+            }
 
             if (manuscript.unlocked && crafts.getResource(parchment.name).value > stock.parchment) {
                 game.craftAll(manuscript.name);
@@ -197,10 +245,11 @@ Engine.prototype = {
 
             if (compendium.unlocked && crafts.getResource(manuscript.name).value > stock.manuscript) {
                 game.craftAll(compendium.name);
+                message('Auto Hunt: crafted parchments, manuscripts, and compendiums');
             }
 
+            message('Auto Hunt: Hunters deployed!');
             $("a:contains('Send hunters')").click();
-            console.log('Hunters have been sent!');
         }
     },
     startBuilds: function () {
@@ -254,13 +303,31 @@ Builds.prototype = {
         if (button.length === 0) return;
 
         button.click();
-        //console.log('Built: ' + label);
+        message('Auto Build: +1 ' + label);
     },
     isBuildable: function (name) {
-        return this.getBuild(name).unlocked;
+        var buildable = this.getBuild(name).unlocked;
+
+        if (buildable) {
+            var crafts = this.crafts;
+            var prices = this.getPrices(name);
+
+            for (i in prices) {
+                var price = prices[i];
+
+                if (crafts.getValue(price.name) < price.val) {
+                    buildable = false;
+                }
+            }
+        }
+
+        return buildable;
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
+    },
+    getPrices: function (name) {
+        return game.bld.getPrices(name);
     }
 };
 
@@ -277,7 +344,12 @@ Crafts.prototype = {
         amount = Math.floor(amount);
 
         game.craft(name, amount);
-        console.log('Craft: ' + name + ' (' + amount + ')');
+
+        // determine actual amount after crafting upgrades
+        var ratio = ('wood' === name) ? 'refineRatio' : 'craftRatio';
+        amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
+
+        message('Auto Craft: +' + amount + ' ' + name);
     },
     isCraftable: function (name, amount) {
         var craftable = false;
@@ -324,6 +396,7 @@ Crafts.prototype = {
 // =====================================
 
 var engine = new Engine();
+var toggleEngine = $('#toggle-engine');
 
 toggleEngine.on('change', function () {
     if (toggleEngine.is(':checked')) {
@@ -334,3 +407,26 @@ toggleEngine.on('change', function () {
 });
 
 toggleEngine.trigger('change');
+
+// Add toggles for options
+// =======================
+
+var autoOptions = ['build', 'craft', 'hunt', 'praise'];
+
+var ucfirst = function (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+$.each(autoOptions, function (event, option) {
+    var toggle = $('#toggle-' + option);
+
+    toggle.on('change', function () {
+        if (toggle.is(':checked')) {
+            options.auto[option] = true;
+            message('Enabled Auto ' + ucfirst(option));
+        } else {
+            options.auto[option] = false;
+            message('Disable Auto ' + ucfirst(option));
+        }
+    });
+});

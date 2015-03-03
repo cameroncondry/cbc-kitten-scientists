@@ -60,3 +60,16 @@ Auto-praise when faith is at 95% capacity.
 #### Game Log
 
 Auto-observes astronomical events.
+
+## History
+
+### 2015.02.03 - Version 1.1.0
+
+- Set up the ability to toggle auto crafting, building, hunting, and praising.
+- Simplified css rule insertion and tweaked displayed colors.
+- Added logging into the GameLog to prevent confusion.
+- Updated crafting log to include the warehouse bonuses.
+
+### 2015.25.02 - Version 1.0.0
+
+- Initial release
