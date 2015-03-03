@@ -63,6 +63,10 @@ Auto-observes astronomical events.
 
 ## History
 
+### 2015.03.03 - Version 1.1.1
+
+- Added barns to the auto build list.
+
 ### 2015.02.03 - Version 1.1.0
 
 - Set up the ability to toggle auto crafting, building, hunting, and praising.

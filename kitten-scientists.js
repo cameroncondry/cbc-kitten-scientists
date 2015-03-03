@@ -128,6 +128,7 @@ var options = {
             {build: 'library', require: 'wood'},
             {build: 'academy', require: 'wood'},
             {build: 'mine', require: 'wood'},
+            {build: 'barn', require: 'wood'},
             {build: 'aqueduct', require: 'minerals'},
             {build: 'lumberMill', require: 'minerals'},
             {build: 'workshop', require: 'minerals'},
