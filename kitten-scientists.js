@@ -26,7 +26,6 @@ var middle = $('#midColumn');
 var right = $('#rightColumn');
 
 left.css({
-    overflowY: 'hidden',
     height: '92%',
     width: '26%'
 });
