@@ -38,6 +38,7 @@ Auto-builds the following buildings when resource is at 75% capacity, will only 
 - library
 - academy
 - mine
+- barn
 - aqueduct
 - lumberMill
 - workshop
