@@ -286,7 +286,7 @@ Engine.prototype = {
             require = !housing.require ? housing.require : crafts.getResource(housing.require);
 
             if (!require || require.value / require.maxValue >= limits) {
-                housings.housing(housing.housing);
+                builds.build(housing.housing);
             }
         }
     },
