@@ -102,6 +102,7 @@ optionsElement.append(optionsTitleElement);
 optionsListElement.append(getToggle('engine', 'Freeze Scientists'));
 optionsListElement.append(getToggle('craft', 'Auto Craft'));
 optionsListElement.append(getToggle('build', 'Auto Build'));
+optionsListElement.append(getToggle('housing', 'Auto Housing'));
 optionsListElement.append(getToggle('hunt', 'Auto Hunt'));
 optionsListElement.append(getToggle('praise', 'Auto Praise'));
 
@@ -133,6 +134,11 @@ var options = {
             {build: 'workshop', require: 'minerals'},
             {build: 'unicornPasture', require: false}
         ],
+        housing: true,
+        housings: [
+            {housing: 'hut', require: 'wood'},
+            {housing: 'logHouse', require: 'minerals'}
+        ],
         craft: true,
         crafts: [
             {craft: 'wood', require: 'catnip'},
@@ -149,6 +155,7 @@ var options = {
     },
     limit: {
         build: 0.75,
+        housing: 0.85,
         craft: 0.95,
         hunt: 0.95,
         faith: 0.95
@@ -204,6 +211,7 @@ Engine.prototype = {
         if (options.auto.praise) this.praiseSun();
         if (options.auto.hunt) this.sendHunters();
         if (options.auto.build) this.startBuilds();
+        if (options.auto.housing) this.startHousings();
         if (options.auto.craft) this.startCrafts();
     },
     observeGameLog: function () {
@@ -264,6 +272,21 @@ Engine.prototype = {
 
             if (!require || require.value / require.maxValue >= limits) {
                 builds.build(build.build);
+            }
+        }
+    },
+    startHousings: function () {
+        var housings = this.housings;
+        var crafts = this.crafts;
+        var limits = options.limit.housing;
+        var housing, require;
+
+        for (i in options.auto.housings) {
+            housing = options.auto.housings[i];
+            require = !housing.require ? housing.require : crafts.getResource(housing.require);
+
+            if (!require || require.value / require.maxValue >= limits) {
+                housings.build(housing.housing);
             }
         }
     },
