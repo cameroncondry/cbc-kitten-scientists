@@ -3,7 +3,7 @@
 // Configure overall page display
 // ==============================
 
-var version = 'Kitten Scientists version 1.1.0';
+var version = 'Kitten Scientists version 1.1.2';
 var container = $('#game');
 var column = $('.column');
 

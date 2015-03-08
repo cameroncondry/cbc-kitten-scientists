@@ -44,6 +44,12 @@ Auto-builds the following buildings when resource is at 75% capacity, will only 
 - workshop
 - unicornPasture
 
+Auto-housing will build the following population buildings:
+
+- hut
+- logHouse
+- mansion
+
 #### Cat Power
 
 Auto-hunts when catpower is at 95% capacity.
