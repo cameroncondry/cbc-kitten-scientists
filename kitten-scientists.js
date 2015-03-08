@@ -137,7 +137,8 @@ var options = {
         housing: true,
         housings: [
             {housing: 'hut', require: 'wood'},
-            {housing: 'logHouse', require: 'minerals'}
+            {housing: 'logHouse', require: 'minerals'},
+            {housing: 'mansion', require: 'titanium'}
         ],
         craft: true,
         crafts: [
@@ -254,6 +255,8 @@ Engine.prototype = {
 
             if (compendium.unlocked && crafts.getResource(manuscript.name).value > stock.manuscript) {
                 game.craftAll(compendium.name);
+
+                // @TODO: clean up this message and add toggles
                 message('Auto Hunt: crafted parchments, manuscripts, and compendiums');
             }
 
@@ -435,7 +438,7 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['build', 'craft', 'hunt', 'praise'];
+var autoOptions = ['build', 'housing', 'craft', 'hunt', 'praise'];
 
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

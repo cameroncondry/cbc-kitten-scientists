@@ -64,6 +64,12 @@ Auto-observes astronomical events.
 
 ## History
 
+### 2015.03.08 - Version 1.1.2
+
+- Updated auto housing to be toggled and added mansions.
+- Added auto housing option. (thanks [mjdillon](https://github.com/mjdillon))
+- Plates moved for priority over steel. (thanks [mjdillon](https://github.com/mjdillon))
+
 ### 2015.03.03 - Version 1.1.1
 
 - Added barns to the auto build list.
