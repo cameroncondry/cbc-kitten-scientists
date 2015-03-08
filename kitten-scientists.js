@@ -144,8 +144,8 @@ var options = {
             {craft: 'wood', require: 'catnip'},
             {craft: 'beam', require: 'wood'},
             {craft: 'slab', require: 'minerals'},
-            {craft: 'steel', require: 'coal'},
-            {craft: 'plate', require: 'iron'}
+            {craft: 'plate', require: 'iron'},
+            {craft: 'steel', require: 'coal'}
         ],
         hunt: true,
         praise: true
@@ -286,7 +286,7 @@ Engine.prototype = {
             require = !housing.require ? housing.require : crafts.getResource(housing.require);
 
             if (!require || require.value / require.maxValue >= limits) {
-                builds.build(housing.housing);
+                housings.build(housing.housing);
             }
         }
     },
