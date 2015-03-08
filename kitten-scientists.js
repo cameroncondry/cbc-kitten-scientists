@@ -187,6 +187,7 @@ var message = function () {
 var Engine = function () {
     this.builds = new Builds();
     this.crafts = new Crafts();
+    this.housings = new Builds();
 };
 
 Engine.prototype = {
