@@ -164,7 +164,7 @@ var options = {
     stock: {
         compendium: 500,
         manuscript: 500,
-        parchment: 2500
+        parchment: 250
     }
 };
 
@@ -245,6 +245,9 @@ Engine.prototype = {
         var blueprint = workshop.getCraft('blueprint');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
+            message('Auto Hunt: Hunters deployed!');
+            $("a:contains('Send hunters')").click();
+
             if (parchment.unlocked) {
                 game.craftAll(parchment.name);
             }
@@ -259,9 +262,6 @@ Engine.prototype = {
                 // @TODO: clean up this message and add toggles
                 message('Auto Hunt: crafted parchments, manuscripts, and compendiums');
             }
-
-            message('Auto Hunt: Hunters deployed!');
-            $("a:contains('Send hunters')").click();
         }
     },
     startBuilds: function () {
