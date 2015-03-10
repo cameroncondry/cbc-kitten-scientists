@@ -415,7 +415,16 @@ Crafts.prototype = {
         return game.resPool.get(name);
     },
     getValue: function (name) {
-        return this.getResource(name).value;
+        var value = this.getResource(name).value;
+        if (name == 'catnip') {
+            var depletion = game.getResourcePerTick(name, false, {
+                modifiers: {
+                    'catnip': 0.10 - game.calendar.getWeatherMod()
+                }}) * 202 * 5;
+            if (depletion < 0)
+                value += depletion;
+        }
+        return value;
     }
 };
 
