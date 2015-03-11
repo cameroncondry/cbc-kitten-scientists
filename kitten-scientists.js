@@ -118,7 +118,7 @@ Engine.prototype = {
         var currentTab = game.activeTabId;
         var faith = this.craftManager.getResource('faith');
 
-        if (faith.value / faith.maxValue >= options.limit.praise) {
+        if (faith.value / faith.maxValue >= options.limit.faith) {
             game.activeTabId = 'Religion';
             game.render();
 
