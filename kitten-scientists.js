@@ -104,6 +104,7 @@ optionsListElement.append(getToggle('craft', 'Auto Craft'));
 optionsListElement.append(getToggle('build', 'Auto Build'));
 optionsListElement.append(getToggle('housing', 'Auto Housing'));
 optionsListElement.append(getToggle('hunt', 'Auto Hunt'));
+optionsListElement.append(getToggle('luxury', 'Auto Luxury'));
 optionsListElement.append(getToggle('praise', 'Auto Praise'));
 
 // add the options above the game log
@@ -149,6 +150,12 @@ var options = {
             {craft: 'steel', require: 'coal'}
         ],
         hunt: true,
+        luxury: true,
+        luxuries: [
+            {craft: 'manuscript', require: 'culture', stock: 'parchment'},
+            // @TODO: dont rely on the mispelled resource for compendiums
+            {craft: 'compedium', require: 'science', stock: 'manuscript'}
+        ],
         praise: true
     },
     gameLog: {
@@ -159,12 +166,13 @@ var options = {
         housing: 0.85,
         craft: 0.95,
         hunt: 0.95,
-        faith: 0.95
+        luxury: 0.99,
+        praise: 0.99
     },
     stock: {
-        compendium: 500,
+        compedium: 500,
         manuscript: 500,
-        parchment: 2500
+        parchment: 500
     }
 };
 
@@ -215,6 +223,7 @@ Engine.prototype = {
         if (options.auto.build) this.startBuilds();
         if (options.auto.housing) this.startHousings();
         if (options.auto.craft) this.startCrafts();
+        if (options.auto.luxury) this.startLuxury();
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
@@ -223,7 +232,7 @@ Engine.prototype = {
         var currentTab = game.activeTabId;
         var faith = this.crafts.getResource('faith');
 
-        if (faith.value / faith.maxValue >= options.limit.faith) {
+        if (faith.value / faith.maxValue >= options.limit.praise) {
             game.activeTabId = 'Religion';
             game.render();
 
@@ -236,28 +245,13 @@ Engine.prototype = {
     },
     sendHunters: function () {
         var catpower = this.crafts.getResource('manpower');
-        var crafts = this.crafts;
-        var stock = options.stock;
         var workshop = game.workshop;
         var parchment = workshop.getCraft('parchment');
-        var manuscript = workshop.getCraft('manuscript');
-        var compendium = workshop.getCraft('compedium');
-        var blueprint = workshop.getCraft('blueprint');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
             if (parchment.unlocked) {
                 game.craftAll(parchment.name);
-            }
-
-            if (manuscript.unlocked && crafts.getResource(parchment.name).value > stock.parchment) {
-                game.craftAll(manuscript.name);
-            }
-
-            if (compendium.unlocked && crafts.getResource(manuscript.name).value > stock.manuscript) {
-                game.craftAll(compendium.name);
-
-                // @TODO: clean up this message and add toggles
-                message('Auto Hunt: crafted parchments, manuscripts, and compendiums');
+                message('Auto Hunt: crafted parchments');
             }
 
             message('Auto Hunt: Hunters deployed!');
@@ -279,6 +273,7 @@ Engine.prototype = {
             }
         }
     },
+    // @TODO: refactor opportunity, unify the various crafting functions
     startHousings: function () {
         var housings = this.housings;
         var crafts = this.crafts;
@@ -294,6 +289,28 @@ Engine.prototype = {
             }
         }
     },
+    startLuxury: function () {
+        var crafts = this.crafts;
+        var limits = options.limit.luxury;
+        var amount, cost, craft, require, stock;
+
+        for (i in options.auto.luxuries) {
+            craft = options.auto.luxuries[i];
+            require = crafts.getResource(craft.require);
+            stock = crafts.getResource(craft.stock);
+
+
+            if (require.value / require.maxValue >= limits && stock.value > options.stock[stock.name]) {
+                cost = crafts.getMaterials(craft.craft)[stock.name];
+                amount = (stock.value - options.stock[stock.name]) * options.amount.craft / cost;
+
+                cost = crafts.getMaterials(craft.craft)[require.name];
+                amount = require.value * options.amount.craft / cost < amount ? require.value * options.amount.craft / cost : amount;
+
+                crafts.craft(craft.craft, amount);
+            }
+        }
+    },
     startCrafts: function () {
         var crafts = this.crafts;
         var amount = options.amount.craft;
@@ -306,7 +323,7 @@ Engine.prototype = {
             cost = crafts.getMaterials(craft.craft)[require.name];
 
             if (require.value / require.maxValue >= limits) {
-                crafts.craft(craft.craft, (require.value * amount / cost));
+                crafts.craft(craft.craft, require.value * amount / cost);
             }
         }
     }
@@ -389,6 +406,8 @@ Crafts.prototype = {
                 var price = craft.prices[i];
 
                 if (this.getValue(price.name) < price.val * amount) {
+                    console.log(price, this.getValue(price.name), price.val, amount);
+
                     craftable = false;
                 }
             }
@@ -447,7 +466,7 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['build', 'housing', 'craft', 'hunt', 'praise'];
+var autoOptions = ['build', 'housing', 'craft', 'hunt', 'luxury', 'praise'];
 
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
