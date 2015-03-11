@@ -72,6 +72,7 @@ Auto-observes astronomical events.
 ### 2015.03.10 - Version 1.1.3
 
 - Updated Auto Faith to wait for 99% faith capacity.
+- Lowered minimum capacity of parchments. (thanks [trini](https://github.com/trini))
 - Move luxury resources out of Auto Hunt. (thanks [SphtMarathon](https://www.reddit.com/user/SphtMarathon))
 - Added safe guards for catnip in the winter. (thanks [jcranmer](https://github.com/jcranmer))
 
