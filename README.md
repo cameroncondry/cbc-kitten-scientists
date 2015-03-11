@@ -21,7 +21,7 @@ javascript:(function(){var d=document,s=d.createElement('script');s.src='https:/
 
 #### Resources
 
-Auto-crafts the following resources when resource is at 95% capacity, will only use 50% of total resources:
+Crafts the following resources when at 95% capacity, will only use 50% of total resources:
 
 - wood
 - beam
@@ -29,14 +29,14 @@ Auto-crafts the following resources when resource is at 95% capacity, will only 
 - steel
 - plate
 
-Auto-luxuries for the following resources when at 99% capacity, will only use 50% of total resources:
+Luxury crafts the following resources when at 99% capacity, will only use 50% of total resources:
 
 - manuscripts
 - compendiums
 
 #### Buildings
 
-Auto-builds the following buildings when resource is at 75% capacity, will only build while on the "Bonfire" tab:
+Builds the following buildings when required resource is at 75% capacity, will only build while on the "Bonfire" tab:
 
 - field
 - pasture
@@ -49,7 +49,7 @@ Auto-builds the following buildings when resource is at 75% capacity, will only 
 - workshop
 - unicornPasture
 
-Auto-housing will build the following population buildings when resource is at 85% capacity:
+Housing will build the following population buildings when required resource is at 85% capacity:
 
 - hut
 - logHouse
@@ -57,17 +57,23 @@ Auto-housing will build the following population buildings when resource is at 8
 
 #### Cat Power
 
-Auto-hunts when catpower is at 95% capacity and Auto crafts parchments before the next hunt is deployed.
+Hunts when catpower is at 95% capacity and builds parchments before the hunt is sent.
 
 #### Religion
 
-Auto-praise when faith is at 99% capacity.
+Praises when faith is at 99% capacity.
 
 #### Game Log
 
-Auto-observes astronomical events.
+Observes astronomical events.
 
 ## History
+
+### 2015.03.11 - Version 1.1.4
+
+- Major refactor of codebase to have cleaner lines between responsibilities.
+- Stacked options in a two column layout.
+- Luxury resources now have their own toggle.
 
 ### 2015.03.10 - Version 1.1.3
 
