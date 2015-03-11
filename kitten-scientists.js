@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.4';
+var version = 'Kitten Scientists version 1.1.5';
 var game = gamePage;
 
 var options = {
@@ -380,7 +380,7 @@ addRule('#game .btn {'
 + 'border-radius: 0px;'
 + 'font-family: "Courier New";'
 + 'font-size: "10px";'
-+ 'margin: 0 0 15px 0;'
++ 'margin: 0 0 7px 0;'
 + '}');
 
 addRule('#ks-options ul {'

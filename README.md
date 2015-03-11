@@ -69,6 +69,11 @@ Observes astronomical events.
 
 ## History
 
+### 2015.03.11 - Version 1.1.5
+
+- Tweaked styles to remove extra margin around interface buttons.
+- Fixed a bug with praising, due to refactoring. (thanks [sjdrodge](https://github.com/sjdrodge))
+
 ### 2015.03.11 - Version 1.1.4
 
 - Major refactor of codebase to have cleaner lines between responsibilities.
