@@ -169,8 +169,6 @@ Engine.prototype = {
             var require = manager.getResource(craft.require);
 
             if (limit <= require.value / require.maxValue) {
-                console.log(craft.name, manager.getLowestCraftAmount(craft.name));
-
                 manager.craft(craft.name, manager.getLowestCraftAmount(craft.name));
             }
         }
@@ -277,8 +275,6 @@ CraftManager.prototype = {
 
         for (i in materials) {
             var total = this.getValueAvailable(i) * consume / materials[i];
-
-            console.log(this.getValueAvailable(i), ':', consume, ':', materials[i]);
 
             amount = (0 === amount || total < amount) ? total : amount;
         }
