@@ -29,14 +29,9 @@ Auto-crafts the following resources when resource is at 95% capacity, will only 
 - steel
 - plate
 
-Auto-luxuries for the following resources when at 99% capacity, will only use 50% of total resources:
-
-- manuscripts
-- compendiums
-
 #### Buildings
 
-Auto-builds the following buildings when resource is at 75% capacity, will only build while on the "Bonfire" tab:
+Auto-builds the following buildings when resource is at 75% capacity, will only build when on the "Bonfire" tab:
 
 - field
 - pasture
@@ -49,7 +44,7 @@ Auto-builds the following buildings when resource is at 75% capacity, will only 
 - workshop
 - unicornPasture
 
-Auto-housing will build the following population buildings when resource is at 85% capacity:
+Auto-housing will build the following population buildings:
 
 - hut
 - logHouse
@@ -57,23 +52,23 @@ Auto-housing will build the following population buildings when resource is at 8
 
 #### Cat Power
 
-Auto-hunts when catpower is at 95% capacity and Auto crafts parchments before the next hunt is deployed.
+Auto-hunts when catpower is at 95% capacity.
+
+Auto-builds the following buildings when they have a specific amount:
+
+- parchment
+- manuscript (2500 parchment)
+- compendium (500 manuscript)
 
 #### Religion
 
-Auto-praise when faith is at 99% capacity.
+Auto-praise when faith is at 95% capacity.
 
 #### Game Log
 
 Auto-observes astronomical events.
 
 ## History
-
-### 2015.03.10 - Version 1.1.3
-
-- Updated Auto Faith to wait for 99% faith capacity.
-- Move luxury resources out of Auto Hunt. (thanks [SphtMarathon](https://www.reddit.com/user/SphtMarathon))
-- Added safe guards for catnip in the winter. (thanks [jcranmer](https://github.com/jcranmer))
 
 ### 2015.03.08 - Version 1.1.2
 
