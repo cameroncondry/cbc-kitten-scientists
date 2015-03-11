@@ -73,6 +73,7 @@ Observes astronomical events.
 
 - Tweaked styles to remove extra margin around interface buttons.
 - Fixed a bug with praising, due to refactoring. (thanks [sjdrodge](https://github.com/sjdrodge))
+- Fixed a bug with catnip calculations.
 
 ### 2015.03.11 - Version 1.1.4
 
