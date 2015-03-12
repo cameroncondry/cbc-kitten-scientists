@@ -327,7 +327,6 @@ var container = $('#game');
 var column = $('.column');
 
 container.css({
-    fontFamily: 'Courier New',
     fontSize: '12px',
     minWidth: '1300px',
     top: '32px'
@@ -378,7 +377,6 @@ addRule('#resContainer .maxRes {'
 
 addRule('#game .btn {'
 + 'border-radius: 0px;'
-+ 'font-family: "Courier New";'
 + 'font-size: "10px";'
 + 'margin: 0 0 7px 0;'
 + '}');
@@ -400,6 +398,11 @@ addRule('#ks-options ul li {'
 + 'display: block;'
 + 'float: left;'
 + 'width: 50%;'
++ '}');
+
+addRule('#rightColumn {'
++ 'display: inline-flex;'
++ 'flex-direction: column;'
 + '}');
 
 // Add options element
