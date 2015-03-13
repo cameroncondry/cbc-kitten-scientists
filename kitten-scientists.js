@@ -86,6 +86,22 @@ var message = function () {
     $('.type_' + args[1]).css('color', options.color);
 };
 
+// Stop having the game log erase messages.
+gameLog.msg = function(message, type) {
+    var gameLog = dojo.byId("gameLog");
+
+    var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
+
+    if (type){
+    	dojo.addClass(span, "type_"+type);
+    }
+
+    var spans = this.spans;
+    spans.push(span);
+
+    return span;
+};
+
 // Core Engine for Kitten Scientists
 // =================================
 
