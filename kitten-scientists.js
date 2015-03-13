@@ -150,6 +150,7 @@ Engine.prototype = {
         var buildManager = this.buildManager;
         var craftManager = this.craftManager;
         var limit = options.limit[type];
+        buildManager.triggerLateBuild();
 
         for (i in builds) {
             var build = builds[i];
@@ -180,17 +181,36 @@ Engine.prototype = {
 
 var BuildManager = function () {
     this.craftManager = new CraftManager();
+    this.lateBuilds = [];
 };
 
 BuildManager.prototype = {
     craftManager: undefined,
+    triggerLateBuild: function () {
+      var arr = this.lateBuilds;
+      this.lateBuilds = [];
+      for (i in arr)
+        this.build(arr[i]);
+    },
     build: function (name) {
         if (!this.isBuildable(name)) return;
 
+        // Craft the resources to build this.
+        var manager = this.craftManager;
+        var prices = this.getPrices(name);
+        for (i in prices) {
+            var price = prices[i];
+            manager.deepCraft(price.name, price.val);
+        }
+
+        // We may have just enabled it.
         var label = this.getBuild(name).label;
         var button = $(".nosel:not('.disabled'):contains('" + label + "')");
 
-        if (button.length === 0) return;
+        if (button.length === 0) {
+            this.lateBuilds.push(name);
+            return;
+        }
 
         button.click();
         message('Kittens Build: +1 ' + label);
@@ -201,12 +221,12 @@ BuildManager.prototype = {
         if (buildable) {
             var manager = this.craftManager;
             var prices = this.getPrices(name);
+            var usage = {};
 
             for (i in prices) {
                 var price = prices[i];
-
-                if (manager.getValueAvailable(price.name) < price.val) {
-                    buildable = false;
+                if (!manager.getCraftUsage(price.name, price.val, usage)) {
+                    return false;
                 }
             }
         }
@@ -268,6 +288,10 @@ CraftManager.prototype = {
 
         return game.workshop.getCraft(name);
     },
+    isCraftable: function (name) {
+        var res = this.getResource(name);
+        return res.craftable && this.getCraft(name).unlocked;
+    },
     getLowestCraftAmount: function (name) {
         var amount = 0;
         var consume = options.amount.consume;
@@ -316,7 +340,55 @@ CraftManager.prototype = {
         }
 
         return value - stock;
-    }
+    },
+    getCraftUsage: function (name, desiredAmount, accounted) {
+        name = this.getResource(name).name; // Normalize the name.
+        var unusable = accounted[name] || 0;
+        var value = this.getValue(name);
+
+        value -= unusable;
+
+        if (desiredAmount < value) {
+            accounted[name] = desiredAmount + unusable;
+            return true;
+        }
+
+        if (!this.isCraftable(name)) {
+            return false;
+        }
+
+        accounted[name] = value + unusable;
+
+        var amountToCraft = Math.ceil((desiredAmount - value) /
+            game.getResCraftRatio(name));
+
+        var materials = this.getMaterials(name);
+        for (i in materials) {
+            var usable = this.getCraftUsage(i,
+                amountToCraft * materials[i], accounted);
+            if (!usable)
+                return false;
+        }
+
+        return true;
+    },
+    deepCraft: function (name, desiredAmount) {
+        var value = this.getValue(name);
+
+        if (desiredAmount < value) return
+        if (!this.isCraftable(name))
+            return this.craft(name, desiredAmount - value);
+
+        var ratio = game.getResCraftRatio(this.getCraft(name).name);
+        var amountToCraft = Math.ceil((desiredAmount - value) / ratio);
+
+        var materials = this.getMaterials(name);
+        for (i in materials) {
+            this.deepCraft(i, amountToCraft * materials[i]);
+        }
+
+        this.craft(name, amountToCraft);
+    },
 };
 
 // ==============================
