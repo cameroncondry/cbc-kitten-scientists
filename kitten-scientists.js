@@ -15,13 +15,13 @@ var options = {
         build: [
             {name: 'field', require: 'catnip'},
             {name: 'pasture', require: 'catnip'},
+            {name: 'mine', require: 'wood'},
             {name: 'library', require: 'wood'},
             {name: 'academy', require: 'wood'},
-            {name: 'mine', require: 'wood'},
             {name: 'barn', require: 'wood'},
-            {name: 'aqueduct', require: 'minerals'},
-            {name: 'lumberMill', require: 'minerals'},
             {name: 'workshop', require: 'minerals'},
+            {name: 'lumberMill', require: 'minerals'},
+            {name: 'aqueduct', require: 'minerals'},
             {name: 'unicornPasture', require: false},
             {name: 'tradepost', require: 'gold'}
         ],
