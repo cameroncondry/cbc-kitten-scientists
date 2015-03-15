@@ -51,9 +51,9 @@ var options = {
         faith: 0.99
     },
     stock: {
-        compendium: 500,
-        manuscript: 500,
-        parchment: 500
+        compendium: 24,
+        manuscript: 49,
+        parchment: 24
     },
     toggle: {
         building: true,
