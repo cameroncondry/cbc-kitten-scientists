@@ -39,6 +39,7 @@ var options = {
         ],
         luxury: [
             {name: 'manuscript', require: 'culture'},
+            {name: 'blueprint', require: 'science'},
             {name: 'compendium', require: 'science'}
         ]
     },
