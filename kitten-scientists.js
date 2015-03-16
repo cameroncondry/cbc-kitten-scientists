@@ -30,6 +30,7 @@ var options = {
             {name: 'beam', require: 'wood'},
             {name: 'slab', require: 'minerals'},
             {name: 'steel', require: 'coal'},
+            {name: 'manuscript', require: 'culture'},
             {name: 'plate', require: 'iron'}
         ],
         house: [
@@ -38,7 +39,6 @@ var options = {
             {name: 'mansion', require: 'titanium'}
         ],
         luxury: [
-            {name: 'manuscript', require: 'culture'},
             {name: 'blueprint', require: 'science'},
             {name: 'compendium', require: 'science'}
         ]
@@ -137,15 +137,15 @@ Engine.prototype = {
         var parchment = workshop.getCraft('parchment');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
+            message('Kittens Hunt: Hunters deployed!');
+            $("a:contains('Send hunters')").click();
+
             if (parchment.unlocked) {
                 game.craftAll(parchment.name);
                 message('Auto Hunt: crafted all parchments');
             }
 
             if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
-
-            message('Kittens Hunt: Hunters deployed!');
-            $("a:contains('Send hunters')").click();
         }
     },
     startBuilds: function (type, builds) {
