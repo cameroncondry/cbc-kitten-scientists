@@ -31,6 +31,8 @@ var options = {
             {name: 'slab', require: 'minerals'},
             {name: 'steel', require: 'coal'},
             {name: 'manuscript', require: 'culture'},
+            {name: 'blueprint', require: 'science'},
+            {name: 'compendium', require: 'science'},
             {name: 'plate', require: 'iron'}
         ],
         house: [
@@ -38,17 +40,12 @@ var options = {
             {name: 'logHouse', require: 'minerals'},
             {name: 'mansion', require: 'titanium'}
         ],
-        luxury: [
-            {name: 'blueprint', require: 'science'},
-            {name: 'compendium', require: 'science'}
-        ]
     },
     limit: {
         build: 0.75,
         craft: 0.95,
         house: 0.85,
         hunt: 0.95,
-        luxury: 0.99,
         faith: 0.99
     },
     stock: {
@@ -61,7 +58,6 @@ var options = {
         crafting: true,
         housing: true,
         hunting: true,
-        luxury: true,
         praising: true
     }
 };
@@ -144,8 +140,6 @@ Engine.prototype = {
                 game.craftAll(parchment.name);
                 message('Auto Hunt: crafted all parchments');
             }
-
-            if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
         }
     },
     startBuilds: function (type, builds) {
@@ -439,7 +433,6 @@ optionsListElement.append(getToggle('housing', 'Housing'));
 optionsListElement.append(getToggle('building', 'Building'));
 optionsListElement.append(getToggle('praising', 'Faith'));
 optionsListElement.append(getToggle('hunting', 'Hunting'));
-optionsListElement.append(getToggle('luxury', 'Luxury'));
 
 // add the options above the game log
 right.prepend(optionsElement.append(optionsListElement));
@@ -463,7 +456,7 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising'];
+var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'praising'];
 
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
