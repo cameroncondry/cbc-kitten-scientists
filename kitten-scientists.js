@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.5-trini';
+var version = 'Kitten Scientists version 1.1.5-trini-27March';
 var game = gamePage;
 
 var options = {
@@ -31,7 +31,7 @@ var options = {
             {name: 'slab', require: 'minerals'},
             {name: 'steel', require: 'coal'},
             {name: 'manuscript', require: 'culture'},
-            {name: 'blueprint', require: 'science'},
+            //{name: 'blueprint', require: 'science'},
             {name: 'compendium', require: 'science'},
             {name: 'plate', require: 'iron'}
         ],
@@ -49,9 +49,9 @@ var options = {
         faith: 0.99
     },
     stock: {
-        compendium: 1500,
+        compendium: 24,
         manuscript: 49,
-        parchment: 2500
+        parchment: 24
     },
     toggle: {
         building: true,
