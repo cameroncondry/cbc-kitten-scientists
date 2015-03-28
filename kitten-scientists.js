@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.5-trini-27March';
+var version = 'Kitten Scientists version 1.1.5-trini-28March';
 var game = gamePage;
 
 var options = {
@@ -22,8 +22,10 @@ var options = {
             {name: 'workshop', require: 'minerals'},
             {name: 'lumberMill', require: 'minerals'},
             {name: 'aqueduct', require: 'minerals'},
+            {name: 'smelter', require: 'minerals'},
             {name: 'unicornPasture', require: false},
-            {name: 'tradepost', require: 'gold'}
+            {name: 'tradepost', require: 'gold'},
+            {name: 'temple', require: 'gold'}
         ],
         craft: [
             {name: 'wood', require: 'catnip'},
