@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.5-trini-28March';
+var version = 'Kitten Scientists version 1.1.5-trini-5k-parch';
 var game = gamePage;
 
 var options = {
@@ -53,7 +53,7 @@ var options = {
     stock: {
         compendium: 24,
         manuscript: 49,
-        parchment: 24
+        parchment: 5000
     },
     toggle: {
         building: true,
