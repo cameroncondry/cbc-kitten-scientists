@@ -372,7 +372,7 @@ TradeManager.prototype = {
             result = true;
 
             for (i in materials) {
-                var total = this.craftManager.getValueAvailable(i);
+                var value = this.craftManager.getValueAvailable(i);
 
                 if (value < materials[i] * amount) {
                     result = false;
