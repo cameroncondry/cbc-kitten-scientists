@@ -118,7 +118,7 @@ Engine.prototype = {
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
-        if (options.toggle.trading) this.startTrades('trade'), options.auto.trade);
+        if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
