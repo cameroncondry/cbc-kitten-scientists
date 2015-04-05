@@ -356,12 +356,7 @@ TradeManager.prototype = {
         var yieldRes = 0;
         
         if (!button) return;
-        
-        // accumulate yield using internal function
-        for (i = 0; i < amount; i++) {
-            yieldRes += button.tradeInternal();
-        }
-        button.printYieldOutput(yieldRes);
+        button.tradeMultiple(amount);
 
         message('Kittens Craft: +' + name + ' x' + amount);
     },
