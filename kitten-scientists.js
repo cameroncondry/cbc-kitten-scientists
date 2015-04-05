@@ -37,8 +37,12 @@ var options = {
             {name: 'mansion', require: 'titanium'}
         ],
         luxury: [
+            {name: 'parchment', require: false},
             {name: 'manuscript', require: 'culture'},
             {name: 'compendium', require: 'science'}
+        ]
+        trade: [
+            {name: 'zebras', require: 'slab'}
         ]
     },
     limit: {
@@ -47,9 +51,11 @@ var options = {
         house: 0.85,
         hunt: 0.95,
         luxury: 0.99,
-        faith: 0.99
+        faith: 0.99,
+        trade: 0.95
     },
     stock: {
+        furs: 1000,
         compendium: 500,
         manuscript: 500,
         parchment: 500
@@ -60,7 +66,8 @@ var options = {
         housing: true,
         hunting: true,
         luxury: true,
-        praising: true
+        praising: true,
+        trading: true
     }
 };
 
@@ -84,6 +91,7 @@ var message = function () {
 var Engine = function () {
     this.buildManager = new BuildManager();
     this.craftManager = new CraftManager();
+    this.tradeManager = new TradeManager();
 };
 
 Engine.prototype = {
@@ -110,6 +118,7 @@ Engine.prototype = {
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
+        if (options.toggle.trading) this.startTrades('trade'), options.auto.trade);
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
@@ -135,11 +144,7 @@ Engine.prototype = {
         var parchment = workshop.getCraft('parchment');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
-            if (parchment.unlocked) {
-                game.craftAll(parchment.name);
-                message('Auto Hunt: crafted all parchments');
-            }
-
+            // Generate luxury goods first, before sending hunters
             if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
 
             message('Kittens Hunt: Hunters deployed!');
@@ -171,6 +176,19 @@ Engine.prototype = {
             if (limit <= require.value / require.maxValue) {
                 manager.craft(craft.name, manager.getLowestCraftAmount(craft.name));
             }
+        }
+    }
+    startTrades: function(type, trades) {
+        var limit = options.limit[type];
+        var manager = this.tradeManager;
+        for (i in trades) {
+            var trade = trades[i];
+            var require = manager.getResource(trade.require);
+            
+            if (limit <= require.value / require.maxValue) {
+                manager.trade(trade.name, manager.getLowestTradeAmount(trade.name));
+            }
+            
         }
     }
 };
@@ -319,6 +337,94 @@ CraftManager.prototype = {
     }
 };
 
+// Trading Manager
+// ================
+
+var TradeManager = function () {
+    this.craftManager = new CraftManager();
+};
+
+TradeManager.prototype = {
+    trade: function (name, amount) {
+        amount = Math.floor(amount);
+
+        if (undefined === name || 1 > amount) return;
+        if (!this.canTrade(name, amount)) return;
+
+        var race = this.getRace(name);
+        var button = this.getTradeButton(name);
+        var yieldRes = 0;
+        
+        // accumulate yield using internal function
+        for (i = 0; i < amount; i++) {
+            yieldRes += button.tradeInternal();
+        }
+        button.printYieldOutput(yieldRes);
+
+        message('Kittens Craft: +' + name + ' x' + amount);
+    },
+    canTrade: function (name, amount) {
+        var race = this.getRace(name);
+        var materials = this.getMaterials(name);
+        var result = false;
+
+        if (race.unlocked) {
+            result = true;
+
+            for (i in materials) {
+                var total = this.craftManager.getValueAvailable(i);
+
+                if (value < materials[i] * amount) {
+                    result = false;
+                }
+            }
+        }
+
+        return result;
+    },
+    getRace: function (name) {
+        return game.diplomacy.get(name);
+    },
+    getTradeButton: function (name) {
+        for (i in game.diplomacyTab.racePanels) {
+            var panel = game.diplomacyTab.racePanels[i];
+            if (panel.name.toLowerCase() == name.toLowerCase())
+                return panel.tradeBtn;
+        }
+        
+        return null;
+    },
+    getLowestTradeAmount: function (name) {
+        var amount = 0;
+        var consume = options.amount.consume;
+        var materials = this.getMaterials(name);
+
+        for (i in materials) {
+            var total = this.craftManager.getValueAvailable(i) * consume / materials[i];
+
+            amount = (0 === amount || total < amount) ? total : amount;
+        }
+
+        return amount;
+    },
+    getMaterials: function (name) {
+        var materials = {};
+        var prices = this.getRace(name).buys;
+
+        for (i in prices) {
+            var price = prices[i];
+
+            materials[price.name] = price.val;
+        }
+        
+        // Include actual cost of trade, not just race materials
+        materials['manpower'] = 50;
+        materials['gold'] = 15;
+
+        return materials;
+    },
+};
+
 // ==============================
 // Configure overall page display
 // ==============================
@@ -438,6 +544,7 @@ optionsListElement.append(getToggle('building', 'Building'));
 optionsListElement.append(getToggle('praising', 'Faith'));
 optionsListElement.append(getToggle('hunting', 'Hunting'));
 optionsListElement.append(getToggle('luxury', 'Luxury'));
+optionsListElement.append(getToggle('trading', 'Trading'));
 
 // add the options above the game log
 right.prepend(optionsElement.append(optionsListElement));
@@ -461,7 +568,7 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising'];
+var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising', 'trading'];
 
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
