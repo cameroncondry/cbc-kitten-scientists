@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.5';
+var version = 'Kitten Scientists version 1.1.5-trini-04April';
 var game = gamePage;
 
 var options = {
@@ -15,20 +15,27 @@ var options = {
         build: [
             {name: 'field', require: 'catnip'},
             {name: 'pasture', require: 'catnip'},
+            {name: 'mine', require: 'wood'},
             {name: 'library', require: 'wood'},
             {name: 'academy', require: 'wood'},
-            {name: 'mine', require: 'wood'},
             {name: 'barn', require: 'wood'},
-            {name: 'aqueduct', require: 'minerals'},
-            {name: 'lumberMill', require: 'minerals'},
             {name: 'workshop', require: 'minerals'},
-            {name: 'unicornPasture', require: false}
+            {name: 'lumberMill', require: 'minerals'},
+            {name: 'aqueduct', require: 'minerals'},
+            {name: 'smelter', require: 'minerals'},
+            {name: 'unicornPasture', require: false},
+            {name: 'factory', require: 'titanium'},
+            {name: 'tradepost', require: 'gold'},
+            {name: 'temple', require: 'gold'}
         ],
         craft: [
             {name: 'wood', require: 'catnip'},
             {name: 'beam', require: 'wood'},
             {name: 'slab', require: 'minerals'},
             {name: 'steel', require: 'coal'},
+            {name: 'manuscript', require: 'culture'},
+            {name: 'blueprint', require: 'science'},
+            {name: 'compendium', require: 'science'},
             {name: 'plate', require: 'iron'}
         ],
         house: [
@@ -36,30 +43,24 @@ var options = {
             {name: 'logHouse', require: 'minerals'},
             {name: 'mansion', require: 'titanium'}
         ],
-        luxury: [
-            {name: 'manuscript', require: 'culture'},
-            {name: 'compendium', require: 'science'}
-        ]
     },
     limit: {
         build: 0.75,
         craft: 0.95,
         house: 0.85,
         hunt: 0.95,
-        luxury: 0.99,
         faith: 0.99
     },
     stock: {
-        compendium: 500,
-        manuscript: 500,
-        parchment: 500
+        compendium: 0,
+        manuscript: 1000,
+        parchment: 25000
     },
     toggle: {
         building: true,
         crafting: true,
         housing: true,
         hunting: true,
-        luxury: true,
         praising: true
     }
 };
@@ -107,9 +108,9 @@ Engine.prototype = {
         this.observeGameLog();
         if (options.toggle.praising) this.praiseSun();
         if (options.toggle.hunting) this.sendHunters();
-        if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
+        if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
@@ -135,15 +136,13 @@ Engine.prototype = {
         var parchment = workshop.getCraft('parchment');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
+            message('Kittens Hunt: Hunters deployed!');
+            $("a:contains('Send hunters')").click();
+
             if (parchment.unlocked) {
                 game.craftAll(parchment.name);
                 message('Auto Hunt: crafted all parchments');
             }
-
-            if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
-
-            message('Kittens Hunt: Hunters deployed!');
-            $("a:contains('Send hunters')").click();
         }
     },
     startBuilds: function (type, builds) {
@@ -437,7 +436,6 @@ optionsListElement.append(getToggle('housing', 'Housing'));
 optionsListElement.append(getToggle('building', 'Building'));
 optionsListElement.append(getToggle('praising', 'Faith'));
 optionsListElement.append(getToggle('hunting', 'Hunting'));
-optionsListElement.append(getToggle('luxury', 'Luxury'));
 
 // add the options above the game log
 right.prepend(optionsElement.append(optionsListElement));
@@ -461,7 +459,7 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising'];
+var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'praising'];
 
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
