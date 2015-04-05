@@ -183,7 +183,7 @@ Engine.prototype = {
         var manager = this.tradeManager;
         for (i in trades) {
             var trade = trades[i];
-            var require = manager.getResource(trade.require);
+            var require = manager.craftManager.getResource(trade.require);
             
             if (limit <= require.value / require.maxValue) {
                 manager.trade(trade.name, manager.getLowestTradeAmount(trade.name));
