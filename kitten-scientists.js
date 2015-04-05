@@ -177,7 +177,7 @@ Engine.prototype = {
                 manager.craft(craft.name, manager.getLowestCraftAmount(craft.name));
             }
         }
-    }
+    },
     startTrades: function(type, trades) {
         var limit = options.limit[type];
         var manager = this.tradeManager;
