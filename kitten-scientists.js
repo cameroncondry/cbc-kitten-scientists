@@ -40,7 +40,7 @@ var options = {
             {name: 'parchment', require: false},
             {name: 'manuscript', require: 'culture'},
             {name: 'compendium', require: 'science'}
-        ]
+        ],
         trade: [
             {name: 'zebras', require: 'slab'}
         ]
