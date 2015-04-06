@@ -15,14 +15,15 @@ var options = {
         build: [
             {name: 'field', require: 'catnip'},
             {name: 'pasture', require: 'catnip'},
+            {name: 'mine', require: 'wood'},
             {name: 'library', require: 'wood'},
             {name: 'academy', require: 'wood'},
-            {name: 'mine', require: 'wood'},
             {name: 'barn', require: 'wood'},
-            {name: 'aqueduct', require: 'minerals'},
-            {name: 'lumberMill', require: 'minerals'},
             {name: 'workshop', require: 'minerals'},
-            {name: 'unicornPasture', require: false}
+            {name: 'lumberMill', require: 'minerals'},
+            {name: 'aqueduct', require: 'minerals'},
+            {name: 'unicornPasture', require: 'unicorns'},
+            {name: 'tradepost', require: 'gold'}
         ],
         craft: [
             {name: 'wood', require: 'catnip'},
@@ -37,8 +38,12 @@ var options = {
             {name: 'mansion', require: 'titanium'}
         ],
         luxury: [
+            {name: 'parchment', require: 'furs'},
             {name: 'manuscript', require: 'culture'},
             {name: 'compendium', require: 'science'}
+        ],
+        trade: [
+            {name: 'zebras', require: 'slab', amount: 0.25 }
         ]
     },
     limit: {
@@ -47,9 +52,11 @@ var options = {
         house: 0.85,
         hunt: 0.95,
         luxury: 0.99,
-        faith: 0.99
+        faith: 0.99,
+        trade: 0.95
     },
     stock: {
+        furs: 1000,
         compendium: 500,
         manuscript: 500,
         parchment: 500
@@ -60,7 +67,8 @@ var options = {
         housing: true,
         hunting: true,
         luxury: true,
-        praising: true
+        praising: true,
+        trading: true
     }
 };
 
@@ -84,6 +92,7 @@ var message = function () {
 var Engine = function () {
     this.buildManager = new BuildManager();
     this.craftManager = new CraftManager();
+    this.tradeManager = new TradeManager();
 };
 
 Engine.prototype = {
@@ -107,9 +116,10 @@ Engine.prototype = {
         this.observeGameLog();
         if (options.toggle.praising) this.praiseSun();
         if (options.toggle.hunting) this.sendHunters();
-        if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
+        if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
+        if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
@@ -130,16 +140,12 @@ Engine.prototype = {
         }
     },
     sendHunters: function () {
-        var catpower = this.craftManager.getResource('manpower');
+        var catpower = this.craftManager.getResource('catpower');
         var workshop = game.workshop;
         var parchment = workshop.getCraft('parchment');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
-            if (parchment.unlocked) {
-                game.craftAll(parchment.name);
-                message('Auto Hunt: crafted all parchments');
-            }
-
+            // Generate luxury goods first, before sending hunters
             if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
 
             message('Kittens Hunt: Hunters deployed!');
@@ -153,23 +159,47 @@ Engine.prototype = {
 
         for (i in builds) {
             var build = builds[i];
-            var require = !build.require ? !build.require : craftManager.getResource(build.require);
+            var require = !build.require ? false : craftManager.getResource(build.require);
 
-            if (require === true || limit <= require.value / require.maxValue) {
+            if (require === false || limit <= require.value / require.maxValue) {
                 buildManager.build(build.name);
             }
         }
     },
     startCrafts: function (type, crafts) {
         var limit = options.limit[type];
-        var manager = this.craftManager;
+        var craftManager = this.craftManager;
 
         for (i in crafts) {
             var craft = crafts[i];
-            var require = manager.getResource(craft.require);
+            var require = !craft.require ? false : craftManager.getResource(craft.require);
 
             if (limit <= require.value / require.maxValue) {
-                manager.craft(craft.name, manager.getLowestCraftAmount(craft.name));
+                craftManager.craft(craft.name, craftManager.getLowestCraftAmount(craft.name));
+            }
+        }
+    },
+    startTrades: function(type, trades) {
+        var limit = options.limit[type];
+        var tradeManager = this.tradeManager;
+        var craftManager = this.craftManager;
+        var totalAmount = tradeManager.getLowestTradeAmount('trade');
+        var gold = craftManager.getResource('gold');
+        var catpower = craftManager.getResource('catpower');
+
+        // Ensure we have enough gold and catpower to start trading
+        if (limit > gold.value / gold.maxValue) return;
+        if (limit > catpower.value / catpower.maxValue) return;
+
+        for (i in trades) {
+            var trade = trades[i];
+            var require = !trade.require ? false : craftManager.getResource(trade.require);
+
+            if (require === false || limit <= require.value/ require.maxValue) {
+
+                var tradeAmount = totalAmount * trade.amount;
+                tradeManager.trade(trade.name,
+                                   tradeManager.getLowestTradeAmount(trade.name, tradeAmount));
             }
         }
     }
@@ -297,6 +327,9 @@ CraftManager.prototype = {
         // adjust for spelling bug in core game logic
         if ('compendium' === name) name = 'compedium';
 
+        // adjust for displayed name
+        if ('catpower' === name) name = 'manpower';
+
         return game.resPool.get(name);
     },
     getValue: function (name) {
@@ -317,6 +350,101 @@ CraftManager.prototype = {
 
         return value - stock;
     }
+};
+
+// Trading Manager
+// ================
+
+var TradeManager = function () {
+    this.craftManager = new CraftManager();
+};
+
+TradeManager.prototype = {
+    trade: function (name, amount) {
+        amount = Math.floor(amount);
+
+        if (undefined === name || 1 > amount) return;
+        if (!this.canTrade(name, amount)) return;
+
+        var race = this.getRace(name);
+        var button = this.getTradeButton(name);
+
+        if (!button) return;
+        button.tradeMultiple(amount);
+
+        message('Kittens Trade: ' + amount + 'x ' + name);
+    },
+    canTrade: function (name, amount) {
+        var race = this.getRace(name);
+        var materials = this.getMaterials(name);
+        var result = false;
+
+        if (race.unlocked) {
+            result = true;
+
+            for (i in materials) {
+                var value = this.craftManager.getValueAvailable(i);
+
+                if (value < materials[i] * amount) {
+                    result = false;
+                }
+            }
+        }
+
+        return result;
+    },
+    getRace: function (name) {
+        return game.diplomacy.get(name);
+    },
+    getTradeButton: function (name) {
+        if (game.diplomacyTab.racePanels === [])
+            game.diplomacyTab.render()
+
+        for (i in game.diplomacyTab.racePanels) {
+            var panel = game.diplomacyTab.racePanels[i];
+            if (panel.name.toLowerCase() == name.toLowerCase())
+                return panel.tradeBtn;
+        }
+
+        return null;
+    },
+    getLowestTradeAmount: function (name, max) {
+        var amount = 0;
+        var consume = options.amount.consume;
+        var materials = this.getMaterials(name);
+
+        for (i in materials) {
+            var total = this.craftManager.getValueAvailable(i) * consume / materials[i];
+
+            amount = (0 === amount || total < amount) ? total : amount;
+        }
+
+        if (max < amount)
+            return max;
+        else
+            return amount;
+    },
+    getMaterials: function (name) {
+        var materials = {};
+        var prices = [];
+
+        // Allow getting base price for trading, or for any race
+        if (name != 'trade') {
+            prices = this.getRace(name).buys;
+        }
+
+        for (i in prices) {
+            var price = prices[i];
+
+            materials[price.name] = price.val;
+        }
+
+        // Include actual cost of trade, not just race materials
+        materials['catpower'] = 50;
+        materials['gold'] = 15;
+
+        return materials;
+    },
 };
 
 // ==============================
@@ -438,6 +566,7 @@ optionsListElement.append(getToggle('building', 'Building'));
 optionsListElement.append(getToggle('praising', 'Faith'));
 optionsListElement.append(getToggle('hunting', 'Hunting'));
 optionsListElement.append(getToggle('luxury', 'Luxury'));
+optionsListElement.append(getToggle('trading', 'Trading'));
 
 // add the options above the game log
 right.prepend(optionsElement.append(optionsListElement));
@@ -461,7 +590,7 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising'];
+var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising', 'trading'];
 
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
