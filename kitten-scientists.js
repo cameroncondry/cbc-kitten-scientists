@@ -22,7 +22,7 @@ var options = {
             {name: 'workshop', require: 'minerals'},
             {name: 'lumberMill', require: 'minerals'},
             {name: 'aqueduct', require: 'minerals'},
-            {name: 'unicornPasture', require: false},
+            {name: 'unicornPasture', require: 'unicorns'},
             {name: 'tradepost', require: 'gold'}
         ],
         craft: [
