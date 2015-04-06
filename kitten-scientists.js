@@ -38,6 +38,7 @@ var options = {
             {name: 'mansion', require: 'titanium'}
         ],
         luxury: [
+            {name: 'parchment', require: 'furs'},
             {name: 'manuscript', require: 'culture'},
             {name: 'compendium', require: 'science'}
         ]
@@ -51,6 +52,7 @@ var options = {
         faith: 0.99
     },
     stock: {
+        furs: 1000,
         compendium: 500,
         manuscript: 500,
         parchment: 500
@@ -136,11 +138,7 @@ Engine.prototype = {
         var parchment = workshop.getCraft('parchment');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
-            if (parchment.unlocked) {
-                game.craftAll(parchment.name);
-                message('Auto Hunt: crafted all parchments');
-            }
-
+            // Generate luxury goods first, before sending hunters
             if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
 
             message('Kittens Hunt: Hunters deployed!');
