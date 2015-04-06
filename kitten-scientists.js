@@ -133,7 +133,7 @@ Engine.prototype = {
         }
     },
     sendHunters: function () {
-        var catpower = this.craftManager.getResource('manpower');
+        var catpower = this.craftManager.getResource('catpower');
         var workshop = game.workshop;
         var parchment = workshop.getCraft('parchment');
 
@@ -295,6 +295,9 @@ CraftManager.prototype = {
     getResource: function (name) {
         // adjust for spelling bug in core game logic
         if ('compendium' === name) name = 'compedium';
+
+        // adjust for displayed name
+        if ('catpower' === name) name = 'manpower';
 
         return game.resPool.get(name);
     },
