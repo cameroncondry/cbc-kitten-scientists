@@ -13,16 +13,42 @@ var options = {
     },
     auto: {
         build: [
-            {name: 'field', require: 'catnip'},
-            {name: 'pasture', require: 'catnip'},
-            {name: 'library', require: 'wood'},
-            {name: 'academy', require: 'wood'},
-            {name: 'mine', require: 'wood'},
-            {name: 'barn', require: 'wood'},
-            {name: 'aqueduct', require: 'minerals'},
-            {name: 'lumberMill', require: 'minerals'},
-            {name: 'workshop', require: 'minerals'},
+            // Priorities:
+            // 1. Max science
+            {name: 'library',      require: 'wood',     limit: 0.75},
+            {name: 'academy',      require: 'wood',     limit: 0.75},
+            {name: 'observatory',  require: 'wood',     limit: 0.75},
+            // 2. Craft bonuses
+            {name: 'workshop',     require: 'minerals', limit: 0.75},
+            // 3. Raw production
+            {name: 'field',        require: 'catnip',   limit: 0.75},
+            {name: 'mine',         require: 'wood',     limit: 0.75},
+            {name: 'lumberMill',   require: 'iron',     limit: 0.75},
+            {name: 'oilWell',      require: 'coal',     limit: 0.75},
+            {name: 'quarry',       require: 'coal',     limit: 0.75},
+            // 4. Conversion (the require keeps them from consuming too much)
+            {name: 'smelter',      require: 'minerals', limit: 0.75},
+            {name: 'magneto',      require: 'oil',      limit: 0.75},
+            {name: 'calciner',     require: 'oil',      limit: 0.95},
+            {name: 'steamworks',   require: 'coal',     limit: 0.75},
+            // 5. Storage
+            {name: 'harbor',       require: 'iron',     limit: 0.90},
+            {name: 'barn',         require: 'wood',     limit: 0.90},
+            {name: 'warehouse',    require: 'minerals', limit: 0.94},
+            // 6. Housing
+            {name: 'hut',          require: 'wood',     limit: 0.85},
+            {name: 'logHouse',     require: 'minerals', limit: 0.85},
+            {name: 'mansion',      require: 'titanium', limit: 0.85},
+            // 7. Other
+            {name: 'pasture',      require: 'catnip',   limit: 0.75},
+            {name: 'amphitheatre', require: 'minerals', limit: 0.94},
+            {name: 'aqueduct',     require: 'minerals', limit: 0.94},
+            {name: 'temple',       require: 'gold',     limit: 0.99},
+            {name: 'tradepost',    require: 'gold',     limit: 0.99},
+            {name: 'ziggurat',     require: 'minerals', limit: 0.94},
             {name: 'unicornPasture', require: false}
+            // Not present: accelerator, biolab, chapel, chronosphere,
+            // factory, mint, reactor
         ],
         craft: [
             {name: 'wood', require: 'catnip'},
@@ -30,11 +56,6 @@ var options = {
             {name: 'slab', require: 'minerals'},
             {name: 'steel', require: 'coal'},
             {name: 'plate', require: 'iron'}
-        ],
-        house: [
-            {name: 'hut', require: 'wood'},
-            {name: 'logHouse', require: 'minerals'},
-            {name: 'mansion', require: 'titanium'}
         ],
         luxury: [
             {name: 'manuscript', require: 'culture'},
@@ -44,20 +65,18 @@ var options = {
     limit: {
         build: 0.75,
         craft: 0.95,
-        house: 0.85,
         hunt: 0.95,
         luxury: 0.99,
         faith: 0.99
     },
     stock: {
         compendium: 500,
-        manuscript: 500,
-        parchment: 500
+        manuscript: 1000,
+        parchment: 3000
     },
     toggle: {
         building: true,
         crafting: true,
-        housing: true,
         hunting: true,
         luxury: true,
         praising: true
@@ -76,6 +95,22 @@ var message = function () {
     // update the color of the message immediately after adding
     gameLog.msg.apply(gameLog, args);
     $('.type_' + args[1]).css('color', options.color);
+};
+
+// Stop having the game log erase messages.
+gameLog.msg = function(message, type) {
+    var gameLog = dojo.byId("gameLog");
+
+    var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
+
+    if (type){
+    	dojo.addClass(span, "type_"+type);
+    }
+
+    var spans = this.spans;
+    spans.push(span);
+
+    return span;
 };
 
 // Core Engine for Kitten Scientists
@@ -109,7 +144,6 @@ Engine.prototype = {
         if (options.toggle.hunting) this.sendHunters();
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
-        if (options.toggle.housing) this.startBuilds('house', options.auto.house);
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
@@ -149,11 +183,13 @@ Engine.prototype = {
     startBuilds: function (type, builds) {
         var buildManager = this.buildManager;
         var craftManager = this.craftManager;
-        var limit = options.limit[type];
+        var globalLimit = options.limit[type];
+        buildManager.triggerLateBuild();
 
         for (i in builds) {
             var build = builds[i];
             var require = !build.require ? !build.require : craftManager.getResource(build.require);
+            var limit = build.limit || globalLimit;
 
             if (require === true || limit <= require.value / require.maxValue) {
                 buildManager.build(build.name);
@@ -180,17 +216,36 @@ Engine.prototype = {
 
 var BuildManager = function () {
     this.craftManager = new CraftManager();
+    this.lateBuilds = [];
 };
 
 BuildManager.prototype = {
     craftManager: undefined,
+    triggerLateBuild: function () {
+      var arr = this.lateBuilds;
+      this.lateBuilds = [];
+      for (i in arr)
+        this.build(arr[i]);
+    },
     build: function (name) {
         if (!this.isBuildable(name)) return;
 
+        // Craft the resources to build this.
+        var manager = this.craftManager;
+        var prices = this.getPrices(name);
+        for (i in prices) {
+            var price = prices[i];
+            manager.deepCraft(price.name, price.val);
+        }
+
+        // We may have just enabled it.
         var label = this.getBuild(name).label;
         var button = $(".nosel:not('.disabled'):contains('" + label + "')");
 
-        if (button.length === 0) return;
+        if (button.length === 0) {
+            this.lateBuilds.push(name);
+            return;
+        }
 
         button.click();
         message('Kittens Build: +1 ' + label);
@@ -201,12 +256,12 @@ BuildManager.prototype = {
         if (buildable) {
             var manager = this.craftManager;
             var prices = this.getPrices(name);
+            var usage = {};
 
             for (i in prices) {
                 var price = prices[i];
-
-                if (manager.getValueAvailable(price.name) < price.val) {
-                    buildable = false;
+                if (!manager.getCraftUsage(price.name, price.val, usage)) {
+                    return false;
                 }
             }
         }
@@ -268,6 +323,10 @@ CraftManager.prototype = {
 
         return game.workshop.getCraft(name);
     },
+    isCraftable: function (name) {
+        var res = this.getResource(name);
+        return res.craftable && this.getCraft(name).unlocked;
+    },
     getLowestCraftAmount: function (name) {
         var amount = 0;
         var consume = options.amount.consume;
@@ -316,7 +375,55 @@ CraftManager.prototype = {
         }
 
         return value - stock;
-    }
+    },
+    getCraftUsage: function (name, desiredAmount, accounted) {
+        name = this.getResource(name).name; // Normalize the name.
+        var unusable = accounted[name] || 0;
+        var value = this.getValue(name);
+
+        value -= unusable;
+
+        if (desiredAmount < value) {
+            accounted[name] = desiredAmount + unusable;
+            return true;
+        }
+
+        if (!this.isCraftable(name)) {
+            return false;
+        }
+
+        accounted[name] = value + unusable;
+
+        var amountToCraft = Math.ceil((desiredAmount - value) /
+            game.getResCraftRatio(name));
+
+        var materials = this.getMaterials(name);
+        for (i in materials) {
+            var usable = this.getCraftUsage(i,
+                amountToCraft * materials[i], accounted);
+            if (!usable)
+                return false;
+        }
+
+        return true;
+    },
+    deepCraft: function (name, desiredAmount) {
+        var value = this.getValue(name);
+
+        if (desiredAmount < value) return
+        if (!this.isCraftable(name))
+            return this.craft(name, desiredAmount - value);
+
+        var ratio = game.getResCraftRatio(this.getCraft(name).name);
+        var amountToCraft = Math.ceil((desiredAmount - value) / ratio);
+
+        var materials = this.getMaterials(name);
+        for (i in materials) {
+            this.deepCraft(i, amountToCraft * materials[i]);
+        }
+
+        this.craft(name, amountToCraft);
+    },
 };
 
 // ==============================
@@ -327,7 +434,6 @@ var container = $('#game');
 var column = $('.column');
 
 container.css({
-    fontFamily: 'Courier New',
     fontSize: '12px',
     minWidth: '1300px',
     top: '32px'
@@ -378,7 +484,6 @@ addRule('#resContainer .maxRes {'
 
 addRule('#game .btn {'
 + 'border-radius: 0px;'
-+ 'font-family: "Courier New";'
 + 'font-size: "10px";'
 + 'margin: 0 0 7px 0;'
 + '}');
@@ -400,6 +505,11 @@ addRule('#ks-options ul li {'
 + 'display: block;'
 + 'float: left;'
 + 'width: 50%;'
++ '}');
+
+addRule('#rightColumn {'
++ 'display: inline-flex;'
++ 'flex-direction: column;'
 + '}');
 
 // Add options element
@@ -433,7 +543,6 @@ optionsElement.append(optionsTitleElement);
 
 optionsListElement.append(getToggle('engine', 'Engine').css('width', '100%'));
 optionsListElement.append(getToggle('crafting', 'Crafting'));
-optionsListElement.append(getToggle('housing', 'Housing'));
 optionsListElement.append(getToggle('building', 'Building'));
 optionsListElement.append(getToggle('praising', 'Faith'));
 optionsListElement.append(getToggle('hunting', 'Hunting'));
@@ -461,7 +570,7 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising'];
+var autoOptions = ['building', 'crafting', 'hunting', 'luxury', 'praising'];
 
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
