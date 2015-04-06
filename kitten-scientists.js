@@ -321,6 +321,101 @@ CraftManager.prototype = {
     }
 };
 
+// Trading Manager
+// ================
+
+var TradeManager = function () {
+    this.craftManager = new CraftManager();
+};
+
+TradeManager.prototype = {
+    trade: function (name, amount) {
+        amount = Math.floor(amount);
+
+        if (undefined === name || 1 > amount) return;
+        if (!this.canTrade(name, amount)) return;
+
+        var race = this.getRace(name);
+        var button = this.getTradeButton(name);
+
+        if (!button) return;
+        button.tradeMultiple(amount);
+
+        message('Kittens Trade: ' + amount + 'x ' + name);
+    },
+    canTrade: function (name, amount) {
+        var race = this.getRace(name);
+        var materials = this.getMaterials(name);
+        var result = false;
+
+        if (race.unlocked) {
+            result = true;
+
+            for (i in materials) {
+                var value = this.craftManager.getValueAvailable(i);
+
+                if (value < materials[i] * amount) {
+                    result = false;
+                }
+            }
+        }
+
+        return result;
+    },
+    getRace: function (name) {
+        return game.diplomacy.get(name);
+    },
+    getTradeButton: function (name) {
+        if (game.diplomacyTab.racePanels === [])
+            game.diplomacyTab.render()
+
+        for (i in game.diplomacyTab.racePanels) {
+            var panel = game.diplomacyTab.racePanels[i];
+            if (panel.name.toLowerCase() == name.toLowerCase())
+                return panel.tradeBtn;
+        }
+
+        return null;
+    },
+    getLowestTradeAmount: function (name, max) {
+        var amount = 0;
+        var consume = options.amount.consume;
+        var materials = this.getMaterials(name);
+
+        for (i in materials) {
+            var total = this.craftManager.getValueAvailable(i) * consume / materials[i];
+
+            amount = (0 === amount || total < amount) ? total : amount;
+        }
+
+        if (max < amount)
+            return max;
+        else
+            return amount;
+    },
+    getMaterials: function (name) {
+        var materials = {};
+        var prices = [];
+
+        // Allow getting base price for trading, or for any race
+        if (name != 'trade') {
+            prices = this.getRace(name).buys;
+        }
+
+        for (i in prices) {
+            var price = prices[i];
+
+            materials[price.name] = price.val;
+        }
+
+        // Include actual cost of trade, not just race materials
+        materials['catpower'] = 50;
+        materials['gold'] = 15;
+
+        return materials;
+    },
+};
+
 // ==============================
 // Configure overall page display
 // ==============================
