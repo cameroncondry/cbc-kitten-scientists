@@ -152,9 +152,9 @@ Engine.prototype = {
 
         for (i in builds) {
             var build = builds[i];
-            var require = !build.require ? !build.require : craftManager.getResource(build.require);
+            var require = !build.require ? false : craftManager.getResource(build.require);
 
-            if (require === true || limit <= require.value / require.maxValue) {
+            if (require === false || limit <= require.value / require.maxValue) {
                 buildManager.build(build.name);
             }
         }
