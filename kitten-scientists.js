@@ -161,14 +161,14 @@ Engine.prototype = {
     },
     startCrafts: function (type, crafts) {
         var limit = options.limit[type];
-        var manager = this.craftManager;
+        var craftManager = this.craftManager;
 
         for (i in crafts) {
             var craft = crafts[i];
-            var require = manager.getResource(craft.require);
+            var require = !craft.require ? false : craftManager.getResource(craft.require);
 
             if (limit <= require.value / require.maxValue) {
-                manager.craft(craft.name, manager.getLowestCraftAmount(craft.name));
+                craftManager.craft(craft.name, craftManager.getLowestCraftAmount(craft.name));
             }
         }
     }
