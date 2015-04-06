@@ -141,11 +141,9 @@ Engine.prototype = {
     },
     sendHunters: function () {
         var catpower = this.craftManager.getResource('catpower');
-        var workshop = game.workshop;
-        var parchment = workshop.getCraft('parchment');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
-            // Generate luxury goods first, before sending hunters
+            // Generate luxury goods before sending hunters
             if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
 
             message('Kittens Hunt: Hunters deployed!');
@@ -324,10 +322,8 @@ CraftManager.prototype = {
         return materials;
     },
     getResource: function (name) {
-        // adjust for spelling bug in core game logic
+        // adjust for spelling discrepancies in core game logic
         if ('compendium' === name) name = 'compedium';
-
-        // adjust for displayed name
         if ('catpower' === name) name = 'manpower';
 
         return game.resPool.get(name);

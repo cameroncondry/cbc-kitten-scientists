@@ -40,20 +40,27 @@ Builds the following buildings when required resource is at 75% capacity, will o
 
 - field
 - pasture
+- mine
 - library
 - academy
-- mine
 - barn
-- aqueduct
-- lumberMill
 - workshop
+- lumberMill
+- aqueduct
 - unicornPasture
+- tradepost
 
 Housing will build the following population buildings when required resource is at 85% capacity:
 
 - hut
 - logHouse
 - mansion
+
+#### Trading
+
+Trades with the following races when gold is at 95% capacity and will use 25% of the amount available.
+
+- zebra
 
 #### Cat Power
 
@@ -71,6 +78,12 @@ Observes astronomical events.
 
 ### 2015.04.06 - Version 1.1.6
 
+- Quality of life changes in internal codebase. (thanks [jacob-keller](https://github.com/jacob-keller))
+- Added automated trading and enabled trading with Zebras. (thanks [jacob-keller](https://github.com/jacob-keller))
+- Specified resource to watch with unicorn pastures. (thanks [jacob-keller](https://github.com/jacob-keller))
+- Moved parchment into the "luxury" goods category. (thanks [jacob-keller](https://github.com/jacob-keller))
+- Added tradepost to the list of buildings and reprioritized order. (thanks [trini](https://github.com/trini))
+- Reprioritized crafting to happen after building. (thanks [trini](https://github.com/trini))
 - Updated the build internals to use the buttons directly. (reverted) (thanks [jacob-keller](https://github.com/jacob-keller))
 
 ### 2015.03.11 - Version 1.1.5
