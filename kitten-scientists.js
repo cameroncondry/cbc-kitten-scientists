@@ -187,12 +187,9 @@ BuildManager.prototype = {
     build: function (name) {
         if (!this.isBuildable(name)) return;
 
-        var label = this.getBuild(name).label;
-        var button = $(".nosel:not('.disabled'):contains('" + label + "')");
+        var button = this.getBuildButton(name);
 
-        if (button.length === 0) return;
-
-        button.click();
+        button.onClick();
         message('Kittens Build: +1 ' + label);
     },
     isBuildable: function (name) {
@@ -215,6 +212,17 @@ BuildManager.prototype = {
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
+    },
+    getBuildButton: function (name) {
+        if (game.bonfireTab.buttons === [])
+            game.bonfireTab.render()
+
+        for (i in game.bonfireTab.buttons) {
+            var btn = game.bonfireTab.buttons[i];
+            if (btn.name.toLowerCase() == name.toLowerCase()) return btn;
+        }
+
+        return null;
     },
     getPrices: function (name) {
         return game.bld.getPrices(name);
