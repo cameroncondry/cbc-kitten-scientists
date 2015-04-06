@@ -71,7 +71,7 @@ Observes astronomical events.
 
 ### 2015.04.06 - Version 1.1.6
 
-- Updated the build internals to use the buttons directly instead of going through the UI. (thanks [jacob-keller](https://github.com/jacob-keller))
+- Updated the build internals to use the buttons directly. (reverted) (thanks [jacob-keller](https://github.com/jacob-keller))
 
 ### 2015.03.11 - Version 1.1.5
 
