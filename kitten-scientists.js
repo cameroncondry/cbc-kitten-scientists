@@ -116,11 +116,11 @@ Engine.prototype = {
     iterate: function () {
         this.observeGameLog();
         if (options.toggle.praising) this.praiseSun();
+        if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
         if (options.toggle.hunting) this.sendHunters();
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
-        if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
