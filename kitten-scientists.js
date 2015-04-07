@@ -43,7 +43,8 @@ var options = {
             {name: 'compendium', require: 'science'}
         ],
         trade: [
-            {name: 'zebras', require: 'slab', amount: 0.25 }
+            {name: 'zebras', require: 'slab', season: 'summer', amount: 0.25 },
+            {name: 'zebras', require: 'slab', season: 'winter', amount: 0.25 }
         ]
     },
     limit: {
@@ -115,11 +116,11 @@ Engine.prototype = {
     iterate: function () {
         this.observeGameLog();
         if (options.toggle.praising) this.praiseSun();
+        if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
         if (options.toggle.hunting) this.sendHunters();
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
-        if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
     },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
@@ -199,8 +200,9 @@ Engine.prototype = {
         for (i in trades) {
             var trade = trades[i];
             var require = !trade.require ? false : craftManager.getResource(trade.require);
+            var season = game.calendar.getCurSeason().name;
 
-            if (require === false || limit <= require.value/ require.maxValue) {
+            if (season == trade.season && (require === false || limit <= require.value/ require.maxValue)) {
 
                 var tradeAmount = totalAmount * trade.amount;
                 tradeManager.trade(trade.name,
