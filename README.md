@@ -76,6 +76,10 @@ Observes astronomical events.
 
 ## History
 
+### 2015.04.06 - Version 1.1.6.1
+
+- Moved parchments out of the luxury goods until fine controls are implemented.
+
 ### 2015.04.06 - Version 1.1.6
 
 - Quality of life changes in internal codebase. (thanks [jacob-keller](https://github.com/jacob-keller))

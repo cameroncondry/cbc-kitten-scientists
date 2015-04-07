@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.6';
+var version = 'Kitten Scientists version 1.1.6.1';
 var game = gamePage;
 
 var options = {
@@ -38,7 +38,7 @@ var options = {
             {name: 'mansion', require: 'titanium'}
         ],
         luxury: [
-            {name: 'parchment', require: 'furs'},
+            //{name: 'parchment', require: 'furs'},
             {name: 'manuscript', require: 'culture'},
             {name: 'compendium', require: 'science'}
         ],
@@ -140,9 +140,16 @@ Engine.prototype = {
         }
     },
     sendHunters: function () {
-        var catpower = this.craftManager.getResource('catpower');
+        var catpower = this.craftManager.getResource('manpower');
+        var workshop = game.workshop;
+        var parchment = workshop.getCraft('parchment');
 
         if (catpower.value / catpower.maxValue > options.limit.hunt) {
+            if (parchment.unlocked) {
+                game.craftAll(parchment.name);
+                message('Auto Hunt: crafted all parchments');
+            }
+
             // Generate luxury goods before sending hunters
             if (options.toggle.luxury) this.startCrafts('luxury', options.auto.luxury);
 
