@@ -43,7 +43,8 @@ var options = {
             {name: 'compendium', require: 'science'}
         ],
         trade: [
-            {name: 'zebras', require: 'slab', amount: 0.25 }
+            {name: 'zebras', require: 'slab', season: 'summer', amount: 0.25 },
+            {name: 'zebras', require: 'slab', season: 'winter', amount: 0.25 }
         ]
     },
     limit: {
@@ -199,8 +200,9 @@ Engine.prototype = {
         for (i in trades) {
             var trade = trades[i];
             var require = !trade.require ? false : craftManager.getResource(trade.require);
+            var season = game.calendar.getCurSeason().name;
 
-            if (require === false || limit <= require.value/ require.maxValue) {
+            if (season == trade.season && (require === false || limit <= require.value/ require.maxValue)) {
 
                 var tradeAmount = totalAmount * trade.amount;
                 tradeManager.trade(trade.name,
