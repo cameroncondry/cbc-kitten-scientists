@@ -58,9 +58,10 @@ Housing will build the following population buildings when required resource is 
 
 #### Trading
 
-Trades with the following races when gold is at 95% capacity and will use 25% of the amount available.
+Trades with races when gold and catpower are at 95% capacity. Uses 50% of the amount available, divided among races based on a separate race amount factor. Note that the actual amount traded per race is the trade amount multiplied by the per-race amount. Ex: we will trade 12.5% of the total available gold and catpower with zebras in the winter (but no more than 50% of the total slab in one trade).
 
-- zebra
+- zebras, 25% of the trade total in winter
+- zebras, 25% of the trade total in spring
 
 #### Cat Power
 
