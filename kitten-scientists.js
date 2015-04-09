@@ -30,7 +30,9 @@ var options = {
             {name: 'beam', require: 'wood'},
             {name: 'slab', require: 'minerals'},
             {name: 'steel', require: 'coal'},
-            {name: 'plate', require: 'iron'}
+            {name: 'plate', require: 'iron'},
+            {name: 'alloy', require: 'titanium'}
+
         ],
         house: [
             {name: 'hut', require: 'wood'},
