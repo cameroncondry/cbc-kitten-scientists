@@ -544,8 +544,11 @@ var getToggle = function (name, text) {
     var toggle = $('<input/>', {
         id: 'toggle-' + name,
         type: 'checkbox',
-        checked: 'checked'
     });
+
+    if ( options.toggle[name] ) {
+      toggle.prop('checked', 'checked');
+    }
 
     return li.append(toggle, label);
 };
@@ -590,13 +593,11 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising', 'trading'];
-
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-$.each(autoOptions, function (event, option) {
+$.each(Object.keys(options.toggle), function (event, option) {
     var toggle = $('#toggle-' + option);
 
     toggle.on('change', function () {
@@ -605,7 +606,7 @@ $.each(autoOptions, function (event, option) {
             message('Enabled Auto ' + ucfirst(option));
         } else {
             options.toggle[option] = false;
-            message('Disable Auto ' + ucfirst(option));
+            message('Disabled Auto ' + ucfirst(option));
         }
     });
 });
