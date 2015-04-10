@@ -224,6 +224,7 @@ var BuildManager = function () {
 BuildManager.prototype = {
     craftManager: undefined,
     build: function (name) {
+        this.getTab('Bonfire').render();
         if (!this.isBuildable(name)) return;
 
         var button = this.getBuildButton(name);
@@ -253,13 +254,15 @@ BuildManager.prototype = {
     getBuild: function (name) {
         return game.bld.getBuilding(name);
     },
-    getBuildButton: function (name) {
-        var buildButtons = [];
-        for (var i = 0; i < game.tabs.length; i++) {
-          if (game.tabs[i].tabId === 'Bonfire') {
-            buildButtons = game.tabs[i].buttons;
-          }
+    getTab: function (name) {
+      for (var i = 0; i < game.tabs.length; i++) {
+        if (game.tabs[i].tabId === name) {
+          return game.tabs[i];
         }
+      }
+    },
+    getBuildButton: function (name) {
+        var buildButtons = this.getTab('Bonfire').buttons;
         var label = this.getBuild(name).label;
         var button = {};
         for (var i = 0; i < buildButtons.length; i++) {
