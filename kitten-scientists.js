@@ -226,13 +226,11 @@ BuildManager.prototype = {
     build: function (name) {
         if (!this.isBuildable(name)) return;
 
-        var label = this.getBuild(name).label;
-        var button = $(".nosel:not('.disabled'):contains('" + label + "')");
+        var button = this.getBuildButton(name);
+        if (!button.enabled) return;
 
-        if (button.length === 0) return;
-
-        button.click();
-        message('Kittens Build: +1 ' + label);
+        button.onClick();
+        message('Kittens Build: +1 ' + button.name);
     },
     isBuildable: function (name) {
         var buildable = this.getBuild(name).unlocked;
@@ -254,6 +252,22 @@ BuildManager.prototype = {
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
+    },
+    getBuildButton: function (name) {
+        var buildButtons = [];
+        for (var i = 0; i < game.tabs.length; i++) {
+          if (game.tabs[i].tabId === 'Bonfire') {
+            buildButtons = game.tabs[i].buttons;
+          }
+        }
+        var label = this.getBuild(name).label;
+        var button = {};
+        for (var i = 0; i < buildButtons.length; i++) {
+          if (buildButtons[i].name === label) {
+            button = buildButtons[i];
+          }
+        }
+        return button;
     },
     getPrices: function (name) {
         return game.bld.getPrices(name);
