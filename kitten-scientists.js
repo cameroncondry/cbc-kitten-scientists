@@ -130,7 +130,7 @@ Engine.prototype = {
         $('#gameLog').find('input').click();
     },
     praiseSun: function () {
-        game.religionTab.render();
+        if (!game.religionTab.praiseBtn) game.religionTab.render();
         if (!game.religionTab.praiseBtn.enabled) return;
         var faith = this.craftManager.getResource('faith');
 
@@ -140,7 +140,7 @@ Engine.prototype = {
         }
     },
     holdFestival: function () {
-        game.villageTab.render();
+        if (!game.villageTab.festivalBtn) game.villageTab.render();
         if (!game.science.get('drama').researched) return;
         var festivalDays = game.calendar.festivalDays;
 
