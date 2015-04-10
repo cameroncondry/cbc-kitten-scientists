@@ -71,7 +71,8 @@ var options = {
         hunting: true,
         luxury: true,
         praising: true,
-        trading: true
+        trading: true,
+        festival: false
     }
 };
 
@@ -118,6 +119,7 @@ Engine.prototype = {
     iterate: function () {
         this.observeGameLog();
         if (options.toggle.praising) this.praiseSun();
+        if (options.toggle.festival) this.holdFestival();
         if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
         if (options.toggle.hunting) this.sendHunters();
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
@@ -133,6 +135,14 @@ Engine.prototype = {
         if (faith.value / faith.maxValue >= options.limit.faith) {
             message('The sun has been praised!');
             game.religion.praise();
+        }
+    },
+    holdFestival: function () {
+        var festivalDays = game.calendar.festivalDays;
+
+        if (festivalDays === 0) {
+            message('A festival has been held!');
+            game.villageTab.holdFestival();
         }
     },
     sendHunters: function () {
@@ -570,6 +580,7 @@ optionsListElement.append(getToggle('praising', 'Faith'));
 optionsListElement.append(getToggle('hunting', 'Hunting'));
 optionsListElement.append(getToggle('luxury', 'Luxury'));
 optionsListElement.append(getToggle('trading', 'Trading'));
+optionsListElement.append(getToggle('festival', 'Festival'));
 
 // add the options above the game log
 right.prepend(optionsElement.append(optionsListElement));
