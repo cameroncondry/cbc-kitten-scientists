@@ -71,7 +71,8 @@ var options = {
         hunting: true,
         luxury: true,
         praising: true,
-        trading: true
+        trading: true,
+        festival: false
     }
 };
 
@@ -118,6 +119,7 @@ Engine.prototype = {
     iterate: function () {
         this.observeGameLog();
         if (options.toggle.praising) this.praiseSun();
+        if (options.toggle.festival) this.holdFestival();
         if (options.toggle.trading) this.startTrades('trade', options.auto.trade);
         if (options.toggle.hunting) this.sendHunters();
         if (options.toggle.building) this.startBuilds('build', options.auto.build);
@@ -128,18 +130,23 @@ Engine.prototype = {
         $('#gameLog').find('input').click();
     },
     praiseSun: function () {
-        var currentTab = game.activeTabId;
+        if (!game.religionTab.praiseBtn) game.religionTab.render();
+        if (!game.religionTab.praiseBtn.enabled) return;
         var faith = this.craftManager.getResource('faith');
 
         if (faith.value / faith.maxValue >= options.limit.faith) {
-            game.activeTabId = 'Religion';
-            game.render();
-
             message('The sun has been praised!');
-            $(".nosel:contains('Praise the sun!')").click();
+            game.religionTab.praiseBtn.onClick();
+        }
+    },
+    holdFestival: function () {
+        if (!game.villageTab.festivalBtn) game.villageTab.render();
+        if (!game.science.get('drama').researched) return;
+        var festivalDays = game.calendar.festivalDays;
 
-            game.activeTabId = currentTab;
-            game.render();
+        if (festivalDays === 0) {
+            message('A festival has been held!');
+            game.villageTab.festivalBtn.onClick();
         }
     },
     sendHunters: function () {
@@ -570,8 +577,11 @@ var getToggle = function (name, text) {
     var toggle = $('<input/>', {
         id: 'toggle-' + name,
         type: 'checkbox',
-        checked: 'checked'
     });
+
+    if ( options.toggle[name] ) {
+      toggle.prop('checked', 'checked');
+    }
 
     return li.append(toggle, label);
 };
@@ -593,6 +603,7 @@ optionsListElement.append(getToggle('praising', 'Faith'));
 optionsListElement.append(getToggle('hunting', 'Hunting'));
 optionsListElement.append(getToggle('luxury', 'Luxury'));
 optionsListElement.append(getToggle('trading', 'Trading'));
+optionsListElement.append(getToggle('festival', 'Festival'));
 
 // add the options above the game log
 right.prepend(optionsElement.append(optionsListElement));
@@ -616,13 +627,11 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var autoOptions = ['building', 'crafting', 'housing', 'hunting', 'luxury', 'praising', 'trading'];
-
 var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-$.each(autoOptions, function (event, option) {
+$.each(Object.keys(options.toggle), function (event, option) {
     var toggle = $('#toggle-' + option);
 
     toggle.on('change', function () {
@@ -631,7 +640,7 @@ $.each(autoOptions, function (event, option) {
             message('Enabled Auto ' + ucfirst(option));
         } else {
             options.toggle[option] = false;
-            message('Disable Auto ' + ucfirst(option));
+            message('Disabled Auto ' + ucfirst(option));
         }
     });
 });
