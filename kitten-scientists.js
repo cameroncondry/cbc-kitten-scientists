@@ -224,7 +224,9 @@ var BuildManager = function () {
 BuildManager.prototype = {
     craftManager: undefined,
     build: function (name) {
-        this.getTab('Bonfire').render();
+        if (game.activeTabId !== 'Bonfire') {
+            this.getTab('Bonfire').render();
+        }
         if (!this.isBuildable(name)) return;
 
         var button = this.getBuildButton(name);
