@@ -138,11 +138,12 @@ Engine.prototype = {
         }
     },
     holdFestival: function () {
+        if (!game.science.get('drama').researched) return;
         var festivalDays = game.calendar.festivalDays;
 
         if (festivalDays === 0) {
             message('A festival has been held!');
-            game.villageTab.holdFestival();
+            game.villageTab.festivalBtn.onClick();
         }
     },
     sendHunters: function () {
