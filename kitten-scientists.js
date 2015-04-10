@@ -128,18 +128,11 @@ Engine.prototype = {
         $('#gameLog').find('input').click();
     },
     praiseSun: function () {
-        var currentTab = game.activeTabId;
         var faith = this.craftManager.getResource('faith');
 
         if (faith.value / faith.maxValue >= options.limit.faith) {
-            game.activeTabId = 'Religion';
-            game.render();
-
             message('The sun has been praised!');
-            $(".nosel:contains('Praise the sun!')").click();
-
-            game.activeTabId = currentTab;
-            game.render();
+            game.religion.praise();
         }
     },
     sendHunters: function () {
