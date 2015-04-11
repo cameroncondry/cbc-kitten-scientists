@@ -233,6 +233,34 @@ Engine.prototype = {
     }
 };
 
+// Tab manager
+// ===========
+
+var TabManager = function (name) {
+    var tab = undefined;
+    for (var i = 0; i < game.tabs.length; i++) {
+        if (game.tabs[i].tabId === name) {
+            tab = game.tabs[i];
+        }
+    }
+
+    // Throw an exception if we failed to find the tab
+    if (tab === undefined)
+        throw "'" + name + "' tab not found";
+
+    this.tab = tab;
+}
+
+TabManager.prototype = {
+    tab: undefined,
+    render: function () {
+        // Only render if it's not the active tab
+        if (game.activeTabId !== name) {
+            this.tab.render();
+        }
+    }
+}
+
 // Building manager
 // ================
 
