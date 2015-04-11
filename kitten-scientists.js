@@ -209,7 +209,7 @@ Engine.prototype = {
         var limit = options.limit[type];
         var tradeManager = this.tradeManager;
         var craftManager = this.craftManager;
-        var totalAmount = tradeManager.getLowestTradeAmount('trade');
+        var totalAmount = tradeManager.getLowestTradeAmount();
         var gold = craftManager.getResource('gold');
         var catpower = craftManager.getResource('catpower');
 
@@ -460,23 +460,18 @@ TradeManager.prototype = {
             return amount;
     },
     getMaterials: function (name) {
-        var materials = {};
-        var prices = [];
+        var materials = {catpower: 50, gold: 15};
 
-        // Allow getting base price for trading, or for any race
-        if (name != 'trade') {
-            prices = this.getRace(name).buys;
-        }
+        if (name === undefined)
+            return materials;
+
+        var prices = prices = this.getRace(name).buys;
 
         for (i in prices) {
             var price = prices[i];
 
             materials[price.name] = price.val;
         }
-
-        // Include actual cost of trade, not just race materials
-        materials['catpower'] = 50;
-        materials['gold'] = 15;
 
         return materials;
     },
