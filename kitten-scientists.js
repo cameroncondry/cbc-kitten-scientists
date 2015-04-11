@@ -59,6 +59,7 @@ var options = {
         trade: 0.95
     },
     stock: {
+        steel: 1000,
         furs: 1000,
         compendium: 500,
         manuscript: 500,
