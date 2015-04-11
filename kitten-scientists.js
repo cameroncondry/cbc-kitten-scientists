@@ -97,12 +97,16 @@ var Engine = function () {
     this.buildManager = new BuildManager();
     this.craftManager = new CraftManager();
     this.tradeManager = new TradeManager();
+
+    // Game Tabs
+    this.religionTab = new ReligionTab();
 };
 
 Engine.prototype = {
     buildManager: undefined,
     craftManager: undefined,
     tradeManager: undefined,
+    religionTab: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -143,13 +147,11 @@ Engine.prototype = {
         $('#gameLog').find('input').click();
     },
     praiseSun: function () {
-        this.renderTabIfInactive('Religion');
-        if (!game.religionTab.praiseBtn.enabled) return;
         var faith = this.craftManager.getResource('faith');
 
         if (faith.value / faith.maxValue >= options.limit.faith) {
+            this.religionTab.clickPraiseBtn();
             message('The sun has been praised!');
-            game.religionTab.praiseBtn.onClick();
         }
     },
     holdFestival: function () {
@@ -259,6 +261,23 @@ TabManager.prototype = {
             this.tab.render();
         }
     }
+}
+
+// Religion Tab
+// ============
+
+var ReligionTab = function () {
+    TabManager.call(this, 'Religion');
+}
+
+ReligionTab.prototype = Object.create(TabManager.prototype);
+ReligionTab.prototype.constructor = ReligionTab;
+
+ReligionTab.prototype.clickPraiseBtn = function () {
+    this.render();
+    if (!this.tab.praiseBtn.enabled) return;
+
+    this.tab.praiseBtn.onClick();
 }
 
 // Building manager
