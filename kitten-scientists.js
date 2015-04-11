@@ -126,11 +126,23 @@ Engine.prototype = {
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
     },
+    getTab: function (name) {
+      for (var i = 0; i < game.tabs.length; i++) {
+        if (game.tabs[i].tabId === name) {
+          return game.tabs[i];
+        }
+      }
+    },
+    renderTabIfInactive: function (name) {
+        if (game.activeTabId !== name) {
+            this.getTab(name).render();
+        }
+    },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
     },
     praiseSun: function () {
-        if (!game.religionTab.praiseBtn) game.religionTab.render();
+        this.renderTabIfInactive('Religion');
         if (!game.religionTab.praiseBtn.enabled) return;
         var faith = this.craftManager.getResource('faith');
 
@@ -140,11 +152,10 @@ Engine.prototype = {
         }
     },
     holdFestival: function () {
-        if (!game.villageTab.festivalBtn) game.villageTab.render();
-        if (!game.science.get('drama').researched) return;
-        var festivalDays = game.calendar.festivalDays;
+        this.renderTabIfInactive('Small village');
+        if (!game.villageTab.festivalBtn.enabled) return;
 
-        if (festivalDays === 0) {
+        if (game.calendar.festivalDays === 0) {
             message('A festival has been held!');
             game.villageTab.festivalBtn.onClick();
         }
@@ -231,9 +242,7 @@ var BuildManager = function () {
 BuildManager.prototype = {
     craftManager: undefined,
     build: function (name) {
-        if (game.activeTabId !== 'Bonfire') {
-            this.getTab('Bonfire').render();
-        }
+        Engine.prototype.renderTabIfInactive('Bonfire');
         if (!this.isBuildable(name)) return;
 
         var button = this.getBuildButton(name);
@@ -263,15 +272,8 @@ BuildManager.prototype = {
     getBuild: function (name) {
         return game.bld.getBuilding(name);
     },
-    getTab: function (name) {
-      for (var i = 0; i < game.tabs.length; i++) {
-        if (game.tabs[i].tabId === name) {
-          return game.tabs[i];
-        }
-      }
-    },
     getBuildButton: function (name) {
-        var buildButtons = this.getTab('Bonfire').buttons;
+        var buildButtons = Engine.prototype.getTab('Bonfire').buttons;
         var label = this.getBuild(name).label;
         var button = {};
         for (var i = 0; i < buildButtons.length; i++) {
