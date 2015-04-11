@@ -100,6 +100,7 @@ var Engine = function () {
 
     // Game Tabs
     this.religionTab = new ReligionTab();
+    this.villageTab = new VillageTab();
 };
 
 Engine.prototype = {
@@ -107,6 +108,7 @@ Engine.prototype = {
     craftManager: undefined,
     tradeManager: undefined,
     religionTab: undefined,
+    villageTab: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -155,12 +157,9 @@ Engine.prototype = {
         }
     },
     holdFestival: function () {
-        this.renderTabIfInactive('Small village');
-        if (!game.villageTab.festivalBtn.enabled) return;
-
         if (game.calendar.festivalDays === 0) {
+            this.villageTab.clickFestivalBtn();
             message('A festival has been held!');
-            game.villageTab.festivalBtn.onClick();
         }
     },
     sendHunters: function () {
@@ -278,6 +277,23 @@ ReligionTab.prototype.clickPraiseBtn = function () {
     if (!this.tab.praiseBtn.enabled) return;
 
     this.tab.praiseBtn.onClick();
+}
+
+// Village Tab
+// ===========
+
+var VillageTab = function () {
+    TabManager.call(this, 'Small village');
+}
+
+VillageTab.prototype = Object.create(TabManager.prototype);
+VillageTab.prototype.constructor = VillageTab;
+
+VillageTab.prototype.clickFestivalBtn = function () {
+    this.render();
+    if (!this.tab.festivalBtn.enabled) return;
+
+    this.tab.festivalBtn.onClick();
 }
 
 // Building manager
