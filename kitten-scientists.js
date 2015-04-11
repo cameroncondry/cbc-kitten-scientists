@@ -318,6 +318,27 @@ BonfireTab.prototype.getBuildingBtn = function(label) {
 
 }
 
+// Trade Tab
+// =========
+
+var TradeTab = function() {
+    TabManager.call(this, 'Trade');
+}
+
+TradeTab.prototype = Object.create(TabManager.prototype);
+TradeTab.prototype.constructor = TradeTab;
+
+TradeTab.prototype.getTradeBtn = function(race) {
+    this.render();
+
+    for (i in this.tab.racePanels) {
+        var panel = this.tab.racePanels[i];
+        if (panel.name === race) return panel.tradeBtn;
+    }
+
+    throw "'" + race + "' race not found";
+}
+
 // Building manager
 // ================
 
@@ -470,19 +491,19 @@ CraftManager.prototype = {
 
 var TradeManager = function () {
     this.craftManager = new CraftManager();
+    this.tradeTab = new TradeTab();
 };
 
 TradeManager.prototype = {
     craftManager: undefined,
+    tradeTab: undefined,
     trade: function (name, amount) {
         amount = Math.floor(amount);
 
         if (undefined === name || 1 > amount) return;
         if (!this.canTrade(name, amount)) return;
 
-        var button = this.getTradeButton(name);
-
-        if (!button) return;
+        var button = this.tradeTab.getTradeBtn(name);
         button.tradeMultiple(amount);
 
         message('Kittens Trade: ' + amount + 'x ' + name);
@@ -507,18 +528,6 @@ TradeManager.prototype = {
     },
     getRace: function (name) {
         return game.diplomacy.get(name);
-    },
-    getTradeButton: function (name) {
-        if (game.diplomacyTab.racePanels === [])
-            game.diplomacyTab.render()
-
-        for (i in game.diplomacyTab.racePanels) {
-            var panel = game.diplomacyTab.racePanels[i];
-            if (panel.name.toLowerCase() == name.toLowerCase())
-                return panel.tradeBtn;
-        }
-
-        return null;
     },
     getLowestTradeAmount: function (name, max) {
         var amount = 0;
