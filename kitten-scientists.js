@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.6.1';
+var version = 'Kitten Scientists version 1.1.7';
 var game = gamePage;
 
 var options = {
