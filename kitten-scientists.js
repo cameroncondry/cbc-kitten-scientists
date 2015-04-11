@@ -102,6 +102,7 @@ var Engine = function () {
 Engine.prototype = {
     buildManager: undefined,
     craftManager: undefined,
+    tradeManager: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -252,7 +253,7 @@ BuildManager.prototype = {
         message('Kittens Build: +1 ' + button.name);
     },
     isBuildable: function (name) {
-        var buildable = this.getBuild(name).unlocked;
+        var buildable = this.getBuilding(name).unlocked;
 
         if (buildable) {
             var manager = this.craftManager;
@@ -269,7 +270,7 @@ BuildManager.prototype = {
 
         return buildable;
     },
-    getBuild: function (name) {
+    getBuilding: function (name) {
         return game.bld.getBuilding(name);
     },
     getBuildButton: function (name) {
@@ -395,13 +396,13 @@ var TradeManager = function () {
 };
 
 TradeManager.prototype = {
+    craftManager: undefined,
     trade: function (name, amount) {
         amount = Math.floor(amount);
 
         if (undefined === name || 1 > amount) return;
         if (!this.canTrade(name, amount)) return;
 
-        var race = this.getRace(name);
         var button = this.getTradeButton(name);
 
         if (!button) return;
@@ -410,11 +411,10 @@ TradeManager.prototype = {
         message('Kittens Trade: ' + amount + 'x ' + name);
     },
     canTrade: function (name, amount) {
-        var race = this.getRace(name);
         var materials = this.getMaterials(name);
         var result = false;
 
-        if (race.unlocked) {
+        if (this.getRace(name).unlocked) {
             result = true;
 
             for (i in materials) {
