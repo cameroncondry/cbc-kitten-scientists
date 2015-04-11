@@ -296,20 +296,45 @@ VillageTab.prototype.clickFestivalBtn = function () {
     this.tab.festivalBtn.onClick();
 }
 
+// Bonfire Tab
+// ===========
+
+var BonfireTab = function() {
+    TabManager.call(this, 'Bonfire');
+}
+
+BonfireTab.prototype = Object.create(TabManager.prototype);
+BonfireTab.prototype.constructor = BonfireTab;
+
+BonfireTab.prototype.getBuildingBtn = function(label) {
+    this.render();
+
+    for (i in this.tab.buttons) {
+        var button = this.tab.buttons[i];
+        if (button.name === label) return button;
+    }
+
+    throw "'" + label + "' building not found";
+
+}
+
 // Building manager
 // ================
 
 var BuildManager = function () {
     this.craftManager = new CraftManager();
+    this.bonfireTab = new BonfireTab();
 };
 
 BuildManager.prototype = {
     craftManager: undefined,
+    bonfireTab: undefined,
     build: function (name) {
-        Engine.prototype.renderTabIfInactive('Bonfire');
         if (!this.isBuildable(name)) return;
 
-        var button = this.getBuildButton(name);
+        var label = this.getBuilding(name).label;
+        var button = this.bonfireTab.getBuildingBtn(label);
+
         if (!button.enabled) return;
 
         button.onClick();
@@ -335,17 +360,6 @@ BuildManager.prototype = {
     },
     getBuilding: function (name) {
         return game.bld.getBuilding(name);
-    },
-    getBuildButton: function (name) {
-        var buildButtons = Engine.prototype.getTab('Bonfire').buttons;
-        var label = this.getBuild(name).label;
-        var button = {};
-        for (var i = 0; i < buildButtons.length; i++) {
-          if (buildButtons[i].name === label) {
-            button = buildButtons[i];
-          }
-        }
-        return button;
     },
     getPrices: function (name) {
         return game.bld.getPrices(name);
