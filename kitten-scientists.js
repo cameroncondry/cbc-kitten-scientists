@@ -133,18 +133,6 @@ Engine.prototype = {
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
     },
-    getTab: function (name) {
-      for (var i = 0; i < game.tabs.length; i++) {
-        if (game.tabs[i].tabId === name) {
-          return game.tabs[i];
-        }
-      }
-    },
-    renderTabIfInactive: function (name) {
-        if (game.activeTabId !== name) {
-            this.getTab(name).render();
-        }
-    },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
     },
