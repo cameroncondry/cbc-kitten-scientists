@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.6.1';
+var version = 'Kitten Scientists version 1.1.7';
 var game = gamePage;
 
 var options = {
@@ -98,11 +98,18 @@ var Engine = function () {
     this.buildManager = new BuildManager();
     this.craftManager = new CraftManager();
     this.tradeManager = new TradeManager();
+
+    // Game Tabs
+    this.religionTab = new ReligionTab();
+    this.villageTab = new VillageTab();
 };
 
 Engine.prototype = {
     buildManager: undefined,
     craftManager: undefined,
+    tradeManager: undefined,
+    religionTab: undefined,
+    villageTab: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -127,38 +134,21 @@ Engine.prototype = {
         if (options.toggle.housing) this.startBuilds('house', options.auto.house);
         if (options.toggle.crafting) this.startCrafts('craft', options.auto.craft);
     },
-    getTab: function (name) {
-      for (var i = 0; i < game.tabs.length; i++) {
-        if (game.tabs[i].tabId === name) {
-          return game.tabs[i];
-        }
-      }
-    },
-    renderTabIfInactive: function (name) {
-        if (game.activeTabId !== name) {
-            this.getTab(name).render();
-        }
-    },
     observeGameLog: function () {
         $('#gameLog').find('input').click();
     },
     praiseSun: function () {
-        this.renderTabIfInactive('Religion');
-        if (!game.religionTab.praiseBtn.enabled) return;
         var faith = this.craftManager.getResource('faith');
 
         if (faith.value / faith.maxValue >= options.limit.faith) {
+            this.religionTab.clickPraiseBtn();
             message('The sun has been praised!');
-            game.religionTab.praiseBtn.onClick();
         }
     },
     holdFestival: function () {
-        this.renderTabIfInactive('Small village');
-        if (!game.villageTab.festivalBtn.enabled) return;
-
         if (game.calendar.festivalDays === 0) {
+            this.villageTab.clickFestivalBtn();
             message('A festival has been held!');
-            game.villageTab.festivalBtn.onClick();
         }
     },
     sendHunters: function () {
@@ -210,7 +200,7 @@ Engine.prototype = {
         var limit = options.limit[type];
         var tradeManager = this.tradeManager;
         var craftManager = this.craftManager;
-        var totalAmount = tradeManager.getLowestTradeAmount('trade');
+        var totalAmount = tradeManager.getLowestTradeAmount();
         var gold = craftManager.getResource('gold');
         var catpower = craftManager.getResource('catpower');
 
@@ -233,27 +223,135 @@ Engine.prototype = {
     }
 };
 
+// Tab manager
+// ===========
+
+var TabManager = function (name) {
+    var tab = undefined;
+    for (var i = 0; i < game.tabs.length; i++) {
+        if (game.tabs[i].tabId === name) {
+            tab = game.tabs[i];
+        }
+    }
+
+    // Throw an exception if we failed to find the tab
+    if (tab === undefined)
+        throw "'" + name + "' tab not found";
+
+    this.tab = tab;
+}
+
+TabManager.prototype = {
+    tab: undefined,
+    render: function () {
+        // Only render if it's not the active tab
+        if (game.activeTabId !== name) {
+            this.tab.render();
+        }
+    }
+}
+
+// Religion Tab
+// ============
+
+var ReligionTab = function () {
+    TabManager.call(this, 'Religion');
+}
+
+ReligionTab.prototype = Object.create(TabManager.prototype);
+ReligionTab.prototype.constructor = ReligionTab;
+
+ReligionTab.prototype.clickPraiseBtn = function () {
+    this.render();
+    if (!this.tab.praiseBtn.enabled) return;
+
+    this.tab.praiseBtn.onClick();
+}
+
+// Village Tab
+// ===========
+
+var VillageTab = function () {
+    TabManager.call(this, 'Small village');
+}
+
+VillageTab.prototype = Object.create(TabManager.prototype);
+VillageTab.prototype.constructor = VillageTab;
+
+VillageTab.prototype.clickFestivalBtn = function () {
+    this.render();
+    if (!this.tab.festivalBtn.enabled) return;
+
+    this.tab.festivalBtn.onClick();
+}
+
+// Bonfire Tab
+// ===========
+
+var BonfireTab = function() {
+    TabManager.call(this, 'Bonfire');
+}
+
+BonfireTab.prototype = Object.create(TabManager.prototype);
+BonfireTab.prototype.constructor = BonfireTab;
+
+BonfireTab.prototype.getBuildingBtn = function(label) {
+    this.render();
+
+    for (i in this.tab.buttons) {
+        var button = this.tab.buttons[i];
+        if (button.name === label) return button;
+    }
+
+    throw "'" + label + "' building not found";
+
+}
+
+// Trade Tab
+// =========
+
+var TradeTab = function() {
+    TabManager.call(this, 'Trade');
+}
+
+TradeTab.prototype = Object.create(TabManager.prototype);
+TradeTab.prototype.constructor = TradeTab;
+
+TradeTab.prototype.getTradeBtn = function(race) {
+    this.render();
+
+    for (i in this.tab.racePanels) {
+        var panel = this.tab.racePanels[i];
+        if (panel.name === race) return panel.tradeBtn;
+    }
+
+    throw "'" + race + "' race not found";
+}
+
 // Building manager
 // ================
 
 var BuildManager = function () {
     this.craftManager = new CraftManager();
+    this.bonfireTab = new BonfireTab();
 };
 
 BuildManager.prototype = {
     craftManager: undefined,
+    bonfireTab: undefined,
     build: function (name) {
-        Engine.prototype.renderTabIfInactive('Bonfire');
         if (!this.isBuildable(name)) return;
 
-        var button = this.getBuildButton(name);
+        var label = this.getBuilding(name).label;
+        var button = this.bonfireTab.getBuildingBtn(label);
+
         if (!button.enabled) return;
 
         button.onClick();
         message('Kittens Build: +1 ' + button.name);
     },
     isBuildable: function (name) {
-        var buildable = this.getBuild(name).unlocked;
+        var buildable = this.getBuilding(name).unlocked;
 
         if (buildable) {
             var manager = this.craftManager;
@@ -270,19 +368,8 @@ BuildManager.prototype = {
 
         return buildable;
     },
-    getBuild: function (name) {
+    getBuilding: function (name) {
         return game.bld.getBuilding(name);
-    },
-    getBuildButton: function (name) {
-        var buildButtons = Engine.prototype.getTab('Bonfire').buttons;
-        var label = this.getBuild(name).label;
-        var button = {};
-        for (var i = 0; i < buildButtons.length; i++) {
-          if (buildButtons[i].name === label) {
-            button = buildButtons[i];
-          }
-        }
-        return button;
     },
     getPrices: function (name) {
         return game.bld.getPrices(name);
@@ -393,29 +480,28 @@ CraftManager.prototype = {
 
 var TradeManager = function () {
     this.craftManager = new CraftManager();
+    this.tradeTab = new TradeTab();
 };
 
 TradeManager.prototype = {
+    craftManager: undefined,
+    tradeTab: undefined,
     trade: function (name, amount) {
         amount = Math.floor(amount);
 
         if (undefined === name || 1 > amount) return;
         if (!this.canTrade(name, amount)) return;
 
-        var race = this.getRace(name);
-        var button = this.getTradeButton(name);
-
-        if (!button) return;
+        var button = this.tradeTab.getTradeBtn(name);
         button.tradeMultiple(amount);
 
         message('Kittens Trade: ' + amount + 'x ' + name);
     },
     canTrade: function (name, amount) {
-        var race = this.getRace(name);
         var materials = this.getMaterials(name);
         var result = false;
 
-        if (race.unlocked) {
+        if (this.getRace(name).unlocked) {
             result = true;
 
             for (i in materials) {
@@ -431,18 +517,6 @@ TradeManager.prototype = {
     },
     getRace: function (name) {
         return game.diplomacy.get(name);
-    },
-    getTradeButton: function (name) {
-        if (game.diplomacyTab.racePanels === [])
-            game.diplomacyTab.render()
-
-        for (i in game.diplomacyTab.racePanels) {
-            var panel = game.diplomacyTab.racePanels[i];
-            if (panel.name.toLowerCase() == name.toLowerCase())
-                return panel.tradeBtn;
-        }
-
-        return null;
     },
     getLowestTradeAmount: function (name, max) {
         var amount = 0;
@@ -461,23 +535,18 @@ TradeManager.prototype = {
             return amount;
     },
     getMaterials: function (name) {
-        var materials = {};
-        var prices = [];
+        var materials = {catpower: 50, gold: 15};
 
-        // Allow getting base price for trading, or for any race
-        if (name != 'trade') {
-            prices = this.getRace(name).buys;
-        }
+        if (name === undefined)
+            return materials;
+
+        var prices = prices = this.getRace(name).buys;
 
         for (i in prices) {
             var price = prices[i];
 
             materials[price.name] = price.val;
         }
-
-        // Include actual cost of trade, not just race materials
-        materials['catpower'] = 50;
-        materials['gold'] = 15;
 
         return materials;
     },
