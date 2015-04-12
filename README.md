@@ -4,7 +4,7 @@ Kitten Scientists is a simple automation script for the complex kittens. [Kitten
 
 ## Basic Usage
 
-Create the following JavaScript bookmarklet:
+Create the following JavaScript bookmarklet (create a new bookmark and past this as the URL):
 
 ```
 javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.js';d.body.appendChild(s);})();
@@ -75,59 +75,18 @@ Praises when faith is at 99% capacity.
 
 Observes astronomical events.
 
-## History
+## Contributors
 
-### 2015.04.06 - Version 1.1.6.1
+If you would like to contribute to the Kitten Scientists, then you can do so in these ways:
 
-- Moved parchments out of the luxury goods until fine controls are implemented.
+- Submit issues or bugs you find, or functionality that would improve the project.
+- Fork the repository, add some functionality, then submit a pull request.
 
-### 2015.04.06 - Version 1.1.6
+Thanks to these past and present contributors!
 
-- Quality of life changes in internal codebase. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Added automated trading and enabled trading with Zebras. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Specified resource to watch with unicorn pastures. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Moved parchment into the "luxury" goods category. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Added tradepost to the list of buildings and reprioritized order. (thanks [trini](https://github.com/trini))
-- Reprioritized crafting to happen after building. (thanks [trini](https://github.com/trini))
-- Updated the build internals to use the buttons directly. (reverted) (thanks [jacob-keller](https://github.com/jacob-keller))
-
-### 2015.03.11 - Version 1.1.5
-
-- Tweaked styles to remove extra margin around interface buttons.
-- Fixed a bug with praising, due to refactoring. (thanks [sjdrodge](https://github.com/sjdrodge))
-- Fixed a bug with catnip calculations.
-- Removed lingering console.log statements. (thanks [sjdrodge](https://github.com/sjdrodge))
-
-### 2015.03.11 - Version 1.1.4
-
-- Major refactor of codebase to have cleaner lines between responsibilities.
-- Stacked options in a two column layout.
-- Luxury resources now have their own toggle.
-
-### 2015.03.10 - Version 1.1.3
-
-- Updated Auto Faith to wait for 99% faith capacity.
-- Lowered minimum capacity of parchments. (thanks [trini](https://github.com/trini))
-- Move luxury resources out of Auto Hunt. (thanks [SphtMarathon](https://www.reddit.com/user/SphtMarathon))
-- Added safe guards for catnip in the winter. (thanks [jcranmer](https://github.com/jcranmer))
-
-### 2015.03.08 - Version 1.1.2
-
-- Updated auto housing to be toggled and added mansions.
-- Added auto housing option. (thanks [mjdillon](https://github.com/mjdillon))
-- Plates moved for priority over steel. (thanks [mjdillon](https://github.com/mjdillon))
-
-### 2015.03.03 - Version 1.1.1
-
-- Added barns to the auto build list.
-
-### 2015.02.03 - Version 1.1.0
-
-- Set up the ability to toggle auto crafting, building, hunting, and praising.
-- Simplified css rule insertion and tweaked displayed colors.
-- Added logging into the GameLog to prevent confusion.
-- Updated crafting log to include the warehouse bonuses.
-
-### 2015.25.02 - Version 1.0.0
-
-- Initial release
+- [jacob-keller](https://github.com/jacob-keller)
+- [sjdrodge](https://github.com/sjdrodge)
+- [trini](https://github.com/trini)
+- [SphtMarathon](https://www.reddit.com/user/SphtMarathon)
+- [jcranmer](https://github.com/jcranmer)
+- [mjdillon](https://github.com/mjdillon)
