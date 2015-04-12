@@ -10,119 +10,82 @@ var options = {
     interval: 2000,
     color: '#aa50fe', // dark purple
     auto: {
-        build: [
-            // max science
-            {name: 'library', require: 'wood'},
-            {name: 'academy', require: 'wood'},
-            {name: 'observatory', require: 'iron'},
-
-            // craft bonuses
-            {name: 'workshop', require: 'minerals'},
-            {name: 'factory', require: 'titanium'},
-
-            // raw production
-            {name: 'field', require: 'catnip'},
-            {name: 'pasture', require: 'catnip'},
-            {name: 'mine', require: 'wood'},
-            {name: 'lumberMill', require: 'minerals'},
-            {name: 'aqueduct', require: 'minerals'},
-            {name: 'oilWell', require: 'coal'},
-            {name: 'quarry', require: 'coal'},
-
-            // conversion
-            {name: 'smelter', require: 'minerals'},
-
-            // storage
-            {name: 'barn', require: 'wood'},
-            {name: 'harbor', require: false},
-            {name: 'warehouse', require: false},
-
-            // other
-            {name: 'amphitheatre', require: 'minerals'},
-            {name: 'tradepost', require: 'gold'},
-            {name: 'chapel', require: 'minerals'},
-            {name: 'temple', require: 'gold'},
-            {name: 'unicornPasture', require: false},
-            {name: 'ziggurat', require: false}
-        ],
-        craft: [
-            {name: 'wood', require: 'catnip'},
-            {name: 'beam', require: 'wood'},
-            {name: 'slab', require: 'minerals'},
-            {name: 'steel', require: 'coal'},
-            {name: 'plate', require: 'iron'},
-            {name: 'alloy', require: 'titanium'}
-        ],
-        house: [
-            {name: 'hut', require: 'wood'},
-            {name: 'logHouse', require: 'minerals'},
-            {name: 'mansion', require: 'titanium'}
-        ],
-        luxury: [
-            {name: 'parchment', require: 'furs'},
-            {name: 'manuscript', require: 'culture'},
-            {name: 'compendium', require: 'science'},
-            {name: 'blueprint', require: false}
-        ],
-        trade: [
-            {name: 'zebras', require: 'slab', season: 'summer'}
-        ]
-    },
-
-    enabled: {
-        tab: {
-            build: true,
-            craft: true,
-            house: true,
-            hunt: true,
-            luxury: true,
-            praising: true,
-            trading: true,
-            festival: true
-        },
+        hunt: {enabled: true, require: 0.95},
+        faith: {enabled: true, require: 0.99},
         build: {
-            library: true,
-            academy: true,
-            observatory: true,
-            workshop: true,
-            factory: true,
-            field: true,
-            pasture: true,
-            mine: true,
-            lumberMill: true,
-            aqueduct: true,
-            oilWell: true,
-            quarry: true,
-            smelter: true,
-            barn: true,
-            harbor: true,
-            warehouse: true,
-            ampitheater: true,
-            tradepost: true,
-            chapel: true,
-            temple: true,
-            unicornPasture: true,
-            ziggurat: true
+            enabled: true, require: 0.75, items: {
+                // science
+                library: {require: 'wood', enabled: true},
+                academy: {require: 'wood', enabled: true},
+                observatory: {require: 'iron', enabled: true},
+
+                // craft bonuses
+                workshop: {require: 'minerals', enabled: true},
+                factory: {require: 'titanium', enabled: true},
+
+                // production
+                field: {require: 'catnip', enabled: true},
+                pasture: {require: 'catnip', enabled: true},
+                mine: {require: 'wood', enabled: true},
+                lumberMill: {require: 'minerals', enabled: true},
+                aqueduct: {require: 'minerals', enabled: true},
+                oilWell: {require: 'coal', enabled: true},
+                quarry: {require: 'coal', enabled: true},
+
+                // conversion
+                smelter: {require: 'minerals', enabled: true},
+
+                // storage
+                barn: {require: 'wood', enabled: true},
+                harbor: {require: false, enabled: false},
+                warehouse: {require: false, enabled: false},
+
+                // housing
+                hut: {require: 'wood', enabled: true},
+                logHouse: {require: 'minerals', enabled: true},
+                mansion: {require: 'titanium', enabled: true},
+
+                // other
+                amphitheatre: {require: 'minerals', enabled: true},
+                tradepost: {require: 'gold', enabled: true},
+                chapel: {require: 'minerals', enabled: true},
+                temple: {require: 'gold', enabled: true},
+                unicornPasture: {require: false, enabled: true},
+                ziggurat: {require: false, enabled: true}
+            }
         },
         craft: {
-            wood: true,
-            beam: true,
-            slab: true,
-            steel: true,
-            plate: true,
-            alloy: true
+            enabled: true, require: 0.95, items: {
+                // raw
+                wood: {require: 'catnip', stock: 0, enabled: true},
+                beam: {require: 'wood', stock: 0, enabled: true},
+                slab: {require: 'minerals', stock: 0, enabled: true},
+                steel: {require: 'coal', stock: 0, enabled: true},
+                plate: {require: 'iron', stock: 0, enabled: true},
+
+                // complex
+                alloy: {require: 'titanium', stock: 0, enabled: false},
+                concrete: {require: false, stock: 0, enabled: false},
+                gear: {require: false, stock: 0, enabled: false},
+                scaffold: {require: false, stock: 0, enabled: false},
+                ship: {require: false, stock: 0, enabled: false},
+                tanker: {require: false, stock: 0, enabled: false},
+                megalith: {require: false, stock: 0, enabled: false}
+            }
+        },
+        luxury: {
+            enabled: true, require: 0.99, items: {
+                parchment: {require: 'furs', stock: 0, enabled: true},
+                manuscript: {require: 'culture', stock: 0, enabled: true},
+                compendium: {require: 'science', stock: 0, enabled: true},
+                blueprint: {require: false, stock: 0, enabled: false}
+            }
+        },
+        trade: {
+            enabled: true, require: 0.99, items: {
+                zebras: {max: 'titanium', require: 'slab', season: 'summer'}
+            }
         }
-    },
-    stock: { // all items default to 0
-    },
-    require: {
-        build: 0.75,
-        craft: 0.95,
-        house: 0.85,
-        hunt: 0.95,
-        luxury: 0.99,
-        faith: 0.99,
-        trade: 0.99
     }
 };
 
@@ -141,7 +104,7 @@ var message = function () {
 };
 
 var warning = function () {
-    var args =  Array.prototype.slice.call(arguments);
+    var args = Array.prototype.slice.call(arguments);
     args.unshift('Warning!');
 
     if (this.console) console.log(args);
@@ -150,7 +113,8 @@ var warning = function () {
 // Core Engine for Kitten Scientists
 // =================================
 
-var Engine = function () {};
+var Engine = function () {
+};
 
 Engine.prototype = {
     loop: undefined,
@@ -167,7 +131,8 @@ Engine.prototype = {
         this.loop = undefined;
         message('Disabling the kitten scientists!');
     },
-    iterate: function () {}
+    iterate: function () {
+    }
 };
 
 // Tab Manager
