@@ -9,11 +9,13 @@ var game = gamePage;
 var options = {
     interval: 2000,
     color: '#aa50fe', // dark purple
+    consume: 0.5,
     auto: {
-        hunt: {enabled: true, require: 0.95},
-        faith: {enabled: true, require: 0.99},
+        hunt: {enabled: true, trigger: 0.95},
+        faith: {enabled: true, trigger: 0.99},
+        luxury: {enabled: true, trigger: 0.99, items: ['parchment', 'manuscript', 'compendium', 'blueprint']},
         build: {
-            enabled: true, require: 0.75, items: {
+            enabled: true, trigger: 0.75, items: {
                 // science
                 library: {require: 'wood', enabled: true},
                 academy: {require: 'wood', enabled: true},
@@ -55,34 +57,27 @@ var options = {
             }
         },
         craft: {
-            enabled: true, require: 0.95, items: {
-                // raw
+            enabled: true, trigger: 0.95, items: {
                 wood: {require: 'catnip', stock: 0, enabled: true},
                 beam: {require: 'wood', stock: 0, enabled: true},
                 slab: {require: 'minerals', stock: 0, enabled: true},
                 steel: {require: 'coal', stock: 0, enabled: true},
                 plate: {require: 'iron', stock: 0, enabled: true},
-
-                // complex
                 alloy: {require: 'titanium', stock: 0, enabled: false},
                 concrete: {require: false, stock: 0, enabled: false},
                 gear: {require: false, stock: 0, enabled: false},
                 scaffold: {require: false, stock: 0, enabled: false},
                 ship: {require: false, stock: 0, enabled: false},
                 tanker: {require: false, stock: 0, enabled: false},
+                parchment: {require: false, stock: 0, enabled: true},
+                manuscript: {require: 'culture', stock: 0, enabled: true},
+                compendium: {require: 'science', stock: 0, enabled: true},
+                blueprint: {require: false, stock: 0, enabled: false},
                 megalith: {require: false, stock: 0, enabled: false}
             }
         },
-        luxury: {
-            enabled: true, require: 0.99, items: {
-                parchment: {require: 'furs', stock: 0, enabled: true},
-                manuscript: {require: 'culture', stock: 0, enabled: true},
-                compendium: {require: 'science', stock: 0, enabled: true},
-                blueprint: {require: false, stock: 0, enabled: false}
-            }
-        },
         trade: {
-            enabled: true, require: 0.99, items: {
+            enabled: true, trigger: 0.99, items: {
                 zebras: {max: 'titanium', require: 'slab', season: 'summer'}
             }
         }
@@ -107,16 +102,18 @@ var warning = function () {
     var args = Array.prototype.slice.call(arguments);
     args.unshift('Warning!');
 
-    if (this.console) console.log(args);
+    if (console) console.log(args);
 };
 
 // Core Engine for Kitten Scientists
 // =================================
 
 var Engine = function () {
+    this.craftManager = new CraftManager();
 };
 
 Engine.prototype = {
+    craftManager: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -132,6 +129,30 @@ Engine.prototype = {
         message('Disabling the kitten scientists!');
     },
     iterate: function () {
+        this.observeGameLog();
+        this.startCrafts();
+    },
+    observeGameLog: function () {
+        // @TODO: determine if this can be accomplished outside the interface
+        $('#gameLog').find('input').click();
+    },
+    startCrafts: function () {
+        var crafts = options.auto.craft.items;
+        var trigger = options.auto.craft.trigger;
+        var manager = this.craftManager;
+
+        for (var name in crafts) {
+            // luxury items are crafted during different triggers
+            if (options.auto.luxury.items.indexOf(name) !== -1) continue;
+            //if (!crafts[name].enabled) continue;
+
+            var craft = crafts[name];
+            var require = !craft.require ? false : manager.getResource(craft.require);
+
+            if (!require || trigger <= require.value / require.maxValue) {
+                manager.craft(name, manager.getLowestCraftAmount(name));
+            }
+        }
     }
 };
 
@@ -184,6 +205,107 @@ BuildManager.prototype = {
     }
 };
 
+// Crafting Manager
+// ================
+
+var CraftManager = function () {};
+
+CraftManager.prototype = {
+    craft: function (name, amount) {
+        amount = Math.floor(amount);
+
+        if (undefined === name || 1 > amount) return;
+        if (!this.canCraft(name, amount)) return;
+
+        var craft = this.getCraft(name);
+        var ratio = ('wood' === name) ? 'refineRatio' : 'craftRatio';
+
+        game.craft(craft.name, amount);
+
+        // determine actual amount after crafting upgrades
+        amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
+
+        message('Kittens Craft: +' + amount + ' ' + name);
+    },
+    canCraft: function (name, amount) {
+        var craft = this.getCraft(name);
+        var enabled = options.auto.craft.items[name].enabled;
+        var result = false;
+
+        if (enabled && craft.unlocked) {
+            result = true;
+
+            for (var i in craft.prices) {
+                var price = craft.prices[i];
+                var value = this.getValueAvailable(price.name);
+
+                if (value < price.val * amount) {
+                    result = false;
+                }
+            }
+        }
+
+        return result;
+    },
+    getCraft: function (name) {
+        // adjust for spelling discrepancies in core game logic
+        if ('compendium' === name) name = 'compedium';
+        if ('concrete' === name) name = 'concrate';
+
+        return game.workshop.getCraft(name);
+    },
+    getLowestCraftAmount: function (name) {
+        var amount = 0;
+        var consume = options.consume;
+        var materials = this.getMaterials(name);
+
+        for (var i in materials) {
+            var total = this.getValueAvailable(i) * consume / materials[i];
+
+            amount = (0 === amount || total < amount) ? total : amount;
+        }
+
+        return amount;
+    },
+    getMaterials: function (name) {
+        var materials = {};
+        var prices = this.getCraft(name).prices;
+
+        for (var i in prices) {
+            var price = prices[i];
+
+            materials[price.name] = price.val;
+        }
+
+        return materials;
+    },
+    getResource: function (name) {
+        // adjust for spelling discrepancies in core game logic
+        if ('catpower' === name) name = 'manpower';
+        if ('compendium' === name) name = 'compedium';
+        if ('concrete' === name) name = 'concrate';
+
+        return game.resPool.get(name);
+    },
+    getValue: function (name) {
+        return this.getResource(name).value;
+    },
+    getValueAvailable: function (name) {
+        var value = this.getValue(name);
+        var stock = !options.auto.craft.items[name] ? 0 : options.auto.craft.items[name].stock;
+
+        if ('catnip' === name) {
+            var resPerTick = game.getResourcePerTick(name, false, {
+                modifiers: {
+                    'catnip': 0.10 - game.calendar.getWeatherMod()
+                }});
+
+            if (resPerTick < 0) stock -= resPerTick * 202 * 5;
+        }
+
+        return value - stock;
+    }
+};
 
 
 
@@ -206,4 +328,21 @@ BuildManager.prototype = {
 
 
 
+// Initialize and set toggles for Engine
+// =====================================
 
+var engine = new Engine();
+
+engine.start();
+
+//var toggleEngine = $('#toggle-engine');
+//
+//toggleEngine.on('change', function () {
+//    if (toggleEngine.is(':checked')) {
+//        engine.start();
+//    } else {
+//        engine.stop();
+//    }
+//});
+//
+//toggleEngine.trigger('change');
