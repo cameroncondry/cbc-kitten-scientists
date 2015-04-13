@@ -144,21 +144,23 @@ Engine.prototype = {
     },
     praiseSun: function () {
         this.renderTabIfInactive('Religion');
-        if (!game.religionTab.praiseBtn.enabled) return;
+        var praiseButton = game.religionTab.praiseBtn;
+        if (!praiseButton.enabled || !praiseButton.visible) return;
         var faith = this.craftManager.getResource('faith');
 
         if (faith.value / faith.maxValue >= options.limit.faith) {
             message('The sun has been praised!');
-            game.religionTab.praiseBtn.onClick();
+            praiseButton.onClick();
         }
     },
     holdFestival: function () {
         this.renderTabIfInactive('Small village');
-        if (!game.villageTab.festivalBtn.enabled) return;
+        var festivalButton = game.villageTab.festivalBtn;
+        if (!festivalButton.enabled || !festivalButton.visible) return;
 
         if (game.calendar.festivalDays === 0) {
             message('A festival has been held!');
-            game.villageTab.festivalBtn.onClick();
+            festivalButton.onClick();
         }
     },
     sendHunters: function () {
