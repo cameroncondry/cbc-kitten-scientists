@@ -15,7 +15,7 @@ var options = {
         faith: {enabled: true, trigger: 0.99},
         festival: {enabled: false},
         hunt: {enabled: true, trigger: 0.95},
-        luxury: {enabled: true, trigger: 0.99, items: ['parchment', 'manuscript', 'compendium', 'blueprint']},
+        luxury: {enabled: true, trigger: 0.99, craft: ['parchment', 'manuscript', 'compendium', 'blueprint']},
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
@@ -80,7 +80,7 @@ var options = {
         },
         trade: {
             enabled: true, trigger: 0.99, items: {
-                zebras: {max: 'titanium', require: 'slab', season: 'summer'}
+                zebras: {max: 'titanium', require: 'slab', season: 'summer', enabled: true}
             }
         }
     }
@@ -145,7 +145,7 @@ Engine.prototype = {
 
         for (var name in crafts) {
             // luxury items are crafted during different triggers
-            if (options.auto.luxury.items.indexOf(name) !== -1) continue;
+            if (options.auto.luxury.craft.indexOf(name) !== -1) continue;
 
             var craft = crafts[name];
             var require = !craft.require ? false : manager.getResource(craft.require);
@@ -361,11 +361,12 @@ left.css({
 
 middle.css({
     marginTop: '1%',
-    height: '92%',
+    height: '90%',
     width: '48%'
 });
 
 right.css({
+    overflowY: 'scroll',
     height: '92%',
     width: '19%'
 });
@@ -415,7 +416,12 @@ addRule('#ks-options ul li {'
 // Add options element
 // ===================
 
+var ucfirst = function (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 var getToggle = function (name, text) {
+    var auto = options.auto[name];
     var element = $('<li/>');
 
     var label = $('<label/>', {
@@ -423,28 +429,33 @@ var getToggle = function (name, text) {
         text: text
     });
 
-    var toggle = $('<input/>', {
+    var input = $('<input/>', {
         id: 'toggle-' + name,
         type: 'checkbox'
     });
 
-    if (options.auto[name].enabled) {
-        toggle.prop('checked', 'checked');
+    if (auto.enabled) {
+        input.prop('checked', 'checked');
     }
 
-    element.append(toggle, label);
+    element.append(input, label);
 
-    if (options.auto[name].items) {
+    if (auto.items) {
         var button = $('<div/>', {
             id: 'toggle-options-' + name,
-            text: 'options',
+            text: 'toggle options',
             css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
         });
 
-        var list = $('<div/>', {
+        var list = $('<ul/>', {
             id: 'toggle-options-list-' + name,
-            css: {display: 'none', width: '100%', height: '10px'}
+            css: {display: 'none', paddingLeft: '20px', width: '100%'}
         });
+
+        // fill out list with toggle items
+        for (var itemName in auto.items) {
+            list.append(getOption(itemName, auto.items[itemName]));
+        }
 
         button.on('click', function () {
             list.toggle();
@@ -452,6 +463,28 @@ var getToggle = function (name, text) {
 
         element.append(button, list);
     }
+
+    return element;
+};
+
+var getOption = function (name, option) {
+    var element = $('<li/>');
+
+    var label = $('<label/>', {
+        'for': 'toggle-' + name,
+        text: ucfirst(name)
+    });
+
+    var input = $('<input/>', {
+        id: 'toggle-' + name,
+        type: 'checkbox'
+    });
+
+    if (option.enabled) {
+        input.prop('checked', 'checked');
+    }
+
+    element.append(input, label);
 
     return element;
 };
@@ -466,11 +499,11 @@ var optionsTitleElement = $('<div/>', {
 optionsElement.append(optionsTitleElement);
 
 optionsListElement.append(getToggle('engine', 'Engine'));
-optionsListElement.append(getToggle('craft', 'Crafting'));
-optionsListElement.append(getToggle('hunt', 'Hunting'));
 optionsListElement.append(getToggle('build', 'Building'));
-optionsListElement.append(getToggle('luxury', 'Luxury'));
+optionsListElement.append(getToggle('craft', 'Crafting'));
 optionsListElement.append(getToggle('trade', 'Trading'));
+optionsListElement.append(getToggle('hunt', 'Hunting'));
+optionsListElement.append(getToggle('luxury', 'Luxury'));
 optionsListElement.append(getToggle('festival', 'Festival'));
 
 // add donation address to bottom of list
@@ -506,19 +539,32 @@ toggleEngine.trigger('change');
 // Add toggles for options
 // =======================
 
-var ucfirst = function (string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+var getOptionItem = function (option) {
+    return options.auto[option] ||
+        options.auto.build.items[option] ||
+        options.auto.craft.items[option] ||
+        options.auto.trade.items[option];
 };
 
-$.each(Object.keys(options.auto), function (event, option) {
+var keys = Object.keys(options.auto);
+
+keys = keys.concat(
+    Object.keys(options.auto.craft.items),
+    Object.keys(options.auto.build.items),
+    Object.keys(options.auto.trade.items)
+);
+
+$.each(keys, function (event, option) {
     var toggle = $('#toggle-' + option);
 
     toggle.on('change', function () {
+        var item = getOptionItem(option);
+
         if (toggle.is(':checked')) {
-            options.auto[option].enabled = true;
+            item.enabled = true;
             message('Enabled Auto ' + ucfirst(option));
         } else {
-            options.auto[option].enabled = false;
+            item.enabled = false;
             message('Disabled Auto ' + ucfirst(option));
         }
     });
