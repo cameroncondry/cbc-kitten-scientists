@@ -11,8 +11,10 @@ var options = {
     color: '#aa50fe', // dark purple
     consume: 0.5,
     auto: {
-        hunt: {enabled: true, trigger: 0.95},
+        engine: {enabled: true},
         faith: {enabled: true, trigger: 0.99},
+        festival: {enabled: false},
+        hunt: {enabled: true, trigger: 0.95},
         luxury: {enabled: true, trigger: 0.99, items: ['parchment', 'manuscript', 'compendium', 'blueprint']},
         build: {
             enabled: true, trigger: 0.75, items: {
@@ -130,7 +132,7 @@ Engine.prototype = {
     },
     iterate: function () {
         this.observeGameLog();
-        this.startCrafts();
+        if (options.auto.craft.enabled) this.startCrafts();
     },
     observeGameLog: function () {
         // @TODO: determine if this can be accomplished outside the interface
@@ -144,7 +146,6 @@ Engine.prototype = {
         for (var name in crafts) {
             // luxury items are crafted during different triggers
             if (options.auto.luxury.items.indexOf(name) !== -1) continue;
-            //if (!crafts[name].enabled) continue;
 
             var craft = crafts[name];
             var require = !craft.require ? false : manager.getResource(craft.require);
@@ -328,21 +329,165 @@ CraftManager.prototype = {
 
 
 
+// ==============================
+// Configure overall page display
+// ==============================
+
+var container = $('#game');
+var column = $('.column');
+
+container.css({
+    fontFamily: 'Courier New',
+    fontSize: '12px',
+    minWidth: '1300px',
+    top: '32px'
+});
+
+column.css({
+    minHeight: 'inherit',
+    maxWidth: 'inherit',
+    padding: '1%',
+    margin: 0
+});
+
+var left = $('#leftColumn');
+var middle = $('#midColumn');
+var right = $('#rightColumn');
+
+left.css({
+    height: '92%',
+    width: '26%'
+});
+
+middle.css({
+    marginTop: '1%',
+    height: '92%',
+    width: '48%'
+});
+
+right.css({
+    height: '92%',
+    width: '19%'
+});
+
+// Reconfigure dynamic page display
+// ================================
+
+var addRule = function (rule) {
+    var sheets = document.styleSheets;
+    sheets[0].insertRule(rule, 1);
+};
+
+addRule('#gameLog .msg {'
++ 'display: block;'
++ '}');
+
+addRule('#resContainer .maxRes {'
++ 'color: #676766;'
++ '}');
+
+addRule('#game .btn {'
++ 'border-radius: 0px;'
++ 'font-family: "Courier New";'
++ 'font-size: "10px";'
++ 'margin: 0 0 7px 0;'
++ '}');
+
+addRule('#ks-options ul {'
++ 'list-style: none;'
++ 'margin: 0 0 5px;'
++ 'padding: 0;'
++ '}');
+
+addRule('#ks-options ul:after {'
++ 'clear: both;'
++ 'content: " ";'
++ 'display: block;'
++ 'height: 0;'
++ '}');
+
+addRule('#ks-options ul li {'
++ 'display: block;'
++ 'float: left;'
++ 'width: 50%;'
++ '}');
+
+// Add options element
+// ===================
+
+var getToggle = function (name, text) {
+    var li = $('<li/>');
+
+    var label = $('<label/>', {
+        'for': 'toggle-' + name,
+        text: text
+    });
+
+    var toggle = $('<input/>', {
+        id: 'toggle-' + name,
+        type: 'checkbox'
+    });
+
+    if (options.auto[name].enabled) {
+        toggle.prop('checked', 'checked');
+    }
+
+    return li.append(toggle, label);
+};
+
+var optionsElement = $('<div/>', {id: 'ks-options', css: {marginBottom: '10px'}});
+var optionsListElement = $('<ul/>');
+var optionsTitleElement = $('<div/>', {
+    css: { borderBottom: '1px solid gray', marginBottom: '5px' },
+    text: version
+});
+
+optionsElement.append(optionsTitleElement);
+
+optionsListElement.append(getToggle('engine', 'Engine').css('width', '100%'));
+optionsListElement.append(getToggle('craft', 'Crafting'));
+optionsListElement.append(getToggle('hunt', 'Hunting'));
+optionsListElement.append(getToggle('build', 'Building'));
+optionsListElement.append(getToggle('luxury', 'Luxury'));
+optionsListElement.append(getToggle('trade', 'Trading'));
+optionsListElement.append(getToggle('festival', 'Festival'));
+
+// add the options above the game log
+right.prepend(optionsElement.append(optionsListElement));
+
 // Initialize and set toggles for Engine
 // =====================================
 
 var engine = new Engine();
+var toggleEngine = $('#toggle-engine');
 
-engine.start();
+toggleEngine.on('change', function () {
+    if (toggleEngine.is(':checked')) {
+        engine.start();
+    } else {
+        engine.stop();
+    }
+});
 
-//var toggleEngine = $('#toggle-engine');
-//
-//toggleEngine.on('change', function () {
-//    if (toggleEngine.is(':checked')) {
-//        engine.start();
-//    } else {
-//        engine.stop();
-//    }
-//});
-//
-//toggleEngine.trigger('change');
+toggleEngine.trigger('change');
+
+// Add toggles for options
+// =======================
+
+var ucfirst = function (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+$.each(Object.keys(options.auto), function (event, option) {
+    var toggle = $('#toggle-' + option);
+
+    toggle.on('change', function () {
+        if (toggle.is(':checked')) {
+            options.auto[option].enabled = true;
+            message('Enabled Auto ' + ucfirst(option));
+        } else {
+            options.auto[option].enabled = false;
+            message('Disabled Auto ' + ucfirst(option));
+        }
+    });
+});
