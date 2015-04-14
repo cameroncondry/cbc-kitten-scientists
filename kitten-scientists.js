@@ -14,8 +14,7 @@ var options = {
         engine: {enabled: true},
         faith: {enabled: true, trigger: 0.99},
         festival: {enabled: false},
-        hunt: {enabled: true, trigger: 0.95},
-        luxury: {enabled: true, trigger: 0.99, craft: ['parchment', 'manuscript', 'compendium', 'blueprint']},
+        hunt: {enabled: true, trigger: 0.95, craft: ['parchment', 'manuscript', 'compendium', 'blueprint']},
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
@@ -145,7 +144,7 @@ Engine.prototype = {
 
         for (var name in crafts) {
             // luxury items are crafted during different triggers
-            if (options.auto.luxury.craft.indexOf(name) !== -1) continue;
+            if (options.auto.hunt.craft.indexOf(name) !== -1) continue;
 
             var craft = crafts[name];
             var require = !craft.require ? false : manager.getResource(craft.require);
@@ -249,11 +248,7 @@ CraftManager.prototype = {
         return result;
     },
     getCraft: function (name) {
-        // adjust for spelling discrepancies in core game logic
-        if ('compendium' === name) name = 'compedium';
-        if ('concrete' === name) name = 'concrate';
-
-        return game.workshop.getCraft(name);
+        return game.workshop.getCraft(this.getName(name));
     },
     getLowestCraftAmount: function (name) {
         var amount = 0;
@@ -280,13 +275,16 @@ CraftManager.prototype = {
 
         return materials;
     },
-    getResource: function (name) {
+    getName: function (name) {
         // adjust for spelling discrepancies in core game logic
         if ('catpower' === name) name = 'manpower';
         if ('compendium' === name) name = 'compedium';
         if ('concrete' === name) name = 'concrate';
 
-        return game.resPool.get(name);
+        return name;
+    },
+    getResource: function (name) {
+        return game.resPool.get(this.getName(name));
     },
     getValue: function (name) {
         return this.getResource(name).value;
@@ -503,7 +501,6 @@ optionsListElement.append(getToggle('build', 'Building'));
 optionsListElement.append(getToggle('craft', 'Crafting'));
 optionsListElement.append(getToggle('trade', 'Trading'));
 optionsListElement.append(getToggle('hunt', 'Hunting'));
-optionsListElement.append(getToggle('luxury', 'Luxury'));
 optionsListElement.append(getToggle('festival', 'Festival'));
 
 // add donation address to bottom of list
