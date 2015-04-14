@@ -78,8 +78,8 @@ var options = {
             }
         },
         trade: {
-            enabled: true, trigger: 0.99, items: {
-                zebras: {max: 'titanium', require: 'slab', season: 'summer', enabled: true}
+            enabled: false, trigger: 0.99, items: {
+                zebras: {max: 'titanium', require: false, season: 'summer', enabled: true}
             }
         }
     }
@@ -111,10 +111,12 @@ var warning = function () {
 
 var Engine = function () {
     this.craftManager = new CraftManager();
+    this.tradeManager = new TradeManager();
 };
 
 Engine.prototype = {
     craftManager: undefined,
+    tradeManager: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -135,20 +137,33 @@ Engine.prototype = {
         if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.hunt.enabled) this.sendHunters();
         if (options.auto.craft.enabled) this.craftType('craft');
+        if (options.auto.trade.enabled) this.startTrade();
     },
-    observeGameLog: function () {
-        // @TODO: determine if this can be accomplished outside the interface
-        $('#gameLog').find('input').click();
+    craftType: function (type) {
+        var crafts = options.auto.craft.items;
+        var trigger = options.auto.craft.trigger;
+        var manager = this.craftManager;
+
+        for (var name in crafts) {
+            var craft = crafts[name];
+            var require = !craft.require ? false : manager.getResource(craft.require);
+
+            if (craft.type === type && (!require || trigger <= require.value / require.maxValue)) {
+                manager.craft(name, manager.getLowestCraftAmount(name));
+            }
+        }
     },
     holdFestival: function () {
         var villageManager = new TabManager('Small village');
-
-        villageManager.render();
 
         if (game.calendar.festivalDays === 0 && villageManager.tab.festivalBtn.hasResources()) {
             villageManager.tab.festivalBtn.onClick();
             message('A festival has been held!');
         }
+    },
+    observeGameLog: function () {
+        // @TODO: determine if this can be accomplished outside the interface
+        $('#gameLog').find('input').click();
     },
     praiseSun: function () {
         var faith = this.craftManager.getResource('faith');
@@ -169,17 +184,20 @@ Engine.prototype = {
             message('Kittens Hunt: Hunters deployed!');
         }
     },
-    craftType: function (type) {
-        var crafts = options.auto.craft.items;
-        var trigger = options.auto.craft.trigger;
-        var manager = this.craftManager;
+    startTrade: function () {
+        var trades = options.auto.trade.items;
+        var trigger = options.auto.trade.trigger;
+        var craftManager = this.craftManager;
+        var tradeManager = this.tradeManager;
 
-        for (var name in crafts) {
-            var craft = crafts[name];
-            var require = !craft.require ? false : manager.getResource(craft.require);
+        for (var name in trades) {
+            var trade = trades[name];
+            var max = !trade.max ? false : craftManager.getResource(trade.max);
+            var require = !trade.require ? false : craftManager.getResource(trade.require);
 
-            if (craft.type === type && (!require || trigger <= require.value / require.maxValue)) {
-                manager.craft(name, manager.getLowestCraftAmount(name));
+            if ((!max || 1 !== max.value / max.maxValue) &&
+                (!require || trigger <= require.value / require.maxValue)) {
+                tradeManager.trade(name, tradeManager.getLowestTradeAmount(name));
             }
         }
     }
@@ -194,11 +212,10 @@ var TabManager = function (name) {
 
 TabManager.prototype = {
     tab: undefined,
-    getButtons: function () {
-        if (this.tab) return this.tab.buttons;
-    },
     render: function () {
         if (this.tab && game.activeTabId !== this.tab.tabId) this.tab.render();
+
+        return this;
     },
     setTab: function (name) {
         for (var i in game.tabs) {
@@ -208,7 +225,7 @@ TabManager.prototype = {
             }
         }
 
-        if (!this.tab) warning('unable to find tab ' + name);
+        this.tab ? this.render() : warning('unable to find tab ' + name);
     }
 };
 
@@ -225,12 +242,12 @@ BuildManager.prototype = {
         return game.bld.getBuilding(name);
     },
     getBuildButton: function (name) {
-        var buttons = this.manager.getButtons();
-        var label = this.getBuild(name).label;
-
-        for (var i in buttons) {
-            if (buttons[i].name === label) return buttons[i];
-        }
+        //var buttons = this.manager.getButtons();
+        //var label = this.getBuild(name).label;
+        //
+        //for (var i in buttons) {
+        //    if (buttons[i].name === label) return buttons[i];
+        //}
     }
 };
 
@@ -243,7 +260,7 @@ CraftManager.prototype = {
     craft: function (name, amount) {
         amount = Math.floor(amount);
 
-        if (undefined === name || 1 > amount) return;
+        if (!name || 1 > amount) return;
         if (!this.canCraft(name, amount)) return;
 
         var craft = this.getCraft(name);
@@ -335,12 +352,74 @@ CraftManager.prototype = {
     }
 };
 
+// Trading Manager
+// ===============
 
+var TradeManager = function () {
+    this.craftManager = new CraftManager();
+    this.manager = new TabManager('Trade');
+};
 
+TradeManager.prototype = {
+    craftManager: undefined,
+    manager: undefined,
+    trade: function (name, amount) {
+        amount = Math.floor(amount);
 
+        if (!name || 1 > amount) return;
 
+        var race = this.getRace(name);
+        var tradeBtn = this.getTradeButton(race.title);
 
+        if (!race.unlocked || !tradeBtn.hasResources() || !options.auto.trade.items[name].enabled) return;
 
+        tradeBtn.tradeMultiple(amount);
+        message('Kittens Trade: ' + amount + 'x ' + race.title);
+    },
+    getLowestTradeAmount: function (name) {
+        var amount = 0;
+        var consume = options.consume;
+        var materials = this.getMaterials(name);
+
+        for (var i in materials) {
+            var total = this.craftManager.getValueAvailable(i) * consume / materials[i];
+
+            amount = (0 === amount || total < amount) ? total : amount;
+        }
+
+        return amount;
+    },
+    getMaterials: function (name) {
+        var materials = {catpower: 50, gold: 15};
+
+        if (name === undefined)
+            return materials;
+
+        var prices = prices = this.getRace(name).buys;
+
+        for (i in prices) {
+            var price = prices[i];
+
+            materials[price.name] = price.val;
+        }
+
+        return materials;
+    },
+    getRace: function (name) {
+        return game.diplomacy.get(name);
+    },
+    getTradeButton: function (race) {
+        var manager = this.manager.render();
+
+        for (var i in manager.tab.racePanels) {
+            var panel = manager.tab.racePanels[i];
+
+            if (panel.name === race) return panel.tradeBtn;
+        }
+
+        warning('unable to find trade button for ' + name);
+    }
+};
 
 
 
