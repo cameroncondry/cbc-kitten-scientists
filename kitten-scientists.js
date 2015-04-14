@@ -11,9 +11,9 @@ var options = {
     color: '#aa50fe', // dark purple
     consume: 0.5,
     auto: {
-        engine: {enabled: true},
+        engine: {enabled: false},
         faith: {enabled: true, trigger: 0.99},
-        festival: {enabled: false},
+        festival: {enabled: true},
         hunt: {enabled: true, trigger: 0.95, craft: ['parchment', 'manuscript', 'compendium', 'blueprint']},
         build: {
             enabled: true, trigger: 0.75, items: {
@@ -59,22 +59,22 @@ var options = {
         },
         craft: {
             enabled: true, trigger: 0.95, items: {
-                wood: {require: 'catnip', stock: 0, enabled: true},
-                beam: {require: 'wood', stock: 0, enabled: true},
-                slab: {require: 'minerals', stock: 0, enabled: true},
-                steel: {require: 'coal', stock: 0, enabled: true},
-                plate: {require: 'iron', stock: 0, enabled: true},
-                alloy: {require: 'titanium', stock: 0, enabled: false},
-                concrete: {require: false, stock: 0, enabled: false},
-                gear: {require: false, stock: 0, enabled: false},
-                scaffold: {require: false, stock: 0, enabled: false},
-                ship: {require: false, stock: 0, enabled: false},
-                tanker: {require: false, stock: 0, enabled: false},
-                parchment: {require: false, stock: 0, enabled: true},
-                manuscript: {require: 'culture', stock: 0, enabled: true},
-                compendium: {require: 'science', stock: 0, enabled: true},
-                blueprint: {require: false, stock: 0, enabled: false},
-                megalith: {require: false, stock: 0, enabled: false}
+                wood: {require: 'catnip', stock: 0, craft: true, enabled: true},
+                beam: {require: 'wood', stock: 0, craft: true, enabled: true},
+                slab: {require: 'minerals', stock: 0, craft: true, enabled: true},
+                steel: {require: 'coal', stock: 0, craft: true, enabled: true},
+                plate: {require: 'iron', stock: 0, craft: true, enabled: true},
+                alloy: {require: 'titanium', stock: 0, craft: true, enabled: false},
+                concrete: {require: false, stock: 0, craft: true, enabled: false},
+                gear: {require: false, stock: 0, craft: true, enabled: false},
+                scaffold: {require: false, stock: 0, craft: true, enabled: false},
+                ship: {require: false, stock: 0, craft: true, enabled: false},
+                tanker: {require: false, stock: 0, craft: true, enabled: false},
+                parchment: {require: false, stock: 0, craft: false, enabled: true},
+                manuscript: {require: 'culture', stock: 0, craft: false, enabled: true},
+                compendium: {require: 'science', stock: 0, craft: false, enabled: true},
+                blueprint: {require: false, stock: 0, craft: false, enabled: false},
+                megalith: {require: false, stock: 0, craft: true, enabled: false}
             }
         },
         trade: {
@@ -131,11 +131,26 @@ Engine.prototype = {
     },
     iterate: function () {
         this.observeGameLog();
+        if (options.auto.faith.enabled) this.praiseSun();
+        if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.craft.enabled) this.startCrafts();
+    },
+    holdFestival: function () {
+        if (game.calendar.festivalDays === 0) {
+
+        }
     },
     observeGameLog: function () {
         // @TODO: determine if this can be accomplished outside the interface
         $('#gameLog').find('input').click();
+    },
+    praiseSun: function () {
+        var faith = this.craftManager.getResource('faith');
+
+        if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
+            game.religion.praise();
+            message('The sun has been praised!');
+        }
     },
     startCrafts: function () {
         var crafts = options.auto.craft.items;
@@ -143,13 +158,10 @@ Engine.prototype = {
         var manager = this.craftManager;
 
         for (var name in crafts) {
-            // luxury items are crafted during different triggers
-            if (options.auto.hunt.craft.indexOf(name) !== -1) continue;
-
             var craft = crafts[name];
             var require = !craft.require ? false : manager.getResource(craft.require);
 
-            if (!require || trigger <= require.value / require.maxValue) {
+            if (craft.craft && (!require || trigger <= require.value / require.maxValue)) {
                 manager.craft(name, manager.getLowestCraftAmount(name));
             }
         }
@@ -418,17 +430,17 @@ var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-var getToggle = function (name, text) {
-    var auto = options.auto[name];
+var getToggle = function (toggleName, text) {
+    var auto = options.auto[toggleName];
     var element = $('<li/>');
 
     var label = $('<label/>', {
-        'for': 'toggle-' + name,
+        'for': 'toggle-' + toggleName,
         text: text
     });
 
     var input = $('<input/>', {
-        id: 'toggle-' + name,
+        id: 'toggle-' + toggleName,
         type: 'checkbox'
     });
 
@@ -440,13 +452,13 @@ var getToggle = function (name, text) {
 
     if (auto.items) {
         var button = $('<div/>', {
-            id: 'toggle-options-' + name,
+            id: 'toggle-options-' + toggleName,
             text: 'toggle options',
             css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
         });
 
         var list = $('<ul/>', {
-            id: 'toggle-options-list-' + name,
+            id: 'toggle-options-list-' + toggleName,
             css: {display: 'none', paddingLeft: '20px', width: '100%'}
         });
 
@@ -501,11 +513,12 @@ optionsListElement.append(getToggle('build', 'Building'));
 optionsListElement.append(getToggle('craft', 'Crafting'));
 optionsListElement.append(getToggle('trade', 'Trading'));
 optionsListElement.append(getToggle('hunt', 'Hunting'));
+optionsListElement.append(getToggle('faith', 'Praising'));
 optionsListElement.append(getToggle('festival', 'Festival'));
 
 // add donation address to bottom of list
 var donate = $('<li/>').append($('<a/>', {
-    href: 'bitcoin:' + address + '?amount=0.005&label=Kittens',
+    href: 'bitcoin:' + address + '?amount=0.005&label=Kittens Donation',
     text: address
 })).prepend($('<img/>', {
     css: {height: '15px', width: '15px', padding: '3px 4px 0 4px', verticalAlign: 'bottom'},
