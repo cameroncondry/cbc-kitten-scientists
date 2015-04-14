@@ -150,7 +150,7 @@ Engine.prototype = {
 
         if (faith.value / faith.maxValue >= options.limit.faith) {
             message('The sun has been praised!');
-            praiseButton.onClick();
+            $(praiseButton.domNode).click();
         }
     },
     holdFestival: function () {
@@ -160,7 +160,7 @@ Engine.prototype = {
 
         if (game.calendar.festivalDays === 0) {
             message('A festival has been held!');
-            festivalButton.onClick();
+            $(festivalButton.domNode).click();
         }
     },
     sendHunters: function () {
@@ -251,7 +251,7 @@ BuildManager.prototype = {
         var button = this.getBuildButton(name);
         if (!button.enabled) return;
 
-        button.onClick();
+        $(button.domNode).click();
         message('Kittens Build: +1 ' + button.name);
     },
     isBuildable: function (name) {
