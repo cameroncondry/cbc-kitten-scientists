@@ -134,7 +134,7 @@ Engine.prototype = {
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.hunt.enabled) this.sendHunters();
-        if (options.auto.craft.enabled) this.startCrafts('craft');
+        if (options.auto.craft.enabled) this.craftType('craft');
     },
     observeGameLog: function () {
         // @TODO: determine if this can be accomplished outside the interface
@@ -163,13 +163,13 @@ Engine.prototype = {
 
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
             // Generate luxury goods before sending hunters
-            this.startCrafts('luxury');
+            this.craftType('luxury');
 
             game.village.huntAll();
             message('Kittens Hunt: Hunters deployed!');
         }
     },
-    startCrafts: function (type) {
+    craftType: function (type) {
         var crafts = options.auto.craft.items;
         var trigger = options.auto.craft.trigger;
         var manager = this.craftManager;
