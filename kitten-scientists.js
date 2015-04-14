@@ -251,7 +251,7 @@ BuildManager.prototype = {
         var button = this.getBuildButton(name);
         if (!button.enabled) return;
 
-        button.onClick({shiftKey: false});
+        button.onClick();
         message('Kittens Build: +1 ' + button.name);
     },
     isBuildable: function (name) {
