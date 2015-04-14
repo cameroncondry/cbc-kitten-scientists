@@ -14,7 +14,7 @@ var options = {
         engine: {enabled: false},
         faith: {enabled: true, trigger: 0.99},
         festival: {enabled: true},
-        hunt: {enabled: true, trigger: 0.95, craft: ['parchment', 'manuscript', 'compendium', 'blueprint']},
+        hunt: {enabled: true, trigger: 0.95},
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
@@ -59,22 +59,22 @@ var options = {
         },
         craft: {
             enabled: true, trigger: 0.95, items: {
-                wood: {require: 'catnip', stock: 0, craft: true, enabled: true},
-                beam: {require: 'wood', stock: 0, craft: true, enabled: true},
-                slab: {require: 'minerals', stock: 0, craft: true, enabled: true},
-                steel: {require: 'coal', stock: 0, craft: true, enabled: true},
-                plate: {require: 'iron', stock: 0, craft: true, enabled: true},
-                alloy: {require: 'titanium', stock: 0, craft: true, enabled: false},
-                concrete: {require: false, stock: 0, craft: true, enabled: false},
-                gear: {require: false, stock: 0, craft: true, enabled: false},
-                scaffold: {require: false, stock: 0, craft: true, enabled: false},
-                ship: {require: false, stock: 0, craft: true, enabled: false},
-                tanker: {require: false, stock: 0, craft: true, enabled: false},
-                parchment: {require: false, stock: 0, craft: false, enabled: true},
-                manuscript: {require: 'culture', stock: 0, craft: false, enabled: true},
-                compendium: {require: 'science', stock: 0, craft: false, enabled: true},
-                blueprint: {require: false, stock: 0, craft: false, enabled: false},
-                megalith: {require: false, stock: 0, craft: true, enabled: false}
+                wood: {require: 'catnip', stock: 0, type: 'craft', enabled: true},
+                beam: {require: 'wood', stock: 0, type: 'craft', enabled: true},
+                slab: {require: 'minerals', stock: 0, type: 'craft', enabled: true},
+                steel: {require: 'coal', stock: 0, type: 'craft', enabled: true},
+                plate: {require: 'iron', stock: 0, type: 'craft', enabled: true},
+                alloy: {require: 'titanium', stock: 0, type: 'craft', enabled: false},
+                concrete: {require: false, stock: 0, type: 'craft', enabled: false},
+                gear: {require: false, stock: 0, type: 'craft', enabled: false},
+                scaffold: {require: false, stock: 0, type: 'craft', enabled: false},
+                ship: {require: false, stock: 0, type: 'craft', enabled: false},
+                tanker: {require: false, stock: 0, type: 'craft', enabled: false},
+                parchment: {require: false, stock: 0, type: 'luxury', enabled: true},
+                manuscript: {require: 'culture', stock: 0, type: 'luxury', enabled: true},
+                compendium: {require: 'science', stock: 0, type: 'luxury', enabled: true},
+                blueprint: {require: false, stock: 0, type: 'luxury', enabled: false},
+                megalith: {require: false, stock: 0, type: 'craft', enabled: false}
             }
         },
         trade: {
@@ -133,7 +133,11 @@ Engine.prototype = {
         this.observeGameLog();
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
-        if (options.auto.craft.enabled) this.startCrafts();
+        if (options.auto.craft.enabled) this.startCrafts('craft', options.auto.craft.items);
+    },
+    observeGameLog: function () {
+        // @TODO: determine if this can be accomplished outside the interface
+        $('#gameLog').find('input').click();
     },
     holdFestival: function () {
         var villageManager = new TabManager('Small village');
@@ -144,10 +148,6 @@ Engine.prototype = {
             villageManager.tab.festivalBtn.onClick();
             message('A festival has been held!');
         }
-    },
-    observeGameLog: function () {
-        // @TODO: determine if this can be accomplished outside the interface
-        $('#gameLog').find('input').click();
     },
     praiseSun: function () {
         var faith = this.craftManager.getResource('faith');
@@ -160,8 +160,7 @@ Engine.prototype = {
             message('The sun has been praised!');
         }
     },
-    startCrafts: function () {
-        var crafts = options.auto.craft.items;
+    startCrafts: function (type, crafts) {
         var trigger = options.auto.craft.trigger;
         var manager = this.craftManager;
 
@@ -169,7 +168,7 @@ Engine.prototype = {
             var craft = crafts[name];
             var require = !craft.require ? false : manager.getResource(craft.require);
 
-            if (craft.craft && (!require || trigger <= require.value / require.maxValue)) {
+            if (craft.type === type && (!require || trigger <= require.value / require.maxValue)) {
                 manager.craft(name, manager.getLowestCraftAmount(name));
             }
         }
