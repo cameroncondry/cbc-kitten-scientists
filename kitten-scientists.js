@@ -136,8 +136,13 @@ Engine.prototype = {
         if (options.auto.craft.enabled) this.startCrafts();
     },
     holdFestival: function () {
-        if (game.calendar.festivalDays === 0) {
+        var villageManager = new TabManager('Small village');
 
+        villageManager.render();
+
+        if (game.calendar.festivalDays === 0 && villageManager.tab.festivalBtn.hasResources()) {
+            villageManager.tab.festivalBtn.onClick();
+            message('A festival has been held!');
         }
     },
     observeGameLog: function () {
