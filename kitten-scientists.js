@@ -151,9 +151,12 @@ Engine.prototype = {
     },
     praiseSun: function () {
         var faith = this.craftManager.getResource('faith');
+        var religionManager = new TabManager('Religion');
+
+        religionManager.render();
 
         if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
-            game.religion.praise();
+            religionManager.tab.praiseBtn.onClick();
             message('The sun has been praised!');
         }
     },
