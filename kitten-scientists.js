@@ -133,7 +133,8 @@ Engine.prototype = {
         this.observeGameLog();
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
-        if (options.auto.craft.enabled) this.startCrafts('craft', options.auto.craft.items);
+        if (options.auto.hunt.enabled) this.sendHunters();
+        if (options.auto.craft.enabled) this.startCrafts('craft');
     },
     observeGameLog: function () {
         // @TODO: determine if this can be accomplished outside the interface
@@ -151,16 +152,25 @@ Engine.prototype = {
     },
     praiseSun: function () {
         var faith = this.craftManager.getResource('faith');
-        var religionManager = new TabManager('Religion');
-
-        religionManager.render();
 
         if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
-            religionManager.tab.praiseBtn.onClick();
+            game.religion.praise();
             message('The sun has been praised!');
         }
     },
-    startCrafts: function (type, crafts) {
+    sendHunters: function () {
+        var catpower = this.craftManager.getResource('catpower');
+
+        if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
+            // Generate luxury goods before sending hunters
+            this.startCrafts('luxury');
+
+            game.village.huntAll();
+            message('Kittens Hunt: Hunters deployed!');
+        }
+    },
+    startCrafts: function (type) {
+        var crafts = options.auto.craft.items;
         var trigger = options.auto.craft.trigger;
         var manager = this.craftManager;
 
