@@ -207,9 +207,11 @@ Engine.prototype = {
             var trade = trades[name];
             var max = !trade.max ? false : craftManager.getResource(trade.max);
             var require = !trade.require ? false : craftManager.getResource(trade.require);
+            var season = game.calendar.getCurSeason().name;
 
-            if ((!max || 1 !== max.value / max.maxValue) &&
-                (!require || trigger <= require.value / require.maxValue)) {
+            if ((!trade.season || trade.season === season)
+                && (!max || 1 !== max.value / max.maxValue)
+                && (!require || trigger <= require.value / require.maxValue)) {
                 tradeManager.trade(name, tradeManager.getLowestTradeAmount(name));
             }
         }
@@ -408,7 +410,7 @@ TradeManager.prototype = {
         if (name === undefined)
             return materials;
 
-        var prices = prices = this.getRace(name).buys;
+        var prices = this.getRace(name).buys;
 
         for (var i in prices) {
             var price = prices[i];
