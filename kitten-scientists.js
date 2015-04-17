@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.1.8';
+var version = 'Kitten Scientists version 1.2.0';
 var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
 var game = gamePage;
 
@@ -89,6 +89,19 @@ var options = {
 // ====================
 
 var gameLog = com.nuclearunicorn.game.log.Console().static;
+
+// Stop having the game log erase messages.
+gameLog.msg = function(message, type) {
+    var gameLog = dojo.byId('gameLog');
+    var span = dojo.create('span', {innerHTML: message, className: 'msg'}, gameLog, 'first');
+
+    if (type) dojo.addClass(span, 'type_' + type);
+
+    var spans = this.spans;
+    spans.push(span);
+
+    return span;
+};
 
 var message = function () {
     var args = Array.prototype.slice.call(arguments);
@@ -181,7 +194,7 @@ Engine.prototype = {
             this.craftType('luxury');
 
             game.village.huntAll();
-            message('Kittens Hunt: Hunters deployed!');
+            message('Hunters have been deployed!');
         }
     },
     startTrade: function () {
@@ -218,9 +231,9 @@ TabManager.prototype = {
         return this;
     },
     setTab: function (name) {
-        for (var i in game.tabs) {
-            if (game.tabs[i].tabId === name) {
-                this.tab = game.tabs[i];
+        for (var tab in game.tabs) {
+            if (game.tabs[tab].tabId === name) {
+                this.tab = game.tabs[tab];
                 break;
             }
         }
@@ -271,7 +284,7 @@ CraftManager.prototype = {
         // determine actual amount after crafting upgrades
         amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
 
-        message('Kittens Craft: +' + amount + ' ' + name);
+        message('Craft: +' + amount + ' ' + name);
     },
     canCraft: function (name, amount) {
         var craft = this.getCraft(name);
@@ -369,12 +382,12 @@ TradeManager.prototype = {
         if (!name || 1 > amount) return;
 
         var race = this.getRace(name);
-        var tradeBtn = this.getTradeButton(race.title);
+        var button = this.getTradeButton(race.title);
 
-        if (!race.unlocked || !tradeBtn.hasResources() || !options.auto.trade.items[name].enabled) return;
+        if (!race.unlocked || !button.hasResources() || !options.auto.trade.items[name].enabled) return;
 
-        tradeBtn.tradeMultiple(amount);
-        message('Kittens Trade: ' + amount + 'x ' + race.title);
+        button.tradeMultiple(amount);
+        message('Trade: ' + amount + 'x ' + race.title);
     },
     getLowestTradeAmount: function (name) {
         var amount = 0;
@@ -397,7 +410,7 @@ TradeManager.prototype = {
 
         var prices = prices = this.getRace(name).buys;
 
-        for (i in prices) {
+        for (var i in prices) {
             var price = prices[i];
 
             materials[price.name] = price.val;
