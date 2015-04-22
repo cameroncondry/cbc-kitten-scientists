@@ -78,8 +78,8 @@ var options = {
             }
         },
         trade: {
-            enabled: false, trigger: 0.99, items: {
-                zebras: {max: 'titanium', require: false, season: 'summer', enabled: true}
+            enabled: true, trigger: 0.95, items: {
+                zebras: {trigger: 0.99, max: 'titanium', require: false, season: 'summer', enabled: true}
             }
         }
     }
@@ -207,11 +207,15 @@ Engine.prototype = {
             var trade = trades[name];
             var max = !trade.max ? false : craftManager.getResource(trade.max);
             var require = !trade.require ? false : craftManager.getResource(trade.require);
+            var requireTrigger = trade.trigger;
             var season = game.calendar.getCurSeason().name;
+            var gold = craftManager.getResource('gold');
 
-            if ((!trade.season || trade.season === season)
+            // oh dear, this case is complicated ...
+            if ((trigger <= gold.value / gold.maxValue)
+                && (!trade.season || trade.season === season)
                 && (!max || 1 !== max.value / max.maxValue)
-                && (!require || trigger <= require.value / require.maxValue)) {
+                && (!require || requireTrigger <= require.value / require.maxValue)) {
                 tradeManager.trade(name, tradeManager.getLowestTradeAmount(name));
             }
         }
@@ -384,9 +388,12 @@ TradeManager.prototype = {
         if (!name || 1 > amount) return;
 
         var race = this.getRace(name);
+
+        if (!race.unlocked) return;
+
         var button = this.getTradeButton(race.title);
 
-        if (!race.unlocked || !button.hasResources() || !options.auto.trade.items[name].enabled) return;
+        if (!button.hasResources() || !options.auto.trade.items[name].enabled) return;
 
         button.tradeMultiple(amount);
         message('Trade: ' + amount + 'x ' + race.title);
@@ -570,7 +577,7 @@ var getToggle = function (toggleName, text) {
 
         var list = $('<ul/>', {
             id: 'toggle-options-list-' + toggleName,
-            css: {display: 'none', paddingLeft: '20px', width: '100%'}
+            css: {display: 'none', paddingLeft: '20px', width: '80%'}
         });
 
         // fill out list with toggle items
