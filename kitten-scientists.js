@@ -159,8 +159,11 @@ Engine.prototype = {
         if (!festivalButton.enabled || !festivalButton.visible) return;
 
         if (game.calendar.festivalDays === 0) {
-            message('A festival has been held!');
             $(festivalButton.domNode).click();
+            if (game.calendar.festivalDays !== 0) {
+                message('A festival has been held!');
+            }
+            
         }
     },
     sendHunters: function () {
