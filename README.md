@@ -6,9 +6,7 @@ Kitten Scientists is a simple automation script for the complex kittens. [Kitten
 
 Create the following JavaScript bookmarklet (create a new bookmark and past this as the URL):
 
-```
-javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.js';d.body.appendChild(s);})();
-```
+    javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.js';d.body.appendChild(s);})();
 
 ## Functionality
 
@@ -23,49 +21,78 @@ javascript:(function(){var d=document,s=d.createElement('script');s.src='https:/
 
 Crafts the following resources when at 95% capacity, will only use 50% of total resources:
 
-- wood
-- beam
-- slab
-- steel
-- plate
+    wood:           enabled: true  
+    beam:           enabled: true  
+    slab:           enabled: true  
+    steel:          enabled: true  
+    plate:          enabled: true  
+    alloy:          enabled: false  
+    concrete:       enabled: false  
+    gear:           enabled: false  
+    scaffold:       enabled: false  
+    ship:           enabled: false  
+    tanker:         enabled: false  
+    parchment:      enabled: true  
+    megalith:       enabled: false  
 
-Luxury crafts the following resources when at 99% capacity, will only use 50% of total resources:
+Luxury crafts follows the same rules as normal crafts except they are auto built during hunts:
 
-- manuscripts
-- compendiums
+    manuscript:     enabled: true  
+    compendium:     enabled: true  
+    blueprint:      enabled: false  
 
 #### Buildings
 
-Builds the following buildings when required resource is at 75% capacity, will only build while on the "Bonfire" tab:
+Builds the following buildings when required resource is at 75% capacity:
 
-- field
-- pasture
-- mine
-- library
-- academy
-- barn
-- workshop
-- lumberMill
-- aqueduct
-- unicornPasture
-- tradepost
-
-Housing will build the following population buildings when required resource is at 85% capacity:
-
-- hut
-- logHouse
-- mansion
+    // science
+    library:        enabled: true
+    academy:        enabled: true
+    observatory:    enabled: true
+    
+    // craft bonuses
+    workshop:       enabled: true
+    factory:        enabled: true
+    
+    // production
+    field:          enabled: true
+    pasture:        enabled: true
+    mine:           enabled: true
+    lumberMill:     enabled: true
+    aqueduct:       enabled: true
+    oilWell:        enabled: true
+    quarry:         enabled: true
+    
+    // conversion
+    smelter:        enabled: true
+    
+    // storage
+    barn:           enabled: true
+    harbor:         enabled: false
+    warehouse:      enabled: false
+    
+    // housing
+    hut: enabled: false
+    logHouse:       enabled: false
+    mansion:        enabled: false
+    
+    // other
+    amphitheatre:   enabled: true
+    tradepost:      enabled: true
+    chapel:         enabled: true
+    temple:         enabled: true
+    unicornPasture: enabled: true
+    ziggurat:       enabled: true
 
 #### Trading
 
-Trades with races when gold and catpower are at 95% capacity. Uses 50% of the amount available, divided among races based on a separate race amount factor. Note that the actual amount traded per race is the trade amount multiplied by the per-race amount. Ex: we will trade 12.5% of the total available gold and catpower with zebras in the winter (but no more than 50% of the total slab in one trade).
+Trades with the following races when gold is at 90% and the maximum resource is not met. Ex: zebras will trade when gold is at 90% and titanium is below 99% to prevent over trading.
 
-- zebras, 25% of the trade total in winter
-- zebras, 25% of the trade total in spring
+    zebras: (summer) enabled true
 
 #### Cat Power
 
-Hunts when catpower is at 95% capacity and builds parchments before the hunt is sent.
+Hunts when catpower is at 95% capacity and builds luxury items before the hunt is sent.
 
 #### Religion
 
@@ -90,3 +117,5 @@ Thanks to these past and present contributors!
 - [SphtMarathon](https://www.reddit.com/user/SphtMarathon)
 - [jcranmer](https://github.com/jcranmer)
 - [mjdillon](https://github.com/mjdillon)
+- [Azulan](https://github.com/Azulan)
+- [mmccubbing](https://github.com/mmccubbing)

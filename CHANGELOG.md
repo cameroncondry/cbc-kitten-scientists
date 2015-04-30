@@ -1,8 +1,20 @@
 ## History
 
-### 2015.04.06 - Version 1.1.7
+### 2015.04.06 - Version 1.2.0
 
+- Added granular controls for build orders. #8 #12 #21
+- Added a bitcoin address by request. #16
+- Updated README with alterations to build orders.
+- Removed restriction of sitting on the "Bonfire" tab for auto building.
 
+Thanks for contributing code:
+[jacob-keller](https://github.com/jacob-keller)
+[trini](https://github.com/trini)
+[sjdrodge](https://github.com/sjdrodge)
+
+Thanks for contributing ideas:
+[Azulan](https://github.com/Azulan)
+[mmccubbing](https://github.com/mmccubbing)
 
 ### 2015.04.06 - Version 1.1.6 - 1.1.6.1
 

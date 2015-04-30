@@ -15,6 +15,7 @@ var options = {
         faith: {enabled: true, trigger: 0.99},
         festival: {enabled: true},
         hunt: {enabled: true, trigger: 0.95},
+        // @TODO: use the internal list of building buttons on the tab manager to get available buildings
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
@@ -44,9 +45,9 @@ var options = {
                 warehouse: {require: false, enabled: false},
 
                 // housing
-                hut: {require: 'wood', enabled: true},
-                logHouse: {require: 'minerals', enabled: true},
-                mansion: {require: 'titanium', enabled: true},
+                hut: {require: 'wood', enabled: false},
+                logHouse: {require: 'minerals', enabled: false},
+                mansion: {require: 'titanium', enabled: false},
 
                 // other
                 amphitheatre: {require: 'minerals', enabled: true},
@@ -77,9 +78,10 @@ var options = {
                 megalith: {require: false, stock: 0, type: 'craft', enabled: false}
             }
         },
+        // @TODO: enable other races for trading
         trade: {
-            enabled: true, trigger: 0.95, items: {
-                zebras: {trigger: 0.99, max: 'titanium', require: false, season: 'summer', enabled: true}
+            enabled: true, trigger: 0.90, items: {
+                zebras: {trigger: 0.95, max: 'titanium', require: false, season: 'summer', enabled: true}
             }
         }
     }
@@ -123,11 +125,13 @@ var warning = function () {
 // =================================
 
 var Engine = function () {
+    this.buildManager = new BuildManager();
     this.craftManager = new CraftManager();
     this.tradeManager = new TradeManager();
 };
 
 Engine.prototype = {
+    buildManager: undefined,
     craftManager: undefined,
     tradeManager: undefined,
     loop: undefined,
@@ -149,13 +153,30 @@ Engine.prototype = {
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.hunt.enabled) this.sendHunters();
+        if (options.auto.build.enabled) this.build();
         if (options.auto.craft.enabled) this.craftType('craft');
         if (options.auto.trade.enabled) this.startTrade();
     },
+    build: function () {
+        var builds = options.auto.build.items;
+        var buildManager = this.buildManager;
+        var craftManager = this.craftManager;
+        var trigger = options.auto.build.trigger;
+
+        for (var name in builds) {
+            var build = builds[name];
+            var require = !build.require ? false : craftManager.getResource(build.require);
+
+            if (!require || trigger <= require.value / require.maxValue) {
+                buildManager.build(name);
+            }
+        }
+    },
+    // @TODO: remove the type check after adding configurable stocks
     craftType: function (type) {
         var crafts = options.auto.craft.items;
-        var trigger = options.auto.craft.trigger;
         var manager = this.craftManager;
+        var trigger = options.auto.craft.trigger;
 
         for (var name in crafts) {
             var craft = crafts[name];
@@ -198,18 +219,19 @@ Engine.prototype = {
         }
     },
     startTrade: function () {
-        var trades = options.auto.trade.items;
-        var trigger = options.auto.trade.trigger;
         var craftManager = this.craftManager;
         var tradeManager = this.tradeManager;
+        var trades = options.auto.trade.items;
+        var trigger = options.auto.trade.trigger;
 
         for (var name in trades) {
             var trade = trades[name];
+
+            var gold = craftManager.getResource('gold');
             var max = !trade.max ? false : craftManager.getResource(trade.max);
             var require = !trade.require ? false : craftManager.getResource(trade.require);
             var requireTrigger = trade.trigger;
             var season = game.calendar.getCurSeason().name;
-            var gold = craftManager.getResource('gold');
 
             // oh dear, this case is complicated ...
             if ((trigger <= gold.value / gold.maxValue)
@@ -257,16 +279,29 @@ var BuildManager = function () {
 
 BuildManager.prototype = {
     manager: undefined,
+    build: function (name) {
+        var button = this.getBuildButton(name);
+
+        // @TODO: make buildings honor resource stocks
+        if (!button || !button.enabled || !button.hasResources() || !options.auto.build.items[name].enabled) return;
+
+        button.build(this.getBuild(name));
+        message('Build: +1 ' + button.name);
+    },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
     },
     getBuildButton: function (name) {
-        //var buttons = this.manager.getButtons();
-        //var label = this.getBuild(name).label;
-        //
-        //for (var i in buttons) {
-        //    if (buttons[i].name === label) return buttons[i];
-        //}
+        var manager = this.manager.render();
+
+        var buttons = manager.tab.buttons;
+        var label = this.getBuild(name).label;
+
+        for (var i in buttons) {
+            if (buttons[i].name === label) return buttons[i];
+        }
+
+        warning('unable to find building with label ' + label);
     }
 };
 
@@ -297,7 +332,7 @@ CraftManager.prototype = {
         var enabled = options.auto.craft.items[name].enabled;
         var result = false;
 
-        if (enabled && craft.unlocked) {
+        if (craft.unlocked && enabled) {
             result = true;
 
             for (var i in craft.prices) {
@@ -442,20 +477,6 @@ TradeManager.prototype = {
         warning('unable to find trade button for ' + name);
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ==============================
 // Configure overall page display
