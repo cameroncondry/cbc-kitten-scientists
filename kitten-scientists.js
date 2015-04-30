@@ -309,8 +309,6 @@ BuildManager.prototype = {
         for (var i in buttons) {
             if (buttons[i].name === label) return buttons[i];
         }
-
-        warning('unable to find building with label ' + label);
     }
 };
 
