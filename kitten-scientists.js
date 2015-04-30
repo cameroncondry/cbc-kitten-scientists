@@ -344,7 +344,12 @@ CraftManager.prototype = {
 
             for (var i in craft.prices) {
                 var price = craft.prices[i];
-                var value = this.getValueAvailable(price.name);
+                var name = price.name;
+                var value = this.getValueAvailable(name);
+                // Adjust name back to correct spelling
+                if ('compedium' === name) name = 'compendium';
+                // Adjust for stock
+                value -= options.stock[name] || 0;
 
                 if (value < price.val * amount) {
                     result = false;
