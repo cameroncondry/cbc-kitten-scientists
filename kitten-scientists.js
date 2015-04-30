@@ -15,7 +15,6 @@ var options = {
         faith: {enabled: true, trigger: 0.99},
         festival: {enabled: true},
         hunt: {enabled: true, trigger: 0.95},
-        // @TODO: use the internal list of building buttons on the tab manager to get available buildings
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
@@ -38,6 +37,12 @@ var options = {
 
                 // conversion
                 smelter: {require: 'minerals', enabled: true},
+                biolab: {require: 'science', enabled: false},
+                calciner: {require: 'titanium', enabled: false},
+                reactor: {require: 'titanium', enabled: false},
+                accelerator: {require: 'titanium', enabled: false},
+                steamworks: {require: false, enabled: false},
+                magneto: {require: false, enabled: false},
 
                 // storage
                 barn: {require: 'wood', enabled: true},
@@ -55,7 +60,8 @@ var options = {
                 chapel: {require: 'minerals', enabled: true},
                 temple: {require: 'gold', enabled: true},
                 unicornPasture: {require: false, enabled: true},
-                ziggurat: {require: false, enabled: true}
+                ziggurat: {require: false, enabled: true},
+                chronosphere: {require: 'unobtanium', enabled: true}
             }
         },
         craft: {
@@ -192,7 +198,10 @@ Engine.prototype = {
 
         if (game.calendar.festivalDays === 0 && villageManager.tab.festivalBtn.hasResources()) {
             villageManager.tab.festivalBtn.onClick();
-            message('A festival has been held!');
+
+            if (game.calendar.festivalDays !== 0) {
+                message('A festival has been held!');
+            }
         }
     },
     observeGameLog: function () {

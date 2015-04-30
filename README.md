@@ -65,6 +65,12 @@ Builds the following buildings when required resource is at 75% capacity:
     
     // conversion
     smelter:        enabled: true
+    biolab:         enabled: false
+    calciner:       enabled: false
+    reactor:        enabled: false
+    accelerator:    enabled: false
+    steamworks:     enabled: false
+    magneto:        enabled: false
     
     // storage
     barn:           enabled: true
@@ -72,7 +78,7 @@ Builds the following buildings when required resource is at 75% capacity:
     warehouse:      enabled: false
     
     // housing
-    hut: enabled: false
+    hut:            enabled: false
     logHouse:       enabled: false
     mansion:        enabled: false
     
@@ -83,6 +89,7 @@ Builds the following buildings when required resource is at 75% capacity:
     temple:         enabled: true
     unicornPasture: enabled: true
     ziggurat:       enabled: true
+    choronosphere:  enabled: true
 
 #### Trading
 

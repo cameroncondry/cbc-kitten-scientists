@@ -6,6 +6,8 @@
 - Added a bitcoin address by request. #16
 - Updated README with alterations to build orders.
 - Removed restriction of sitting on the "Bonfire" tab for auto building.
+- Added all buildings and crafts to auto crafting. (requires toggling on in some cases)
+- Stocks are enabled but require manual updating. Ex: "options.auto.craft.items.wood.stock = 5000;" 
 
 Thanks for contributing code:
 [jacob-keller](https://github.com/jacob-keller)
