@@ -4,11 +4,9 @@ Kitten Scientists is a simple automation script for the complex kittens. [Kitten
 
 ## Basic Usage
 
-Create the following JavaScript bookmarklet:
+Create the following JavaScript bookmarklet (create a new bookmark and past this as the URL):
 
-```
-javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.js';d.body.appendChild(s);})();
-```
+    javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.js';d.body.appendChild(s);})();
 
 ## Functionality
 
@@ -23,49 +21,85 @@ javascript:(function(){var d=document,s=d.createElement('script');s.src='https:/
 
 Crafts the following resources when at 95% capacity, will only use 50% of total resources:
 
-- wood
-- beam
-- slab
-- steel
-- plate
+    wood:           enabled: true  
+    beam:           enabled: true  
+    slab:           enabled: true  
+    steel:          enabled: true  
+    plate:          enabled: true  
+    alloy:          enabled: false  
+    concrete:       enabled: false  
+    gear:           enabled: false  
+    scaffold:       enabled: false  
+    ship:           enabled: false  
+    tanker:         enabled: false  
+    parchment:      enabled: true  
+    megalith:       enabled: false  
 
-Luxury crafts the following resources when at 99% capacity, will only use 50% of total resources:
+Luxury crafts follows the same rules as normal crafts except they are auto built during hunts:
 
-- manuscripts
-- compendiums
+    manuscript:     enabled: true  
+    compendium:     enabled: true  
+    blueprint:      enabled: false  
 
 #### Buildings
 
-Builds the following buildings when required resource is at 75% capacity, will only build while on the "Bonfire" tab:
+Builds the following buildings when required resource is at 75% capacity:
 
-- field
-- pasture
-- mine
-- library
-- academy
-- barn
-- workshop
-- lumberMill
-- aqueduct
-- unicornPasture
-- tradepost
-
-Housing will build the following population buildings when required resource is at 85% capacity:
-
-- hut
-- logHouse
-- mansion
+    // science
+    library:        enabled: true
+    academy:        enabled: true
+    observatory:    enabled: true
+    
+    // craft bonuses
+    workshop:       enabled: true
+    factory:        enabled: true
+    
+    // production
+    field:          enabled: true
+    pasture:        enabled: true
+    mine:           enabled: true
+    lumberMill:     enabled: true
+    aqueduct:       enabled: true
+    oilWell:        enabled: true
+    quarry:         enabled: true
+    
+    // conversion
+    smelter:        enabled: true
+    biolab:         enabled: false
+    calciner:       enabled: false
+    reactor:        enabled: false
+    accelerator:    enabled: false
+    steamworks:     enabled: false
+    magneto:        enabled: false
+    
+    // storage
+    barn:           enabled: true
+    harbor:         enabled: false
+    warehouse:      enabled: false
+    
+    // housing
+    hut:            enabled: false
+    logHouse:       enabled: false
+    mansion:        enabled: false
+    
+    // other
+    amphitheatre:   enabled: true
+    tradepost:      enabled: true
+    chapel:         enabled: true
+    temple:         enabled: true
+    unicornPasture: enabled: true
+    ziggurat:       enabled: true
+    choronosphere:  enabled: true
 
 #### Trading
 
-Trades with races when gold and catpower are at 95% capacity. Uses 50% of the amount available, divided among races based on a separate race amount factor. Note that the actual amount traded per race is the trade amount multiplied by the per-race amount. Ex: we will trade 12.5% of the total available gold and catpower with zebras in the winter (but no more than 50% of the total slab in one trade).
+Trades with the following races when gold is at 90% and the maximum resource is not met. Ex: zebras will trade when gold is at 90% and titanium is below 99% to prevent over trading.
 
-- zebras, 25% of the trade total in winter
-- zebras, 25% of the trade total in spring
+    zebras: (summer) enabled true
 
 #### Cat Power
 
-Hunts when catpower is at 95% capacity and builds parchments before the hunt is sent.
+Hunts when catpower is at 95% capacity and builds luxury items before the hunt is sent.
 
 #### Religion
 
@@ -75,59 +109,20 @@ Praises when faith is at 99% capacity.
 
 Observes astronomical events.
 
-## History
+## Contributors
 
-### 2015.04.06 - Version 1.1.6.1
+If you would like to contribute to the Kitten Scientists, then you can do so in these ways:
 
-- Moved parchments out of the luxury goods until fine controls are implemented.
+- Submit issues or bugs you find, or functionality that would improve the project.
+- Fork the repository, add some functionality, then submit a pull request.
 
-### 2015.04.06 - Version 1.1.6
+Thanks to these past and present contributors!
 
-- Quality of life changes in internal codebase. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Added automated trading and enabled trading with Zebras. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Specified resource to watch with unicorn pastures. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Moved parchment into the "luxury" goods category. (thanks [jacob-keller](https://github.com/jacob-keller))
-- Added tradepost to the list of buildings and reprioritized order. (thanks [trini](https://github.com/trini))
-- Reprioritized crafting to happen after building. (thanks [trini](https://github.com/trini))
-- Updated the build internals to use the buttons directly. (reverted) (thanks [jacob-keller](https://github.com/jacob-keller))
-
-### 2015.03.11 - Version 1.1.5
-
-- Tweaked styles to remove extra margin around interface buttons.
-- Fixed a bug with praising, due to refactoring. (thanks [sjdrodge](https://github.com/sjdrodge))
-- Fixed a bug with catnip calculations.
-- Removed lingering console.log statements. (thanks [sjdrodge](https://github.com/sjdrodge))
-
-### 2015.03.11 - Version 1.1.4
-
-- Major refactor of codebase to have cleaner lines between responsibilities.
-- Stacked options in a two column layout.
-- Luxury resources now have their own toggle.
-
-### 2015.03.10 - Version 1.1.3
-
-- Updated Auto Faith to wait for 99% faith capacity.
-- Lowered minimum capacity of parchments. (thanks [trini](https://github.com/trini))
-- Move luxury resources out of Auto Hunt. (thanks [SphtMarathon](https://www.reddit.com/user/SphtMarathon))
-- Added safe guards for catnip in the winter. (thanks [jcranmer](https://github.com/jcranmer))
-
-### 2015.03.08 - Version 1.1.2
-
-- Updated auto housing to be toggled and added mansions.
-- Added auto housing option. (thanks [mjdillon](https://github.com/mjdillon))
-- Plates moved for priority over steel. (thanks [mjdillon](https://github.com/mjdillon))
-
-### 2015.03.03 - Version 1.1.1
-
-- Added barns to the auto build list.
-
-### 2015.02.03 - Version 1.1.0
-
-- Set up the ability to toggle auto crafting, building, hunting, and praising.
-- Simplified css rule insertion and tweaked displayed colors.
-- Added logging into the GameLog to prevent confusion.
-- Updated crafting log to include the warehouse bonuses.
-
-### 2015.25.02 - Version 1.0.0
-
-- Initial release
+- [jacob-keller](https://github.com/jacob-keller)
+- [sjdrodge](https://github.com/sjdrodge)
+- [trini](https://github.com/trini)
+- [SphtMarathon](https://www.reddit.com/user/SphtMarathon)
+- [jcranmer](https://github.com/jcranmer)
+- [mjdillon](https://github.com/mjdillon)
+- [Azulan](https://github.com/Azulan)
+- [mmccubbing](https://github.com/mmccubbing)
