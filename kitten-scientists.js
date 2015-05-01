@@ -658,12 +658,15 @@ var getToggle = function (toggleName, text) {
 
         var list = $('<ul/>', {
             id: 'toggle-options-list-' + toggleName,
-            css: {display: 'none', paddingLeft: '20px', width: '80%'}
+            css: {display: 'none', paddingLeft: '20px'}
         });
 
         // fill out list with toggle items
         for (var itemName in auto.items) {
-            list.append(getOption(itemName, auto.items[itemName]));
+            if (toggleName === 'trade')
+                list.append(getTradeToggle(itemName, auto.items[itemName]));
+            else
+                list.append(getOption(itemName, auto.items[itemName]));
         }
 
         button.on('click', function () {
@@ -672,6 +675,83 @@ var getToggle = function (toggleName, text) {
 
         element.append(button, list);
     }
+
+    return element;
+};
+
+var getTradeToggle = function (name, option) {
+    var element = $('<li/>');
+
+    var label = $('<label/>', {
+        'for': 'toggle-' + name,
+        text: ucfirst(name)
+    });
+
+    var input = $('<input/>', {
+        id: 'toggle-' + name,
+        type: 'checkbox'
+    });
+
+    if (option.enabled) {
+        input.prop('checked', 'checked');
+    }
+
+    element.append(input, label);
+
+    var button = $('<div/>', {
+        id: 'toggle-seasons-' + name,
+        text: 'toggle seasons',
+        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+    });
+
+    var list = $('<ul/>', {
+        id: 'toggle-seasons-list-' + name,
+        css: {display: 'none', paddingLeft: '20px'}
+    });
+
+    // fill out the list with seasons
+    list.append(getSeason(name, 'spring', option));
+    list.append(getSeason(name, 'summer', option));
+    list.append(getSeason(name, 'autunn', option));
+    list.append(getSeason(name, 'winter', option));
+
+    button.on('click', function () {
+        list.toggle();
+    });
+
+    element.append(button, list);
+
+    return element;
+};
+
+var getSeason = function (name, season, option) {
+    var element = $('<li/>');
+
+    var label = $('<label/>', {
+        'for': 'toggle-' + name + '-' + season,
+        text: ucfirst(season)
+    });
+
+    var input = $('<input/>', {
+        id: 'toggle-' + name + '-' + season,
+        type: 'checkbox'
+    });
+
+    if (option[season]) {
+        input.prop('checked', 'checked');
+    }
+
+    input.on('change', function () {
+        if (input.is(':checked')) {
+            options.auto.trade.items[name][season] = true;
+            message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
+        } else {
+            option[season] = false;
+            message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
+        }
+    });
+
+    element.append(input, label);
 
     return element;
 };
