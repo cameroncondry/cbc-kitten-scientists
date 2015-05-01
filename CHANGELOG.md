@@ -1,5 +1,11 @@
 ## History
 
+### 2015.04.30 - Version 1.2.1
+
+- Added mint to the building list. (thanks [lightrider44](https://www.reddit.com/user/lightrider44))
+- Removed trading cap temporarily. This will need re-enabled with better cap measures.
+- Added the remaining trade possibilities.
+
 ### 2015.04.30 - Version 1.2.0
 
 - Added granular controls for build orders. #8 #12 #21

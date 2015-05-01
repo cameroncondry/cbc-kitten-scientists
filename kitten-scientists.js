@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.2.0';
+var version = 'Kitten Scientists version 1.2.1';
 var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
 var game = gamePage;
 
@@ -59,6 +59,7 @@ var options = {
                 tradepost: {require: 'gold', enabled: true},
                 chapel: {require: 'minerals', enabled: true},
                 temple: {require: 'gold', enabled: true},
+                mint: {require: false, enabled: true},
                 unicornPasture: {require: false, enabled: true},
                 ziggurat: {require: false, enabled: true},
                 chronosphere: {require: 'unobtanium', enabled: true}
@@ -87,7 +88,14 @@ var options = {
         // @TODO: enable other races for trading
         trade: {
             enabled: true, trigger: 0.90, items: {
-                zebras: {trigger: 0.95, max: 'titanium', require: false, season: 'summer', enabled: true}
+                zebras: {trigger: 0.95, max: 'titanium', require: false, season: 'summer', enabled: true},
+                lizards: {trigger: 0.95, max: false, require: 'minerals', season: 'summer', enabled: false},
+                sharks: {trigger: 0.95, max: false, require: 'iron', season: 'winter', enabled: false},
+                griffins: {trigger: 0.95, max: false, require: 'wood', season: 'autumn', enabled: false},
+                nagas: {trigger: 0.95, max: false, require: false, season: 'spring', enabled: false},
+                spiders: {trigger: 0.95, max: false, require: false, season: 'autumn', enabled: false},
+                dragons: {trigger: 0.95, max: false, require: 'uranium', season: false, enabled: false},
+                leviathans: {trigger: 0.95, max: false, require: 'unobtainium ', season: false, enabled: false}
             }
         }
     }
@@ -245,7 +253,7 @@ Engine.prototype = {
             // oh dear, this case is complicated ...
             if ((trigger <= gold.value / gold.maxValue)
                 && (!trade.season || trade.season === season)
-                && (!max || 1 !== max.value / max.maxValue)
+                //&& (!max || 1 !== max.value / max.maxValue) // trading max cap controls need to consider all resources instead of one
                 && (!require || requireTrigger <= require.value / require.maxValue)) {
                 tradeManager.trade(name, tradeManager.getLowestTradeAmount(name));
             }
