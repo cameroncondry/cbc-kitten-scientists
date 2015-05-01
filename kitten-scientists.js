@@ -673,6 +673,7 @@ optionsListElement.append(getToggle('festival', 'Festival'));
 // add donation address to bottom of list
 var donate = $('<li/>').append($('<a/>', {
     href: 'bitcoin:' + address + '?amount=0.005&label=Kittens Donation',
+    target: '_blank',
     text: address
 })).prepend($('<img/>', {
     css: {height: '15px', width: '15px', padding: '3px 4px 0 4px', verticalAlign: 'bottom'},
