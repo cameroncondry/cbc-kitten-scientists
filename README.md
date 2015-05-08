@@ -95,7 +95,14 @@ Builds the following buildings when required resource is at 75% capacity:
 
 Trades with the following races when gold is at 90% and the maximum resource is not met. Ex: zebras will trade when gold is at 90% and titanium is below 99% to prevent over trading.
 
-    zebras: (summer) enabled true
+    zebras: (summer)    enabled true
+    lizards: (summer)   enabled: false
+    sharks: (winter)    enabled: false
+    griffins: (autumn)  enabled: false
+    nagas: (spring)     enabled: false
+    spiders: (autumn)   enabled: false
+    dragons: (all)      enabled: false
+    leviathans: (all)   enabled: false
 
 #### Cat Power
 
