@@ -295,15 +295,16 @@ TabManager.prototype = {
 
 var BuildManager = function () {
     this.manager = new TabManager('Bonfire');
+    this.crafts = new CraftManager();
 };
 
 BuildManager.prototype = {
     manager: undefined,
+    crafts: undefined,
     build: function (name) {
         var button = this.getBuildButton(name);
 
-        // @TODO: make buildings honor resource stocks
-        if (!button || !button.enabled || !button.hasResources() || !options.auto.build.items[name].enabled) return;
+        if (!button || !button.enabled || !this.hasResources(name) || !options.auto.build.items[name].enabled) return;
 
         button.build(this.getBuild(name));
         message('Build: +1 ' + button.name);
@@ -320,6 +321,17 @@ BuildManager.prototype = {
         for (var i in buttons) {
             if (buttons[i].name === label) return buttons[i];
         }
+    },
+    hasResources: function (name) {
+        var prices = game.bld.getPrices(name);
+
+        for (var i in prices) {
+            price = prices[i];
+            var res = this.crafts.getValueAvailable(price.name);
+            if (res < price.val) return false;
+        }
+
+        return true;
     }
 };
 
