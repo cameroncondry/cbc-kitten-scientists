@@ -85,17 +85,16 @@ var options = {
                 megalith: {require: false, stock: 0, type: 'craft', enabled: false}
             }
         },
-        // @TODO: enable other races for trading
         trade: {
-            enabled: true, trigger: 0.90, items: {
-                zebras: {trigger: 0.95, max: 'titanium', require: false, season: 'summer', enabled: true},
-                lizards: {trigger: 0.95, max: false, require: 'minerals', season: 'summer', enabled: false},
-                sharks: {trigger: 0.95, max: false, require: 'iron', season: 'winter', enabled: false},
-                griffins: {trigger: 0.95, max: false, require: 'wood', season: 'autumn', enabled: false},
-                nagas: {trigger: 0.95, max: false, require: false, season: 'spring', enabled: false},
-                spiders: {trigger: 0.95, max: false, require: false, season: 'autumn', enabled: false},
-                dragons: {trigger: 0.95, max: false, require: 'uranium', season: false, enabled: false},
-                leviathans: {trigger: 0.95, max: false, require: 'unobtainium ', season: false, enabled: false}
+            enabled: true, trigger: 0.85, items: {
+                dragons: {trigger: 0.99, require: 'titanium', summer: true, autumn: true, winter: false, spring: true, enabled: false},
+                zebras: {trigger: 0.99, require: false, summer: true, autumn: false, winter: false, spring: false, enabled: true},
+                lizards: {trigger: 0.95, require: 'minerals', summer: true, autumn: false, winter: false, spring: false, enabled: false},
+                sharks: {trigger: 0.95, require: 'iron', summer: false, autumn: false, winter: true, spring: false, enabled: false},
+                griffins: {trigger: 0.99, require: 'wood', summer: true, autumn: false, winter: false, spring: false, enabled: false},
+                nagas: {trigger: 0.95, require: false, summer: false, autumn: false, winter: false, spring: true, enabled: false},
+                spiders: {trigger: 0.95, require: false, summer: false, autumn: true, winter: false, spring: true, enabled: false},
+                leviathans: {trigger: 0.99, require: 'unobtainium', summer: true, autumn: true, winter: true, spring: true, enabled: false},
             }
         }
     }
@@ -239,22 +238,26 @@ Engine.prototype = {
         var craftManager = this.craftManager;
         var tradeManager = this.tradeManager;
         var trades = options.auto.trade.items;
-        var trigger = options.auto.trade.trigger;
+        var gold = craftManager.getResource('gold');
+        var power = craftManager.getResource('catpower');
+
+        // Only trade if we have enough gold and catpower. Check once at start so that we don't starve multiple races
+        if (options.auto.trade.trigger >= gold.value / gold.maxValue) return;
+        if (options.auto.trade.trigger >= power.value / power.maxValue) return;
 
         for (var name in trades) {
             var trade = trades[name];
-
-            var gold = craftManager.getResource('gold');
-            var max = !trade.max ? false : craftManager.getResource(trade.max);
-            var require = !trade.require ? false : craftManager.getResource(trade.require);
-            var requireTrigger = trade.trigger;
             var season = game.calendar.getCurSeason().name;
 
-            // oh dear, this case is complicated ...
-            if ((trigger <= gold.value / gold.maxValue)
-                && (!trade.season || trade.season === season)
-                //&& (!max || 1 !== max.value / max.maxValue) // trading max cap controls need to consider all resources instead of one
-                && (!require || requireTrigger <= require.value / require.maxValue)) {
+            // Only check if we are in season and enabled
+            if (!trade.enabled) continue;
+            if (!trade[season]) continue;
+
+            var require = !trade.require ? false : craftManager.getResource(trade.require);
+            var requireTrigger = trade.trigger;
+
+            // If we have enough to trigger the check, then attempt to trade
+            if (!require || requireTrigger <= require.value / require.maxValue) {
                 tradeManager.trade(name, tradeManager.getLowestTradeAmount(name));
             }
         }
@@ -433,7 +436,6 @@ TradeManager.prototype = {
     craftManager: undefined,
     manager: undefined,
     trade: function (name, amount) {
-        amount = Math.floor(amount);
 
         if (!name || 1 > amount) return;
 
@@ -449,17 +451,60 @@ TradeManager.prototype = {
         message('Trade: ' + amount + 'x ' + race.title);
     },
     getLowestTradeAmount: function (name) {
-        var amount = 0;
+        var amount = -1;
+        var highestCapacity = undefined;
         var consume = options.consume;
         var materials = this.getMaterials(name);
+        var race = this.getRace(name);
 
         for (var i in materials) {
             var total = this.craftManager.getValueAvailable(i) * consume / materials[i];
 
-            amount = (0 === amount || total < amount) ? total : amount;
+            amount = (-1 === amount || total < amount) ? total : amount;
         }
 
-        return amount;
+        // Loop through the items obtained by the race, and determine
+        // which good has the most space left. Once we've determined this,
+        // reduce the amount by this capacity. This ensures that we continue to trade
+        // as long as at least one resource has capacity, and we never over-trade.
+        for (var s in race.sells) {
+            var item = race.sells[s];
+            var resource = this.craftManager.getResource(item.name);
+            var max = 0;
+
+            // No need to process resources that don't cap
+            if (!resource.maxValue) continue;
+
+            // Zebras special cased titanium taken directly from game code
+            if (race.name == "zebras" && item.name == "titanium") {
+                var val = 1.5 + (1.5 * game.resPool.get("ship").value / 100 * 2);
+                max = Math.ceil(val);
+            } else {
+                var sratio = item.seasons[game.calendar.getCurSeason().name];
+                var tratio = self.game.bld.getEffect("tradeRatio");
+                var val = item.value + item.value * tratio;
+
+                max = val * sratio * (1 + item.delta/2);
+            }
+
+            capacity = (resource.maxValue - resource.value) / max;
+
+            highestCapacity = (capacity < highestCapacity) ? highestCapacity : capacity;
+        }
+
+        // We must take the ceiling of capacity so that we will trade as long
+        // as there is any room, even if it doesn't have exact space. Otherwise
+        // we seem to starve trading altogether.
+        highestCapacity = Math.ceil(highestCapacity);
+
+        // Now that we know the most we *should* trade for, check to ensure that
+        // we trade for our max cost, or our max capacity, whichever is lower.
+        // This helps us prevent trading for resources we can't store. Note that we
+        // essentially ignore blueprints here. In addition, if highestCapacity was never set,
+        // then we just 
+        amount = (highestCapacity < amount) ? highestCapacity : amount;
+
+        return Math.floor(amount);
     },
     getMaterials: function (name) {
         var materials = {catpower: 50, gold: 15};
@@ -613,12 +658,15 @@ var getToggle = function (toggleName, text) {
 
         var list = $('<ul/>', {
             id: 'toggle-options-list-' + toggleName,
-            css: {display: 'none', paddingLeft: '20px', width: '80%'}
+            css: {display: 'none', paddingLeft: '20px'}
         });
 
         // fill out list with toggle items
         for (var itemName in auto.items) {
-            list.append(getOption(itemName, auto.items[itemName]));
+            if (toggleName === 'trade')
+                list.append(getTradeToggle(itemName, auto.items[itemName]));
+            else
+                list.append(getOption(itemName, auto.items[itemName]));
         }
 
         button.on('click', function () {
@@ -627,6 +675,83 @@ var getToggle = function (toggleName, text) {
 
         element.append(button, list);
     }
+
+    return element;
+};
+
+var getTradeToggle = function (name, option) {
+    var element = $('<li/>');
+
+    var label = $('<label/>', {
+        'for': 'toggle-' + name,
+        text: ucfirst(name)
+    });
+
+    var input = $('<input/>', {
+        id: 'toggle-' + name,
+        type: 'checkbox'
+    });
+
+    if (option.enabled) {
+        input.prop('checked', 'checked');
+    }
+
+    element.append(input, label);
+
+    var button = $('<div/>', {
+        id: 'toggle-seasons-' + name,
+        text: 'toggle seasons',
+        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+    });
+
+    var list = $('<ul/>', {
+        id: 'toggle-seasons-list-' + name,
+        css: {display: 'none', paddingLeft: '20px'}
+    });
+
+    // fill out the list with seasons
+    list.append(getSeason(name, 'spring', option));
+    list.append(getSeason(name, 'summer', option));
+    list.append(getSeason(name, 'autunn', option));
+    list.append(getSeason(name, 'winter', option));
+
+    button.on('click', function () {
+        list.toggle();
+    });
+
+    element.append(button, list);
+
+    return element;
+};
+
+var getSeason = function (name, season, option) {
+    var element = $('<li/>');
+
+    var label = $('<label/>', {
+        'for': 'toggle-' + name + '-' + season,
+        text: ucfirst(season)
+    });
+
+    var input = $('<input/>', {
+        id: 'toggle-' + name + '-' + season,
+        type: 'checkbox'
+    });
+
+    if (option[season]) {
+        input.prop('checked', 'checked');
+    }
+
+    input.on('change', function () {
+        if (input.is(':checked')) {
+            options.auto.trade.items[name][season] = true;
+            message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
+        } else {
+            option[season] = false;
+            message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
+        }
+    });
+
+    element.append(input, label);
 
     return element;
 };
