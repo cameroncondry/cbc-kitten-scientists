@@ -79,9 +79,9 @@ var options = {
                 ship: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
                 tanker: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
                 parchment: {require: false, stock: 0, max: 0, type: 'luxury', limited: false, enabled: true},
-                manuscript: {require: 'culture', stock: 0, max: 0, type: 'luxury', limited: true, enabled: true},
-                compendium: {require: 'science', stock: 0, max: 0, type: 'luxury', limited: true, enabled: true},
-                blueprint: {require: false, stock: 0, max: 0, type: 'luxury', limited: true, enabled: false},
+                manuscript: {require: 'culture', stock: 0, max: 0, type: 'craft', limited: true, enabled: true},
+                compendium: {require: 'science', stock: 0, max: 0, type: 'craft', limited: true, enabled: true},
+                blueprint: {require: 'science', stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
                 megalith: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false}
             }
         },
