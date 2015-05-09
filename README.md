@@ -87,6 +87,7 @@ Builds the following buildings when required resource is at 75% capacity:
     tradepost:      enabled: true
     chapel:         enabled: true
     temple:         enabled: true
+    mint:           enabled: false
     unicornPasture: enabled: true
     ziggurat:       enabled: true
     choronosphere:  enabled: true

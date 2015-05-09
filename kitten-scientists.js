@@ -59,7 +59,7 @@ var options = {
                 tradepost: {require: 'gold', enabled: true},
                 chapel: {require: 'minerals', enabled: true},
                 temple: {require: 'gold', enabled: true},
-                mint: {require: false, enabled: true},
+                mint: {require: false, enabled: false},
                 unicornPasture: {require: false, enabled: true},
                 ziggurat: {require: false, enabled: true},
                 chronosphere: {require: 'unobtanium', enabled: true}
