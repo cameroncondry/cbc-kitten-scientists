@@ -1,5 +1,15 @@
 ## History
 
+### 2015.05.09 - Version 1.2.3
+
+- Added variable controls over season limits. ([#41](https://github.com/cameroncondry/cbc-kitten-scientists/issues/41))
+
+### 2015.05.08 - Version 1.2.2
+
+- Added season control to crafts. (thanks [jacob-keller](https://github.com/jacob-keller)) ([#37](https://github.com/cameroncondry/cbc-kitten-scientists/issues/37))
+- Reimplemented resource stock on buildings. (thanks [jacob-keller](https://github.com/jacob-keller))
+- Added season control to trades. (thanks [jacob-keller](https://github.com/jacob-keller))
+
 ### 2015.04.30 - Version 1.2.1
 
 - Added mint to the building list. (thanks [lightrider44](https://www.reddit.com/user/lightrider44))

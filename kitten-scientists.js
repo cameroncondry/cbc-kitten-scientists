@@ -2,7 +2,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.2.1';
+var version = 'Kitten Scientists version 1.2.3';
 var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
 var game = gamePage;
 
@@ -67,22 +67,22 @@ var options = {
         },
         craft: {
             enabled: true, trigger: 0.95, items: {
-                wood: {require: 'catnip', stock: 0, max: 0, type: 'craft', enabled: true},
-                beam: {require: 'wood', stock: 0, max: 0, type: 'craft', enabled: true},
-                slab: {require: 'minerals', stock: 0, max: 0, type: 'craft', enabled: true},
-                steel: {require: 'coal', stock: 0, max: 0, type: 'craft', enabled: true},
-                plate: {require: 'iron', stock: 0, max: 0, type: 'craft', enabled: true},
-                alloy: {require: 'titanium', stock: 0, max: 0, type: 'craft', enabled: false},
-                concrete: {require: false, stock: 0, max: 0, type: 'craft', enabled: false},
-                gear: {require: false, stock: 0, max: 0, type: 'craft', enabled: false},
-                scaffold: {require: false, stock: 0, max: 0, type: 'craft', enabled: false},
-                ship: {require: false, stock: 0, max: 0, type: 'craft', enabled: false},
-                tanker: {require: false, stock: 0, max: 0, type: 'craft', enabled: false},
-                parchment: {require: false, stock: 0, max: 0, type: 'luxury', enabled: true},
-                manuscript: {require: 'culture', stock: 0, max: 0, type: 'luxury', enabled: true},
-                compendium: {require: 'science', stock: 0, max: 0, type: 'luxury', enabled: true},
-                blueprint: {require: false, stock: 0, max: 0, type: 'luxury', enabled: false},
-                megalith: {require: false, stock: 0, max: 0, type: 'craft', enabled: false}
+                wood: {require: 'catnip', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
+                beam: {require: 'wood', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
+                slab: {require: 'minerals', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
+                steel: {require: 'coal', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
+                plate: {require: 'iron', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
+                alloy: {require: 'titanium', stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
+                concrete: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
+                gear: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
+                scaffold: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
+                ship: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
+                tanker: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
+                parchment: {require: false, stock: 0, max: 0, type: 'luxury', limited: false, enabled: true},
+                manuscript: {require: 'culture', stock: 0, max: 0, type: 'luxury', limited: true, enabled: true},
+                compendium: {require: 'science', stock: 0, max: 0, type: 'luxury', limited: true, enabled: true},
+                blueprint: {require: false, stock: 0, max: 0, type: 'luxury', limited: true, enabled: false},
+                megalith: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false}
             }
         },
         trade: {
@@ -193,7 +193,7 @@ Engine.prototype = {
 
         for (var name in crafts) {
             var craft = crafts[name];
-            var current = !craft.nax ? false : manager.getResource(name);
+            var current = !craft.max ? false : manager.getResource(name);
             var require = !craft.require ? false : manager.getResource(craft.require);
             var season = game.calendar.getCurSeason().name;
 
@@ -203,11 +203,9 @@ Engine.prototype = {
             // Ensure that we have not reached our cap
             if (current && current.value > craft.max) continue;
 
-            // If the required item has no maximum value, only craft this item
-            // once per season. This enables us to craft various goods which
-            // otherwise would starve us of resources. Possibly seasons don't
-            // last long enough, so further testing is required.
-            if ((require.maxValue === 0) || craft.lastSeason === season) continue;
+            // Enforce season limited on specific crafts
+            // @TODO: make this configurable to toggle season limiting
+            if (craft.limited && craft.lastSeason === season) continue;
 
             // Craft the resource if we meet the trigger requirement
             if (!require || trigger <= require.value / require.maxValue) {

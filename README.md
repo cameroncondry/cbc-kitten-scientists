@@ -133,3 +133,6 @@ Thanks to these past and present contributors!
 - [mjdillon](https://github.com/mjdillon)
 - [Azulan](https://github.com/Azulan)
 - [mmccubbing](https://github.com/mmccubbing)
+- [Mewnine](https://github.com/Mewnine)
+- [pefoley2](https://github.com/pefoley2)
+- [DirCattus](https://github.com/DirCattus)
