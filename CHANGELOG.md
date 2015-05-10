@@ -1,5 +1,11 @@
 ## History
 
+### 2015.05.10 - Version 1.2.4
+
+- Added a debug mode to send messages to the console.
+- Set a 100 message limit on the game log. (thanks [FancyRabbitt](https://www.reddit.com/user/FancyRabbitt))
+- Added toggles to limit resources to once per season. (thanks [jacob-keller](https://github.com/jacob-keller))
+
 ### 2015.05.09 - Version 1.2.3
 
 - Added variable controls over season limits. ([#41](https://github.com/cameroncondry/cbc-kitten-scientists/issues/41))

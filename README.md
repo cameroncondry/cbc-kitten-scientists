@@ -137,3 +137,4 @@ Thanks to these past and present contributors!
 - [Mewnine](https://github.com/Mewnine)
 - [pefoley2](https://github.com/pefoley2)
 - [DirCattus](https://github.com/DirCattus)
+- [FancyRabbitt](https://www.reddit.com/user/FancyRabbitt)
