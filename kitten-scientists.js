@@ -7,9 +7,11 @@ var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
 var game = gamePage;
 
 var options = {
+    debug: false,
     interval: 2000,
     color: '#aa50fe', // dark purple
     consume: 0.5,
+    logMessages: 100,
     auto: {
         engine: {enabled: false},
         faith: {enabled: true, trigger: 0.99},
@@ -105,15 +107,20 @@ var options = {
 
 var gameLog = com.nuclearunicorn.game.log.Console().static;
 
-// Stop having the game log erase messages.
+// Increase the game log's message capacity
 gameLog.msg = function(message, type) {
-    var gameLog = dojo.byId('gameLog');
-    var span = dojo.create('span', {innerHTML: message, className: 'msg'}, gameLog, 'first');
+    var gameLog = dojo.byId("gameLog");
+    var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
 
-    if (type) dojo.addClass(span, 'type_' + type);
+    if (type){
+        dojo.addClass(span, "type_"+type);
+    }
 
     var spans = this.spans;
     spans.push(span);
+    if (spans.length > options.logMessages){
+        dojo.destroy(spans.shift()); //remove the first element from the array and destroy it
+    }
 
     return span;
 };
@@ -125,6 +132,8 @@ var message = function () {
     // update the color of the message immediately after adding
     gameLog.msg.apply(gameLog, args);
     $('.type_' + args[1]).css('color', options.color);
+
+    if (options.debug && console) console.log(args);
 };
 
 var warning = function () {
@@ -342,7 +351,7 @@ BuildManager.prototype = {
         var prices = game.bld.getPrices(name);
 
         for (var i in prices) {
-            price = prices[i];
+            var price = prices[i];
             var res = this.crafts.getValueAvailable(price.name);
             if (res < price.val) return false;
         }
