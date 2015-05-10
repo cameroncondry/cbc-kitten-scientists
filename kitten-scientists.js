@@ -693,6 +693,8 @@ var getToggle = function (toggleName, text) {
         for (var itemName in auto.items) {
             if (toggleName === 'trade')
                 list.append(getTradeToggle(itemName, auto.items[itemName]));
+            else if (toggleName === 'craft')
+                list.append(getCraftOption(itemName, auto.items[itemName]));
             else
                 list.append(getOption(itemName, auto.items[itemName]));
         }
@@ -771,7 +773,7 @@ var getSeason = function (name, season, option) {
 
     input.on('change', function () {
         if (input.is(':checked')) {
-            options.auto.trade.items[name][season] = true;
+            option[season] = true;
             message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
         } else {
             option[season] = false;
@@ -789,7 +791,8 @@ var getOption = function (name, option) {
 
     var label = $('<label/>', {
         'for': 'toggle-' + name,
-        text: ucfirst(name)
+        text: ucfirst(name),
+        css: {display: 'inline-block', minWidth: '80px'}
     });
 
     var input = $('<input/>', {
@@ -805,6 +808,38 @@ var getOption = function (name, option) {
 
     return element;
 };
+
+var getCraftOption = function (name, option) {
+    var element = getOption(name, option)
+
+    var label = $('<label/>', {
+        'for': 'toggle-limited-' + name,
+        text: 'Limited'
+    });
+
+    var input = $('<input/>', {
+        id: 'toggle-limited-' + name,
+        type: 'checkbox'
+    });
+
+    if (option.limited) {
+        input.prop('checked', 'checked');
+    }
+
+    input.on('change', function () {
+        if (input.is(':checked')) {
+            option.limited = true;
+            message('Crafting ' + ucfirst(name) + ': limited once per season');
+        } else {
+            option.limited = false;
+            message('Crafting ' + ucfirst(name) + ': unlimited');
+        }
+    });
+
+    element.append(input, label);
+
+    return element;
+}
 
 var optionsElement = $('<div/>', {id: 'ks-options', css: {marginBottom: '10px'}});
 var optionsListElement = $('<ul/>');
