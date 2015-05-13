@@ -461,7 +461,7 @@ CraftManager.prototype = {
             if (resPerTick < 0) stock -= resPerTick * 202 * 5;
         }
 
-        return value - stock;
+        return Math.max(value - stock, 0);
     }
 };
 
