@@ -232,20 +232,24 @@ Engine.prototype = {
             villageManager.tab.festivalBtn.onClick();
 
             if (game.calendar.festivalDays !== 0) {
-                message('A festival has been held!');
+                incrementActivity(activity, 'festival');
             }
         }
     },
     observeGameLog: function () {
         // @TODO: determine if this can be accomplished outside the interface
-        $('#gameLog').find('input').click();
+        var stars = $('#gameLog').find('input');
+        if (stars.length) {
+            incrementActivity(activity, 'stars', stars.length);
+            stars.click();
+        }
     },
     praiseSun: function () {
         var faith = this.craftManager.getResource('faith');
 
         if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
+            incrementActivity(activity, 'faith', faith.value);
             game.religion.praise();
-            message('The sun has been praised!');
         }
     },
     sendHunters: function () {
@@ -255,8 +259,8 @@ Engine.prototype = {
             // Generate luxury goods before sending hunters
             this.craftType('luxury');
 
+            incrementActivity(activity, 'hunt', catpower.value);
             game.village.huntAll();
-            message('Hunters have been deployed!');
         }
     },
     startTrade: function () {
@@ -332,7 +336,7 @@ BuildManager.prototype = {
         if (!button || !button.enabled || !this.hasResources(name) || !options.auto.build.items[name].enabled) return;
 
         button.build(this.getBuild(name));
-        message('Build: +1 ' + button.name);
+        incrementActivity(activity.build, name);
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
@@ -380,7 +384,7 @@ CraftManager.prototype = {
         // determine actual amount after crafting upgrades
         amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
 
-        message('Craft: +' + amount + ' ' + name);
+        incrementActivity(activity.craft, name, amount);
     },
     canCraft: function (name, amount) {
         var craft = this.getCraft(name);
@@ -485,7 +489,7 @@ TradeManager.prototype = {
         if (!button.hasResources() || !options.auto.trade.items[name].enabled) return;
 
         button.tradeMultiple(amount);
-        message('Trade: ' + amount + 'x ' + race.title);
+        incrementActivity(activity.trade, name, amount);
     },
     getLowestTradeAmount: function (name) {
         var amount = -1;
@@ -538,7 +542,7 @@ TradeManager.prototype = {
         // we trade for our max cost, or our max capacity, whichever is lower.
         // This helps us prevent trading for resources we can't store. Note that we
         // essentially ignore blueprints here. In addition, if highestCapacity was never set,
-        // then we just 
+        // then we just
         amount = (highestCapacity < amount) ? highestCapacity : amount;
 
         return Math.floor(amount);
@@ -627,6 +631,10 @@ var addRule = function (rule) {
 
 addRule('#gameLog .msg {'
 + 'display: block;'
++ '}');
+
+addRule('#gameLog {'
++ 'overflow-y: hidden !important;'
 + '}');
 
 addRule('#resContainer .maxRes {'
@@ -866,6 +874,99 @@ optionsListElement.append(getToggle('trade', 'Trading'));
 optionsListElement.append(getToggle('hunt', 'Hunting'));
 optionsListElement.append(getToggle('faith', 'Praising'));
 optionsListElement.append(getToggle('festival', 'Festival'));
+
+// add activity button
+// ===================
+
+var emptyActivity = function () {
+    return { lastyear: game.calendar.year, lastday: game.calendar.day, craft: {}, trade: {}, build: {} };
+}
+
+var incrementActivity = function(section, name, amount) {
+    if (amount === undefined) amount = 1;
+
+    if (section === undefined) {
+        warning('activity increment section was undefined');
+    }
+
+    if (section[name] === undefined) {
+        section[name] = parseInt(amount, 10);
+    } else {
+        section[name] += parseInt(amount);
+    }
+}
+
+activity = emptyActivity();
+
+var showActivity = $('<a/>', {
+    id: 'showActivityHref',
+    text: 'Show activity',
+    href: '#',
+    css: { float: 'right' },
+});
+
+showActivity.on('click', function () {
+
+    // Festivals
+    if (activity.festival) {
+        message('Held ' + game.getDisplayValueExt(activity.festival) + ' festivals');
+    }
+
+    // Observe stars
+    if (activity.stars) {
+        message('Observed ' + game.getDisplayValueExt(activity.stars) + ' stars');
+    }
+
+    if (activity.faith) {
+        message('Accumulated ' + game.getDisplayValueExt(activity.faith) + ' by praising the sun');
+    }
+
+    if (activity.hunt) {
+        message('Sent ' + game.getDisplayValueExt(activity.hunt / 100) + ' adorable kitten hunters');
+    }
+
+    for (var name in activity.build) {
+        message('Build: +' + game.getDisplayValueExt(activity.build[name]) + ' ' + ucfirst(name));
+    }
+
+    for (var name in activity.craft) {
+        message('Craft: +' + game.getDisplayValueExt(activity.craft[name]) + ' ' + ucfirst(name));
+    }
+
+    for (var name in activity.trade) {
+        message('Trade: ' + game.getDisplayValueExt(activity.trade[name]) + 'x ' + ucfirst(name));
+    }
+
+    // Show time since last run. Assumes that the day and year are always higher.
+    if (activity.lastyear && activity.lastday) {
+        var years = game.calendar.year - activity.lastyear;
+        var days = Math.floor(game.calendar.day - activity.lastday);
+
+        if (days < 0) {
+            years -= 1;
+            days += 400;
+        }
+
+        var duration = '';
+        if (years > 0) {
+            duration += years + ' ';
+            duration += (years == 1) ? 'year' : 'years';
+        }
+
+        if (days >= 0) {
+            if (years > 0) duration += ' and ';
+            duration += days + ' ';
+            duration += (days == 1) ? 'day' : 'days';
+        }
+
+        message('Activity over the last ' + duration + ' in game');
+    }
+
+    // Clear out the old activity
+    activity = emptyActivity();
+});
+
+$('#clearLog').append(showActivity);
 
 // add donation address to bottom of list
 var donate = $('<li/>').append($('<a/>', {
