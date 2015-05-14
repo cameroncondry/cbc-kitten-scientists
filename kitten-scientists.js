@@ -280,8 +280,8 @@ Engine.prototype = {
     startTrade: function () {
         var craftManager = this.craftManager;
         var tradeManager = this.tradeManager;
-        var trades = options.auto.trade.items;
         var gold = craftManager.getResource('gold');
+        var trades = [];
 
         // Only trade if it's enabled
         if (!options.auto.trade.enabled) return;
@@ -289,8 +289,9 @@ Engine.prototype = {
         // Trade when we have enough gold. Don't worry about catpower.
         if (options.auto.trade.trigger >= gold.value / gold.maxValue) return;
 
-        for (var name in trades) {
-            var trade = trades[name];
+        // Determine how many races we will trade this cycle
+        for (var name in options.auto.trade.items) {
+            var trade = options.auto.trade.items[name];
             var season = game.calendar.getCurSeason().name;
 
             // Only check if we are in season and enabled
@@ -302,8 +303,19 @@ Engine.prototype = {
 
             // If we have enough to trigger the check, then attempt to trade
             if (!require || requireTrigger <= require.value / require.maxValue) {
-                tradeManager.trade(name, tradeManager.getLowestTradeAmount(name));
+                trades.push(name);
             }
+        }
+
+        // Figure out how much we can currently trade
+        var maxTrades = tradeManager.getLowestTradeAmount(undefined);
+
+        // Try our best not to starve any single race
+        maxTrades = (trades.length > 0) ? Math.floor(maxTrades / trades.length) : 0;
+
+        for (var i in trades) {
+            var name = trades[i];
+            tradeManager.trade(name, Math.min(tradeManager.getLowestTradeAmount(name), maxTrades));
         }
     }
 };
@@ -519,6 +531,8 @@ TradeManager.prototype = {
             amount = (-1 === amount || total < amount) ? total : amount;
         }
 
+        if (race === null) return Math.floor(amount);
+
         // Loop through the items obtained by the race, and determine
         // which good has the most space left. Once we've determined this,
         // reduce the amount by this capacity. This ensures that we continue to trade
@@ -579,7 +593,10 @@ TradeManager.prototype = {
         return materials;
     },
     getRace: function (name) {
-        return game.diplomacy.get(name);
+        if (name === undefined)
+            return null;
+        else
+            return game.diplomacy.get(name);
     },
     getTradeButton: function (race) {
         var manager = this.manager.render();
