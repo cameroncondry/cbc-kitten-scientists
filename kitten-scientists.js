@@ -69,23 +69,26 @@ var options = {
         },
         craft: {
             enabled: true, trigger: 0.95, items: {
-                wood: {require: 'catnip', stock: 0, max: 0, limited: false, enabled: true},
-                beam: {require: 'wood', stock: 0, max: 0, limited: false, enabled: true},
-                slab: {require: 'minerals', stock: 0, max: 0, limited: false, enabled: true},
-                steel: {require: 'coal', stock: 0, max: 0, limited: false, enabled: true},
-                plate: {require: 'iron', stock: 0, max: 0, limited: false, enabled: true},
-                alloy: {require: 'titanium', stock: 0, max: 0, limited: true, enabled: false},
-                concrete: {require: false, stock: 0, max: 0, limited: true, enabled: false},
-                gear: {require: false, stock: 0, max: 0, limited: true, enabled: false},
-                scaffold: {require: false, stock: 0, max: 0, limited: true, enabled: false},
-                ship: {require: false, stock: 0, max: 0, limited: true, enabled: false},
-                tanker: {require: false, stock: 0, max: 0, limited: true, enabled: false},
-                parchment: {require: false, stock: 0, max: 0, limited: false, enabled: true},
-                manuscript: {require: 'culture', stock: 0, max: 0, limited: true, enabled: true},
-                compendium: {require: 'science', stock: 0, max: 0, limited: true, enabled: true},
-                blueprint: {require: 'science', stock: 0, max: 0, limited: true, enabled: false},
-                megalith: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false}
+                wood: {require: 'catnip', max: 0, limited: false, enabled: true},
+                beam: {require: 'wood', max: 0, limited: false, enabled: true},
+                slab: {require: 'minerals', max: 0, limited: false, enabled: true},
+                steel: {require: 'coal', max: 0, limited: false, enabled: true},
+                plate: {require: 'iron', max: 0, limited: false, enabled: true},
+                alloy: {require: 'titanium', max: 0, limited: true, enabled: false},
+                concrete: {require: false, max: 0, limited: true, enabled: false},
+                gear: {require: false, max: 0, limited: true, enabled: false},
+                scaffold: {require: false, max: 0, limited: true, enabled: false},
+                ship: {require: false, max: 0, limited: true, enabled: false},
+                tanker: {require: false, max: 0, limited: true, enabled: false},
+                parchment: {require: false, max: 0,  limited: true, enabled: true},
+                manuscript: {require: 'culture', max: 0, limited: true, enabled: true},
+                compendium: {require: 'science', max: 0, limited: true, enabled: true},
+                blueprint: {require: 'science', max: 0, limited: true, enabled: false},
+                megalith: {require: false, max: 0, limited: true, enabled: false}
             }
+        },
+        stock: {
+            furs: 1000,
         },
         trade: {
             enabled: true, trigger: 0.95, items: {
@@ -471,7 +474,7 @@ CraftManager.prototype = {
     },
     getValueAvailable: function (name) {
         var value = this.getValue(name);
-        var stock = !options.auto.craft.items[name] ? 0 : options.auto.craft.items[name].stock;
+        var stock = !options.auto.stock[name] ? 0 : options.auto.stock[name];
 
         if ('catnip' === name) {
             var resPerTick = game.getResourcePerTick(name, false, {
