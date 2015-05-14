@@ -69,21 +69,21 @@ var options = {
         },
         craft: {
             enabled: true, trigger: 0.95, items: {
-                wood: {require: 'catnip', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                beam: {require: 'wood', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                slab: {require: 'minerals', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                steel: {require: 'coal', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                plate: {require: 'iron', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                alloy: {require: 'titanium', stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                concrete: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                gear: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                scaffold: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                ship: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                tanker: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                parchment: {require: false, stock: 0, max: 0, type: 'luxury', limited: false, enabled: true},
-                manuscript: {require: 'culture', stock: 0, max: 0, type: 'craft', limited: true, enabled: true},
-                compendium: {require: 'science', stock: 0, max: 0, type: 'craft', limited: true, enabled: true},
-                blueprint: {require: 'science', stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
+                wood: {require: 'catnip', stock: 0, max: 0, limited: false, enabled: true},
+                beam: {require: 'wood', stock: 0, max: 0, limited: false, enabled: true},
+                slab: {require: 'minerals', stock: 0, max: 0, limited: false, enabled: true},
+                steel: {require: 'coal', stock: 0, max: 0, limited: false, enabled: true},
+                plate: {require: 'iron', stock: 0, max: 0, limited: false, enabled: true},
+                alloy: {require: 'titanium', stock: 0, max: 0, limited: true, enabled: false},
+                concrete: {require: false, stock: 0, max: 0, limited: true, enabled: false},
+                gear: {require: false, stock: 0, max: 0, limited: true, enabled: false},
+                scaffold: {require: false, stock: 0, max: 0, limited: true, enabled: false},
+                ship: {require: false, stock: 0, max: 0, limited: true, enabled: false},
+                tanker: {require: false, stock: 0, max: 0, limited: true, enabled: false},
+                parchment: {require: false, stock: 0, max: 0, limited: false, enabled: true},
+                manuscript: {require: 'culture', stock: 0, max: 0, limited: true, enabled: true},
+                compendium: {require: 'science', stock: 0, max: 0, limited: true, enabled: true},
+                blueprint: {require: 'science', stock: 0, max: 0, limited: true, enabled: false},
                 megalith: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false}
             }
         },
@@ -190,7 +190,7 @@ Engine.prototype = {
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.build.enabled) this.build();
-        if (options.auto.craft.enabled) this.craftType('craft');
+        if (options.auto.craft.enabled) this.craft();
         if (options.auto.trade.enabled) this.trade();
         if (options.auto.hunt.enabled) this.hunt();
     },
@@ -209,8 +209,7 @@ Engine.prototype = {
             }
         }
     },
-    // @TODO: remove the type check after adding configurable stocks
-    craftType: function (type) {
+    craft: function () {
         var crafts = options.auto.craft.items;
         var manager = this.craftManager;
         var trigger = options.auto.craft.trigger;
@@ -221,10 +220,7 @@ Engine.prototype = {
             var require = !craft.require ? false : manager.getResource(craft.require);
             var season = game.calendar.getCurSeason().name;
 
-            // Only craft matching types
-            if (craft.type !== type) continue;
-
-            // Ensure that we have not reached our cap
+            // Ensure that we have reached our cap
             if (current && current.value > craft.max) continue;
 
             // Enforce season limited on specific crafts
@@ -270,9 +266,7 @@ Engine.prototype = {
         var catpower = this.craftManager.getResource('catpower');
 
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
-            // Generate luxury goods before sending hunters
-            this.craftType('luxury');
-
+            // No way to send only some hunters. Thus, we hunt with everything
             incrementActivity(activity, 'hunt', catpower.value);
             game.village.huntAll();
         }
