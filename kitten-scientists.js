@@ -468,7 +468,12 @@ CraftManager.prototype = {
         return name;
     },
     getResource: function (name) {
-        return game.resPool.get(this.getName(name));
+        for (var i in game.resPool.resources) {
+            var res = game.resPool.resources[i];
+            if (res.name === this.getName(name)) return res;
+        }
+        warning('unable to find resource ' + name);
+        return null;
     },
     getValue: function (name) {
         return this.getResource(name).value;
@@ -706,7 +711,94 @@ var ucfirst = function (string) {
 
 var roundToTwo = function (n) {
         return +(Math.round(n + "e+2") + "e-2")
-}
+};
+
+var setStockValue = function (name, value) {
+    var label = $('#stock-' + name);
+    var n = Number(value);
+
+    if (n === NaN || n < 0) {
+       warning('ignoring non-numeric or invalid stock value ' + value);
+       return;
+    }
+
+    options.auto.stock[name] = n;
+    $('#stock-value-' + name).text(ucfirst(name) + ': ' + game.getDisplayValueExt(n));
+};
+
+var addNewStockOption = function (name) {
+    var stock = options.auto.stock[name];
+
+    var container = $('<div/>', {
+        id: 'stock-' + name,
+        css: {display: 'inline-block', width: '100%'},
+    });
+
+    var label = $('<div/>', {
+        id: 'stock-value-' + name,
+        text: ucfirst(name) + ': ' + game.getDisplayValueExt(stock),
+        css: {cursor: 'pointer', display: 'inline-block'},
+    });
+
+    var del = $('<div/>', {
+        id: 'stock-delete-' + name,
+        text: 'delete',
+        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+    });
+
+    container.append(label, del);
+
+    label.on('click', function () {
+        var value = window.prompt('Stock for ' + ucfirst(name));
+        if (value !== null) setStockValue(name, value);
+    });
+
+    del.on('click', function () {
+        if (window.confirm('Delete stock for ' + name + '?')) {
+            container.remove();
+            setStockValue(name, 0);
+        }
+    });
+
+    return container;
+};
+
+var getStockOptions = function () {
+    var list = $('<ul/>', {
+        id: 'toggle-list-stocks',
+        css: {display: 'none', paddingLeft: '20px'}
+    });
+
+    var add = $('<div/>', {
+        id: 'stock-add',
+        text: 'add stock',
+        css: {cursor: 'pointer', display: 'inline-block'},
+    });
+
+    add.on('click', function () {
+        var name = window.prompt('New stock name');
+        if (name !== null) {
+            var manager = new CraftManager();
+            var lcname = name.toLowerCase();
+            if (manager.getResource(lcname) !== null) {
+                    options.auto.stock[name] = 0;
+                    if ($('#stock-'+lcname).length === 0)
+                        list.append(addNewStockOption(lcname));
+            } else {
+                message('Kittens know nothing of that resource.');
+            }
+        }
+    });
+
+    list.append(add);
+
+    // Add all the default stocks
+    for (var name in options.auto.stock) {
+        list.append(addNewStockOption(name));
+    }
+
+    return list;
+};
 
 var getToggle = function (toggleName, text) {
     var auto = options.auto[toggleName];
@@ -777,6 +869,32 @@ var getToggle = function (toggleName, text) {
         });
 
         element.append(toggle, list);
+
+        // Add stocks for crafting, sort of a hack
+        if (toggleName === 'craft') {
+            var stocks = $('<div/>', {
+                id: 'toggle-stocks-craft',
+                text: 'stocks',
+                css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+            });
+
+            var stocksList = getStockOptions();
+
+            // When we click the items button, make sure we clear stocks
+            button.on('click', function () {
+                stocksList.toggle(false);
+            });
+
+            stocks.on('click', function () {
+                list.toggle(false);
+                stocksList.toggle();
+            });
+
+            toggle.prepend(stocks);
+
+            element.append(stocksList);
+        }
+
     }
 
     return element;
