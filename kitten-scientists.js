@@ -189,10 +189,10 @@ Engine.prototype = {
         this.observeGameLog();
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
-        if (options.auto.hunt.enabled) this.sendHunters();
         if (options.auto.build.enabled) this.build();
         if (options.auto.craft.enabled) this.craftType('craft');
-        if (options.auto.trade.enabled) this.startTrade();
+        if (options.auto.trade.enabled) this.trade();
+        if (options.auto.hunt.enabled) this.hunt();
     },
     build: function () {
         var builds = options.auto.build.items;
@@ -266,7 +266,7 @@ Engine.prototype = {
             game.religion.praise();
         }
     },
-    sendHunters: function () {
+    hunt: function () {
         var catpower = this.craftManager.getResource('catpower');
 
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
@@ -277,7 +277,7 @@ Engine.prototype = {
             game.village.huntAll();
         }
     },
-    startTrade: function () {
+    trade: function () {
         var craftManager = this.craftManager;
         var tradeManager = this.tradeManager;
         var gold = craftManager.getResource('gold');
