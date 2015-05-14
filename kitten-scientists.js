@@ -88,15 +88,30 @@ var options = {
             }
         },
         trade: {
-            enabled: true, trigger: 0.85, items: {
-                dragons: {trigger: 0.99, require: 'titanium', summer: true, autumn: true, winter: false, spring: true, enabled: false},
-                zebras: {trigger: 0.99, require: false, summer: true, autumn: false, winter: false, spring: false, enabled: true},
-                lizards: {trigger: 0.95, require: 'minerals', summer: true, autumn: false, winter: false, spring: false, enabled: false},
-                sharks: {trigger: 0.95, require: 'iron', summer: false, autumn: false, winter: true, spring: false, enabled: false},
-                griffins: {trigger: 0.99, require: 'wood', summer: true, autumn: false, winter: false, spring: false, enabled: false},
-                nagas: {trigger: 0.95, require: false, summer: false, autumn: false, winter: false, spring: true, enabled: false},
-                spiders: {trigger: 0.95, require: false, summer: false, autumn: true, winter: false, spring: true, enabled: false},
-                leviathans: {trigger: 0.99, require: 'unobtainium', summer: true, autumn: true, winter: true, spring: true, enabled: false},
+            enabled: true, trigger: 0.95, items: {
+                dragons: {enabled: false, trigger: 0.80, require: 'titanium',
+                          summer: true, autumn: true, winter: false, spring: true},
+
+                zebras: {enabled: true, trigger: 0.80, require: false,
+                         summer: true, autumn: false, winter: false, spring: false},
+
+                lizards: {trigger: 0.80, require: 'minerals',
+                          summer: true, autumn: false, winter: false, spring: false},
+
+                sharks: {enabled: false, trigger: 0.80, require: 'iron',
+                         summer: false, autumn: false, winter: true, spring: false},
+
+                griffins: {enabled: false, trigger: 0.80, require: 'wood',
+                           summer: true, autumn: false, winter: false, spring: false},
+
+                nagas: {enabled: false, trigger: 0.80, require: false,
+                        summer: false, autumn: false, winter: false, spring: true},
+
+                spiders: {enabled: false, trigger: 0.80, require: false,
+                          summer: false, autumn: true, winter: false, spring: true},
+
+                leviathans: {enabled: false, trigger: 0.80, require: 'unobtainium',
+                             summer: true, autumn: true, winter: true, spring: true},
             }
         }
     }
