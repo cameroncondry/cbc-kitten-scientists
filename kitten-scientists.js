@@ -213,7 +213,6 @@ Engine.prototype = {
             if (current && current.value > craft.max) continue;
 
             // Enforce season limited on specific crafts
-            // @TODO: make this configurable to toggle season limiting
             if (craft.limited && craft.lastSeason === season) continue;
 
             // Craft the resource if we meet the trigger requirement
