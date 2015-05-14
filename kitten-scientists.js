@@ -282,11 +282,12 @@ Engine.prototype = {
         var tradeManager = this.tradeManager;
         var trades = options.auto.trade.items;
         var gold = craftManager.getResource('gold');
-        var power = craftManager.getResource('catpower');
 
-        // Only trade if we have enough gold and catpower. Check once at start so that we don't starve multiple races
+        // Only trade if it's enabled
+        if (!options.auto.trade.enabled) return;
+
+        // Trade when we have enough gold. Don't worry about catpower.
         if (options.auto.trade.trigger >= gold.value / gold.maxValue) return;
-        if (options.auto.trade.trigger >= power.value / power.maxValue) return;
 
         for (var name in trades) {
             var trade = trades[name];
