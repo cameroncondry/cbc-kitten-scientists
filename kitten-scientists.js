@@ -673,6 +673,10 @@ var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+var roundToTwo = function (n) {
+        return +(Math.round(n + "e+2") + "e-2")
+}
+
 var getToggle = function (toggleName, text) {
     var auto = options.auto[toggleName];
     var element = $('<li/>');
@@ -939,7 +943,7 @@ showActivity.on('click', function () {
     // Show time since last run. Assumes that the day and year are always higher.
     if (activity.lastyear && activity.lastday) {
         var years = game.calendar.year - activity.lastyear;
-        var days = Math.floor(game.calendar.day - activity.lastday);
+        var days = game.calendar.day - activity.lastday;
 
         if (days < 0) {
             years -= 1;
@@ -954,7 +958,7 @@ showActivity.on('click', function () {
 
         if (days >= 0) {
             if (years > 0) duration += ' and ';
-            duration += days + ' ';
+            duration += roundToTwo(days) + ' ';
             duration += (days == 1) ? 'day' : 'days';
         }
 
