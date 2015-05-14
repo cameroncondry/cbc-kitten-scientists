@@ -16,7 +16,7 @@ var options = {
         engine: {enabled: false},
         faith: {enabled: true, trigger: 0.99},
         festival: {enabled: true},
-        hunt: {enabled: true, trigger: 0.95},
+        hunt: {enabled: true, trigger: 0.6},
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
