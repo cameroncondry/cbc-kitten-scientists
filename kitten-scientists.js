@@ -88,9 +88,6 @@ var options = {
                 eludium: {require: 'unobtanium', max: 0,  limited: true, enabled: false},
             }
         },
-        stock: {
-            furs: 1000,
-        },
         trade: {
             enabled: true, trigger: 0.95, items: {
                 dragons: {enabled: false, trigger: 0.80, require: 'titanium',
@@ -117,7 +114,10 @@ var options = {
                 leviathans: {enabled: false, trigger: 0.80, require: 'unobtainium',
                              summer: true, autumn: true, winter: true, spring: true},
             }
-        }
+        },
+        stock: {
+            furs: 1000,
+        },
     }
 };
 
