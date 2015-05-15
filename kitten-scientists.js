@@ -678,6 +678,8 @@ addRule('#gameLog .msg {'
 
 addRule('#gameLog {'
 + 'overflow-y: hidden !important;'
++ 'width: 100% !important;'
++ 'padding-top: 5px !important;'
 + '}');
 
 addRule('#resContainer .maxRes {'
