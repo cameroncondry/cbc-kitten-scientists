@@ -10,7 +10,8 @@ var options = {
     debug: false,
     interval: 2000,
     msgcolor: '#aa50fe', // dark purple
-    summarycolor: '#009933', // light green,
+    summarycolor: '#009933', // light green
+    activitycolor: '#E65C00', // orange
     consume: 0.5,
     logMessages: 100,
     auto: {
@@ -164,6 +165,13 @@ var message = function () {
     printoutput(args);
 };
 
+var activity = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.push('ks-activity');
+    args.push(options.activitycolor);
+    printoutput(args);
+};
+
 var summary = function () {
     var args = Array.prototype.slice.call(arguments);
     args.push('ks-summary');
@@ -263,6 +271,7 @@ Engine.prototype = {
 
             if (game.calendar.festivalDays !== 0) {
                 storeForSummary('festival');
+                activity('Kittens begin holding a festival');
             }
         }
     },
@@ -271,6 +280,7 @@ Engine.prototype = {
         var stars = $('#gameLog').find('input');
         if (stars.length) {
             storeForSummary('stars', stars.length);
+            activity('Kitten Scientists have observed a star');
             stars.click();
         }
     },
@@ -279,6 +289,7 @@ Engine.prototype = {
 
         if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
             storeForSummary('faith', faith.value);
+            activity('Praised the sun!');
             game.religion.praise();
         }
     },
@@ -288,6 +299,7 @@ Engine.prototype = {
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
             // No way to send only some hunters. Thus, we hunt with everything
             storeForSummary('hunt', catpower.value);
+            activity('Sent ' + game.getDisplayValueExt(catpower.value) + ' kittens on the hunt');
             game.village.huntAll();
         }
     },
@@ -372,12 +384,14 @@ BuildManager.prototype = {
     manager: undefined,
     crafts: undefined,
     build: function (name) {
+        var build = this.getBuild(name);
         var button = this.getBuildButton(name);
 
         if (!button || !button.enabled || !this.hasResources(name) || !options.auto.build.items[name].enabled) return;
 
-        button.build(this.getBuild(name));
+        button.build(build);
         storeForSummary(name, 1, 'build');
+        activity('Kittens have built a new ' + build.label);
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
@@ -426,6 +440,7 @@ CraftManager.prototype = {
         amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
 
         storeForSummary(name, amount, 'craft');
+        activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name));
     },
     canCraft: function (name, amount) {
         var craft = this.getCraft(name);
@@ -536,6 +551,7 @@ TradeManager.prototype = {
 
         button.tradeMultiple(amount);
         storeForSummary(name, amount, 'trade');
+        activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name));
     },
     getLowestTradeAmount: function (name) {
         var amount = -1;
