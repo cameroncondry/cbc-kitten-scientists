@@ -1074,8 +1074,9 @@ optionsListElement.append(getToggle('festival', 'Festival'));
 // add activity button
 // ===================
 
-var emptyActivity = function () {
-    return { lastyear: game.calendar.year, lastday: game.calendar.day, craft: {}, trade: {}, build: {} };
+activitySummary = {};
+var resetActivitySummary = function () {
+    activitySummary = { lastyear: game.calendar.year, lastday: game.calendar.day, craft: {}, trade: {}, build: {}, other: {} };
 }
 
 var storeForSummary = function(name, amount, section) {
@@ -1092,17 +1093,7 @@ var storeForSummary = function(name, amount, section) {
     }
 }
 
-activity = emptyActivity();
-
-var showActivity = $('<a/>', {
-    id: 'showActivityHref',
-    text: 'Show activity',
-    href: '#',
-    css: { float: 'right' },
-});
-
-showActivity.on('click', function () {
-
+var displayActivitySummary = function() {
     // Festivals
     if (activitySummary.other.festival) {
         message('Held ' + game.getDisplayValueExt(activitySummary.other.festival) + ' festivals');
@@ -1164,10 +1155,21 @@ showActivity.on('click', function () {
     }
 
     // Clear out the old activity
-    activitySummary = emptyActivity();
+    resetActivitySummary()
+}
+
+resetActivitySummary();
+
+var showActivity = $('<a/>', {
+    id: 'showActivityHref',
+    text: 'Show activity',
+    href: '#',
+    css: { float: 'right' },
 });
 
 $('#clearLog').append(showActivity);
+
+showActivity.on('click', displayActivitySummary);
 
 // add donation address to bottom of list
 var donate = $('<li/>').append($('<a/>', {
