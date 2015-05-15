@@ -90,28 +90,28 @@ var options = {
         },
         trade: {
             enabled: true, trigger: 0.95, items: {
-                dragons: {enabled: false, trigger: 0.80, require: 'titanium',
-                          summer: true, autumn: true, winter: false, spring: true},
+                dragons: {enabled: false, trigger: 0.80, require: 'titanium', allowcapped: false,
+                          summer: true, autumn: true, winter: true, spring: true},
 
-                zebras: {enabled: true, trigger: 0.80, require: false,
-                         summer: true, autumn: false, winter: false, spring: false},
+                zebras: {enabled: true, trigger: 0.80, require: false, allowcapped: false,
+                         summer: true, autumn: true, winter: true, spring: true},
 
-                lizards: {trigger: 0.80, require: 'minerals',
+                lizards: {enabled: false, trigger: 0.80, require: 'minerals', allowcapped: false,
                           summer: true, autumn: false, winter: false, spring: false},
 
-                sharks: {enabled: false, trigger: 0.80, require: 'iron',
+                sharks: {enabled: false, trigger: 0.80, require: 'iron', allowcapped: false,
                          summer: false, autumn: false, winter: true, spring: false},
 
-                griffins: {enabled: false, trigger: 0.80, require: 'wood',
-                           summer: true, autumn: false, winter: false, spring: false},
+                griffins: {enabled: false, trigger: 0.80, require: 'wood', allowcapped: false,
+                           summer: false, autumn: true, winter: false, spring: false},
 
-                nagas: {enabled: false, trigger: 0.80, require: false,
+                nagas: {enabled: false, trigger: 0.80, require: false, allowcapped: false,
                         summer: false, autumn: false, winter: false, spring: true},
 
-                spiders: {enabled: false, trigger: 0.80, require: false,
-                          summer: false, autumn: true, winter: false, spring: true},
+                spiders: {enabled: false, trigger: 0.80, require: false, allowcapped: false,
+                          summer: false, autumn: true, winter: false, spring: false},
 
-                leviathans: {enabled: false, trigger: 0.80, require: 'unobtainium',
+                leviathans: {enabled: false, trigger: 0.80, require: 'unobtainium', allowcapped: true,
                              summer: true, autumn: true, winter: true, spring: true},
             }
         },
@@ -534,7 +534,7 @@ TradeManager.prototype = {
             amount = (-1 === amount || total < amount) ? total : amount;
         }
 
-        if (race === null) return Math.floor(amount);
+        if (race === null || options.auto.trade.items[name].allowuncapped) return Math.floor(amount);
 
         // Loop through the items obtained by the race, and determine
         // which good has the most space left. Once we've determined this,
