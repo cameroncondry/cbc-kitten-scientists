@@ -1178,7 +1178,7 @@ var displayActivitySummary = function() {
             duration += (days == 1) ? 'day' : 'days';
         }
 
-        summary('Activity over the last ' + duration + ' in game');
+        summary('Summary of the last ' + duration);
     }
 
     // Clear out the old activity
