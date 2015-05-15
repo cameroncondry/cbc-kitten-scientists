@@ -10,6 +10,7 @@ var options = {
     debug: false,
     interval: 2000,
     msgcolor: '#aa50fe', // dark purple
+    summarycolor: '#009933', // light green,
     consume: 0.5,
     logMessages: 100,
     auto: {
@@ -160,6 +161,13 @@ var message = function () {
     var args = Array.prototype.slice.call(arguments);
     args.push('ks-default');
     args.push(options.msgcolor);
+    printoutput(args);
+};
+
+var summary = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.push('ks-summary');
+    args.push(options.summarycolor);
     printoutput(args);
 };
 
@@ -1096,37 +1104,37 @@ var storeForSummary = function(name, amount, section) {
 var displayActivitySummary = function() {
     // Festivals
     if (activitySummary.other.festival) {
-        message('Held ' + game.getDisplayValueExt(activitySummary.other.festival) + ' festivals');
+        summary('Held ' + game.getDisplayValueExt(activitySummary.other.festival) + ' festivals');
     }
 
     // Observe stars
     if (activitySummary.other.stars) {
-        message('Observed ' + game.getDisplayValueExt(activitySummary.other.stars) + ' stars');
+        summary('Observed ' + game.getDisplayValueExt(activitySummary.other.stars) + ' stars');
     }
 
     // Praise the Sun
     if (activitySummary.other.faith) {
-        message('Accumulated ' + game.getDisplayValueExt(activitySummary.other.faith) + ' by praising the sun');
+        summary('Accumulated ' + game.getDisplayValueExt(activitySummary.other.faith) + ' by praising the sun');
     }
 
     // Hunters
     if (activitySummary.other.hunt) {
-        message('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt / 100) + ' adorable kitten hunters');
+        summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt / 100) + ' adorable kitten hunters');
     }
 
     // Buildings
     for (var name in activitySummary.build) {
-        message('Build: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
+        summary('Build: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
     }
 
     // Crafts
     for (var name in activitySummary.craft) {
-        message('Craft: +' + game.getDisplayValueExt(activitySummary.craft[name]) + ' ' + ucfirst(name));
+        summary('Craft: +' + game.getDisplayValueExt(activitySummary.craft[name]) + ' ' + ucfirst(name));
     }
 
     // Trading
     for (var name in activitySummary.trade) {
-        message('Trade: ' + game.getDisplayValueExt(activitySummary.trade[name]) + 'x ' + ucfirst(name));
+        summary('Trade: ' + game.getDisplayValueExt(activitySummary.trade[name]) + 'x ' + ucfirst(name));
     }
 
     // Show time since last run. Assumes that the day and year are always higher.
@@ -1151,7 +1159,7 @@ var displayActivitySummary = function() {
             duration += (days == 1) ? 'day' : 'days';
         }
 
-        message('Activity over the last ' + duration + ' in game');
+        summary('Activity over the last ' + duration + ' in game');
     }
 
     // Clear out the old activity
