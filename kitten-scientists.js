@@ -12,6 +12,7 @@ var options = {
     msgcolor: '#aa50fe', // dark purple
     summarycolor: '#009933', // light green
     activitycolor: '#E65C00', // orange
+    showactivity: true,
     consume: 0.5,
     logMessages: 100,
     auto: {
@@ -166,10 +167,12 @@ var message = function () {
 };
 
 var activity = function () {
-    var args = Array.prototype.slice.call(arguments);
-    args.push('ks-activity');
-    args.push(options.activitycolor);
-    printoutput(args);
+    if (options.showactivity) {
+        var args = Array.prototype.slice.call(arguments);
+        args.push('ks-activity');
+        args.push(options.activitycolor);
+        printoutput(args);
+    }
 };
 
 var summary = function () {
@@ -1184,16 +1187,42 @@ var displayActivitySummary = function() {
 
 resetActivitySummary();
 
+var activityBox = $('<div/>', {
+    id: 'activity-box',
+    css: { display: 'inline-block', float: 'right', verticalAlign: 'top' },
+});
+
 var showActivity = $('<a/>', {
     id: 'showActivityHref',
     text: 'Show activity',
     href: '#',
-    css: { float: 'right' },
+    css: { verticalAlign: 'top' },
 });
 
-$('#clearLog').append(showActivity);
+var activityCheckbox = $('<input/>', {
+    id: 'enable-activity',
+    type: 'checkbox',
+    css: { verticalAlign: 'top' },
+});
+
+if (options.showactivity)
+    activityCheckbox.prop('checked', 'checked');
+
+activityCheckbox.on('change', function () {
+    if (activityCheckbox.is(':checked')) {
+        options.showactivity = true;
+        message('Showing Kitten Scientists activity live');
+    } else {
+        options.showactivity = false;
+        message('Hiding updates of Kitten Scientists activity');
+    }
+});
 
 showActivity.on('click', displayActivitySummary);
+
+activityBox.append(activityCheckbox, showActivity);
+
+$('#clearLog').append(activityBox);
 
 // add donation address to bottom of list
 var donate = $('<li/>').append($('<a/>', {
