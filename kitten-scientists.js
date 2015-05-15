@@ -9,7 +9,7 @@ var game = gamePage;
 var options = {
     debug: false,
     interval: 2000,
-    color: '#aa50fe', // dark purple
+    msgcolor: '#aa50fe', // dark purple
     consume: 0.5,
     logMessages: 100,
     auto: {
@@ -144,15 +144,23 @@ gameLog.msg = function(message, type) {
     return span;
 };
 
-var message = function () {
-    var args = Array.prototype.slice.call(arguments);
+var printoutput = function (args) {
+    var color = args.pop();
     args[1] = args[1] || 'ks-default';
 
     // update the color of the message immediately after adding
     gameLog.msg.apply(gameLog, args);
-    $('.type_' + args[1]).css('color', options.color);
+    $('.type_' + args[1]).css('color', color);
 
     if (options.debug && console) console.log(args);
+};
+
+// Used for option change messages and other special notifications
+var message = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.push('ks-default');
+    args.push(options.msgcolor);
+    printoutput(args);
 };
 
 var warning = function () {
