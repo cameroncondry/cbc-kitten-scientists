@@ -254,7 +254,7 @@ Engine.prototype = {
             villageManager.tab.festivalBtn.onClick();
 
             if (game.calendar.festivalDays !== 0) {
-                incrementActivity(activity, 'festival');
+                storeForSummary('festival');
             }
         }
     },
@@ -262,7 +262,7 @@ Engine.prototype = {
         // @TODO: determine if this can be accomplished outside the interface
         var stars = $('#gameLog').find('input');
         if (stars.length) {
-            incrementActivity(activity, 'stars', stars.length);
+            storeForSummary('stars', stars.length);
             stars.click();
         }
     },
@@ -270,7 +270,7 @@ Engine.prototype = {
         var faith = this.craftManager.getResource('faith');
 
         if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
-            incrementActivity(activity, 'faith', faith.value);
+            storeForSummary('faith', faith.value);
             game.religion.praise();
         }
     },
@@ -279,7 +279,7 @@ Engine.prototype = {
 
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
             // No way to send only some hunters. Thus, we hunt with everything
-            incrementActivity(activity, 'hunt', catpower.value);
+            storeForSummary('hunt', catpower.value);
             game.village.huntAll();
         }
     },
@@ -369,7 +369,7 @@ BuildManager.prototype = {
         if (!button || !button.enabled || !this.hasResources(name) || !options.auto.build.items[name].enabled) return;
 
         button.build(this.getBuild(name));
-        incrementActivity(activity.build, name);
+        storeForSummary(name, 1, 'build');
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
@@ -417,7 +417,7 @@ CraftManager.prototype = {
         // determine actual amount after crafting upgrades
         amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
 
-        incrementActivity(activity.craft, name, amount);
+        storeForSummary(name, amount, 'craft');
     },
     canCraft: function (name, amount) {
         var craft = this.getCraft(name);
@@ -527,7 +527,7 @@ TradeManager.prototype = {
         if (!button.hasResources() || !options.auto.trade.items[name].enabled) return;
 
         button.tradeMultiple(amount);
-        incrementActivity(activity.trade, name, amount);
+        storeForSummary(name, amount, 'trade');
     },
     getLowestTradeAmount: function (name) {
         var amount = -1;
@@ -1076,17 +1076,17 @@ var emptyActivity = function () {
     return { lastyear: game.calendar.year, lastday: game.calendar.day, craft: {}, trade: {}, build: {} };
 }
 
-var incrementActivity = function(section, name, amount) {
+var storeForSummary = function(name, amount, section) {
     if (amount === undefined) amount = 1;
+    if (section === undefined) section = 'other';
 
-    if (section === undefined) {
-        warning('activity increment section was undefined');
-    }
+    if (activitySummary[section] === undefined)
+        activitySummary[section] = {};
 
-    if (section[name] === undefined) {
-        section[name] = parseInt(amount, 10);
+    if (activitySummary[section][name] === undefined) {
+        activitySummary[section][name] = parseInt(amount, 10);
     } else {
-        section[name] += parseInt(amount);
+        activitySummary[section][name] += parseInt(amount, 10);
     }
 }
 
@@ -1102,39 +1102,44 @@ var showActivity = $('<a/>', {
 showActivity.on('click', function () {
 
     // Festivals
-    if (activity.festival) {
-        message('Held ' + game.getDisplayValueExt(activity.festival) + ' festivals');
+    if (activitySummary.other.festival) {
+        message('Held ' + game.getDisplayValueExt(activitySummary.other.festival) + ' festivals');
     }
 
     // Observe stars
-    if (activity.stars) {
-        message('Observed ' + game.getDisplayValueExt(activity.stars) + ' stars');
+    if (activitySummary.other.stars) {
+        message('Observed ' + game.getDisplayValueExt(activitySummary.other.stars) + ' stars');
     }
 
-    if (activity.faith) {
-        message('Accumulated ' + game.getDisplayValueExt(activity.faith) + ' by praising the sun');
+    // Praise the Sun
+    if (activitySummary.other.faith) {
+        message('Accumulated ' + game.getDisplayValueExt(activitySummary.other.faith) + ' by praising the sun');
     }
 
-    if (activity.hunt) {
-        message('Sent ' + game.getDisplayValueExt(activity.hunt / 100) + ' adorable kitten hunters');
+    // Hunters
+    if (activitySummary.other.hunt) {
+        message('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt / 100) + ' adorable kitten hunters');
     }
 
-    for (var name in activity.build) {
-        message('Build: +' + game.getDisplayValueExt(activity.build[name]) + ' ' + ucfirst(name));
+    // Buildings
+    for (var name in activitySummary.build) {
+        message('Build: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
     }
 
-    for (var name in activity.craft) {
-        message('Craft: +' + game.getDisplayValueExt(activity.craft[name]) + ' ' + ucfirst(name));
+    // Crafts
+    for (var name in activitySummary.craft) {
+        message('Craft: +' + game.getDisplayValueExt(activitySummary.craft[name]) + ' ' + ucfirst(name));
     }
 
-    for (var name in activity.trade) {
-        message('Trade: ' + game.getDisplayValueExt(activity.trade[name]) + 'x ' + ucfirst(name));
+    // Trading
+    for (var name in activitySummary.trade) {
+        message('Trade: ' + game.getDisplayValueExt(activitySummary.trade[name]) + 'x ' + ucfirst(name));
     }
 
     // Show time since last run. Assumes that the day and year are always higher.
-    if (activity.lastyear && activity.lastday) {
-        var years = game.calendar.year - activity.lastyear;
-        var days = game.calendar.day - activity.lastday;
+    if (activitySummary.lastyear && activitySummary.lastday) {
+        var years = game.calendar.year - activitySummary.lastyear;
+        var days = game.calendar.day - activitySummary.lastday;
 
         if (days < 0) {
             years -= 1;
@@ -1157,7 +1162,7 @@ showActivity.on('click', function () {
     }
 
     // Clear out the old activity
-    activity = emptyActivity();
+    activitySummary = emptyActivity();
 });
 
 $('#clearLog').append(showActivity);
