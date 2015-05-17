@@ -780,7 +780,11 @@ var addNewStockOption = function (name) {
     var del = $('<div/>', {
         id: 'stock-delete-' + name,
         text: 'delete',
-        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+        css: {cursor: 'pointer',
+              display: 'inline-block',
+              float: 'right',
+              paddingRight: '5px',
+              textShadow: '3px 3px 4px gray'},
     });
 
     container.append(label, del);
@@ -809,7 +813,9 @@ var getStockOptions = function () {
     var add = $('<div/>', {
         id: 'stock-add',
         text: 'add stock',
-        css: {cursor: 'pointer', display: 'inline-block'},
+        css: {cursor: 'pointer',
+              display: 'inline-block',
+              textShadow: '3px 3px 4px gray'},
     });
 
     add.on('click', function () {
@@ -881,7 +887,10 @@ var getToggle = function (toggleName, text) {
         var button = $('<div/>', {
             id: 'toggle-items-' + toggleName,
             text: 'items',
-            css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+            css: {cursor: 'pointer',
+                  display: 'inline-block',
+                  paddingRight: '5px',
+                  textShadow: '3px 3px 4px gray'},
         });
 
         toggle.append(button);
@@ -912,7 +921,10 @@ var getToggle = function (toggleName, text) {
             var stocks = $('<div/>', {
                 id: 'toggle-stocks-craft',
                 text: 'stocks',
-                css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+                css: {cursor: 'pointer',
+                      display: 'inline-block',
+                      paddingRight: '5px',
+                      textShadow: '3px 3px 4px gray'},
             });
 
             var stocksList = getStockOptions();
@@ -961,7 +973,11 @@ var getTradeToggle = function (name, option) {
     var button = $('<div/>', {
         id: 'toggle-seasons-' + name,
         text: 'seasons',
-        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+        css: {cursor: 'pointer',
+              display: 'inline-block',
+              float: 'right',
+              paddingRight: '5px',
+              textShadow: '3px 3px 4px gray'},
     });
 
     var list = $('<ul/>', {
