@@ -726,17 +726,39 @@ var getToggle = function (toggleName, text) {
         input.prop('checked', 'checked');
     }
 
+    // engine needs a custom toggle
+    if (toggleName !== 'engine') {
+        input.on('change', function () {
+            if (input.is(':checked')) {
+                auto.enabled = true;
+                message('Enabled Auto ' + ucfirst(text));
+            } else {
+                auto.enabled = false;
+                message('Disabled Auto ' + ucfirst(text));
+            }
+        });
+    }
+
     element.append(input, label);
 
     if (auto.items) {
-        var button = $('<div/>', {
-            id: 'toggle-options-' + toggleName,
-            text: 'toggle options',
-            css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+        // Add a border on the element
+        element.css('borderBottom', '1px  solid gray');
+
+        var toggle = $('<div/>', {
+            css: {display: 'inline-block', float: 'right'},
         });
 
+        var button = $('<div/>', {
+            id: 'toggle-items-' + toggleName,
+            text: 'items',
+            css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+        });
+
+        toggle.append(button);
+
         var list = $('<ul/>', {
-            id: 'toggle-options-list-' + toggleName,
+            id: 'items-list-' + toggleName,
             css: {display: 'none', paddingLeft: '20px'}
         });
 
@@ -754,14 +776,16 @@ var getToggle = function (toggleName, text) {
             list.toggle();
         });
 
-        element.append(button, list);
+        element.append(toggle, list);
     }
 
     return element;
 };
 
 var getTradeToggle = function (name, option) {
-    var element = $('<li/>');
+    var element = $('<li/>', {
+        css: { borderBottom: '1px solid gray' },
+    });
 
     var label = $('<label/>', {
         'for': 'toggle-' + name,
@@ -781,12 +805,12 @@ var getTradeToggle = function (name, option) {
 
     var button = $('<div/>', {
         id: 'toggle-seasons-' + name,
-        text: 'toggle seasons',
+        text: 'seasons',
         css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
     });
 
     var list = $('<ul/>', {
-        id: 'toggle-seasons-list-' + name,
+        id: 'seasons-list-' + name,
         css: {display: 'none', paddingLeft: '20px'}
     });
 
@@ -855,6 +879,16 @@ var getOption = function (name, option) {
         input.prop('checked', 'checked');
     }
 
+    input.on('change', function() {
+        if (input.is(':checked')) {
+            option.enabled = true;
+            message('Enabled Auto ' + ucfirst(name));
+        } else {
+            option.enabled = false;
+            message('Disabled Auto ' + ucfirst(name));
+        }
+    });
+
     element.append(input, label);
 
     return element;
@@ -895,7 +929,7 @@ var getCraftOption = function (name, option) {
 var optionsElement = $('<div/>', {id: 'ks-options', css: {marginBottom: '10px'}});
 var optionsListElement = $('<ul/>');
 var optionsTitleElement = $('<div/>', {
-    css: { borderBottom: '1px solid gray', marginBottom: '5px' },
+    css: { bottomBorder: '1px solid gray', marginBottom: '5px' },
     text: version
 });
 
@@ -1029,40 +1063,4 @@ toggleEngine.on('change', function () {
     } else {
         engine.stop();
     }
-});
-
-toggleEngine.trigger('change');
-
-// Add toggles for options
-// =======================
-
-var getOptionItem = function (option) {
-    return options.auto[option] ||
-        options.auto.build.items[option] ||
-        options.auto.craft.items[option] ||
-        options.auto.trade.items[option];
-};
-
-var keys = Object.keys(options.auto);
-
-keys = keys.concat(
-    Object.keys(options.auto.craft.items),
-    Object.keys(options.auto.build.items),
-    Object.keys(options.auto.trade.items)
-);
-
-$.each(keys, function (event, option) {
-    var toggle = $('#toggle-' + option);
-
-    toggle.on('change', function () {
-        var item = getOptionItem(option);
-
-        if (toggle.is(':checked')) {
-            item.enabled = true;
-            message('Enabled Auto ' + ucfirst(option));
-        } else {
-            item.enabled = false;
-            message('Disabled Auto ' + ucfirst(option));
-        }
-    });
 });
