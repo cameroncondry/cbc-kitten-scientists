@@ -841,14 +841,16 @@ var getToggle = function (toggleName, text) {
     var auto = options.auto[toggleName];
     var element = $('<li/>');
 
-    var label = $('<label/>', {
-        'for': 'toggle-' + toggleName,
-        text: text
+    var label = $('<div/>', {
+        id: 'toggle-label-' + toggleName,
+        text: text,
+        css: {cursor: 'pointer', display: 'inline-block'},
     });
 
     var input = $('<input/>', {
         id: 'toggle-' + toggleName,
-        type: 'checkbox'
+        type: 'checkbox',
+        css: {cursor: 'pointer', display: 'inline-block'},
     });
 
     if (auto.enabled) {
@@ -905,6 +907,10 @@ var getToggle = function (toggleName, text) {
             list.toggle();
         });
 
+        label.on('click', function () {
+            list.toggle();
+        });
+
         element.append(toggle, list);
 
         // Add stocks for crafting, sort of a hack
@@ -942,14 +948,17 @@ var getTradeToggle = function (name, option) {
         css: { borderBottom: '1px solid gray' },
     });
 
-    var label = $('<label/>', {
-        'for': 'toggle-' + name,
-        text: ucfirst(name)
+    var label = $('<div/>', {
+        id: 'toggle-label-' + name,
+        text: ucfirst(name),
+        css: {cursor: 'pointer', display: 'inline-block'},
+
     });
 
     var input = $('<input/>', {
         id: 'toggle-' + name,
-        type: 'checkbox'
+        type: 'checkbox',
+        css: {cursor: 'pointer', display: 'inline-block'},
     });
 
     if (option.enabled) {
@@ -976,6 +985,10 @@ var getTradeToggle = function (name, option) {
     list.append(getSeason(name, 'winter', option));
 
     button.on('click', function () {
+        list.toggle();
+    });
+
+    label.on('click', function () {
         list.toggle();
     });
 
