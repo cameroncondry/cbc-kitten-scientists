@@ -9,14 +9,17 @@ var game = gamePage;
 var options = {
     debug: false,
     interval: 2000,
-    color: '#aa50fe', // dark purple
+    msgcolor: '#aa50fe', // dark purple
+    summarycolor: '#009933', // light green
+    activitycolor: '#E65C00', // orange
+    showactivity: true,
     consume: 0.5,
     logMessages: 100,
     auto: {
         engine: {enabled: false},
         faith: {enabled: true, trigger: 0.99},
         festival: {enabled: true},
-        hunt: {enabled: true, trigger: 0.95},
+        hunt: {enabled: true, trigger: 0.6},
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
@@ -64,41 +67,60 @@ var options = {
                 mint: {require: false, enabled: false},
                 unicornPasture: {require: false, enabled: true},
                 ziggurat: {require: false, enabled: true},
-                chronosphere: {require: 'unobtanium', enabled: true}
+                chronosphere: {require: 'unobtanium', enabled: true},
             }
         },
         craft: {
             enabled: true, trigger: 0.95, items: {
-                wood: {require: 'catnip', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                beam: {require: 'wood', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                slab: {require: 'minerals', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                steel: {require: 'coal', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                plate: {require: 'iron', stock: 0, max: 0, type: 'craft', limited: false, enabled: true},
-                alloy: {require: 'titanium', stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                concrete: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                gear: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                scaffold: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                ship: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                tanker: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                parchment: {require: false, stock: 0, max: 0, type: 'luxury', limited: false, enabled: true},
-                manuscript: {require: 'culture', stock: 0, max: 0, type: 'craft', limited: true, enabled: true},
-                compendium: {require: 'science', stock: 0, max: 0, type: 'craft', limited: true, enabled: true},
-                blueprint: {require: 'science', stock: 0, max: 0, type: 'craft', limited: true, enabled: false},
-                megalith: {require: false, stock: 0, max: 0, type: 'craft', limited: true, enabled: false}
+                wood: {require: 'catnip', max: 0, limited: false, enabled: true},
+                beam: {require: 'wood', max: 0, limited: false, enabled: true},
+                slab: {require: 'minerals', max: 0, limited: false, enabled: true},
+                steel: {require: 'coal', max: 0, limited: false, enabled: true},
+                plate: {require: 'iron', max: 0, limited: false, enabled: true},
+                alloy: {require: 'titanium', max: 0, limited: true, enabled: false},
+                concrete: {require: false, max: 0, limited: true, enabled: false},
+                gear: {require: false, max: 0, limited: true, enabled: false},
+                scaffold: {require: false, max: 0, limited: true, enabled: false},
+                ship: {require: false, max: 0, limited: true, enabled: false},
+                tanker: {require: false, max: 0, limited: true, enabled: false},
+                parchment: {require: false, max: 0,  limited: true, enabled: true},
+                manuscript: {require: 'culture', max: 0, limited: true, enabled: true},
+                compendium: {require: 'science', max: 0, limited: true, enabled: true},
+                blueprint: {require: 'science', max: 0, limited: true, enabled: false},
+                megalith: {require: false, max: 0, limited: true, enabled: false},
+                eludium: {require: 'unobtanium', max: 0,  limited: true, enabled: false},
             }
         },
         trade: {
-            enabled: true, trigger: 0.85, items: {
-                dragons: {trigger: 0.99, require: 'titanium', summer: true, autumn: true, winter: false, spring: true, enabled: false},
-                zebras: {trigger: 0.99, require: false, summer: true, autumn: false, winter: false, spring: false, enabled: true},
-                lizards: {trigger: 0.95, require: 'minerals', summer: true, autumn: false, winter: false, spring: false, enabled: false},
-                sharks: {trigger: 0.95, require: 'iron', summer: false, autumn: false, winter: true, spring: false, enabled: false},
-                griffins: {trigger: 0.99, require: 'wood', summer: true, autumn: false, winter: false, spring: false, enabled: false},
-                nagas: {trigger: 0.95, require: false, summer: false, autumn: false, winter: false, spring: true, enabled: false},
-                spiders: {trigger: 0.95, require: false, summer: false, autumn: true, winter: false, spring: true, enabled: false},
-                leviathans: {trigger: 0.99, require: 'unobtainium', summer: true, autumn: true, winter: true, spring: true, enabled: false},
+            enabled: true, trigger: 0.95, items: {
+                dragons: {enabled: false, trigger: 0.80, require: 'titanium', allowcapped: false,
+                          summer: true, autumn: true, winter: true, spring: true},
+
+                zebras: {enabled: true, trigger: 0.80, require: false, allowcapped: false,
+                         summer: true, autumn: true, winter: true, spring: true},
+
+                lizards: {enabled: false, trigger: 0.80, require: 'minerals', allowcapped: false,
+                          summer: true, autumn: false, winter: false, spring: false},
+
+                sharks: {enabled: false, trigger: 0.80, require: 'iron', allowcapped: false,
+                         summer: false, autumn: false, winter: true, spring: false},
+
+                griffins: {enabled: false, trigger: 0.80, require: 'wood', allowcapped: false,
+                           summer: false, autumn: true, winter: false, spring: false},
+
+                nagas: {enabled: false, trigger: 0.80, require: false, allowcapped: false,
+                        summer: false, autumn: false, winter: false, spring: true},
+
+                spiders: {enabled: false, trigger: 0.80, require: false, allowcapped: false,
+                          summer: false, autumn: true, winter: false, spring: false},
+
+                leviathans: {enabled: false, trigger: 0.80, require: 'unobtainium', allowcapped: true,
+                             summer: true, autumn: true, winter: true, spring: true},
             }
-        }
+        },
+        stock: {
+            furs: 1000,
+        },
     }
 };
 
@@ -125,15 +147,39 @@ gameLog.msg = function(message, type) {
     return span;
 };
 
-var message = function () {
-    var args = Array.prototype.slice.call(arguments);
+var printoutput = function (args) {
+    var color = args.pop();
     args[1] = args[1] || 'ks-default';
 
     // update the color of the message immediately after adding
     gameLog.msg.apply(gameLog, args);
-    $('.type_' + args[1]).css('color', options.color);
+    $('.type_' + args[1]).css('color', color);
 
     if (options.debug && console) console.log(args);
+};
+
+// Used for option change messages and other special notifications
+var message = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.push('ks-default');
+    args.push(options.msgcolor);
+    printoutput(args);
+};
+
+var activity = function () {
+    if (options.showactivity) {
+        var args = Array.prototype.slice.call(arguments);
+        args.push('ks-activity');
+        args.push(options.activitycolor);
+        printoutput(args);
+    }
+};
+
+var summary = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.push('ks-summary');
+    args.push(options.summarycolor);
+    printoutput(args);
 };
 
 var warning = function () {
@@ -174,10 +220,10 @@ Engine.prototype = {
         this.observeGameLog();
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
-        if (options.auto.hunt.enabled) this.sendHunters();
         if (options.auto.build.enabled) this.build();
-        if (options.auto.craft.enabled) this.craftType('craft');
-        if (options.auto.trade.enabled) this.startTrade();
+        if (options.auto.craft.enabled) this.craft();
+        if (options.auto.trade.enabled) this.trade();
+        if (options.auto.hunt.enabled) this.hunt();
     },
     build: function () {
         var builds = options.auto.build.items;
@@ -194,8 +240,7 @@ Engine.prototype = {
             }
         }
     },
-    // @TODO: remove the type check after adding configurable stocks
-    craftType: function (type) {
+    craft: function () {
         var crafts = options.auto.craft.items;
         var manager = this.craftManager;
         var trigger = options.auto.craft.trigger;
@@ -206,14 +251,10 @@ Engine.prototype = {
             var require = !craft.require ? false : manager.getResource(craft.require);
             var season = game.calendar.getCurSeason().name;
 
-            // Only craft matching types
-            if (craft.type !== type) continue;
-
-            // Ensure that we have not reached our cap
+            // Ensure that we have reached our cap
             if (current && current.value > craft.max) continue;
 
             // Enforce season limited on specific crafts
-            // @TODO: make this configurable to toggle season limiting
             if (craft.limited && craft.lastSeason === season) continue;
 
             // Craft the resource if we meet the trigger requirement
@@ -232,7 +273,8 @@ Engine.prototype = {
             villageManager.tab.festivalBtn.onClick();
 
             if (game.calendar.festivalDays !== 0) {
-                incrementActivity(activity, 'festival');
+                storeForSummary('festival');
+                activity('Kittens begin holding a festival');
             }
         }
     },
@@ -240,7 +282,8 @@ Engine.prototype = {
         // @TODO: determine if this can be accomplished outside the interface
         var stars = $('#gameLog').find('input');
         if (stars.length) {
-            incrementActivity(activity, 'stars', stars.length);
+            storeForSummary('stars', stars.length);
+            activity('Kitten Scientists have observed a star');
             stars.click();
         }
     },
@@ -248,34 +291,36 @@ Engine.prototype = {
         var faith = this.craftManager.getResource('faith');
 
         if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
-            incrementActivity(activity, 'faith', faith.value);
+            storeForSummary('faith', faith.value);
+            activity('Praised the sun!');
             game.religion.praise();
         }
     },
-    sendHunters: function () {
+    hunt: function () {
         var catpower = this.craftManager.getResource('catpower');
 
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
-            // Generate luxury goods before sending hunters
-            this.craftType('luxury');
-
-            incrementActivity(activity, 'hunt', catpower.value);
+            // No way to send only some hunters. Thus, we hunt with everything
+            storeForSummary('hunt', catpower.value);
+            activity('Sent ' + game.getDisplayValueExt(catpower.value) + ' kittens on the hunt');
             game.village.huntAll();
         }
     },
-    startTrade: function () {
+    trade: function () {
         var craftManager = this.craftManager;
         var tradeManager = this.tradeManager;
-        var trades = options.auto.trade.items;
         var gold = craftManager.getResource('gold');
-        var power = craftManager.getResource('catpower');
+        var trades = [];
 
-        // Only trade if we have enough gold and catpower. Check once at start so that we don't starve multiple races
+        // Only trade if it's enabled
+        if (!options.auto.trade.enabled) return;
+
+        // Trade when we have enough gold. Don't worry about catpower.
         if (options.auto.trade.trigger >= gold.value / gold.maxValue) return;
-        if (options.auto.trade.trigger >= power.value / power.maxValue) return;
 
-        for (var name in trades) {
-            var trade = trades[name];
+        // Determine how many races we will trade this cycle
+        for (var name in options.auto.trade.items) {
+            var trade = options.auto.trade.items[name];
             var season = game.calendar.getCurSeason().name;
 
             // Only check if we are in season and enabled
@@ -287,8 +332,19 @@ Engine.prototype = {
 
             // If we have enough to trigger the check, then attempt to trade
             if (!require || requireTrigger <= require.value / require.maxValue) {
-                tradeManager.trade(name, tradeManager.getLowestTradeAmount(name));
+                trades.push(name);
             }
+        }
+
+        // Figure out how much we can currently trade
+        var maxTrades = tradeManager.getLowestTradeAmount(undefined);
+
+        // Try our best not to starve any single race
+        maxTrades = (trades.length > 0) ? Math.floor(maxTrades / trades.length) : 0;
+
+        for (var i in trades) {
+            var name = trades[i];
+            tradeManager.trade(name, Math.min(tradeManager.getLowestTradeAmount(name), maxTrades));
         }
     }
 };
@@ -331,12 +387,14 @@ BuildManager.prototype = {
     manager: undefined,
     crafts: undefined,
     build: function (name) {
+        var build = this.getBuild(name);
         var button = this.getBuildButton(name);
 
         if (!button || !button.enabled || !this.hasResources(name) || !options.auto.build.items[name].enabled) return;
 
-        button.build(this.getBuild(name));
-        incrementActivity(activity.build, name);
+        button.build(build);
+        storeForSummary(name, 1, 'build');
+        activity('Kittens have built a new ' + build.label);
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
@@ -384,7 +442,8 @@ CraftManager.prototype = {
         // determine actual amount after crafting upgrades
         amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
 
-        incrementActivity(activity.craft, name, amount);
+        storeForSummary(name, amount, 'craft');
+        activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name));
     },
     canCraft: function (name, amount) {
         var craft = this.getCraft(name);
@@ -443,14 +502,19 @@ CraftManager.prototype = {
         return name;
     },
     getResource: function (name) {
-        return game.resPool.get(this.getName(name));
+        for (var i in game.resPool.resources) {
+            var res = game.resPool.resources[i];
+            if (res.name === this.getName(name)) return res;
+        }
+        warning('unable to find resource ' + name);
+        return null;
     },
     getValue: function (name) {
         return this.getResource(name).value;
     },
     getValueAvailable: function (name) {
         var value = this.getValue(name);
-        var stock = !options.auto.craft.items[name] ? 0 : options.auto.craft.items[name].stock;
+        var stock = !options.auto.stock[name] ? 0 : options.auto.stock[name];
 
         if ('catnip' === name) {
             var resPerTick = game.getResourcePerTick(name, false, {
@@ -489,7 +553,8 @@ TradeManager.prototype = {
         if (!button.hasResources() || !options.auto.trade.items[name].enabled) return;
 
         button.tradeMultiple(amount);
-        incrementActivity(activity.trade, name, amount);
+        storeForSummary(name, amount, 'trade');
+        activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name));
     },
     getLowestTradeAmount: function (name) {
         var amount = -1;
@@ -503,6 +568,8 @@ TradeManager.prototype = {
 
             amount = (-1 === amount || total < amount) ? total : amount;
         }
+
+        if (race === null || options.auto.trade.items[name].allowuncapped) return Math.floor(amount);
 
         // Loop through the items obtained by the race, and determine
         // which good has the most space left. Once we've determined this,
@@ -564,7 +631,10 @@ TradeManager.prototype = {
         return materials;
     },
     getRace: function (name) {
-        return game.diplomacy.get(name);
+        if (name === undefined)
+            return null;
+        else
+            return game.diplomacy.get(name);
     },
     getTradeButton: function (race) {
         var manager = this.manager.render();
@@ -635,6 +705,8 @@ addRule('#gameLog .msg {'
 
 addRule('#gameLog {'
 + 'overflow-y: hidden !important;'
++ 'width: 100% !important;'
++ 'padding-top: 5px !important;'
 + '}');
 
 addRule('#resContainer .maxRes {'
@@ -674,6 +746,97 @@ var ucfirst = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+var roundToTwo = function (n) {
+        return +(Math.round(n + "e+2") + "e-2")
+};
+
+var setStockValue = function (name, value) {
+    var label = $('#stock-' + name);
+    var n = Number(value);
+
+    if (n === NaN || n < 0) {
+       warning('ignoring non-numeric or invalid stock value ' + value);
+       return;
+    }
+
+    options.auto.stock[name] = n;
+    $('#stock-value-' + name).text(ucfirst(name) + ': ' + game.getDisplayValueExt(n));
+};
+
+var addNewStockOption = function (name) {
+    var stock = options.auto.stock[name];
+
+    var container = $('<div/>', {
+        id: 'stock-' + name,
+        css: {display: 'inline-block', width: '100%'},
+    });
+
+    var label = $('<div/>', {
+        id: 'stock-value-' + name,
+        text: ucfirst(name) + ': ' + game.getDisplayValueExt(stock),
+        css: {cursor: 'pointer', display: 'inline-block'},
+    });
+
+    var del = $('<div/>', {
+        id: 'stock-delete-' + name,
+        text: 'delete',
+        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+    });
+
+    container.append(label, del);
+
+    label.on('click', function () {
+        var value = window.prompt('Stock for ' + ucfirst(name));
+        if (value !== null) setStockValue(name, value);
+    });
+
+    del.on('click', function () {
+        if (window.confirm('Delete stock for ' + name + '?')) {
+            container.remove();
+            setStockValue(name, 0);
+        }
+    });
+
+    return container;
+};
+
+var getStockOptions = function () {
+    var list = $('<ul/>', {
+        id: 'toggle-list-stocks',
+        css: {display: 'none', paddingLeft: '20px'}
+    });
+
+    var add = $('<div/>', {
+        id: 'stock-add',
+        text: 'add stock',
+        css: {cursor: 'pointer', display: 'inline-block'},
+    });
+
+    add.on('click', function () {
+        var name = window.prompt('New stock name');
+        if (name !== null) {
+            var manager = new CraftManager();
+            var lcname = name.toLowerCase();
+            if (manager.getResource(lcname) !== null) {
+                    options.auto.stock[name] = 0;
+                    if ($('#stock-'+lcname).length === 0)
+                        list.append(addNewStockOption(lcname));
+            } else {
+                message('Kittens know nothing of that resource.');
+            }
+        }
+    });
+
+    list.append(add);
+
+    // Add all the default stocks
+    for (var name in options.auto.stock) {
+        list.append(addNewStockOption(name));
+    }
+
+    return list;
+};
+
 var getToggle = function (toggleName, text) {
     var auto = options.auto[toggleName];
     var element = $('<li/>');
@@ -692,17 +855,39 @@ var getToggle = function (toggleName, text) {
         input.prop('checked', 'checked');
     }
 
+    // engine needs a custom toggle
+    if (toggleName !== 'engine') {
+        input.on('change', function () {
+            if (input.is(':checked')) {
+                auto.enabled = true;
+                message('Enabled Auto ' + ucfirst(text));
+            } else {
+                auto.enabled = false;
+                message('Disabled Auto ' + ucfirst(text));
+            }
+        });
+    }
+
     element.append(input, label);
 
     if (auto.items) {
-        var button = $('<div/>', {
-            id: 'toggle-options-' + toggleName,
-            text: 'toggle options',
-            css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+        // Add a border on the element
+        element.css('borderBottom', '1px  solid gray');
+
+        var toggle = $('<div/>', {
+            css: {display: 'inline-block', float: 'right'},
         });
 
+        var button = $('<div/>', {
+            id: 'toggle-items-' + toggleName,
+            text: 'items',
+            css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+        });
+
+        toggle.append(button);
+
         var list = $('<ul/>', {
-            id: 'toggle-options-list-' + toggleName,
+            id: 'items-list-' + toggleName,
             css: {display: 'none', paddingLeft: '20px'}
         });
 
@@ -720,14 +905,42 @@ var getToggle = function (toggleName, text) {
             list.toggle();
         });
 
-        element.append(button, list);
+        element.append(toggle, list);
+
+        // Add stocks for crafting, sort of a hack
+        if (toggleName === 'craft') {
+            var stocks = $('<div/>', {
+                id: 'toggle-stocks-craft',
+                text: 'stocks',
+                css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+            });
+
+            var stocksList = getStockOptions();
+
+            // When we click the items button, make sure we clear stocks
+            button.on('click', function () {
+                stocksList.toggle(false);
+            });
+
+            stocks.on('click', function () {
+                list.toggle(false);
+                stocksList.toggle();
+            });
+
+            toggle.prepend(stocks);
+
+            element.append(stocksList);
+        }
+
     }
 
     return element;
 };
 
 var getTradeToggle = function (name, option) {
-    var element = $('<li/>');
+    var element = $('<li/>', {
+        css: { borderBottom: '1px solid gray' },
+    });
 
     var label = $('<label/>', {
         'for': 'toggle-' + name,
@@ -747,12 +960,12 @@ var getTradeToggle = function (name, option) {
 
     var button = $('<div/>', {
         id: 'toggle-seasons-' + name,
-        text: 'toggle seasons',
+        text: 'seasons',
         css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
     });
 
     var list = $('<ul/>', {
-        id: 'toggle-seasons-list-' + name,
+        id: 'seasons-list-' + name,
         css: {display: 'none', paddingLeft: '20px'}
     });
 
@@ -821,6 +1034,16 @@ var getOption = function (name, option) {
         input.prop('checked', 'checked');
     }
 
+    input.on('change', function() {
+        if (input.is(':checked')) {
+            option.enabled = true;
+            message('Enabled Auto ' + ucfirst(name));
+        } else {
+            option.enabled = false;
+            message('Disabled Auto ' + ucfirst(name));
+        }
+    });
+
     element.append(input, label);
 
     return element;
@@ -861,7 +1084,7 @@ var getCraftOption = function (name, option) {
 var optionsElement = $('<div/>', {id: 'ks-options', css: {marginBottom: '10px'}});
 var optionsListElement = $('<ul/>');
 var optionsTitleElement = $('<div/>', {
-    css: { borderBottom: '1px solid gray', marginBottom: '5px' },
+    css: { bottomBorder: '1px solid gray', marginBottom: '5px' },
     text: version
 });
 
@@ -878,69 +1101,65 @@ optionsListElement.append(getToggle('festival', 'Festival'));
 // add activity button
 // ===================
 
-var emptyActivity = function () {
-    return { lastyear: game.calendar.year, lastday: game.calendar.day, craft: {}, trade: {}, build: {} };
+activitySummary = {};
+var resetActivitySummary = function () {
+    activitySummary = { lastyear: game.calendar.year, lastday: game.calendar.day, craft: {}, trade: {}, build: {}, other: {} };
 }
 
-var incrementActivity = function(section, name, amount) {
+var storeForSummary = function(name, amount, section) {
     if (amount === undefined) amount = 1;
+    if (section === undefined) section = 'other';
 
-    if (section === undefined) {
-        warning('activity increment section was undefined');
-    }
+    if (activitySummary[section] === undefined)
+        activitySummary[section] = {};
 
-    if (section[name] === undefined) {
-        section[name] = parseInt(amount, 10);
+    if (activitySummary[section][name] === undefined) {
+        activitySummary[section][name] = parseInt(amount, 10);
     } else {
-        section[name] += parseInt(amount);
+        activitySummary[section][name] += parseInt(amount, 10);
     }
 }
 
-activity = emptyActivity();
-
-var showActivity = $('<a/>', {
-    id: 'showActivityHref',
-    text: 'Show activity',
-    href: '#',
-    css: { float: 'right' },
-});
-
-showActivity.on('click', function () {
-
+var displayActivitySummary = function() {
     // Festivals
-    if (activity.festival) {
-        message('Held ' + game.getDisplayValueExt(activity.festival) + ' festivals');
+    if (activitySummary.other.festival) {
+        summary('Held ' + game.getDisplayValueExt(activitySummary.other.festival) + ' festivals');
     }
 
     // Observe stars
-    if (activity.stars) {
-        message('Observed ' + game.getDisplayValueExt(activity.stars) + ' stars');
+    if (activitySummary.other.stars) {
+        summary('Observed ' + game.getDisplayValueExt(activitySummary.other.stars) + ' stars');
     }
 
-    if (activity.faith) {
-        message('Accumulated ' + game.getDisplayValueExt(activity.faith) + ' by praising the sun');
+    // Praise the Sun
+    if (activitySummary.other.faith) {
+        summary('Accumulated ' + game.getDisplayValueExt(activitySummary.other.faith) + ' by praising the sun');
     }
 
-    if (activity.hunt) {
-        message('Sent ' + game.getDisplayValueExt(activity.hunt / 100) + ' adorable kitten hunters');
+    // Hunters
+    if (activitySummary.other.hunt) {
+        summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt / 100) + ' adorable kitten hunters');
     }
 
-    for (var name in activity.build) {
-        message('Build: +' + game.getDisplayValueExt(activity.build[name]) + ' ' + ucfirst(name));
+    // Buildings
+    for (var name in activitySummary.build) {
+        summary('Build: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
     }
 
-    for (var name in activity.craft) {
-        message('Craft: +' + game.getDisplayValueExt(activity.craft[name]) + ' ' + ucfirst(name));
+    // Crafts
+    for (var name in activitySummary.craft) {
+        summary('Craft: +' + game.getDisplayValueExt(activitySummary.craft[name]) + ' ' + ucfirst(name));
     }
 
-    for (var name in activity.trade) {
-        message('Trade: ' + game.getDisplayValueExt(activity.trade[name]) + 'x ' + ucfirst(name));
+    // Trading
+    for (var name in activitySummary.trade) {
+        summary('Trade: ' + game.getDisplayValueExt(activitySummary.trade[name]) + 'x ' + ucfirst(name));
     }
 
     // Show time since last run. Assumes that the day and year are always higher.
-    if (activity.lastyear && activity.lastday) {
-        var years = game.calendar.year - activity.lastyear;
-        var days = Math.floor(game.calendar.day - activity.lastday);
+    if (activitySummary.lastyear && activitySummary.lastday) {
+        var years = game.calendar.year - activitySummary.lastyear;
+        var days = game.calendar.day - activitySummary.lastday;
 
         if (days < 0) {
             years -= 1;
@@ -955,18 +1174,55 @@ showActivity.on('click', function () {
 
         if (days >= 0) {
             if (years > 0) duration += ' and ';
-            duration += days + ' ';
+            duration += roundToTwo(days) + ' ';
             duration += (days == 1) ? 'day' : 'days';
         }
 
-        message('Activity over the last ' + duration + ' in game');
+        summary('Summary of the last ' + duration);
     }
 
     // Clear out the old activity
-    activity = emptyActivity();
+    resetActivitySummary()
+}
+
+resetActivitySummary();
+
+var activityBox = $('<div/>', {
+    id: 'activity-box',
+    css: { display: 'inline-block', float: 'right', verticalAlign: 'top' },
 });
 
-$('#clearLog').append(showActivity);
+var showActivity = $('<a/>', {
+    id: 'showActivityHref',
+    text: 'Show activity',
+    href: '#',
+    css: { verticalAlign: 'top' },
+});
+
+var activityCheckbox = $('<input/>', {
+    id: 'enable-activity',
+    type: 'checkbox',
+    css: { verticalAlign: 'top' },
+});
+
+if (options.showactivity)
+    activityCheckbox.prop('checked', 'checked');
+
+activityCheckbox.on('change', function () {
+    if (activityCheckbox.is(':checked')) {
+        options.showactivity = true;
+        message('Showing Kitten Scientists activity live');
+    } else {
+        options.showactivity = false;
+        message('Hiding updates of Kitten Scientists activity');
+    }
+});
+
+showActivity.on('click', displayActivitySummary);
+
+activityBox.append(activityCheckbox, showActivity);
+
+$('#clearLog').append(activityBox);
 
 // add donation address to bottom of list
 var donate = $('<li/>').append($('<a/>', {
@@ -977,6 +1233,9 @@ var donate = $('<li/>').append($('<a/>', {
     css: {height: '15px', width: '15px', padding: '3px 4px 0 4px', verticalAlign: 'bottom'},
     src: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgdmVyc2lvbj0iMS4xIgogICB3aWR0aD0iNTEycHgiCiAgIGhlaWdodD0iNTEycHgiCiAgIHZpZXdCb3g9IjAgMCAxIDEiCiAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIgogICBpZD0ic3ZnMiIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMC40OC4yIHI5ODE5IgogICBzb2RpcG9kaTpkb2NuYW1lPSJiaXRjb2luLWxvZ28tbm9zaGFkb3cuc3ZnIj4KICA8bWV0YWRhdGEKICAgICBpZD0ibWV0YWRhdGEyMiI+CiAgICA8cmRmOlJERj4KICAgICAgPGNjOldvcmsKICAgICAgICAgcmRmOmFib3V0PSIiPgogICAgICAgIDxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PgogICAgICAgIDxkYzp0eXBlCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4KICAgICAgICA8ZGM6dGl0bGU+PC9kYzp0aXRsZT4KICAgICAgPC9jYzpXb3JrPgogICAgPC9yZGY6UkRGPgogIDwvbWV0YWRhdGE+CiAgPHNvZGlwb2RpOm5hbWVkdmlldwogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIKICAgICBib3JkZXJjb2xvcj0iIzY2NjY2NiIKICAgICBib3JkZXJvcGFjaXR5PSIxIgogICAgIG9iamVjdHRvbGVyYW5jZT0iMTAiCiAgICAgZ3JpZHRvbGVyYW5jZT0iMTAiCiAgICAgZ3VpZGV0b2xlcmFuY2U9IjEwIgogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwIgogICAgIGlua3NjYXBlOnBhZ2VzaGFkb3c9IjIiCiAgICAgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxNDQ3IgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9Ijg2MSIKICAgICBpZD0ibmFtZWR2aWV3MjAiCiAgICAgc2hvd2dyaWQ9ImZhbHNlIgogICAgIGlua3NjYXBlOnpvb209IjAuOTIxODc1IgogICAgIGlua3NjYXBlOmN4PSIyMTIuNTE0MzciCiAgICAgaW5rc2NhcGU6Y3k9IjIzMy4yNDYxNyIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIwIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9InN2ZzIiIC8+CiAgPCEtLSBBbmRyb2lkIGxhdW5jaGVyIGljb25zOiB2aWV3Qm94PSItMC4wNDUgLTAuMDQ1IDEuMDkgMS4wOSIgLS0+CiAgPGRlZnMKICAgICBpZD0iZGVmczQiPgogICAgPGZpbHRlcgogICAgICAgaWQ9Il9kcm9wLXNoYWRvdyIKICAgICAgIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICAgIDxmZUdhdXNzaWFuQmx1cgogICAgICAgICBpbj0iU291cmNlQWxwaGEiCiAgICAgICAgIHJlc3VsdD0iYmx1ci1vdXQiCiAgICAgICAgIHN0ZERldmlhdGlvbj0iMSIKICAgICAgICAgaWQ9ImZlR2F1c3NpYW5CbHVyNyIgLz4KICAgICAgPGZlQmxlbmQKICAgICAgICAgaW49IlNvdXJjZUdyYXBoaWMiCiAgICAgICAgIGluMj0iYmx1ci1vdXQiCiAgICAgICAgIG1vZGU9Im5vcm1hbCIKICAgICAgICAgaWQ9ImZlQmxlbmQ5IiAvPgogICAgPC9maWx0ZXI+CiAgICA8bGluZWFyR3JhZGllbnQKICAgICAgIGlkPSJjb2luLWdyYWRpZW50IgogICAgICAgeDE9IjAlIgogICAgICAgeTE9IjAlIgogICAgICAgeDI9IjAlIgogICAgICAgeTI9IjEwMCUiPgogICAgICA8c3RvcAogICAgICAgICBvZmZzZXQ9IjAlIgogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojZjlhYTRiIgogICAgICAgICBpZD0ic3RvcDEyIiAvPgogICAgICA8c3RvcAogICAgICAgICBvZmZzZXQ9IjEwMCUiCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiNmNzkzMWEiCiAgICAgICAgIGlkPSJzdG9wMTQiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZwogICAgIHRyYW5zZm9ybT0ic2NhbGUoMC4wMTU2MjUpIgogICAgIGlkPSJnMTYiPgogICAgPHBhdGgKICAgICAgIGlkPSJjb2luIgogICAgICAgZD0ibSA2My4wMzU5LDM5Ljc0MSBjIC00LjI3NCwxNy4xNDMgLTIxLjYzNywyNy41NzYgLTM4Ljc4MiwyMy4zMDEgLTE3LjEzOCwtNC4yNzQgLTI3LjU3MSwtMjEuNjM4IC0yMy4yOTUsLTM4Ljc4IDQuMjcyLC0xNy4xNDUgMjEuNjM1LC0yNy41NzkgMzguNzc1LC0yMy4zMDUgMTcuMTQ0LDQuMjc0IDI3LjU3NiwyMS42NCAyMy4zMDIsMzguNzg0IHoiCiAgICAgICBzdHlsZT0iZmlsbDp1cmwoI2NvaW4tZ3JhZGllbnQpIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJzeW1ib2wiCiAgICAgICBkPSJtIDQ2LjEwMDksMjcuNDQxIGMgMC42MzcsLTQuMjU4IC0yLjYwNSwtNi41NDcgLTcuMDM4LC04LjA3NCBsIDEuNDM4LC01Ljc2OCAtMy41MTEsLTAuODc1IC0xLjQsNS42MTYgYyAtMC45MjMsLTAuMjMgLTEuODcxLC0wLjQ0NyAtMi44MTMsLTAuNjYyIGwgMS40MSwtNS42NTMgLTMuNTA5LC0wLjg3NSAtMS40MzksNS43NjYgYyAtMC43NjQsLTAuMTc0IC0xLjUxNCwtMC4zNDYgLTIuMjQyLC0wLjUyNyBsIDAuMDA0LC0wLjAxOCAtNC44NDIsLTEuMjA5IC0wLjkzNCwzLjc1IGMgMCwwIDIuNjA1LDAuNTk3IDIuNTUsMC42MzQgMS40MjIsMC4zNTUgMS42NzksMS4yOTYgMS42MzYsMi4wNDIgbCAtMS42MzgsNi41NzEgYyAwLjA5OCwwLjAyNSAwLjIyNSwwLjA2MSAwLjM2NSwwLjExNyAtMC4xMTcsLTAuMDI5IC0wLjI0MiwtMC4wNjEgLTAuMzcxLC0wLjA5MiBsIC0yLjI5Niw5LjIwNSBjIC0wLjE3NCwwLjQzMiAtMC42MTUsMS4wOCAtMS42MDksMC44MzQgMC4wMzUsMC4wNTEgLTIuNTUyLC0wLjYzNyAtMi41NTIsLTAuNjM3IGwgLTEuNzQzLDQuMDE5IDQuNTY5LDEuMTM5IGMgMC44NSwwLjIxMyAxLjY4MywwLjQzNiAyLjUwMywwLjY0NiBsIC0xLjQ1Myw1LjgzNCAzLjUwNywwLjg3NSAxLjQzOSwtNS43NzIgYyAwLjk1OCwwLjI2IDEuODg4LDAuNSAyLjc5OCwwLjcyNiBsIC0xLjQzNCw1Ljc0NSAzLjUxMSwwLjg3NSAxLjQ1MywtNS44MjMgYyA1Ljk4NywxLjEzMyAxMC40ODksMC42NzYgMTIuMzg0LC00LjczOSAxLjUyNywtNC4zNiAtMC4wNzYsLTYuODc1IC0zLjIyNiwtOC41MTUgMi4yOTQsLTAuNTI5IDQuMDIyLC0yLjAzOCA0LjQ4MywtNS4xNTUgeiBtIC04LjAyMiwxMS4yNDkgYyAtMS4wODUsNC4zNiAtOC40MjYsMi4wMDMgLTEwLjgwNiwxLjQxMiBsIDEuOTI4LC03LjcyOSBjIDIuMzgsMC41OTQgMTAuMDEyLDEuNzcgOC44NzgsNi4zMTcgeiBtIDEuMDg2LC0xMS4zMTIgYyAtMC45OSwzLjk2NiAtNy4xLDEuOTUxIC05LjA4MiwxLjQ1NyBsIDEuNzQ4LC03LjAxIGMgMS45ODIsMC40OTQgOC4zNjUsMS40MTYgNy4zMzQsNS41NTMgeiIKICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmYiIC8+CiAgPC9nPgo8L3N2Zz4='
 }));
+
+// Add some padding above the donation item
+donate.css('padding', '5px');
 
 optionsListElement.append(donate);
 
@@ -995,40 +1254,4 @@ toggleEngine.on('change', function () {
     } else {
         engine.stop();
     }
-});
-
-toggleEngine.trigger('change');
-
-// Add toggles for options
-// =======================
-
-var getOptionItem = function (option) {
-    return options.auto[option] ||
-        options.auto.build.items[option] ||
-        options.auto.craft.items[option] ||
-        options.auto.trade.items[option];
-};
-
-var keys = Object.keys(options.auto);
-
-keys = keys.concat(
-    Object.keys(options.auto.craft.items),
-    Object.keys(options.auto.build.items),
-    Object.keys(options.auto.trade.items)
-);
-
-$.each(keys, function (event, option) {
-    var toggle = $('#toggle-' + option);
-
-    toggle.on('change', function () {
-        var item = getOptionItem(option);
-
-        if (toggle.is(':checked')) {
-            item.enabled = true;
-            message('Enabled Auto ' + ucfirst(option));
-        } else {
-            item.enabled = false;
-            message('Disabled Auto ' + ucfirst(option));
-        }
-    });
 });
