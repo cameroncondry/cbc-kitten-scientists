@@ -872,7 +872,7 @@ var getToggle = function (toggleName, text) {
 
     if (auto.items) {
         // Add a border on the element
-        element.css('borderBottom', '1px  solid gray');
+        element.css('borderBottom', '1px  solid rgba(185, 185, 185, 0.7)');
 
         var toggle = $('<div/>', {
             css: {display: 'inline-block', float: 'right'},
@@ -939,7 +939,7 @@ var getToggle = function (toggleName, text) {
 
 var getTradeToggle = function (name, option) {
     var element = $('<li/>', {
-        css: { borderBottom: '1px solid gray' },
+        css: { borderBottom: '1px solid gray rgba(185, 185, 185,0.7)' },
     });
 
     var label = $('<label/>', {
