@@ -907,7 +907,7 @@ var getToggle = function (toggleName, text) {
     });
 
     if (auto.enabled) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     // engine needs a custom toggle
@@ -1046,7 +1046,7 @@ var getSeason = function (name, season, option) {
     });
 
     if (option[season]) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     input.on('change', function () {
@@ -1079,7 +1079,7 @@ var getOption = function (name, option) {
     });
 
     if (option.enabled) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     input.on('change', function() {
@@ -1111,7 +1111,7 @@ var getCraftOption = function (name, option) {
     });
 
     if (option.limited) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     input.on('change', function () {
@@ -1254,7 +1254,7 @@ var activityCheckbox = $('<input/>', {
 });
 
 if (options.showactivity)
-    activityCheckbox.prop('checked', 'checked');
+    activityCheckbox.prop('checked', true);
 
 activityCheckbox.on('change', function () {
     if (activityCheckbox.is(':checked')) {
