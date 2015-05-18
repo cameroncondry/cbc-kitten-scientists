@@ -812,7 +812,7 @@ var getAvailableStockOptions = function () {
 
         // Show only new resources that we don't have in the list and that are
         // visible. This helps cut down on total size.
-        if ($('#stock-' + res.name).length === 0 && res.visible) {
+        if ($('#stock-' + res.name).length === 0) {
             var item = $('<div/>', {
                 id: 'stock-add-' + name,
                 text: ucfirst(res.name),
@@ -907,16 +907,16 @@ var getToggle = function (toggleName, text) {
     });
 
     if (auto.enabled) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     // engine needs a custom toggle
     if (toggleName !== 'engine') {
         input.on('change', function () {
-            if (input.is(':checked')) {
+            if (input.is(':checked') && auto.enabled == false) {
                 auto.enabled = true;
                 message('Enabled Auto ' + ucfirst(text));
-            } else {
+            } else if (input.not(':checked') && auto.enabled == true) {
                 auto.enabled = false;
                 message('Disabled Auto ' + ucfirst(text));
             }
@@ -949,10 +949,28 @@ var getToggle = function (toggleName, text) {
             css: {display: 'none', paddingLeft: '20px'}
         });
 
+        var disableall = $('<div/>', {
+            id: 'toggle-all-items-' + toggleName,
+            text: 'disable all',
+            css: {cursor: 'pointer',
+                  display: 'inline-block',
+                  textShadow: '3px 3px 4px gray'},
+        });
+
+        disableall.on('click', function () {
+            // can't use find as we only want one layer of checkboxes
+            var items = list.children().children(':checkbox');
+            items.prop('checked', false);
+            items.change();
+            list.children().children(':checkbox').change();
+        });
+
+        list.append(disableall);
+
         // fill out list with toggle items
         for (var itemName in auto.items) {
             if (toggleName === 'trade')
-                list.append(getTradeToggle(itemName, auto.items[itemName]));
+                list.append(getTradeOption(itemName, auto.items[itemName]));
             else if (toggleName === 'craft')
                 list.append(getCraftOption(itemName, auto.items[itemName]));
             else
@@ -998,26 +1016,9 @@ var getToggle = function (toggleName, text) {
     return element;
 };
 
-var getTradeToggle = function (name, option) {
-    var element = $('<li/>', {
-        css: { borderBottom: '1px solid gray rgba(185, 185, 185,0.7)' },
-    });
-
-    var label = $('<label/>', {
-        'for': 'toggle-' + name,
-        text: ucfirst(name)
-    });
-
-    var input = $('<input/>', {
-        id: 'toggle-' + name,
-        type: 'checkbox'
-    });
-
-    if (option.enabled) {
-        input.prop('checked', 'checked');
-    }
-
-    element.append(input, label);
+var getTradeOption = function (name, option) {
+    var element = getOption(name, option);
+    element.css('borderBottom', '1px solid rgba(185, 185, 185, 0.7)');
 
     var button = $('<div/>', {
         id: 'toggle-seasons-' + name,
@@ -1063,14 +1064,14 @@ var getSeason = function (name, season, option) {
     });
 
     if (option[season]) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     input.on('change', function () {
-        if (input.is(':checked')) {
+        if (input.is(':checked') && option[season] == false) {
             option[season] = true;
             message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
-        } else {
+        } else if (input.not(':checked') && option[season] == true) {
             option[season] = false;
             message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
         }
@@ -1096,14 +1097,14 @@ var getOption = function (name, option) {
     });
 
     if (option.enabled) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     input.on('change', function() {
-        if (input.is(':checked')) {
+        if (input.is(':checked') && option.enabled == false) {
             option.enabled = true;
             message('Enabled Auto ' + ucfirst(name));
-        } else {
+        } else if (input.not(':checked') && option.enabled == true) {
             option.enabled = false;
             message('Disabled Auto ' + ucfirst(name));
         }
@@ -1128,14 +1129,14 @@ var getCraftOption = function (name, option) {
     });
 
     if (option.limited) {
-        input.prop('checked', 'checked');
+        input.prop('checked', true);
     }
 
     input.on('change', function () {
-        if (input.is(':checked')) {
+        if (input.is(':checked') && option.limited == false) {
             option.limited = true;
             message('Crafting ' + ucfirst(name) + ': limited once per season');
-        } else {
+        } else if (input.not(':checked') && option.limited == true) {
             option.limited = false;
             message('Crafting ' + ucfirst(name) + ': unlimited');
         }
@@ -1271,13 +1272,13 @@ var activityCheckbox = $('<input/>', {
 });
 
 if (options.showactivity)
-    activityCheckbox.prop('checked', 'checked');
+    activityCheckbox.prop('checked', true);
 
 activityCheckbox.on('change', function () {
-    if (activityCheckbox.is(':checked')) {
+    if (activityCheckbox.is(':checked') && options.showactivity == false) {
         options.showactivity = true;
         message('Showing Kitten Scientists activity live');
-    } else {
+    } else if (activityCheckbox.not(':checked') && options.showactivity == true) {
         options.showactivity = false;
         message('Hiding updates of Kitten Scientists activity');
     }
