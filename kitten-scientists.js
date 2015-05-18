@@ -949,6 +949,24 @@ var getToggle = function (toggleName, text) {
             css: {display: 'none', paddingLeft: '20px'}
         });
 
+        var disableall = $('<div/>', {
+            id: 'toggle-all-items-' + toggleName,
+            text: 'disable all',
+            css: {cursor: 'pointer',
+                  display: 'inline-block',
+                  textShadow: '3px 3px 4px gray'},
+        });
+
+        disableall.on('click', function () {
+            // can't use find as we only want one layer of checkboxes
+            var items = list.children().children(':checkbox');
+            items.prop('checked', false);
+            items.change();
+            list.children().children(':checkbox').change();
+        });
+
+        list.append(disableall);
+
         // fill out list with toggle items
         for (var itemName in auto.items) {
             if (toggleName === 'trade')
