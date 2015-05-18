@@ -470,11 +470,10 @@ CraftManager.prototype = {
     },
     getLowestCraftAmount: function (name) {
         var amount = 0;
-        var consume = options.consume;
         var materials = this.getMaterials(name);
 
         for (var i in materials) {
-            var total = this.getValueAvailable(i) * consume / materials[i];
+            var total = this.getValueAvailable(i) / materials[i];
 
             amount = (0 === amount || total < amount) ? total : amount;
         }
@@ -525,7 +524,13 @@ CraftManager.prototype = {
             if (resPerTick < 0) stock -= resPerTick * 202 * 5;
         }
 
-        return Math.max(value - stock, 0);
+        value = Math.max(value - stock, 0);
+
+        // If we have a maxValue, check consumption rate
+        if (this.getResource(name).maxValue > 0)
+            value /= options.consume;
+
+        return value;
     }
 };
 
@@ -559,12 +564,11 @@ TradeManager.prototype = {
     getLowestTradeAmount: function (name) {
         var amount = -1;
         var highestCapacity = undefined;
-        var consume = options.consume;
         var materials = this.getMaterials(name);
         var race = this.getRace(name);
 
         for (var i in materials) {
-            var total = this.craftManager.getValueAvailable(i) * consume / materials[i];
+            var total = this.craftManager.getValueAvailable(i) / materials[i];
 
             amount = (-1 === amount || total < amount) ? total : amount;
         }
