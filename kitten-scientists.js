@@ -913,10 +913,10 @@ var getToggle = function (toggleName, text) {
     // engine needs a custom toggle
     if (toggleName !== 'engine') {
         input.on('change', function () {
-            if (input.is(':checked')) {
+            if (input.is(':checked') && auto.enabled == false) {
                 auto.enabled = true;
                 message('Enabled Auto ' + ucfirst(text));
-            } else {
+            } else if (input.not(':checked') && auto.enabled == true) {
                 auto.enabled = false;
                 message('Disabled Auto ' + ucfirst(text));
             }
@@ -1050,10 +1050,10 @@ var getSeason = function (name, season, option) {
     }
 
     input.on('change', function () {
-        if (input.is(':checked')) {
+        if (input.is(':checked') && option[season] == false) {
             option[season] = true;
             message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
-        } else {
+        } else if (input.not(':checked') && option[season] == true) {
             option[season] = false;
             message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
         }
@@ -1083,10 +1083,10 @@ var getOption = function (name, option) {
     }
 
     input.on('change', function() {
-        if (input.is(':checked')) {
+        if (input.is(':checked') && option.enabled == false) {
             option.enabled = true;
             message('Enabled Auto ' + ucfirst(name));
-        } else {
+        } else if (input.not(':checked') && option.enabled == true) {
             option.enabled = false;
             message('Disabled Auto ' + ucfirst(name));
         }
@@ -1115,10 +1115,10 @@ var getCraftOption = function (name, option) {
     }
 
     input.on('change', function () {
-        if (input.is(':checked')) {
+        if (input.is(':checked') && option.limited == false) {
             option.limited = true;
             message('Crafting ' + ucfirst(name) + ': limited once per season');
-        } else {
+        } else if (input.not(':checked') && option.limited == true) {
             option.limited = false;
             message('Crafting ' + ucfirst(name) + ': unlimited');
         }
@@ -1257,10 +1257,10 @@ if (options.showactivity)
     activityCheckbox.prop('checked', true);
 
 activityCheckbox.on('change', function () {
-    if (activityCheckbox.is(':checked')) {
+    if (activityCheckbox.is(':checked') && options.showactivity == false) {
         options.showactivity = true;
         message('Showing Kitten Scientists activity live');
-    } else {
+    } else if (activityCheckbox.not(':checked') && options.showactivity == true) {
         options.showactivity = false;
         message('Hiding updates of Kitten Scientists activity');
     }
