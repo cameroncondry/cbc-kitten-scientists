@@ -13,7 +13,7 @@ var options = {
     summarycolor: '#009933', // light green
     activitycolor: '#E65C00', // orange
     showactivity: true,
-    consume: 0.5,
+    consume: 0.6,
     logMessages: 100,
     auto: {
         engine: {enabled: false},
@@ -470,10 +470,11 @@ CraftManager.prototype = {
     },
     getLowestCraftAmount: function (name) {
         var amount = 0;
+        var consume = options.consume;
         var materials = this.getMaterials(name);
 
         for (var i in materials) {
-            var total = this.getValueAvailable(i) / materials[i];
+            var total = this.getValueAvailable(i) * consume / materials[i];
 
             amount = (0 === amount || total < amount) ? total : amount;
         }
