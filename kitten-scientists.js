@@ -780,7 +780,11 @@ var addNewStockOption = function (name) {
     var del = $('<div/>', {
         id: 'stock-delete-' + name,
         text: 'delete',
-        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+        css: {cursor: 'pointer',
+              display: 'inline-block',
+              float: 'right',
+              paddingRight: '5px',
+              textShadow: '3px 3px 4px gray'},
     });
 
     container.append(label, del);
@@ -800,6 +804,38 @@ var addNewStockOption = function (name) {
     return container;
 };
 
+var getAvailableStockOptions = function () {
+    var items = [];
+
+    for (var i in game.resPool.resources) {
+        var res = game.resPool.resources[i];
+
+        // Show only new resources that we don't have in the list and that are
+        // visible. This helps cut down on total size.
+        if ($('#stock-' + res.name).length === 0 && res.visible) {
+            var item = $('<div/>', {
+                id: 'stock-add-' + name,
+                text: ucfirst(res.name),
+                css: {cursor: 'pointer',
+                      textShadow: '3px 3px 4px gray'},
+            });
+
+            // Wrapper function needed to make closure work
+            (function (res, item) {
+                item.on('click', function () {
+                   item.remove();
+                   $('#toggle-list-stocks').append(addNewStockOption(res.name));
+                   options.auto.stock[res.name] = 0;
+                });
+            })(res, item);
+
+            items.push(item);
+        }
+    }
+
+    return items;
+};
+
 var getStockOptions = function () {
     var list = $('<ul/>', {
         id: 'toggle-list-stocks',
@@ -809,25 +845,44 @@ var getStockOptions = function () {
     var add = $('<div/>', {
         id: 'stock-add',
         text: 'add stock',
-        css: {cursor: 'pointer', display: 'inline-block'},
+        css: {cursor: 'pointer',
+              display: 'inline-block',
+              textShadow: '3px 3px 4px gray',
+              borderBottom: '1px solid rgba(185, 185, 185, 0.7)' },
+    });
+
+    var clearunused = $('<div/>', {
+        id: 'stock-clear-unused',
+        text: 'clear unused',
+        css: {cursor: 'pointer',
+              display: 'inline-block',
+              float: 'right',
+              paddingRight: '5px',
+              textShadow: '3px 3px 4px gray' },
+    });
+
+    clearunused.on('click', function () {
+       for (var name in options.auto.stock) {
+           // Only delete empty stocks, require manual delete of stocks at
+           // non-zero value.
+           if (!options.auto.stock[name]) {
+               $('#stock-' + name).remove();
+           }
+       }
+    });
+
+    allstocks = $('<ul/>', {
+        id: 'available-list-stocks',
+        css: {display: 'none', paddingLeft: '20px'}
     });
 
     add.on('click', function () {
-        var name = window.prompt('New stock name');
-        if (name !== null) {
-            var manager = new CraftManager();
-            var lcname = name.toLowerCase();
-            if (manager.getResource(lcname) !== null) {
-                    options.auto.stock[name] = 0;
-                    if ($('#stock-'+lcname).length === 0)
-                        list.append(addNewStockOption(lcname));
-            } else {
-                message('Kittens know nothing of that resource.');
-            }
-        }
+        allstocks.toggle();
+        allstocks.empty();
+        allstocks.append(getAvailableStockOptions());
     });
 
-    list.append(add);
+    list.append(add, delempty, allstocks);
 
     // Add all the default stocks
     for (var name in options.auto.stock) {
@@ -872,7 +927,7 @@ var getToggle = function (toggleName, text) {
 
     if (auto.items) {
         // Add a border on the element
-        element.css('borderBottom', '1px  solid gray');
+        element.css('borderBottom', '1px  solid rgba(185, 185, 185, 0.7)');
 
         var toggle = $('<div/>', {
             css: {display: 'inline-block', float: 'right'},
@@ -881,7 +936,10 @@ var getToggle = function (toggleName, text) {
         var button = $('<div/>', {
             id: 'toggle-items-' + toggleName,
             text: 'items',
-            css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+            css: {cursor: 'pointer',
+                  display: 'inline-block',
+                  paddingRight: '5px',
+                  textShadow: '3px 3px 4px gray'},
         });
 
         toggle.append(button);
@@ -912,7 +970,10 @@ var getToggle = function (toggleName, text) {
             var stocks = $('<div/>', {
                 id: 'toggle-stocks-craft',
                 text: 'stocks',
-                css: {cursor: 'pointer', display: 'inline-block', paddingRight: '5px'}
+                css: {cursor: 'pointer',
+                      display: 'inline-block',
+                      paddingRight: '5px',
+                      textShadow: '3px 3px 4px gray'},
             });
 
             var stocksList = getStockOptions();
@@ -939,7 +1000,7 @@ var getToggle = function (toggleName, text) {
 
 var getTradeToggle = function (name, option) {
     var element = $('<li/>', {
-        css: { borderBottom: '1px solid gray' },
+        css: { borderBottom: '1px solid gray rgba(185, 185, 185,0.7)' },
     });
 
     var label = $('<label/>', {
@@ -961,7 +1022,11 @@ var getTradeToggle = function (name, option) {
     var button = $('<div/>', {
         id: 'toggle-seasons-' + name,
         text: 'seasons',
-        css: {cursor: 'pointer', display: 'inline-block', float: 'right', paddingRight: '5px'}
+        css: {cursor: 'pointer',
+              display: 'inline-block',
+              float: 'right',
+              paddingRight: '5px',
+              textShadow: '3px 3px 4px gray'},
     });
 
     var list = $('<ul/>', {
