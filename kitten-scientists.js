@@ -952,7 +952,7 @@ var getToggle = function (toggleName, text) {
         // fill out list with toggle items
         for (var itemName in auto.items) {
             if (toggleName === 'trade')
-                list.append(getTradeToggle(itemName, auto.items[itemName]));
+                list.append(getTradeOption(itemName, auto.items[itemName]));
             else if (toggleName === 'craft')
                 list.append(getCraftOption(itemName, auto.items[itemName]));
             else
@@ -998,26 +998,9 @@ var getToggle = function (toggleName, text) {
     return element;
 };
 
-var getTradeToggle = function (name, option) {
-    var element = $('<li/>', {
-        css: { borderBottom: '1px solid gray rgba(185, 185, 185,0.7)' },
-    });
-
-    var label = $('<label/>', {
-        'for': 'toggle-' + name,
-        text: ucfirst(name)
-    });
-
-    var input = $('<input/>', {
-        id: 'toggle-' + name,
-        type: 'checkbox'
-    });
-
-    if (option.enabled) {
-        input.prop('checked', 'checked');
-    }
-
-    element.append(input, label);
+var getTradeOption = function (name, option) {
+    var element = getOption(name, option);
+    element.css('borderBottom', '1px solid rgba(185, 185, 185, 0.7)');
 
     var button = $('<div/>', {
         id: 'toggle-seasons-' + name,
