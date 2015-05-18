@@ -882,7 +882,7 @@ var getStockOptions = function () {
         allstocks.append(getAvailableStockOptions());
     });
 
-    list.append(add, delempty, allstocks);
+    list.append(add, clearunused, allstocks);
 
     // Add all the default stocks
     for (var name in options.auto.stock) {
