@@ -529,7 +529,7 @@ CraftManager.prototype = {
 
         // If we have a maxValue, check consumption rate
         if (this.getResource(name).maxValue > 0)
-            value /= options.consume;
+            value *= options.consume;
 
         return value;
     }
