@@ -469,13 +469,13 @@ CraftManager.prototype = {
         return game.workshop.getCraft(this.getName(name));
     },
     getLowestCraftAmount: function (name) {
-        var amount = 0;
+        var amount = undefined;
         var materials = this.getMaterials(name);
 
         for (var i in materials) {
             var total = this.getValueAvailable(i) / materials[i];
 
-            amount = (0 === amount || total < amount) ? total : amount;
+            amount = (amount === undefined || total < amount) ? total : amount;
         }
 
         return amount;
@@ -562,7 +562,7 @@ TradeManager.prototype = {
         activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name));
     },
     getLowestTradeAmount: function (name) {
-        var amount = -1;
+        var amount = undefined;
         var highestCapacity = undefined;
         var materials = this.getMaterials(name);
         var race = this.getRace(name);
@@ -570,7 +570,7 @@ TradeManager.prototype = {
         for (var i in materials) {
             var total = this.craftManager.getValueAvailable(i) / materials[i];
 
-            amount = (-1 === amount || total < amount) ? total : amount;
+            amount = (amount === undefined || total < amount) ? total : amount;
         }
 
         if (race === null || options.auto.trade.items[name].allowuncapped) return Math.floor(amount);
