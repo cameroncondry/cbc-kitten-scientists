@@ -259,10 +259,15 @@ Engine.prototype = {
 
             // Craft the resource if we meet the trigger requirement
             if (!require || trigger <= require.value / require.maxValue) {
-                manager.craft(name, manager.getLowestCraftAmount(name));
+                var amount = Math.floor(manager.getLowestCraftAmount(name));
 
-                // Store the season for future reference
-                craft.lastSeason = season;
+                // Only update season if we actually craft anything.
+                if (amount > 0) {
+                    manager.craft(name, manager.getLowestCraftAmount(name));
+
+                    // Store the season for future reference
+                    craft.lastSeason = season;
+                }
             }
         }
     },
