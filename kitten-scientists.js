@@ -816,7 +816,7 @@ var getAvailableStockOptions = function () {
 
         // Show only new resources that we don't have in the list and that are
         // visible. This helps cut down on total size.
-        if ($('#stock-' + res.name).length === 0) {
+        if (res.name && $('#stock-' + res.name).length === 0) {
             var item = $('<div/>', {
                 id: 'stock-add-' + name,
                 text: ucfirst(res.name),
