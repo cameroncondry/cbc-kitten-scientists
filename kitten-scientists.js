@@ -470,11 +470,10 @@ CraftManager.prototype = {
     },
     getLowestCraftAmount: function (name) {
         var amount = 0;
-        var consume = options.consume;
         var materials = this.getMaterials(name);
 
         for (var i in materials) {
-            var total = this.getValueAvailable(i) * consume / materials[i];
+            var total = this.getValueAvailable(i) / materials[i];
 
             amount = (0 === amount || total < amount) ? total : amount;
         }
@@ -817,7 +816,7 @@ var getAvailableStockOptions = function () {
 
         // Show only new resources that we don't have in the list and that are
         // visible. This helps cut down on total size.
-        if ($('#stock-' + res.name).length === 0) {
+        if (res.name && $('#stock-' + res.name).length === 0) {
             var item = $('<div/>', {
                 id: 'stock-add-' + name,
                 text: ucfirst(res.name),
