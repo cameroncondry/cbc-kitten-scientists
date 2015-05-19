@@ -470,11 +470,10 @@ CraftManager.prototype = {
     },
     getLowestCraftAmount: function (name) {
         var amount = 0;
-        var consume = options.consume;
         var materials = this.getMaterials(name);
 
         for (var i in materials) {
-            var total = this.getValueAvailable(i) * consume / materials[i];
+            var total = this.getValueAvailable(i) / materials[i];
 
             amount = (0 === amount || total < amount) ? total : amount;
         }
