@@ -511,9 +511,14 @@ CraftManager.prototype = {
     getValue: function (name) {
         return this.getResource(name).value;
     },
+    getStock: function (name) {
+        var stock = options.auto.stock[this.getName(name)];
+
+        return !stock ? 0 : stock;
+    },
     getValueAvailable: function (name) {
         var value = this.getValue(name);
-        var stock = !options.auto.stock[name] ? 0 : options.auto.stock[name];
+        var stock = this.getStock(name);
 
         if ('catnip' === name) {
             var resPerTick = game.getResourcePerTick(name, false, {
@@ -767,7 +772,7 @@ var setStockValue = function (name, value) {
     $('#stock-value-' + name).text(ucfirst(name) + ': ' + game.getDisplayValueExt(n));
 };
 
-var addNewStockOption = function (name) {
+var addNewStockOption = function (name, title) {
     var stock = options.auto.stock[name];
 
     var container = $('<div/>', {
@@ -777,7 +782,7 @@ var addNewStockOption = function (name) {
 
     var label = $('<div/>', {
         id: 'stock-value-' + name,
-        text: ucfirst(name) + ': ' + game.getDisplayValueExt(stock),
+        text: ucfirst(title ? title : name) + ': ' + game.getDisplayValueExt(stock),
         css: {cursor: 'pointer', display: 'inline-block'},
     });
 
@@ -819,7 +824,7 @@ var getAvailableStockOptions = function () {
         if (res.name && $('#stock-' + res.name).length === 0) {
             var item = $('<div/>', {
                 id: 'stock-add-' + name,
-                text: ucfirst(res.name),
+                text: ucfirst(res.title ? res.title : res.name),
                 css: {cursor: 'pointer',
                       textShadow: '3px 3px 4px gray'},
             });
@@ -828,7 +833,7 @@ var getAvailableStockOptions = function () {
             (function (res, item) {
                 item.on('click', function () {
                    item.remove();
-                   $('#toggle-list-stocks').append(addNewStockOption(res.name));
+                   $('#toggle-list-stocks').append(addNewStockOption(res.name, res.title));
                    options.auto.stock[res.name] = 0;
                 });
             })(res, item);
