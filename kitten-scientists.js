@@ -583,7 +583,7 @@ TradeManager.prototype = {
             amount = (amount === undefined || total < amount) ? total : amount;
         }
 
-        if (race === null || options.auto.trade.items[name].allowuncapped) return Math.floor(amount);
+        if (race === null || options.auto.trade.items[name].allowcapped) return Math.floor(amount);
 
         // Loop through the items obtained by the race, and determine
         // which good has the most space left. Once we've determined this,
