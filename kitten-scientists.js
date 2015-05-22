@@ -476,12 +476,20 @@ CraftManager.prototype = {
     getLowestCraftAmount: function (name) {
         var amount = undefined;
         var materials = this.getMaterials(name);
+        var res = this.getResource(name);
 
         for (var i in materials) {
             var total = this.getValueAvailable(i) / materials[i];
 
             amount = (amount === undefined || total < amount) ? total : amount;
         }
+
+        // If we have a maximum value, ensure that we don't produce more than
+        // this value. This should currently only impact wood crafting, but is
+        // written generically to ensure it works for any craft that produces a
+        // good with a maximum value.
+        if (res.maxValue > 0 && amount > (res.maxValue - res.value))
+            amount = res.maxValue - res.value;
 
         return amount;
     },
