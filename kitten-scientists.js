@@ -67,7 +67,7 @@ var options = {
                 mint: {require: false, enabled: false},
                 unicornPasture: {require: false, enabled: true},
                 ziggurat: {require: false, enabled: true},
-                chronosphere: {require: 'unobtanium', enabled: true},
+                chronosphere: {require: 'unobtainium', enabled: true},
             }
         },
         craft: {
@@ -88,7 +88,7 @@ var options = {
                 compendium: {require: 'science', max: 0, limited: true, enabled: true},
                 blueprint: {require: 'science', max: 0, limited: true, enabled: false},
                 megalith: {require: false, max: 0, limited: true, enabled: false},
-                eludium: {require: 'unobtanium', max: 0,  limited: true, enabled: false},
+                eludium: {require: 'unobtainium', max: 0,  limited: true, enabled: false},
             }
         },
         trade: {
