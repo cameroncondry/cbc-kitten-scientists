@@ -812,12 +812,12 @@ var addNewStockOption = function (name, title) {
     container.append(label, del);
 
     label.on('click', function () {
-        var value = window.prompt('Stock for ' + ucfirst(name));
+        var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
         if (value !== null) setStockValue(name, value);
     });
 
     del.on('click', function () {
-        if (window.confirm('Delete stock for ' + name + '?')) {
+        if (window.confirm('Delete stock for ' + ucfirst(title ? title : name) + '?')) {
             container.remove();
             setStockValue(name, 0);
         }
