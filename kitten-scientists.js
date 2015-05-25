@@ -120,6 +120,7 @@ var options = {
         },
         resources: {
             furs: {stock: 1000},
+            unobtainium: {consume: 1.0},
         },
     }
 };
@@ -546,8 +547,12 @@ CraftManager.prototype = {
         value = Math.max(value - stock, 0);
 
         // If we have a maxValue, check consumption rate
-        if (this.getResource(name).maxValue > 0)
-            value *= options.consume;
+        if (this.getResource(name).maxValue > 0) {
+            var res = options.auto.resources[name];
+            var consume = res.consume ? res.consume : options.consume;
+
+            value *= consume;
+        }
 
         return value;
     }
