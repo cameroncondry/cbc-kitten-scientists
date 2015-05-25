@@ -420,7 +420,7 @@ BuildManager.prototype = {
 
         for (var i in prices) {
             var price = prices[i];
-            var res = this.crafts.getValueAvailable(price.name);
+            var res = this.crafts.getValueAvailable(price.name, true);
             if (res < price.val) return false;
         }
 
@@ -531,7 +531,7 @@ CraftManager.prototype = {
 
         return !stock ? 0 : stock;
     },
-    getValueAvailable: function (name) {
+    getValueAvailable: function (name, all) {
         var value = this.getValue(name);
         var stock = this.getStock(name);
 
@@ -546,8 +546,9 @@ CraftManager.prototype = {
 
         value = Math.max(value - stock, 0);
 
-        // If we have a maxValue, check consumption rate
-        if (this.getResource(name).maxValue > 0) {
+        // If we have a maxValue, and user hasn't requested all, check
+        // consumption rate
+        if (!all && this.getResource(name).maxValue > 0) {
             var res = options.auto.resources[name];
             var consume = res.consume ? res.consume : options.consume;
 
