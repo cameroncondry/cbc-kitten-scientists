@@ -791,9 +791,23 @@ var setStockValue = function (name, value) {
     $('#stock-value-' + name).text('Stock: ' + game.getDisplayValueExt(n));
 };
 
+var setConsumeRate = function (name, value) {
+    var n = parseFloat(value);
+
+    if (n === NaN || n < 0.0 || n > 1.0) {
+       warning('ignoring non-numeric or invalid consume rate ' + value);
+       return;
+    }
+
+    if (!options.auto.resources[name]) options.auto.resources[name] = {};
+    options.auto.resources[name].consume = n;
+    $('#consume-rate-' + name).text('Consume: ' + n.toFixed(2));
+};
+
 var addNewResourceOption = function (name, title) {
     var res = options.auto.resources[name];
     var stock = res && (res.stock != undefined) ? res.stock : 0;
+    var consume = res && (res.consume != undefined) ? res.consume : options.consume;
 
     var container = $('<div/>', {
         id: 'resource-' + name,
@@ -812,6 +826,12 @@ var addNewResourceOption = function (name, title) {
         css: {cursor: 'pointer', display: 'inline-block', width: '80px'},
     });
 
+    var consume = $('<div/>', {
+        id: 'consume-rate-' + name,
+        text: 'Consume: ' + consume.toFixed(2),
+        css: {cursor: 'pointer', display: 'inline-block'},
+    });
+
     var del = $('<div/>', {
         id: 'resource-delete-' + name,
         text: 'del',
@@ -822,11 +842,16 @@ var addNewResourceOption = function (name, title) {
               textShadow: '3px 3px 4px gray'},
     });
 
-    container.append(label, stock, del);
+    container.append(label, stock, consume, del);
 
     stock.on('click', function () {
         var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
         if (value !== null) setStockValue(name, value);
+    });
+
+    consume.on('click', function () {
+        var value = window.prompt('Consume rate for ' + ucfirst(title ? title : name));
+        if (value !== null) setConsumeRate(name, value);
     });
 
     del.on('click', function () {
