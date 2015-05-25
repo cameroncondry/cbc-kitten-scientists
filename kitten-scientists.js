@@ -118,8 +118,8 @@ var options = {
                              summer: true, autumn: true, winter: true, spring: true},
             }
         },
-        stock: {
-            furs: 1000,
+        resources: {
+            furs: {stock: 1000},
         },
     }
 };
@@ -525,7 +525,8 @@ CraftManager.prototype = {
         return this.getResource(name).value;
     },
     getStock: function (name) {
-        var stock = options.auto.stock[this.getName(name)];
+        var res = options.auto.resources[this.getName(name)];
+        var stock = res ? res.stock : 0;
 
         return !stock ? 0 : stock;
     },
@@ -781,12 +782,14 @@ var setStockValue = function (name, value) {
        return;
     }
 
-    options.auto.stock[name] = n;
+    if (!options.auto.resources[name]) options.auto.resources[name] = {};
+    options.auto.resources[name].stock = n;
     $('#stock-value-' + name).text(ucfirst(name) + ': ' + game.getDisplayValueExt(n));
 };
 
 var addNewStockOption = function (name, title) {
-    var stock = options.auto.stock[name];
+    var res = options.auto.resources[name];
+    var stock = res ? res.stock : 0;
 
     var container = $('<div/>', {
         id: 'stock-' + name,
@@ -846,8 +849,9 @@ var getAvailableStockOptions = function () {
             (function (res, item) {
                 item.on('click', function () {
                    item.remove();
+                   if (!options.auto.resources[res.name]) options.auto.resources[res.name] = {};
+                   options.auto.resources[res.name].stock = 0;
                    $('#toggle-list-stocks').append(addNewStockOption(res.name, res.title));
-                   options.auto.stock[res.name] = 0;
                 });
             })(res, item);
 
@@ -884,10 +888,10 @@ var getStockOptions = function () {
     });
 
     clearunused.on('click', function () {
-       for (var name in options.auto.stock) {
+       for (var name in options.auto.resources) {
            // Only delete empty stocks, require manual delete of stocks at
            // non-zero value.
-           if (!options.auto.stock[name]) {
+           if (!options.auto.resources[name].stock) {
                $('#stock-' + name).remove();
            }
        }
@@ -907,8 +911,9 @@ var getStockOptions = function () {
     list.append(add, clearunused, allstocks);
 
     // Add all the default stocks
-    for (var name in options.auto.stock) {
-        list.append(addNewStockOption(name));
+    for (var name in options.auto.resources) {
+        if (options.auto.resources[name].stock)
+            list.append(addNewStockOption(name));
     }
 
     return list;
