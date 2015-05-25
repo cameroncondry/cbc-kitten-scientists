@@ -784,27 +784,33 @@ var setStockValue = function (name, value) {
 
     if (!options.auto.resources[name]) options.auto.resources[name] = {};
     options.auto.resources[name].stock = n;
-    $('#stock-value-' + name).text(ucfirst(name) + ': ' + game.getDisplayValueExt(n));
+    $('#stock-value-' + name).text('Stock: ' + game.getDisplayValueExt(n));
 };
 
-var addNewStockOption = function (name, title) {
+var addNewResourceOption = function (name, title) {
     var res = options.auto.resources[name];
     var stock = res ? res.stock : 0;
 
     var container = $('<div/>', {
-        id: 'stock-' + name,
+        id: 'resource-' + name,
         css: {display: 'inline-block', width: '100%'},
     });
 
     var label = $('<div/>', {
+        id: 'resource-label-' + name,
+        text: ucfirst(title ? title : name),
+        css: {display: 'inline-block', width: '95px'},
+    });
+
+    var stock = $('<div/>', {
         id: 'stock-value-' + name,
-        text: ucfirst(title ? title : name) + ': ' + game.getDisplayValueExt(stock),
-        css: {cursor: 'pointer', display: 'inline-block'},
+        text: 'Stock: ' + game.getDisplayValueExt(stock),
+        css: {cursor: 'pointer', display: 'inline-block', width: '80px'},
     });
 
     var del = $('<div/>', {
-        id: 'stock-delete-' + name,
-        text: 'delete',
+        id: 'resource-delete-' + name,
+        text: 'del',
         css: {cursor: 'pointer',
               display: 'inline-block',
               float: 'right',
@@ -812,15 +818,15 @@ var addNewStockOption = function (name, title) {
               textShadow: '3px 3px 4px gray'},
     });
 
-    container.append(label, del);
+    container.append(label, stock, del);
 
-    label.on('click', function () {
+    stock.on('click', function () {
         var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
         if (value !== null) setStockValue(name, value);
     });
 
     del.on('click', function () {
-        if (window.confirm('Delete stock for ' + ucfirst(title ? title : name) + '?')) {
+        if (window.confirm('Delete resource controls for ' + ucfirst(title ? title : name) + '?')) {
             container.remove();
             setStockValue(name, 0);
         }
@@ -829,7 +835,7 @@ var addNewStockOption = function (name, title) {
     return container;
 };
 
-var getAvailableStockOptions = function () {
+var getAvailableResourceOptions = function () {
     var items = [];
 
     for (var i in game.resPool.resources) {
@@ -837,9 +843,9 @@ var getAvailableStockOptions = function () {
 
         // Show only new resources that we don't have in the list and that are
         // visible. This helps cut down on total size.
-        if (res.name && $('#stock-' + res.name).length === 0) {
+        if (res.name && $('#resource-' + res.name).length === 0) {
             var item = $('<div/>', {
-                id: 'stock-add-' + name,
+                id: 'resource-add-' + name,
                 text: ucfirst(res.title ? res.title : res.name),
                 css: {cursor: 'pointer',
                       textShadow: '3px 3px 4px gray'},
@@ -851,7 +857,7 @@ var getAvailableStockOptions = function () {
                    item.remove();
                    if (!options.auto.resources[res.name]) options.auto.resources[res.name] = {};
                    options.auto.resources[res.name].stock = 0;
-                   $('#toggle-list-stocks').append(addNewStockOption(res.name, res.title));
+                   $('#toggle-list-resources').append(addNewResourceOption(res.name, res.title));
                 });
             })(res, item);
 
@@ -862,15 +868,15 @@ var getAvailableStockOptions = function () {
     return items;
 };
 
-var getStockOptions = function () {
+var getResourceOptions = function () {
     var list = $('<ul/>', {
-        id: 'toggle-list-stocks',
+        id: 'toggle-list-resources',
         css: {display: 'none', paddingLeft: '20px'}
     });
 
     var add = $('<div/>', {
-        id: 'stock-add',
-        text: 'add stock',
+        id: 'resources-add',
+        text: 'add resources',
         css: {cursor: 'pointer',
               display: 'inline-block',
               textShadow: '3px 3px 4px gray',
@@ -878,7 +884,7 @@ var getStockOptions = function () {
     });
 
     var clearunused = $('<div/>', {
-        id: 'stock-clear-unused',
+        id: 'resources-clear-unused',
         text: 'clear unused',
         css: {cursor: 'pointer',
               display: 'inline-block',
@@ -889,31 +895,30 @@ var getStockOptions = function () {
 
     clearunused.on('click', function () {
        for (var name in options.auto.resources) {
-           // Only delete empty stocks, require manual delete of stocks at
-           // non-zero value.
+           // Only delete resources with zero stock value. Require manual
+           // removal of resources with non-zero stocks
            if (!options.auto.resources[name].stock) {
-               $('#stock-' + name).remove();
+               $('#resource-' + name).remove();
            }
        }
     });
 
-    allstocks = $('<ul/>', {
-        id: 'available-list-stocks',
+    allresources = $('<ul/>', {
+        id: 'available-resources-list',
         css: {display: 'none', paddingLeft: '20px'}
     });
 
     add.on('click', function () {
-        allstocks.toggle();
-        allstocks.empty();
-        allstocks.append(getAvailableStockOptions());
+        allresources.toggle();
+        allresources.empty();
+        allresources.append(getAvailableResourceOptions());
     });
 
-    list.append(add, clearunused, allstocks);
+    list.append(add, clearunused, allresources);
 
-    // Add all the default stocks
+    // Add all the current resources
     for (var name in options.auto.resources) {
-        if (options.auto.resources[name].stock)
-            list.append(addNewStockOption(name));
+        list.append(addNewResourceOption(name));
     }
 
     return list;
@@ -1010,32 +1015,32 @@ var getToggle = function (toggleName, text) {
 
         element.append(toggle, list);
 
-        // Add stocks for crafting, sort of a hack
+        // Add resource controls for crafting, sort of a hack
         if (toggleName === 'craft') {
-            var stocks = $('<div/>', {
-                id: 'toggle-stocks-craft',
-                text: 'stocks',
+            var resources = $('<div/>', {
+                id: 'toggle-resource-controls',
+                text: 'resources',
                 css: {cursor: 'pointer',
                       display: 'inline-block',
                       paddingRight: '5px',
                       textShadow: '3px 3px 4px gray'},
             });
 
-            var stocksList = getStockOptions();
+            var resourcesList = getResourceOptions();
 
-            // When we click the items button, make sure we clear stocks
+            // When we click the items button, make sure we clear resources
             button.on('click', function () {
-                stocksList.toggle(false);
+                resourcesList.toggle(false);
             });
 
-            stocks.on('click', function () {
+            resources.on('click', function () {
                 list.toggle(false);
-                stocksList.toggle();
+                resourcesList.toggle();
             });
 
-            toggle.prepend(stocks);
+            toggle.prepend(resources);
 
-            element.append(stocksList);
+            element.append(resourcesList);
         }
 
     }
