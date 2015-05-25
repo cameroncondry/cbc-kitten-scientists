@@ -779,7 +779,6 @@ var roundToTwo = function (n) {
 };
 
 var setStockValue = function (name, value) {
-    var label = $('#stock-' + name);
     var n = Number(value);
 
     if (n === NaN || n < 0) {
@@ -794,7 +793,7 @@ var setStockValue = function (name, value) {
 
 var addNewResourceOption = function (name, title) {
     var res = options.auto.resources[name];
-    var stock = res ? res.stock : 0;
+    var stock = res && (res.stock != undefined) ? res.stock : 0;
 
     var container = $('<div/>', {
         id: 'resource-' + name,
@@ -900,9 +899,10 @@ var getResourceOptions = function () {
 
     clearunused.on('click', function () {
        for (var name in options.auto.resources) {
-           // Only delete resources with zero stock value. Require manual
-           // removal of resources with non-zero stocks
-           if (!options.auto.resources[name].stock) {
+           // Only delete resources with modified values. Require manual
+           // removal of resources with non-standard values.
+           if (!options.auto.resources[name].stock &&
+               (options.auto.resources[name].consume == options.consume)) {
                $('#resource-' + name).remove();
            }
        }
