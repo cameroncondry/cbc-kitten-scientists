@@ -550,7 +550,7 @@ CraftManager.prototype = {
         // consumption rate
         if (!all && this.getResource(name).maxValue > 0) {
             var res = options.auto.resources[name];
-            var consume = res.consume ? res.consume : options.consume;
+            var consume = res && (res.consume != undefined) ? res.consume : options.consume;
 
             value *= consume;
         }
