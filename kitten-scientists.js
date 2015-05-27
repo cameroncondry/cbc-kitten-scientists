@@ -118,8 +118,9 @@ var options = {
                              summer: true, autumn: true, winter: true, spring: true},
             }
         },
-        stock: {
-            furs: 1000,
+        resources: {
+            furs: {stock: 1000},
+            unobtainium: {consume: 1.0},
         },
     }
 };
@@ -525,7 +526,8 @@ CraftManager.prototype = {
         return this.getResource(name).value;
     },
     getStock: function (name) {
-        var stock = options.auto.stock[this.getName(name)];
+        var res = options.auto.resources[this.getName(name)];
+        var stock = res ? res.stock : 0;
 
         return !stock ? 0 : stock;
     },
@@ -545,8 +547,12 @@ CraftManager.prototype = {
         value = Math.max(value - stock, 0);
 
         // If we have a maxValue, check consumption rate
-        if (this.getResource(name).maxValue > 0)
-            value *= options.consume;
+        if (this.getResource(name).maxValue > 0) {
+            var res = options.auto.resources[name];
+            var consume = res.consume ? res.consume : options.consume;
+
+            value *= consume;
+        }
 
         return value;
     }
@@ -773,7 +779,6 @@ var roundToTwo = function (n) {
 };
 
 var setStockValue = function (name, value) {
-    var label = $('#stock-' + name);
     var n = Number(value);
 
     if (n === NaN || n < 0) {
@@ -781,27 +786,55 @@ var setStockValue = function (name, value) {
        return;
     }
 
-    options.auto.stock[name] = n;
-    $('#stock-value-' + name).text(ucfirst(name) + ': ' + game.getDisplayValueExt(n));
+    if (!options.auto.resources[name]) options.auto.resources[name] = {};
+    options.auto.resources[name].stock = n;
+    $('#stock-value-' + name).text('Stock: ' + game.getDisplayValueExt(n));
 };
 
-var addNewStockOption = function (name, title) {
-    var stock = options.auto.stock[name];
+var setConsumeRate = function (name, value) {
+    var n = parseFloat(value);
+
+    if (n === NaN || n < 0.0 || n > 1.0) {
+       warning('ignoring non-numeric or invalid consume rate ' + value);
+       return;
+    }
+
+    if (!options.auto.resources[name]) options.auto.resources[name] = {};
+    options.auto.resources[name].consume = n;
+    $('#consume-rate-' + name).text('Consume: ' + n.toFixed(2));
+};
+
+var addNewResourceOption = function (name, title) {
+    var res = options.auto.resources[name];
+    var stock = res && (res.stock != undefined) ? res.stock : 0;
+    var consume = res && (res.consume != undefined) ? res.consume : options.consume;
 
     var container = $('<div/>', {
-        id: 'stock-' + name,
+        id: 'resource-' + name,
         css: {display: 'inline-block', width: '100%'},
     });
 
     var label = $('<div/>', {
+        id: 'resource-label-' + name,
+        text: ucfirst(title ? title : name),
+        css: {display: 'inline-block', width: '95px'},
+    });
+
+    var stock = $('<div/>', {
         id: 'stock-value-' + name,
-        text: ucfirst(title ? title : name) + ': ' + game.getDisplayValueExt(stock),
+        text: 'Stock: ' + game.getDisplayValueExt(stock),
+        css: {cursor: 'pointer', display: 'inline-block', width: '80px'},
+    });
+
+    var consume = $('<div/>', {
+        id: 'consume-rate-' + name,
+        text: 'Consume: ' + consume.toFixed(2),
         css: {cursor: 'pointer', display: 'inline-block'},
     });
 
     var del = $('<div/>', {
-        id: 'stock-delete-' + name,
-        text: 'delete',
+        id: 'resource-delete-' + name,
+        text: 'del',
         css: {cursor: 'pointer',
               display: 'inline-block',
               float: 'right',
@@ -809,15 +842,20 @@ var addNewStockOption = function (name, title) {
               textShadow: '3px 3px 4px gray'},
     });
 
-    container.append(label, del);
+    container.append(label, stock, consume, del);
 
-    label.on('click', function () {
-        var value = window.prompt('Stock for ' + ucfirst(name));
+    stock.on('click', function () {
+        var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
         if (value !== null) setStockValue(name, value);
     });
 
+    consume.on('click', function () {
+        var value = window.prompt('Consume rate for ' + ucfirst(title ? title : name));
+        if (value !== null) setConsumeRate(name, value);
+    });
+
     del.on('click', function () {
-        if (window.confirm('Delete stock for ' + name + '?')) {
+        if (window.confirm('Delete resource controls for ' + ucfirst(title ? title : name) + '?')) {
             container.remove();
             setStockValue(name, 0);
         }
@@ -826,7 +864,7 @@ var addNewStockOption = function (name, title) {
     return container;
 };
 
-var getAvailableStockOptions = function () {
+var getAvailableResourceOptions = function () {
     var items = [];
 
     for (var i in game.resPool.resources) {
@@ -834,9 +872,9 @@ var getAvailableStockOptions = function () {
 
         // Show only new resources that we don't have in the list and that are
         // visible. This helps cut down on total size.
-        if (res.name && $('#stock-' + res.name).length === 0) {
+        if (res.name && $('#resource-' + res.name).length === 0) {
             var item = $('<div/>', {
-                id: 'stock-add-' + name,
+                id: 'resource-add-' + name,
                 text: ucfirst(res.title ? res.title : res.name),
                 css: {cursor: 'pointer',
                       textShadow: '3px 3px 4px gray'},
@@ -846,8 +884,9 @@ var getAvailableStockOptions = function () {
             (function (res, item) {
                 item.on('click', function () {
                    item.remove();
-                   $('#toggle-list-stocks').append(addNewStockOption(res.name, res.title));
-                   options.auto.stock[res.name] = 0;
+                   if (!options.auto.resources[res.name]) options.auto.resources[res.name] = {};
+                   options.auto.resources[res.name].stock = 0;
+                   $('#toggle-list-resources').append(addNewResourceOption(res.name, res.title));
                 });
             })(res, item);
 
@@ -858,15 +897,15 @@ var getAvailableStockOptions = function () {
     return items;
 };
 
-var getStockOptions = function () {
+var getResourceOptions = function () {
     var list = $('<ul/>', {
-        id: 'toggle-list-stocks',
+        id: 'toggle-list-resources',
         css: {display: 'none', paddingLeft: '20px'}
     });
 
     var add = $('<div/>', {
-        id: 'stock-add',
-        text: 'add stock',
+        id: 'resources-add',
+        text: 'add resources',
         css: {cursor: 'pointer',
               display: 'inline-block',
               textShadow: '3px 3px 4px gray',
@@ -874,7 +913,7 @@ var getStockOptions = function () {
     });
 
     var clearunused = $('<div/>', {
-        id: 'stock-clear-unused',
+        id: 'resources-clear-unused',
         text: 'clear unused',
         css: {cursor: 'pointer',
               display: 'inline-block',
@@ -884,31 +923,32 @@ var getStockOptions = function () {
     });
 
     clearunused.on('click', function () {
-       for (var name in options.auto.stock) {
-           // Only delete empty stocks, require manual delete of stocks at
-           // non-zero value.
-           if (!options.auto.stock[name]) {
-               $('#stock-' + name).remove();
+       for (var name in options.auto.resources) {
+           // Only delete resources with modified values. Require manual
+           // removal of resources with non-standard values.
+           if (!options.auto.resources[name].stock &&
+               (options.auto.resources[name].consume == options.consume)) {
+               $('#resource-' + name).remove();
            }
        }
     });
 
-    allstocks = $('<ul/>', {
-        id: 'available-list-stocks',
+    allresources = $('<ul/>', {
+        id: 'available-resources-list',
         css: {display: 'none', paddingLeft: '20px'}
     });
 
     add.on('click', function () {
-        allstocks.toggle();
-        allstocks.empty();
-        allstocks.append(getAvailableStockOptions());
+        allresources.toggle();
+        allresources.empty();
+        allresources.append(getAvailableResourceOptions());
     });
 
-    list.append(add, clearunused, allstocks);
+    list.append(add, clearunused, allresources);
 
-    // Add all the default stocks
-    for (var name in options.auto.stock) {
-        list.append(addNewStockOption(name));
+    // Add all the current resources
+    for (var name in options.auto.resources) {
+        list.append(addNewResourceOption(name));
     }
 
     return list;
@@ -1005,32 +1045,32 @@ var getToggle = function (toggleName, text) {
 
         element.append(toggle, list);
 
-        // Add stocks for crafting, sort of a hack
+        // Add resource controls for crafting, sort of a hack
         if (toggleName === 'craft') {
-            var stocks = $('<div/>', {
-                id: 'toggle-stocks-craft',
-                text: 'stocks',
+            var resources = $('<div/>', {
+                id: 'toggle-resource-controls',
+                text: 'resources',
                 css: {cursor: 'pointer',
                       display: 'inline-block',
                       paddingRight: '5px',
                       textShadow: '3px 3px 4px gray'},
             });
 
-            var stocksList = getStockOptions();
+            var resourcesList = getResourceOptions();
 
-            // When we click the items button, make sure we clear stocks
+            // When we click the items button, make sure we clear resources
             button.on('click', function () {
-                stocksList.toggle(false);
+                resourcesList.toggle(false);
             });
 
-            stocks.on('click', function () {
+            resources.on('click', function () {
                 list.toggle(false);
-                stocksList.toggle();
+                resourcesList.toggle();
             });
 
-            toggle.prepend(stocks);
+            toggle.prepend(resources);
 
-            element.append(stocksList);
+            element.append(resourcesList);
         }
 
     }
