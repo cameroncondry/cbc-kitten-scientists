@@ -1101,7 +1101,7 @@ var getTradeOption = function (name, option) {
     // fill out the list with seasons
     list.append(getSeason(name, 'spring', option));
     list.append(getSeason(name, 'summer', option));
-    list.append(getSeason(name, 'autunn', option));
+    list.append(getSeason(name, 'autumn', option));
     list.append(getSeason(name, 'winter', option));
 
     button.on('click', function () {
