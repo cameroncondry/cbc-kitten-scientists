@@ -305,7 +305,7 @@ Engine.prototype = {
     hunt: function () {
         var catpower = this.craftManager.getResource('catpower');
 
-        if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue) {
+        if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue && catpower.value >= 100) {
             // No way to send only some hunters. Thus, we hunt with everything
             storeForSummary('hunt', catpower.value);
             activity('Sent ' + game.getDisplayValueExt(catpower.value) + ' kittens on the hunt');
