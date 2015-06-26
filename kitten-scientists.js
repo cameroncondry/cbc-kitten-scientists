@@ -4,124 +4,124 @@
 
 var version = 'Kitten Scientists version 1.2.4';
 var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
-var game = gamePage;
+var game    = gamePage;
 
 var options = {
-    debug: false,
-    interval: 2000,
-    msgcolor: '#aa50fe', // dark purple
-    summarycolor: '#009933', // light green
-    activitycolor: '#E65C00', // orange
-    showactivity: true,
-    consume: 0.6,
-    logMessages: 100,
+    debug         : false,
+    interval      : 2000,
+    msgcolor      : '#aa50fe', // dark purple
+    summarycolor  : '#009933', // light green
+    activitycolor : '#E65C00', // orange
+    showactivity  : true,
+    consume       : 0.6,
+    logMessages   : 100,
     auto: {
-        engine: {enabled: false},
-        faith: {enabled: true, trigger: 0.99},
+        engine:   {enabled: false},
+        faith:    {enabled: true, trigger: 0.99},
         festival: {enabled: true},
-        hunt: {enabled: true, trigger: 0.6},
+        hunt:     {enabled: true, trigger: 0.6},
         build: {
             enabled: true, trigger: 0.75, items: {
                 // science
-                library: {require: 'wood', enabled: true},
-                academy: {require: 'wood', enabled: true},
-                observatory: {require: 'iron', enabled: true},
+                library:        {require: 'wood',        enabled: true},
+                academy:        {require: 'wood',        enabled: true},
+                observatory:    {require: 'iron',        enabled: true},
 
                 // craft bonuses
-                workshop: {require: 'minerals', enabled: true},
-                factory: {require: 'titanium', enabled: true},
+                workshop:       {require: 'minerals',    enabled: true},
+                factory:        {require: 'titanium',    enabled: true},
 
                 // production
-                field: {require: 'catnip', enabled: true},
-                pasture: {require: 'catnip', enabled: true},
-                mine: {require: 'wood', enabled: true},
-                lumberMill: {require: 'minerals', enabled: true},
-                aqueduct: {require: 'minerals', enabled: true},
-                oilWell: {require: 'coal', enabled: true},
-                quarry: {require: 'coal', enabled: true},
+                field:          {require: 'catnip',      enabled: true},
+                pasture:        {require: 'catnip',      enabled: true},
+                mine:           {require: 'wood',        enabled: true},
+                lumberMill:     {require: 'minerals',    enabled: true},
+                aqueduct:       {require: 'minerals',    enabled: true},
+                oilWell:        {require: 'coal',        enabled: true},
+                quarry:         {require: 'coal',        enabled: true},
 
                 // conversion
-                smelter: {require: 'minerals', enabled: true},
-                biolab: {require: 'science', enabled: false},
-                calciner: {require: 'titanium', enabled: false},
-                reactor: {require: 'titanium', enabled: false},
-                accelerator: {require: 'titanium', enabled: false},
-                steamworks: {require: false, enabled: false},
-                magneto: {require: false, enabled: false},
+                smelter:        {require: 'minerals',    enabled: true},
+                biolab:         {require: 'science',     enabled: false},
+                calciner:       {require: 'titanium',    enabled: false},
+                reactor:        {require: 'titanium',    enabled: false},
+                accelerator:    {require: 'titanium',    enabled: false},
+                steamworks:     {require: false,         enabled: false},
+                magneto:        {require: false,         enabled: false},
 
                 // storage
-                barn: {require: 'wood', enabled: true},
-                harbor: {require: false, enabled: false},
-                warehouse: {require: false, enabled: false},
+                barn:           {require: 'wood',        enabled: true},
+                harbor:         {require: false,         enabled: false},
+                warehouse:      {require: false,         enabled: false},
 
                 // housing
-                hut: {require: 'wood', enabled: false},
-                logHouse: {require: 'minerals', enabled: false},
-                mansion: {require: 'titanium', enabled: false},
+                hut:            {require: 'wood',        enabled: false},
+                logHouse:       {require: 'minerals',    enabled: false},
+                mansion:        {require: 'titanium',    enabled: false},
 
                 // other
-                amphitheatre: {require: 'minerals', enabled: true},
-                tradepost: {require: 'gold', enabled: true},
-                chapel: {require: 'minerals', enabled: true},
-                temple: {require: 'gold', enabled: true},
-                mint: {require: false, enabled: false},
-                unicornPasture: {require: false, enabled: true},
-                ziggurat: {require: false, enabled: true},
-                chronosphere: {require: 'unobtainium', enabled: true},
+                amphitheatre:   {require: 'minerals',    enabled: true},
+                tradepost:      {require: 'gold',        enabled: true},
+                chapel:         {require: 'minerals',    enabled: true},
+                temple:         {require: 'gold',        enabled: true},
+                mint:           {require: false,         enabled: false},
+                unicornPasture: {require: false,         enabled: true},
+                ziggurat:       {require: false,         enabled: true},
+                chronosphere:   {require: 'unobtainium', enabled: true}
             }
         },
         craft: {
             enabled: true, trigger: 0.95, items: {
-                wood: {require: 'catnip', max: 0, limited: false, enabled: true},
-                beam: {require: 'wood', max: 0, limited: false, enabled: true},
-                slab: {require: 'minerals', max: 0, limited: false, enabled: true},
-                steel: {require: 'coal', max: 0, limited: false, enabled: true},
-                plate: {require: 'iron', max: 0, limited: false, enabled: true},
-                alloy: {require: 'titanium', max: 0, limited: true, enabled: false},
-                concrete: {require: false, max: 0, limited: true, enabled: false},
-                gear: {require: false, max: 0, limited: true, enabled: false},
-                scaffold: {require: false, max: 0, limited: true, enabled: false},
-                ship: {require: false, max: 0, limited: true, enabled: false},
-                tanker: {require: false, max: 0, limited: true, enabled: false},
-                parchment: {require: false, max: 0,  limited: true, enabled: true},
-                manuscript: {require: 'culture', max: 0, limited: true, enabled: true},
-                compendium: {require: 'science', max: 0, limited: true, enabled: true},
-                blueprint: {require: 'science', max: 0, limited: true, enabled: false},
-                megalith: {require: false, max: 0, limited: true, enabled: false},
-                eludium: {require: 'unobtainium', max: 0,  limited: true, enabled: false},
+                wood:       {require: 'catnip',      max: 0, limited: false, enabled: true},
+                beam:       {require: 'wood',        max: 0, limited: false, enabled: true},
+                slab:       {require: 'minerals',    max: 0, limited: false, enabled: true},
+                steel:      {require: 'coal',        max: 0, limited: false, enabled: true},
+                plate:      {require: 'iron',        max: 0, limited: false, enabled: true},
+                alloy:      {require: 'titanium',    max: 0, limited: true,  enabled: false},
+                concrete:   {require: false,         max: 0, limited: true,  enabled: false},
+                gear:       {require: false,         max: 0, limited: true,  enabled: false},
+                scaffold:   {require: false,         max: 0, limited: true,  enabled: false},
+                ship:       {require: false,         max: 0, limited: true,  enabled: false},
+                tanker:     {require: false,         max: 0, limited: true,  enabled: false},
+                parchment:  {require: false,         max: 0, limited: true,  enabled: true},
+                manuscript: {require: 'culture',     max: 0, limited: true,  enabled: true},
+                compendium: {require: 'science',     max: 0, limited: true,  enabled: true},
+                blueprint:  {require: 'science',     max: 0, limited: true,  enabled: false},
+                megalith:   {require: false,         max: 0, limited: true,  enabled: false},
+                eludium:    {require: 'unobtainium', max: 0, limited: true,  enabled: false}
             }
         },
         trade: {
             enabled: true, trigger: 0.95, items: {
-                dragons: {enabled: false, trigger: 0.80, require: 'titanium', allowcapped: false,
-                          summer: true, autumn: true, winter: true, spring: true},
+                dragons:    {enabled: false, trigger: 0.80,  require: 'titanium',    allowcapped: false,
+                             summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
-                zebras: {enabled: true, trigger: 0.80, require: false, allowcapped: false,
-                         summer: true, autumn: true, winter: true, spring: true},
+                zebras:     {enabled: true,  trigger: 0.80,  require: false,         allowcapped: false,
+                             summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
-                lizards: {enabled: false, trigger: 0.80, require: 'minerals', allowcapped: false,
-                          summer: true, autumn: false, winter: false, spring: false},
+                lizards:    {enabled: false, trigger: 0.80,  require: 'minerals',    allowcapped: false,
+                             summer:  true,  autumn:  false, winter:  false,         spring:      false},
 
-                sharks: {enabled: false, trigger: 0.80, require: 'iron', allowcapped: false,
-                         summer: false, autumn: false, winter: true, spring: false},
+                sharks:     {enabled: false, trigger: 0.80,  require: 'iron',        allowcapped: false,
+                             summer:  false, autumn:  false, winter:  true,          spring:      false},
 
-                griffins: {enabled: false, trigger: 0.80, require: 'wood', allowcapped: false,
-                           summer: false, autumn: true, winter: false, spring: false},
+                griffins:   {enabled: false, trigger: 0.80,  require: 'wood',        allowcapped: false,
+                             summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
-                nagas: {enabled: false, trigger: 0.80, require: false, allowcapped: false,
-                        summer: false, autumn: false, winter: false, spring: true},
+                nagas:      {enabled: false, trigger: 0.80,  require: false,         allowcapped: false,
+                             summer:  false, autumn:  false, winter:  false,         spring:      true},
 
-                spiders: {enabled: false, trigger: 0.80, require: false, allowcapped: false,
-                          summer: false, autumn: true, winter: false, spring: false},
+                spiders:    {enabled: false, trigger: 0.80,  require: false,         allowcapped: false,
+                             summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
-                leviathans: {enabled: false, trigger: 0.80, require: 'unobtainium', allowcapped: true,
-                             summer: true, autumn: true, winter: true, spring: true},
+                leviathans: {enabled: false, trigger: 0.80,  require: 'unobtainium', allowcapped: true,
+                             summer:  true,  autumn:  true,  winter:  true,          spring: true}
             }
         },
         resources: {
-            furs: {stock: 1000},
-            unobtainium: {consume: 1.0},
-        },
+            furs:        {stock: 1000},
+            unobtainium: {consume: 1.0}
+        }
     }
 };
 
@@ -131,7 +131,7 @@ var options = {
 var gameLog = com.nuclearunicorn.game.log.Console().static;
 
 // Increase the game log's message capacity
-gameLog.msg = function(message, type) {
+gameLog.msg = function (message, type) {
     var gameLog = dojo.byId("gameLog");
     var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
 
@@ -768,6 +768,70 @@ addRule('#ks-options ul li {'
 + 'width: 100%;'
 + '}');
 
+// Local Storage
+// =============
+
+var kittenStorage = {
+    items: {},
+    resources: {}
+};
+
+var initializeKittenStorage = function () {
+    $("#items-list-build, #items-list-craft, #items-list-trade").find("input[id^='toggle-']").each(function () {
+        kittenStorage.items[$(this).attr("id")] = $(this).prop("checked");
+    });
+
+    saveToKittenStorage();
+};
+
+var saveToKittenStorage = function () {
+    kittenStorage.resources = options.auto.resources;
+    localStorage['cbc.kitten-scientists'] = JSON.stringify(kittenStorage);
+};
+
+var loadFromKittenStorage = function () {
+    var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
+    if (saved) {
+        kittenStorage = saved;
+
+        for (var item in kittenStorage.items) {
+            var value = kittenStorage.items[item];
+            var el = $('#' + item);
+            var option = el.data('option');
+            var name = item.split('-');
+
+            el.prop('checked', value);
+
+            if (name.length == 2) {
+                option.enabled = value;
+            } else {
+                if (name[1] == 'limited') {
+                    option.limited = value;
+                } else {
+                    option[name[2]] = value;
+                }
+            }
+        }
+
+        var list = $("#toggle-list-resources");
+        for (var resource in kittenStorage.resources) {
+            var res = kittenStorage.resources[resource];
+
+            if ($("#resource-" + resource).length === 0) {
+                list.append(addNewResourceOption(resource));
+                if ('stock' in res) {
+                    setStockValue(resource, res.stock);
+                }
+                if ('consume' in res) {
+                    setConsumeRate(resource, res.consume);
+                }
+            }
+        }
+    } else {
+        initializeKittenStorage();
+    }
+};
+
 // Add options element
 // ===================
 
@@ -776,7 +840,7 @@ var ucfirst = function (string) {
 };
 
 var roundToTwo = function (n) {
-        return +(Math.round(n + "e+2") + "e-2")
+    return +(Math.round(n + "e+2") + "e-2")
 };
 
 var setStockValue = function (name, value) {
@@ -803,6 +867,10 @@ var setConsumeRate = function (name, value) {
     if (!options.auto.resources[name]) options.auto.resources[name] = {};
     options.auto.resources[name].consume = n;
     $('#consume-rate-' + name).text('Consume: ' + n.toFixed(2));
+};
+
+var removeResourceControl = function (name) {
+    delete options.auto.resources[name];
 };
 
 var addNewResourceOption = function (name, title) {
@@ -847,18 +915,25 @@ var addNewResourceOption = function (name, title) {
 
     stock.on('click', function () {
         var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
-        if (value !== null) setStockValue(name, value);
+        if (value !== null) {
+            setStockValue(name, value);
+            saveToKittenStorage();
+        }
     });
 
     consume.on('click', function () {
         var value = window.prompt('Consume rate for ' + ucfirst(title ? title : name));
-        if (value !== null) setConsumeRate(name, value);
+        if (value !== null) {
+            setConsumeRate(name, value);
+            saveToKittenStorage();
+        }
     });
 
     del.on('click', function () {
         if (window.confirm('Delete resource controls for ' + ucfirst(title ? title : name) + '?')) {
             container.remove();
-            setStockValue(name, 0);
+            removeResourceControl(name);
+            saveToKittenStorage();
         }
     });
 
@@ -875,7 +950,7 @@ var getAvailableResourceOptions = function () {
         // visible. This helps cut down on total size.
         if (res.name && $('#resource-' + res.name).length === 0) {
             var item = $('<div/>', {
-                id: 'resource-add-' + name,
+                id: 'resource-add-' + res.name,
                 text: ucfirst(res.title ? res.title : res.name),
                 css: {cursor: 'pointer',
                       textShadow: '3px 3px 4px gray'},
@@ -925,7 +1000,7 @@ var getResourceOptions = function () {
 
     clearunused.on('click', function () {
        for (var name in options.auto.resources) {
-           // Only delete resources with modified values. Require manual
+           // Only delete resources with unmodified values. Require manual
            // removal of resources with non-standard values.
            if (!options.auto.resources[name].stock &&
                (options.auto.resources[name].consume == options.consume)) {
@@ -1124,7 +1199,7 @@ var getSeason = function (name, season, option) {
     var input = $('<input/>', {
         id: 'toggle-' + name + '-' + season,
         type: 'checkbox'
-    });
+    }).data('option', option);
 
     if (option[season]) {
         input.prop('checked', true);
@@ -1138,6 +1213,8 @@ var getSeason = function (name, season, option) {
             option[season] = false;
             message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
         }
+        storage[input.attr('id')] = option[season];
+        saveToKittenStorage();
     });
 
     element.append(input, label);
@@ -1157,13 +1234,13 @@ var getOption = function (name, option) {
     var input = $('<input/>', {
         id: 'toggle-' + name,
         type: 'checkbox'
-    });
+    }).data('option', option);
 
     if (option.enabled) {
         input.prop('checked', true);
     }
 
-    input.on('change', function() {
+    input.on('change', function () {
         if (input.is(':checked') && option.enabled == false) {
             option.enabled = true;
             message('Enabled Auto ' + ucfirst(name));
@@ -1171,6 +1248,8 @@ var getOption = function (name, option) {
             option.enabled = false;
             message('Disabled Auto ' + ucfirst(name));
         }
+        storage[input.attr('id')] = option.enabled;
+        saveToKittenStorage();
     });
 
     element.append(input, label);
@@ -1189,7 +1268,7 @@ var getCraftOption = function (name, option) {
     var input = $('<input/>', {
         id: 'toggle-limited-' + name,
         type: 'checkbox'
-    });
+    }).data('option', option);
 
     if (option.limited) {
         input.prop('checked', true);
@@ -1203,12 +1282,14 @@ var getCraftOption = function (name, option) {
             option.limited = false;
             message('Crafting ' + ucfirst(name) + ': unlimited');
         }
+        storage[input.attr('id')] = option.limited;
+        saveToKittenStorage();
     });
 
     element.append(input, label);
 
     return element;
-}
+};
 
 var optionsElement = $('<div/>', {id: 'ks-options', css: {marginBottom: '10px'}});
 var optionsListElement = $('<ul/>');
@@ -1219,12 +1300,12 @@ var optionsTitleElement = $('<div/>', {
 
 optionsElement.append(optionsTitleElement);
 
-optionsListElement.append(getToggle('engine', 'Engine'));
-optionsListElement.append(getToggle('build', 'Building'));
-optionsListElement.append(getToggle('craft', 'Crafting'));
-optionsListElement.append(getToggle('trade', 'Trading'));
-optionsListElement.append(getToggle('hunt', 'Hunting'));
-optionsListElement.append(getToggle('faith', 'Praising'));
+optionsListElement.append(getToggle('engine',   'Engine'));
+optionsListElement.append(getToggle('build',    'Building'));
+optionsListElement.append(getToggle('craft',    'Crafting'));
+optionsListElement.append(getToggle('trade',    'Trading'));
+optionsListElement.append(getToggle('hunt',     'Hunting'));
+optionsListElement.append(getToggle('faith',    'Praising'));
 optionsListElement.append(getToggle('festival', 'Festival'));
 
 // add activity button
@@ -1232,10 +1313,17 @@ optionsListElement.append(getToggle('festival', 'Festival'));
 
 activitySummary = {};
 var resetActivitySummary = function () {
-    activitySummary = { lastyear: game.calendar.year, lastday: game.calendar.day, craft: {}, trade: {}, build: {}, other: {} };
-}
+    activitySummary = {
+        lastyear: game.calendar.year,
+        lastday:  game.calendar.day,
+        craft:    {},
+        trade:    {},
+        build:    {},
+        other:    {} 
+    };
+};
 
-var storeForSummary = function(name, amount, section) {
+var storeForSummary = function (name, amount, section) {
     if (amount === undefined) amount = 1;
     if (section === undefined) section = 'other';
 
@@ -1247,9 +1335,9 @@ var storeForSummary = function(name, amount, section) {
     } else {
         activitySummary[section][name] += parseInt(amount, 10);
     }
-}
+};
 
-var displayActivitySummary = function() {
+var displayActivitySummary = function () {
     // Festivals
     if (activitySummary.other.festival) {
         summary('Held ' + game.getDisplayValueExt(activitySummary.other.festival) + ' festivals');
@@ -1312,26 +1400,34 @@ var displayActivitySummary = function() {
 
     // Clear out the old activity
     resetActivitySummary()
-}
+};
 
 resetActivitySummary();
 
 var activityBox = $('<div/>', {
     id: 'activity-box',
-    css: { display: 'inline-block', float: 'right', verticalAlign: 'top' },
+    css: {
+        display: 'inline-block',
+        float: 'right',
+        verticalAlign: 'top'
+    }
 });
 
 var showActivity = $('<a/>', {
     id: 'showActivityHref',
     text: 'Show activity',
     href: '#',
-    css: { verticalAlign: 'top' },
+    css: {
+        verticalAlign: 'top'
+    }
 });
 
 var activityCheckbox = $('<input/>', {
     id: 'enable-activity',
     type: 'checkbox',
-    css: { verticalAlign: 'top' },
+    css: {
+        verticalAlign: 'top'
+    }
 });
 
 if (options.showactivity)
@@ -1353,13 +1449,20 @@ activityBox.append(activityCheckbox, showActivity);
 
 $('#clearLog').append(activityBox);
 
-// add donation address to bottom of list
+// Donation Button
+// ===============
+
 var donate = $('<li/>').append($('<a/>', {
     href: 'bitcoin:' + address + '?amount=0.005&label=Kittens Donation',
     target: '_blank',
     text: address
 })).prepend($('<img/>', {
-    css: {height: '15px', width: '15px', padding: '3px 4px 0 4px', verticalAlign: 'bottom'},
+    css: {
+        height: '15px',
+        width: '15px',
+        padding: '3px 4px 0 4px',
+        verticalAlign: 'bottom'
+    },
     src: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgdmVyc2lvbj0iMS4xIgogICB3aWR0aD0iNTEycHgiCiAgIGhlaWdodD0iNTEycHgiCiAgIHZpZXdCb3g9IjAgMCAxIDEiCiAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIgogICBpZD0ic3ZnMiIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMC40OC4yIHI5ODE5IgogICBzb2RpcG9kaTpkb2NuYW1lPSJiaXRjb2luLWxvZ28tbm9zaGFkb3cuc3ZnIj4KICA8bWV0YWRhdGEKICAgICBpZD0ibWV0YWRhdGEyMiI+CiAgICA8cmRmOlJERj4KICAgICAgPGNjOldvcmsKICAgICAgICAgcmRmOmFib3V0PSIiPgogICAgICAgIDxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PgogICAgICAgIDxkYzp0eXBlCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4KICAgICAgICA8ZGM6dGl0bGU+PC9kYzp0aXRsZT4KICAgICAgPC9jYzpXb3JrPgogICAgPC9yZGY6UkRGPgogIDwvbWV0YWRhdGE+CiAgPHNvZGlwb2RpOm5hbWVkdmlldwogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIKICAgICBib3JkZXJjb2xvcj0iIzY2NjY2NiIKICAgICBib3JkZXJvcGFjaXR5PSIxIgogICAgIG9iamVjdHRvbGVyYW5jZT0iMTAiCiAgICAgZ3JpZHRvbGVyYW5jZT0iMTAiCiAgICAgZ3VpZGV0b2xlcmFuY2U9IjEwIgogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwIgogICAgIGlua3NjYXBlOnBhZ2VzaGFkb3c9IjIiCiAgICAgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxNDQ3IgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9Ijg2MSIKICAgICBpZD0ibmFtZWR2aWV3MjAiCiAgICAgc2hvd2dyaWQ9ImZhbHNlIgogICAgIGlua3NjYXBlOnpvb209IjAuOTIxODc1IgogICAgIGlua3NjYXBlOmN4PSIyMTIuNTE0MzciCiAgICAgaW5rc2NhcGU6Y3k9IjIzMy4yNDYxNyIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIwIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9InN2ZzIiIC8+CiAgPCEtLSBBbmRyb2lkIGxhdW5jaGVyIGljb25zOiB2aWV3Qm94PSItMC4wNDUgLTAuMDQ1IDEuMDkgMS4wOSIgLS0+CiAgPGRlZnMKICAgICBpZD0iZGVmczQiPgogICAgPGZpbHRlcgogICAgICAgaWQ9Il9kcm9wLXNoYWRvdyIKICAgICAgIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICAgIDxmZUdhdXNzaWFuQmx1cgogICAgICAgICBpbj0iU291cmNlQWxwaGEiCiAgICAgICAgIHJlc3VsdD0iYmx1ci1vdXQiCiAgICAgICAgIHN0ZERldmlhdGlvbj0iMSIKICAgICAgICAgaWQ9ImZlR2F1c3NpYW5CbHVyNyIgLz4KICAgICAgPGZlQmxlbmQKICAgICAgICAgaW49IlNvdXJjZUdyYXBoaWMiCiAgICAgICAgIGluMj0iYmx1ci1vdXQiCiAgICAgICAgIG1vZGU9Im5vcm1hbCIKICAgICAgICAgaWQ9ImZlQmxlbmQ5IiAvPgogICAgPC9maWx0ZXI+CiAgICA8bGluZWFyR3JhZGllbnQKICAgICAgIGlkPSJjb2luLWdyYWRpZW50IgogICAgICAgeDE9IjAlIgogICAgICAgeTE9IjAlIgogICAgICAgeDI9IjAlIgogICAgICAgeTI9IjEwMCUiPgogICAgICA8c3RvcAogICAgICAgICBvZmZzZXQ9IjAlIgogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojZjlhYTRiIgogICAgICAgICBpZD0ic3RvcDEyIiAvPgogICAgICA8c3RvcAogICAgICAgICBvZmZzZXQ9IjEwMCUiCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiNmNzkzMWEiCiAgICAgICAgIGlkPSJzdG9wMTQiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZwogICAgIHRyYW5zZm9ybT0ic2NhbGUoMC4wMTU2MjUpIgogICAgIGlkPSJnMTYiPgogICAgPHBhdGgKICAgICAgIGlkPSJjb2luIgogICAgICAgZD0ibSA2My4wMzU5LDM5Ljc0MSBjIC00LjI3NCwxNy4xNDMgLTIxLjYzNywyNy41NzYgLTM4Ljc4MiwyMy4zMDEgLTE3LjEzOCwtNC4yNzQgLTI3LjU3MSwtMjEuNjM4IC0yMy4yOTUsLTM4Ljc4IDQuMjcyLC0xNy4xNDUgMjEuNjM1LC0yNy41NzkgMzguNzc1LC0yMy4zMDUgMTcuMTQ0LDQuMjc0IDI3LjU3NiwyMS42NCAyMy4zMDIsMzguNzg0IHoiCiAgICAgICBzdHlsZT0iZmlsbDp1cmwoI2NvaW4tZ3JhZGllbnQpIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJzeW1ib2wiCiAgICAgICBkPSJtIDQ2LjEwMDksMjcuNDQxIGMgMC42MzcsLTQuMjU4IC0yLjYwNSwtNi41NDcgLTcuMDM4LC04LjA3NCBsIDEuNDM4LC01Ljc2OCAtMy41MTEsLTAuODc1IC0xLjQsNS42MTYgYyAtMC45MjMsLTAuMjMgLTEuODcxLC0wLjQ0NyAtMi44MTMsLTAuNjYyIGwgMS40MSwtNS42NTMgLTMuNTA5LC0wLjg3NSAtMS40MzksNS43NjYgYyAtMC43NjQsLTAuMTc0IC0xLjUxNCwtMC4zNDYgLTIuMjQyLC0wLjUyNyBsIDAuMDA0LC0wLjAxOCAtNC44NDIsLTEuMjA5IC0wLjkzNCwzLjc1IGMgMCwwIDIuNjA1LDAuNTk3IDIuNTUsMC42MzQgMS40MjIsMC4zNTUgMS42NzksMS4yOTYgMS42MzYsMi4wNDIgbCAtMS42MzgsNi41NzEgYyAwLjA5OCwwLjAyNSAwLjIyNSwwLjA2MSAwLjM2NSwwLjExNyAtMC4xMTcsLTAuMDI5IC0wLjI0MiwtMC4wNjEgLTAuMzcxLC0wLjA5MiBsIC0yLjI5Niw5LjIwNSBjIC0wLjE3NCwwLjQzMiAtMC42MTUsMS4wOCAtMS42MDksMC44MzQgMC4wMzUsMC4wNTEgLTIuNTUyLC0wLjYzNyAtMi41NTIsLTAuNjM3IGwgLTEuNzQzLDQuMDE5IDQuNTY5LDEuMTM5IGMgMC44NSwwLjIxMyAxLjY4MywwLjQzNiAyLjUwMywwLjY0NiBsIC0xLjQ1Myw1LjgzNCAzLjUwNywwLjg3NSAxLjQzOSwtNS43NzIgYyAwLjk1OCwwLjI2IDEuODg4LDAuNSAyLjc5OCwwLjcyNiBsIC0xLjQzNCw1Ljc0NSAzLjUxMSwwLjg3NSAxLjQ1MywtNS44MjMgYyA1Ljk4NywxLjEzMyAxMC40ODksMC42NzYgMTIuMzg0LC00LjczOSAxLjUyNywtNC4zNiAtMC4wNzYsLTYuODc1IC0zLjIyNiwtOC41MTUgMi4yOTQsLTAuNTI5IDQuMDIyLC0yLjAzOCA0LjQ4MywtNS4xNTUgeiBtIC04LjAyMiwxMS4yNDkgYyAtMS4wODUsNC4zNiAtOC40MjYsMi4wMDMgLTEwLjgwNiwxLjQxMiBsIDEuOTI4LC03LjcyOSBjIDIuMzgsMC41OTQgMTAuMDEyLDEuNzcgOC44NzgsNi4zMTcgeiBtIDEuMDg2LC0xMS4zMTIgYyAtMC45OSwzLjk2NiAtNy4xLDEuOTUxIC05LjA4MiwxLjQ1NyBsIDEuNzQ4LC03LjAxIGMgMS45ODIsMC40OTQgOC4zNjUsMS40MTYgNy4zMzQsNS41NTMgeiIKICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmYiIC8+CiAgPC9nPgo8L3N2Zz4='
 }));
 
@@ -1384,3 +1487,5 @@ toggleEngine.on('change', function () {
         engine.stop();
     }
 });
+
+$(document).ready(loadFromKittenStorage);
