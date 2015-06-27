@@ -771,7 +771,10 @@ addRule('#ks-options ul li {'
 // Local Storage
 // =============
 
+var kittenStorageVersion = 1;
+
 var kittenStorage = {
+    version: kittenStorageVersion,
     items: {},
     resources: {}
 };
@@ -791,7 +794,7 @@ var saveToKittenStorage = function () {
 
 var loadFromKittenStorage = function () {
     var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
-    if (saved) {
+    if (saved && saved.version == kittenStorageVersion) {
         kittenStorage = saved;
 
         for (var item in kittenStorage.items) {
