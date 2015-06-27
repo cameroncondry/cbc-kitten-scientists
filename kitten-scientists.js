@@ -1491,4 +1491,4 @@ toggleEngine.on('change', function () {
     }
 });
 
-$(document).ready(loadFromKittenStorage);
+loadFromKittenStorage();
