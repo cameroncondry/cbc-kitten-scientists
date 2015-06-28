@@ -7,14 +7,14 @@ var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
 var game    = gamePage;
 
 var options = {
-    debug         : false,
-    interval      : 2000,
-    msgcolor      : '#aa50fe', // dark purple
-    summarycolor  : '#009933', // light green
-    activitycolor : '#E65C00', // orange
-    showactivity  : true,
-    consume       : 0.6,
-    logMessages   : 100,
+    debug:         false,
+    interval:      2000,
+    msgcolor:      '#aa50fe', // dark purple
+    summarycolor:  '#009933', // light green
+    activitycolor: '#E65C00', // orange
+    showactivity:  true,
+    consume:       0.6,
+    logMessages:   100,
     auto: {
         engine:   {enabled: false},
         faith:    {enabled: true, trigger: 0.99},
