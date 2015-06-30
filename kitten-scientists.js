@@ -1216,7 +1216,7 @@ var getSeason = function (name, season, option) {
             option[season] = false;
             message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
         }
-        storage[input.attr('id')] = option[season];
+        kittenStorage.items[input.attr('id')] = option[season];
         saveToKittenStorage();
     });
 
@@ -1251,7 +1251,7 @@ var getOption = function (name, option) {
             option.enabled = false;
             message('Disabled Auto ' + ucfirst(name));
         }
-        storage[input.attr('id')] = option.enabled;
+        kittenStorage.items[input.attr('id')] = option.enabled;
         saveToKittenStorage();
     });
 
@@ -1285,7 +1285,7 @@ var getCraftOption = function (name, option) {
             option.limited = false;
             message('Crafting ' + ucfirst(name) + ': unlimited');
         }
-        storage[input.attr('id')] = option.limited;
+        kittenStorage.items[input.attr('id')] = option.limited;
         saveToKittenStorage();
     });
 
