@@ -131,7 +131,11 @@ var options = {
 var gameLog = com.nuclearunicorn.game.log.Console().static;
 
 // Increase the game log's message capacity
-gameLog.msg = function (message, type) {
+gameLog.msg = function (message, type, tag) {
+    if (tag && this.filters[tag] && !this.filters[tag].enabled){
+        return;
+    }
+
     var gameLog = dojo.byId("gameLog");
     var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
 
