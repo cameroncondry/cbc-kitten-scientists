@@ -222,7 +222,7 @@ Engine.prototype = {
         message('Disabling the kitten scientists!');
     },
     iterate: function () {
-        this.observeGameLog();
+        this.observeStars();
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.build.enabled) this.build();
@@ -288,13 +288,11 @@ Engine.prototype = {
             }
         }
     },
-    observeGameLog: function () {
-        // @TODO: determine if this can be accomplished outside the interface
-        var stars = $('#gameLog').find('input');
-        if (stars.length) {
-            storeForSummary('stars', stars.length);
+    observeStars: function () {
+       if (game.calendar.observeBtn != null){
+            game.calendar.observeHandler();
             activity('Kitten Scientists have observed a star');
-            stars.click();
+            storeForSummary('stars', 1); 
         }
     },
     praiseSun: function () {
