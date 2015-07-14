@@ -155,12 +155,12 @@ gameLog.msg = function (message, type, tag) {
 // Add message filters for hunts and trades
 gameLog.filters.hunt = {
     title: "Hunts",
-	enabled: true,
-	unlocked: true
+    enabled: true,
+    unlocked: true
 };
 gameLog.filters.trade = {
-	title: "Trades",
-	enabled: true,
+    title: "Trades",
+    enabled: true,
     unlocked: true
 };
 gameLog.rederFilters();
