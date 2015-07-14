@@ -152,6 +152,19 @@ gameLog.msg = function (message, type, tag) {
     return span;
 };
 
+// Add message filters for hunts and trades
+gameLog.filters.hunt = {
+    title: "Hunts",
+	enabled: true,
+	unlocked: true
+};
+gameLog.filters.trade = {
+	title: "Trades",
+	enabled: true,
+    unlocked: true
+};
+gameLog.rederFilters();
+
 var printoutput = function (args) {
     var color = args.pop();
     args[1] = args[1] || 'ks-default';
