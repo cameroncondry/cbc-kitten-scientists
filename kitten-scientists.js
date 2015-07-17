@@ -742,7 +742,7 @@ right.css({
 
 var addRule = function (rule) {
     var sheets = document.styleSheets;
-    sheets[0].insertRule(rule, 1);
+    sheets[0].insertRule(rule, 0);
 };
 
 addRule('#gameLog .msg {'
