@@ -292,7 +292,7 @@ Engine.prototype = {
     holdFestival: function () {
         var villageManager = new TabManager('Small village');
 
-        if (game.calendar.festivalDays === 0 && villageManager.tab.festivalBtn.hasResources()) {
+        if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && villageManager.tab.festivalBtn.hasResources()) {
             villageManager.tab.festivalBtn.onClick();
 
             if (game.calendar.festivalDays !== 0) {
