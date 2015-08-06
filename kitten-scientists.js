@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name        Kitten Scientists
+// @namespace   http://www.reddit.com/r/kittensgame/comments/34gb2u/kitten_scientists_automation_script/
+// @description Launch Kitten Scientists
+// @include     *bloodrizer.ru/games/kittens/*
+// @version     1.2.4
+// @grant       none
+// @copyright   2015, cameroncondry
+// ==/UserScript==
+
 // ==========================================
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
@@ -701,12 +711,24 @@ TradeManager.prototype = {
 
 var container = $('#game');
 var column = $('.column');
+var body = $('body');
+var button = $('.btn.modern');
 
 container.css({
-    fontFamily: 'Courier New',
+    fontFamily: 'monospace',
     fontSize: '12px',
     minWidth: '1300px',
     top: '32px'
+});
+
+body.css({
+    fontFamily: 'monospace',
+    fontSize: '12px'
+});
+
+button.css({
+    fontFamily: 'monospace',
+    fontSize: '12px'
 });
 
 column.css({
@@ -982,6 +1004,7 @@ var getAvailableResourceOptions = function () {
                    item.remove();
                    if (!options.auto.resources[res.name]) options.auto.resources[res.name] = {};
                    options.auto.resources[res.name].stock = 0;
+                   options.auto.resources[res.name].consume = options.consume;
                    $('#toggle-list-resources').append(addNewResourceOption(res.name, res.title));
                 });
             })(res, item);
@@ -1023,7 +1046,8 @@ var getResourceOptions = function () {
            // Only delete resources with unmodified values. Require manual
            // removal of resources with non-standard values.
            if (!options.auto.resources[name].stock &&
-               (options.auto.resources[name].consume == options.consume)) {
+               options.auto.resources[name].consume == options.consume ||
+               options.auto.resources[name].consume == undefined) {
                $('#resource-' + name).remove();
            }
        }
@@ -1124,6 +1148,24 @@ var getToggle = function (toggleName, text) {
         });
 
         list.append(disableall);
+        
+        var enableall = $('<div/>', {
+            id: 'toggle-all-items-' + toggleName,
+            text: 'enable all',
+            css: {cursor: 'pointer',
+                  display: 'inline-block',
+                  textShadow: '3px 3px 4px gray'},
+        });
+
+        enableall.on('click', function () {
+            // can't use find as we only want one layer of checkboxes
+            var items = list.children().children(':checkbox');
+            items.prop('checked', true);
+            items.change();
+            list.children().children(':checkbox').change();
+        });
+
+        list.append(enableall);
 
         // fill out list with toggle items
         for (var itemName in auto.items) {
