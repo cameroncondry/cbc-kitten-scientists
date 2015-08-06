@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name        Kitten Scientists
+// @namespace   http://www.reddit.com/r/kittensgame/comments/34gb2u/kitten_scientists_automation_script/
+// @description Launch Kitten Scientists
+// @include     *bloodrizer.ru/games/kittens/*
+// @version     1.2.4
+// @grant       none
+// @copyright   2015, cameroncondry
+// ==/UserScript==
+
 // ==========================================
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
@@ -701,12 +711,24 @@ TradeManager.prototype = {
 
 var container = $('#game');
 var column = $('.column');
+var body = $('body');
+var button = $('.btn.modern');
 
 container.css({
-    fontFamily: 'Courier New',
+    fontFamily: 'monospace',
     fontSize: '12px',
     minWidth: '1300px',
     top: '32px'
+});
+
+body.css({
+    fontFamily: 'monospace',
+    fontSize: '12px'
+});
+
+button.css({
+    fontFamily: 'monospace',
+    fontSize: '12px'
 });
 
 column.css({
