@@ -423,9 +423,10 @@ BuildManager.prototype = {
         var build = this.getBuild(name);
         var button = this.getBuildButton(name);
 
-        if (!button || !button.enabled || !this.hasResources(name) || !options.auto.build.items[name].enabled) return;
+        if (!button || !button.enabled || !button.hasResources() || !options.auto.build.items[name].enabled) return;
 
-        button.build(build);
+        //need to simulate a click so the game updates everything properly
+        button.domNode.click(build);
         storeForSummary(name, 1, 'build');
         activity('Kittens have built a new ' + build.label);
     },
@@ -441,17 +442,6 @@ BuildManager.prototype = {
         for (var i in buttons) {
             if (buttons[i].name === label) return buttons[i];
         }
-    },
-    hasResources: function (name) {
-        var prices = game.bld.getPrices(name);
-
-        for (var i in prices) {
-            var price = prices[i];
-            var res = this.crafts.getValueAvailable(price.name, true);
-            if (res < price.val) return false;
-        }
-
-        return true;
     }
 };
 
