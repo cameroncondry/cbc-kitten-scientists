@@ -150,7 +150,10 @@ gameLog.msg = function (message, type, tag) {
     var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
 
     if (type){
-        dojo.addClass(span, "type_"+type);
+        var typeArray = type.split(',');
+        for (i = 0; i < typeArray.length; ++i) {
+            dojo.addClass(span, "type_"+typeArray[i]);
+        }
     }
 
     var spans = this.spans;
@@ -197,7 +200,8 @@ var message = function () {
 var activity = function () {
     if (options.showactivity) {
         var args = Array.prototype.slice.call(arguments);
-        args.push('ks-activity');
+        var activityClass = args.length > 1 ? ',' + args.pop() : '';
+        args.push('ks-activity' + activityClass);
         args.push(options.activitycolor);
         printoutput(args);
     }
@@ -307,14 +311,14 @@ Engine.prototype = {
 
             if (game.calendar.festivalDays !== 0) {
                 storeForSummary('festival');
-                activity('Kittens begin holding a festival');
+                activity('Kittens begin holding a festival', 'ks-festival');
             }
         }
     },
     observeStars: function () {
        if (game.calendar.observeBtn != null){
             game.calendar.observeHandler();
-            activity('Kitten Scientists have observed a star');
+            activity('Kitten Scientists have observed a star', 'ks-star');
             storeForSummary('stars', 1); 
         }
     },
@@ -323,7 +327,7 @@ Engine.prototype = {
 
         if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
             storeForSummary('faith', faith.value);
-            activity('Praised the sun!');
+            activity('Praised the sun!', 'ks-praise');
             game.religion.praise();
         }
     },
@@ -333,7 +337,7 @@ Engine.prototype = {
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue && catpower.value >= 100) {
             // No way to send only some hunters. Thus, we hunt with everything
             storeForSummary('hunt', catpower.value);
-            activity('Sent ' + game.getDisplayValueExt(catpower.value) + ' kittens on the hunt');
+            activity('Sent ' + game.getDisplayValueExt(catpower.value) + ' kittens on the hunt', 'ks-hunt');
             game.village.huntAll();
         }
     },
@@ -425,7 +429,7 @@ BuildManager.prototype = {
 
         button.build(build);
         storeForSummary(name, 1, 'build');
-        activity('Kittens have built a new ' + build.label);
+        activity('Kittens have built a new ' + build.label, 'ks-build');
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
@@ -474,7 +478,7 @@ CraftManager.prototype = {
         amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
 
         storeForSummary(name, amount, 'craft');
-        activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name));
+        activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name), 'ks-craft');
     },
     canCraft: function (name, amount) {
         var craft = this.getCraft(name);
@@ -609,7 +613,7 @@ TradeManager.prototype = {
 
         button.tradeMultiple(amount);
         storeForSummary(name, amount, 'trade');
-        activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name));
+        activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name), 'ks-trade');
     },
     getLowestTradeAmount: function (name) {
         var amount = undefined;
