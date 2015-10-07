@@ -173,7 +173,7 @@ gameLog.filters.trade = {
     enabled: true,
     unlocked: true
 };
-gameLog.rederFilters();
+gameLog.renderFilters();
 
 var printoutput = function (args) {
     var color = args.pop();
