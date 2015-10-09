@@ -429,7 +429,9 @@ BuildManager.prototype = {
 
         button.build(build);
         storeForSummary(name, 1, 'build');
-        activity('Kittens have built a new ' + build.label, 'ks-build');
+        
+        var label = build.label ? build.label : build.stages[0].label;
+        activity('Kittens have built a new ' + label, 'ks-build');
     },
     getBuild: function (name) {
         return game.bld.getBuilding(name);
@@ -438,7 +440,8 @@ BuildManager.prototype = {
         var manager = this.manager.render();
 
         var buttons = manager.tab.buttons;
-        var label = this.getBuild(name).label;
+        var build = this.getBuild(name);
+        var label = build.label ? build.label : build.stages[0].label;
 
         for (var i in buttons) {
             if (buttons[i].name === label) return buttons[i];
