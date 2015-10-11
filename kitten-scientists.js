@@ -97,6 +97,7 @@ var options = {
                 manuscript: {require: 'culture',     max: 0, limited: true,  enabled: true},
                 compendium: {require: 'science',     max: 0, limited: true,  enabled: true},
                 blueprint:  {require: 'science',     max: 0, limited: true,  enabled: false},
+                kerosene:   {require: 'oil',         max: 0, limited: true,  enabled: false},
                 megalith:   {require: false,         max: 0, limited: true,  enabled: false},
                 eludium:    {require: 'unobtainium', max: 0, limited: true,  enabled: false}
             }
