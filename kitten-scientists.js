@@ -897,7 +897,7 @@ var roundToTwo = function (n) {
 var setStockValue = function (name, value) {
     var n = Number(value);
 
-    if (n === NaN || n < 0) {
+    if (isNaN(n) || n < 0) {
        warning('ignoring non-numeric or invalid stock value ' + value);
        return;
     }
@@ -910,7 +910,7 @@ var setStockValue = function (name, value) {
 var setConsumeRate = function (name, value) {
     var n = parseFloat(value);
 
-    if (n === NaN || n < 0.0 || n > 1.0) {
+    if (isNaN(n) || n < 0.0 || n > 1.0) {
        warning('ignoring non-numeric or invalid consume rate ' + value);
        return;
     }
