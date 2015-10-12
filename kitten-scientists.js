@@ -378,6 +378,8 @@ Engine.prototype = {
         // Try our best not to starve any single race
         maxTrades = (trades.length > 0) ? Math.floor(maxTrades / trades.length) : 0;
 
+        if (maxTrades < 1) return;
+
         for (var i in trades) {
             var name = trades[i];
             tradeManager.trade(name, Math.min(tradeManager.getLowestTradeAmount(name), maxTrades));
@@ -651,7 +653,7 @@ TradeManager.prototype = {
                 max = Math.ceil(val);
             } else {
                 var sratio = item.seasons[game.calendar.getCurSeason().name];
-                var tratio = self.game.bld.getEffect("tradeRatio");
+                var tratio = game.bld.getEffect("tradeRatio");
                 var val = item.value + item.value * tratio;
 
                 max = val * sratio * (1 + item.delta/2);
