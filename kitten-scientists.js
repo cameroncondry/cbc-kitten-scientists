@@ -790,7 +790,7 @@ addRule('#resContainer .maxRes {'
 addRule('#game .btn {'
 + 'border-radius: 0px;'
 + 'font-family: monospace;'
-+ 'font-size: "10px";'
++ 'font-size: 13px !important;'
 + 'margin: 0 0 7px 0;'
 + '}');
 
