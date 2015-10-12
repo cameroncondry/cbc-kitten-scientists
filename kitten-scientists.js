@@ -1371,7 +1371,7 @@ var optionsTitleElement = $('<div/>', {
 
 optionsElement.append(optionsTitleElement);
 
-optionsListElement.append(getToggle('engine',   'Engine'));
+optionsListElement.append(getToggle('engine',   'Enable Scientists'));
 optionsListElement.append(getToggle('build',    'Building'));
 optionsListElement.append(getToggle('craft',    'Crafting'));
 optionsListElement.append(getToggle('trade',    'Trading'));
