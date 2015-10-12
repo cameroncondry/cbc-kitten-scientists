@@ -3,6 +3,7 @@
 // @namespace   http://www.reddit.com/r/kittensgame/comments/34gb2u/kitten_scientists_automation_script/
 // @description Launch Kitten Scientists
 // @include     *bloodrizer.ru/games/kittens/*
+// @include     file:///*kitten-game*
 // @version     1.2.4
 // @grant       none
 // @copyright   2015, cameroncondry
