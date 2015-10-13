@@ -508,7 +508,12 @@ CraftManager.prototype = {
         return result;
     },
     getCraft: function (name) {
-        return game.workshop.getCraft(this.getName(name));
+        try {
+            return game.workshop.getCraft(this.getName(name));
+        } catch(error) {
+            // getCraft() can throw in case the given resource is not in the game yet.
+            return;
+        }
     },
     getLowestCraftAmount: function (name) {
         var amount = undefined;
