@@ -142,7 +142,6 @@ Thanks to these past and present contributors!
 - [Mewnine](https://www.reddit.com/user/Mewnine)
 - [mjdillon](https://github.com/mjdillon)
 - [mmccubbing](https://github.com/mmccubbing)
-- [mmccubbing](https://www.reddit.com/user/mmccubbing)
 - [oliversalzburg](https://github.com/oliversalzburg)
 - [pefoley2](https://www.reddit.com/user/pefoley2)
 - [sapid](https://github.com/sapid)
