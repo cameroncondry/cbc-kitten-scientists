@@ -513,6 +513,10 @@ CraftManager.prototype = {
     getLowestCraftAmount: function (name) {
         var amount = undefined;
         var materials = this.getMaterials(name);
+        
+        // Safeguard if materials for craft cannot be determined.
+        if (!materials) return 0;
+        
         var res = this.getResource(name);
 
         for (var i in materials) {
@@ -532,7 +536,12 @@ CraftManager.prototype = {
     },
     getMaterials: function (name) {
         var materials = {};
-        var prices = this.getCraft(name).prices;
+        var craft = this.getCraft(name);
+        
+        // Safeguard against craft items that aren't actually available yet.
+        if (!craft) return;
+        
+        var prices = craft.prices;
 
         for (var i in prices) {
             var price = prices[i];
