@@ -1,0 +1,29 @@
+{
+  "name": "cbc-kitten-scientists",
+  "version": "1.2.4",
+  "description": "Add-on for the wonderful incremental browser game: http://bloodrizer.ru/games/kittens/",
+  "main": "kitten-scientists.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cameroncondry/cbc-kitten-scientists.git"
+  },
+  "keywords": [
+    "kitten",
+    "kittens",
+    "scientists"
+  ],
+  "author": "Cameron Condry",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oliversalzburg/cbc-kitten-scientists/issues"
+  },
+  "homepage": "https://github.com/oliversalzburg/cbc-kitten-scientists#readme",
+  "devDependencies": {
+    "bluebird": "^2.10.2",
+    "lodash": "^3.10.1",
+    "superagent": "^1.4.0"
+  }
+}
