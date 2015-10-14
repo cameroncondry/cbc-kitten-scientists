@@ -18,9 +18,9 @@
   "author": "Cameron Condry",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/oliversalzburg/cbc-kitten-scientists/issues"
+    "url": "https://github.com/cameroncondry/cbc-kitten-scientists/issues"
   },
-  "homepage": "https://github.com/oliversalzburg/cbc-kitten-scientists#readme",
+  "homepage": "https://github.com/cameroncondry/cbc-kitten-scientists",
   "devDependencies": {
     "bluebird": "^2.10.2",
     "lodash": "^3.10.1",
