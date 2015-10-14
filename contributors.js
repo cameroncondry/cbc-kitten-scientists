@@ -21,10 +21,6 @@ var staticContributors = [
         html_url: 'https://www.reddit.com/user/Azulan'
     },
     {
-        login: 'mmccubbing',
-        html_url: 'https://www.reddit.com/user/mmccubbing'
-    },
-    {
         login: 'Mewnine',
         html_url: 'https://www.reddit.com/user/Mewnine'
     },
@@ -60,5 +56,5 @@ function parseContributors(response) {
 }
 
 function toMarkdown(contributor) {
-    return '[' + contributor.login + '](' + contributor.html_url + ')';
+    return '- [' + contributor.login + '](' + contributor.html_url + ')';
 }
