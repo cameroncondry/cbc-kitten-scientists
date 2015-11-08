@@ -746,7 +746,8 @@ body.css({
 
 button.css({
     fontFamily: 'monospace',
-    fontSize: '12px'
+    fontSize: '12px',
+    width: '290px'
 });
 
 column.css({
@@ -802,8 +803,9 @@ addRule('#resContainer .maxRes {'
 addRule('#game .btn {'
 + 'border-radius: 0px;'
 + 'font-family: monospace;'
-+ 'font-size: 13px !important;'
-+ 'margin: 0 0 7px 0;'
++ 'font-size: 12px !important;'
++ 'margin: 0 5px 7px 0;'
++ 'width: 290px;'
 + '}');
 
 addRule('#ks-options ul {'
