@@ -716,7 +716,7 @@ TradeManager.prototype = {
         for (var i in manager.tab.racePanels) {
             var panel = manager.tab.racePanels[i];
 
-            if (panel.name.substr(race) > -1) return panel.tradeBtn;
+            if (panel.name.indexOf(race) > -1) return panel.tradeBtn;
         }
 
         warning('unable to find trade button for ' + name);
