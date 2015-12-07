@@ -420,6 +420,8 @@ TabManager.prototype = {
 var BuildManager = function () {
     this.manager = new TabManager('Bonfire');
     this.crafts = new CraftManager();
+
+    this.manager.render();
 };
 
 BuildManager.prototype = {
@@ -441,9 +443,7 @@ BuildManager.prototype = {
         return game.bld.getBuilding(name);
     },
     getBuildButton: function (name) {
-        var manager = this.manager.render();
-
-        var buttons = manager.tab.buttons;
+        var buttons = this.manager.tab.buttons;
         var build = this.getBuild(name);
         var label = build.label ? build.label : build.stages[0].label;
 
@@ -610,6 +610,8 @@ CraftManager.prototype = {
 var TradeManager = function () {
     this.craftManager = new CraftManager();
     this.manager = new TabManager('Trade');
+
+    this.manager.render();
 };
 
 TradeManager.prototype = {
@@ -711,10 +713,8 @@ TradeManager.prototype = {
             return game.diplomacy.get(name);
     },
     getTradeButton: function (race) {
-        var manager = this.manager.render();
-
-        for (var i in manager.tab.racePanels) {
-            var panel = manager.tab.racePanels[i];
+        for (var i in this.manager.tab.racePanels) {
+            var panel = this.manager.tab.racePanels[i];
 
             if (panel.name.indexOf(race) > -1) return panel.tradeBtn;
         }
