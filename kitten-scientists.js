@@ -230,12 +230,14 @@ var Engine = function () {
     this.buildManager = new BuildManager();
     this.craftManager = new CraftManager();
     this.tradeManager = new TradeManager();
+    this.villageManager = new TabManager('Small village');
 };
 
 Engine.prototype = {
     buildManager: undefined,
     craftManager: undefined,
     tradeManager: undefined,
+    villageManager: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -306,10 +308,8 @@ Engine.prototype = {
         }
     },
     holdFestival: function () {
-        var villageManager = new TabManager('Small village');
-
-        if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && villageManager.tab.festivalBtn.hasResources()) {
-            villageManager.tab.festivalBtn.onClick();
+        if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && this.villageManager.tab.festivalBtn.hasResources()) {
+            this.villageManager.tab.festivalBtn.onClick();
 
             if (game.calendar.festivalDays !== 0) {
                 storeForSummary('festival');
