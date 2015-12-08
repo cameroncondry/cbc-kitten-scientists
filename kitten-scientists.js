@@ -420,14 +420,14 @@ TabManager.prototype = {
 var BuildManager = function () {
     this.manager = new TabManager('Bonfire');
     this.crafts = new CraftManager();
-
-    this.manager.render();
 };
 
 BuildManager.prototype = {
     manager: undefined,
     crafts: undefined,
     build: function (name) {
+        // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+        this.manager.render();
         var build = this.getBuild(name);
         var button = this.getBuildButton(name);
 
