@@ -144,8 +144,15 @@ var gameLog = com.nuclearunicorn.game.log.Console().static;
 
 // Increase the game log's message capacity
 gameLog.msg = function (message, type, tag) {
-    if (tag && this.filters[tag] && !this.filters[tag].enabled){
-        return;
+    if (tag && this.filters[tag]) {
+        var filter = this.filters[tag];
+
+        if (!filter.unlocked) {
+            filter.unlocked = true;
+            this.renderFilters();
+        } else if (!filter.enabled) {
+            return;
+        }
     }
 
     var gameLog = dojo.byId("gameLog");
@@ -167,12 +174,7 @@ gameLog.msg = function (message, type, tag) {
     return span;
 };
 
-// Add message filters for hunts and trades
-gameLog.filters.hunt = {
-    title: "Hunts",
-    enabled: true,
-    unlocked: true
-};
+// Add a message filter for trades
 gameLog.filters.trade = {
     title: "Trades",
     enabled: true,
