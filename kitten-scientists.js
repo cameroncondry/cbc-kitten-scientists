@@ -266,6 +266,9 @@ Engine.prototype = {
         var buildManager = this.buildManager;
         var craftManager = this.craftManager;
         var trigger = options.auto.build.trigger;
+        
+        // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+        buildManager.manager.render();
 
         for (var name in builds) {
             var build = builds[name];
@@ -426,8 +429,6 @@ BuildManager.prototype = {
     manager: undefined,
     crafts: undefined,
     build: function (name) {
-        // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
-        this.manager.render();
         var build = this.getBuild(name);
         var button = this.getBuildButton(name);
 
