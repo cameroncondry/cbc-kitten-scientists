@@ -723,101 +723,102 @@ var container = $('#game');
 var column = $('.column');
 var body = $('body');
 var button = $('.btn.modern');
-
-container.css({
-    fontFamily: 'monospace',
-    fontSize: '12px',
-    minWidth: '1300px',
-    top: '32px'
-});
-
-body.css({
-    fontFamily: 'monospace',
-    fontSize: '12px'
-});
-
-button.css({
-    fontFamily: 'monospace',
-    fontSize: '12px',
-    width: '290px'
-});
-
-column.css({
-    minHeight: 'inherit',
-    maxWidth: 'inherit',
-    padding: '1%',
-    margin: 0
-});
-
 var left = $('#leftColumn');
 var middle = $('#midColumn');
 var right = $('#rightColumn');
-
-left.css({
-    height: '92%',
-    width: '26%'
-});
-
-middle.css({
-    marginTop: '1%',
-    height: '90%',
-    width: '48%'
-});
-
-right.css({
-    overflowY: 'scroll',
-    height: '92%',
-    width: '19%'
-});
-
-// Reconfigure dynamic page display
-// ================================
 
 var addRule = function (rule) {
     var sheets = document.styleSheets;
     sheets[0].insertRule(rule, 0);
 };
 
-addRule('#gameLog .msg {'
-+ 'display: block;'
-+ '}');
+if (game.colorScheme !== 'sleek') {
+    container.css({
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        minWidth: '1300px',
+        top: '32px'
+    });
 
-addRule('#gameLog {'
-+ 'overflow-y: hidden !important;'
-+ 'width: 100% !important;'
-+ 'padding-top: 5px !important;'
-+ '}');
+    body.css({
+        fontFamily: 'monospace',
+        fontSize: '12px'
+    });
 
-addRule('#resContainer .maxRes {'
-+ 'color: #676766;'
-+ '}');
+    button.css({
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        width: '290px'
+    });
 
-addRule('#game .btn {'
-+ 'border-radius: 0px;'
-+ 'font-family: monospace;'
-+ 'font-size: 12px !important;'
-+ 'margin: 0 5px 7px 0;'
-+ 'width: 290px;'
-+ '}');
+    column.css({
+        minHeight: 'inherit',
+        maxWidth: 'inherit',
+        padding: '1%',
+        margin: 0,
+        overflowY: 'auto'
+    });
+
+    left.css({
+        height: '92%',
+        width: '26%',
+        maxWidth: '380px'
+    });
+
+    middle.css({
+        marginTop: '1%',
+        height: '90%',
+        width: '48%',
+        maxWidth: '630px'
+    });
+
+    right.css({
+        overflowY: 'scroll',
+        height: '92%',
+        width: '19%'
+    });
+
+    addRule('#gameLog .msg {'
+        + 'display: block;'
+        + '}');
+
+    addRule('#gameLog {'
+        + 'overflow-y: hidden !important;'
+        + 'width: 100% !important;'
+        + 'padding-top: 5px !important;'
+        + '}');
+
+    addRule('#resContainer .maxRes {'
+        + 'color: #676766;'
+        + '}');
+
+    addRule('#game .btn {'
+        + 'border-radius: 0px;'
+        + 'font-family: monospace;'
+        + 'font-size: 12px !important;'
+        + 'margin: 0 5px 7px 0;'
+        + 'width: 290px;'
+        + '}');
+}
 
 addRule('#ks-options ul {'
-+ 'list-style: none;'
-+ 'margin: 0 0 5px;'
-+ 'padding: 0;'
-+ '}');
+    + 'list-style: none;'
+    + 'margin: 0 0 5px;'
+    + 'padding: 0;'
+    + '}');
 
 addRule('#ks-options ul:after {'
-+ 'clear: both;'
-+ 'content: " ";'
-+ 'display: block;'
-+ 'height: 0;'
-+ '}');
+    + 'clear: both;'
+    + 'content: " ";'
+    + 'display: block;'
+    + 'height: 0;'
+    + '}');
 
 addRule('#ks-options ul li {'
-+ 'display: block;'
-+ 'float: left;'
-+ 'width: 100%;'
-+ '}');
+    + 'display: block;'
+    + 'float: left;'
+    + 'width: 100%;'
+    + '}');
 
 // Local Storage
 // =============
