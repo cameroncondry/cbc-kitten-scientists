@@ -81,6 +81,35 @@ var options = {
                 chronosphere:   {require: 'unobtainium', enabled: true}
             }
         },
+        space: {
+            enabled: false, trigger: 0.95, items: {
+                // Cath
+                spaceElevator:  {require: 'unobtainium', enabled: false},
+                sattelite:      {require: 'titanium',    enabled: false},
+                spaceStation:   {require: 'oil',         enabled: false},
+                
+                // Moon
+                moonOutpost:    {require: 'uranium',     enabled: false},
+                moonBase:       {require: 'unobtainium', enabled: false},
+                
+                // Dune
+                planetCracker:  {require: 'science',     enabled: false},
+                hydrofracturer: {require: 'science',     enabled: false},
+                
+                // Piscine
+                researchVessel: {require: 'titanium',    enabled: false},
+                orbitalArray:   {require: 'eludium',     enabled: false},
+                
+                // Helios
+                sunlifter:      {require: 'eludium',     enabled: false},
+                
+                // T-Minus
+                cryostation:    {require: 'eludium',     enabled: false},
+                
+                // Kairo
+                spaceBeacon:    {require: 'antimatter',  enabled: false}
+            }
+        },
         craft: {
             enabled: true, trigger: 0.95, items: {
                 wood:       {require: 'catnip',      max: 0, limited: false, enabled: true},
@@ -230,12 +259,14 @@ var warning = function () {
 
 var Engine = function () {
     this.buildManager = new BuildManager();
+    this.spaceManager = new SpaceManager();
     this.craftManager = new CraftManager();
     this.tradeManager = new TradeManager();
 };
 
 Engine.prototype = {
     buildManager: undefined,
+    spaceManager: undefined,
     craftManager: undefined,
     tradeManager: undefined,
     loop: undefined,
@@ -257,6 +288,7 @@ Engine.prototype = {
         if (options.auto.faith.enabled) this.praiseSun();
         if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.build.enabled) this.build();
+        if (options.auto.space.enabled) this.space();
         if (options.auto.craft.enabled) this.craft();
         if (options.auto.trade.enabled) this.trade();
         if (options.auto.hunt.enabled) this.hunt();
@@ -266,6 +298,24 @@ Engine.prototype = {
         var buildManager = this.buildManager;
         var craftManager = this.craftManager;
         var trigger = options.auto.build.trigger;
+
+        for (var name in builds) {
+            var build = builds[name];
+            var require = !build.require ? false : craftManager.getResource(build.require);
+
+            if (!require || trigger <= require.value / require.maxValue) {
+                buildManager.build(name);
+            }
+        }
+    },
+    space: function () {
+        var builds = options.auto.space.items;
+        var buildManager = this.spaceManager;
+        var craftManager = this.craftManager;
+        var trigger = options.auto.space.trigger;
+
+        // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+        buildManager.manager.render();
 
         for (var name in builds) {
             var build = builds[name];
@@ -452,6 +502,44 @@ BuildManager.prototype = {
 
         for (var i in buttons) {
             if (buttons[i].name === label) return buttons[i];
+        }
+    }
+};
+
+// Space manager
+// ================
+
+var SpaceManager = function () {
+    this.manager = new TabManager('Space');
+    this.crafts = new CraftManager();
+};
+
+SpaceManager.prototype = {
+    manager: undefined,
+    crafts: undefined,
+    build: function (name) {
+        var build = this.getBuild(name);
+        var button = this.getBuildButton(name);
+
+        if (!button || !button.enabled || !button.hasResources() || !options.auto.space.items[name].enabled) return;
+
+        //need to simulate a click so the game updates everything properly
+        button.domNode.click(build);
+        storeForSummary(name, 1, 'build');
+
+        var label = build.title;
+        activity('Kittens have built a new ' + label, 'ks-build');
+    },
+    getBuild: function (name) {
+        return game.space.getProgram(name);
+    },
+    getBuildButton: function (name) {
+        var panels = this.manager.tab.planetPanels;
+        
+        for (var panel in panels) {
+            for (var child in panels[panel].children) {
+                if (panels[panel].children[child].id === name) return panels[panel].children[child];
+            }
         }
     }
 };
@@ -1376,6 +1464,7 @@ optionsElement.append(optionsTitleElement);
 
 optionsListElement.append(getToggle('engine',   'Enable Scientists'));
 optionsListElement.append(getToggle('build',    'Building'));
+optionsListElement.append(getToggle('space',    'Space'));
 optionsListElement.append(getToggle('craft',    'Crafting'));
 optionsListElement.append(getToggle('trade',    'Trading'));
 optionsListElement.append(getToggle('hunt',     'Hunting'));
