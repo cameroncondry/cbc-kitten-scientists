@@ -86,18 +86,18 @@ var options = {
                 // Cath
                 spaceElevator:  {require: 'unobtainium', enabled: false},
                 sattelite:      {require: 'titanium',    enabled: false},
-                spaceStation:   {require: 'alloy',       enabled: false},
+                spaceStation:   {require: 'oil',         enabled: false},
                 
                 // Moon
                 moonOutpost:    {require: 'uranium',     enabled: false},
                 moonBase:       {require: 'unobtainium', enabled: false},
                 
                 // Dune
-                planetCracker:  {require: 'alloy',       enabled: false},
-                hydrofracturer: {require: 'alloy',       enabled: false},
+                planetCracker:  {require: 'science',     enabled: false},
+                hydrofracturer: {require: 'science',     enabled: false},
                 
                 // Piscine
-                researchVessel: {require: 'alloy',       enabled: false},
+                researchVessel: {require: 'titanium',    enabled: false},
                 orbitalArray:   {require: 'eludium',     enabled: false},
                 
                 // Helios
