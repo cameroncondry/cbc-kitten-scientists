@@ -1237,7 +1237,8 @@ var getToggle = function (toggleName, text) {
             text: 'disable all',
             css: {cursor: 'pointer',
                   display: 'inline-block',
-                  textShadow: '3px 3px 4px gray'},
+                  textShadow: '3px 3px 4px gray',
+                  marginRight: '8px'}
         });
 
         disableall.on('click', function () {
@@ -1255,7 +1256,7 @@ var getToggle = function (toggleName, text) {
             text: 'enable all',
             css: {cursor: 'pointer',
                   display: 'inline-block',
-                  textShadow: '3px 3px 4px gray'},
+                  textShadow: '3px 3px 4px gray'}
         });
 
         enableall.on('click', function () {
