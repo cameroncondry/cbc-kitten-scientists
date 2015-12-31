@@ -1677,3 +1677,5 @@ toggleEngine.on('change', function () {
 });
 
 loadFromKittenStorage();
+
+if (console && console.log) console.log(version + " loaded");
