@@ -45,9 +45,11 @@ var options = {
                 // production
                 field:          {require: 'catnip',      enabled: true},
                 pasture:        {require: 'catnip',      enabled: true, stage: 0},
+                solarFarm:      {require: 'titanium',    enabled: true, stage: 1, name: 'pasture'},
                 mine:           {require: 'wood',        enabled: true},
                 lumberMill:     {require: 'minerals',    enabled: true},
                 aqueduct:       {require: 'minerals',    enabled: true, stage: 0},
+                hydroPlant:     {require: 'titanium',    enabled: true, stage: 1, name: 'aqueduct'},
                 oilWell:        {require: 'coal',        enabled: true},
                 quarry:         {require: 'coal',        enabled: true},
 
@@ -72,6 +74,7 @@ var options = {
 
                 // other
                 amphitheatre:   {require: 'minerals',    enabled: true, stage: 0},
+                broadcastTower: {require: 'titanium',    enabled: true, stage: 1, name: 'amphitheatre'},
                 tradepost:      {require: 'gold',        enabled: true},
                 chapel:         {require: 'minerals',    enabled: true},
                 temple:         {require: 'gold',        enabled: true},
@@ -300,11 +303,15 @@ Engine.prototype = {
         var trigger = options.auto.build.trigger;
 
         for (var name in builds) {
+            if (!builds[name].enabled) continue;
+
             var build = builds[name];
             var require = !build.require ? false : craftManager.getResource(build.require);
 
             if (!require || trigger <= require.value / require.maxValue) {
-                buildManager.build(name);
+                // If the build overrides the name, use that name instead.
+                // This is usually true for buildings that can be upgraded.
+                buildManager.build(build.name || name, build.stage);
             }
         }
     },
@@ -477,11 +484,11 @@ var BuildManager = function () {
 BuildManager.prototype = {
     manager: undefined,
     crafts: undefined,
-    build: function (name) {
+    build: function (name, stage) {
         var build = this.getBuild(name);
-        var button = this.getBuildButton(name);
+        var button = this.getBuildButton(name, stage);
 
-        if (!button || !button.enabled || !button.hasResources() || !options.auto.build.items[name].enabled) return;
+        if (!button || !button.enabled || !button.hasResources()) return;
 
         //need to simulate a click so the game updates everything properly
         button.domNode.click(build);
@@ -498,7 +505,7 @@ BuildManager.prototype = {
 
         var buttons = manager.tab.buttons;
         var build = this.getBuild(name);
-        var label = build.label ? build.label : build.stages[0].label;
+        var label = typeof stage !== 'undefined' ? build.stages[stage].label : build.label;
 
         for (var i in buttons) {
             if (buttons[i].name === label) return buttons[i];
@@ -1460,7 +1467,7 @@ var getCraftOption = function (name, option) {
 var buildManager = new BuildManager();
 for (var buildOption in options.auto.build.items) {
     var buildItem = options.auto.build.items[buildOption];
-    var build = buildManager.getBuild(buildOption);
+    var build = buildManager.getBuild(buildItem.name || buildOption);
     if (build) {
         if ("stage" in buildItem) {
             options.auto.build.items[buildOption].label = build.stages[buildItem.stage].label;
