@@ -44,10 +44,10 @@ var options = {
 
                 // production
                 field:          {require: 'catnip',      enabled: true},
-                pasture:        {require: 'catnip',      enabled: true},
+                pasture:        {require: 'catnip',      enabled: true, stage: 0},
                 mine:           {require: 'wood',        enabled: true},
                 lumberMill:     {require: 'minerals',    enabled: true},
-                aqueduct:       {require: 'minerals',    enabled: true},
+                aqueduct:       {require: 'minerals',    enabled: true, stage: 0},
                 oilWell:        {require: 'coal',        enabled: true},
                 quarry:         {require: 'coal',        enabled: true},
 
@@ -71,7 +71,7 @@ var options = {
                 mansion:        {require: 'titanium',    enabled: false},
 
                 // other
-                amphitheatre:   {require: 'minerals',    enabled: true},
+                amphitheatre:   {require: 'minerals',    enabled: true, stage: 0},
                 tradepost:      {require: 'gold',        enabled: true},
                 chapel:         {require: 'minerals',    enabled: true},
                 temple:         {require: 'gold',        enabled: true},
@@ -1213,7 +1213,7 @@ var getToggle = function (toggleName, text) {
         element.css('borderBottom', '1px  solid rgba(185, 185, 185, 0.7)');
 
         var toggle = $('<div/>', {
-            css: {display: 'inline-block', float: 'right'},
+            css: {display: 'inline-block', float: 'right'}
         });
 
         var button = $('<div/>', {
@@ -1222,7 +1222,7 @@ var getToggle = function (toggleName, text) {
             css: {cursor: 'pointer',
                   display: 'inline-block',
                   paddingRight: '5px',
-                  textShadow: '3px 3px 4px gray'},
+                  textShadow: '3px 3px 4px gray'}
         });
 
         toggle.append(button);
@@ -1388,10 +1388,11 @@ var getSeason = function (name, season, option) {
 
 var getOption = function (name, option) {
     var element = $('<li/>');
+    var elementLabel = option.label || ucfirst(name);
 
     var label = $('<label/>', {
         'for': 'toggle-' + name,
-        text: ucfirst(name),
+        text: elementLabel,
         css: {display: 'inline-block', minWidth: '80px'}
     });
 
@@ -1407,10 +1408,10 @@ var getOption = function (name, option) {
     input.on('change', function () {
         if (input.is(':checked') && option.enabled == false) {
             option.enabled = true;
-            message('Enabled Auto ' + ucfirst(name));
+            message('Enabled Auto ' + elementLabel);
         } else if (input.not(':checked') && option.enabled == true) {
             option.enabled = false;
-            message('Disabled Auto ' + ucfirst(name));
+            message('Disabled Auto ' + elementLabel);
         }
         kittenStorage.items[input.attr('id')] = option.enabled;
         saveToKittenStorage();
@@ -1454,6 +1455,28 @@ var getCraftOption = function (name, option) {
 
     return element;
 };
+
+// Grab button labels for build options
+var buildManager = new BuildManager();
+for (var buildOption in options.auto.build.items) {
+    var buildItem = options.auto.build.items[buildOption];
+    var build = buildManager.getBuild(buildOption);
+    if (build) {
+        if ("stage" in buildItem) {
+            options.auto.build.items[buildOption].label = build.stages[buildItem.stage].label;
+        } else {
+            options.auto.build.items[buildOption].label = build.label;
+        }
+    }
+}
+// Grab button labels for space options
+var spaceManager = new SpaceManager();
+for (var spaceOption in options.auto.space.items) {
+    var build = spaceManager.getBuild(spaceOption);
+    if (build) {
+        options.auto.space.items[spaceOption].label = build.title;
+    }
+}
 
 var optionsElement = $('<div/>', {id: 'ks-options', css: {marginBottom: '10px'}});
 var optionsListElement = $('<ul/>');
