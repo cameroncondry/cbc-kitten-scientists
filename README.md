@@ -1,5 +1,7 @@
 # Kitten Scientists
 
+<p align="center"><img src="https://i.imgur.com/AWHGIGH.jpg" /></p>
+
 Kitten Scientists is a simple automation script for the complex kittens. [Kittens Game](http://bloodrizer.ru/games/kittens/)
 
 ## Basic Usage
