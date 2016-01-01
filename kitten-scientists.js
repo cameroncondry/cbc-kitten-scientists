@@ -262,6 +262,7 @@ var Engine = function () {
     this.spaceManager = new SpaceManager();
     this.craftManager = new CraftManager();
     this.tradeManager = new TradeManager();
+    this.villageManager = new TabManager('Small village');
 };
 
 Engine.prototype = {
@@ -269,6 +270,7 @@ Engine.prototype = {
     spaceManager: undefined,
     craftManager: undefined,
     tradeManager: undefined,
+    villageManager: undefined,
     loop: undefined,
     start: function () {
         if (this.loop) return;
@@ -298,6 +300,9 @@ Engine.prototype = {
         var buildManager = this.buildManager;
         var craftManager = this.craftManager;
         var trigger = options.auto.build.trigger;
+        
+        // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+        buildManager.manager.render();
 
         for (var name in builds) {
             var build = builds[name];
@@ -358,10 +363,8 @@ Engine.prototype = {
         }
     },
     holdFestival: function () {
-        var villageManager = new TabManager('Small village');
-
-        if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && villageManager.tab.festivalBtn.hasResources()) {
-            villageManager.tab.festivalBtn.onClick();
+        if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && this.villageManager.tab.festivalBtn.hasResources()) {
+            this.villageManager.tab.festivalBtn.onClick();
 
             if (game.calendar.festivalDays !== 0) {
                 storeForSummary('festival');
@@ -494,9 +497,7 @@ BuildManager.prototype = {
         return game.bld.getBuilding(name);
     },
     getBuildButton: function (name) {
-        var manager = this.manager.render();
-
-        var buttons = manager.tab.buttons;
+        var buttons = this.manager.tab.buttons;
         var build = this.getBuild(name);
         var label = build.label ? build.label : build.stages[0].label;
 
@@ -690,6 +691,8 @@ CraftManager.prototype = {
 var TradeManager = function () {
     this.craftManager = new CraftManager();
     this.manager = new TabManager('Trade');
+
+    this.manager.render();
 };
 
 TradeManager.prototype = {
@@ -791,10 +794,8 @@ TradeManager.prototype = {
             return game.diplomacy.get(name);
     },
     getTradeButton: function (race) {
-        var manager = this.manager.render();
-
-        for (var i in manager.tab.racePanels) {
-            var panel = manager.tab.racePanels[i];
+        for (var i in this.manager.tab.racePanels) {
+            var panel = this.manager.tab.racePanels[i];
 
             if (panel.name.indexOf(race) > -1) return panel.tradeBtn;
         }
