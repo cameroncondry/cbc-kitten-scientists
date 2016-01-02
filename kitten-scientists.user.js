@@ -925,15 +925,13 @@ if (game.colorScheme !== 'sleek') {
 
     left.css({
         height: '92%',
-        width: '26%',
-        maxWidth: '380px'
+        width: '26%'
     });
 
     middle.css({
         marginTop: '1%',
         height: '90%',
-        width: '48%',
-        maxWidth: '630px'
+        width: '48%'
     });
 
     right.css({
