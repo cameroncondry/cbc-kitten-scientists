@@ -5,6 +5,7 @@
 #### Changes by [oliversalzburg](https://github.com/oliversalzburg)
 - Fixed upgradeable buildings not being built.
 - Prioritize housing in build order and upgrade storage last.
+- Allow the user to configure the trigger threshold. 
 
 ### 2016.01.01 - Version 1.3.0
 
