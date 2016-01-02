@@ -33,10 +33,10 @@ var options = {
         hunt:     {enabled: true, trigger: 0.6},
         build: {
             enabled: true, trigger: 0.75, items: {
-                // science
-                library:        {require: 'wood',        enabled: true},
-                academy:        {require: 'wood',        enabled: true},
-                observatory:    {require: 'iron',        enabled: true},
+                // housing
+                hut:            {require: 'wood',        enabled: false},
+                logHouse:       {require: 'minerals',    enabled: false},
+                mansion:        {require: 'titanium',    enabled: false},
 
                 // craft bonuses
                 workshop:       {require: 'minerals',    enabled: true},
@@ -62,15 +62,10 @@ var options = {
                 steamworks:     {require: false,         enabled: false},
                 magneto:        {require: false,         enabled: false},
 
-                // storage
-                barn:           {require: 'wood',        enabled: true},
-                harbor:         {require: false,         enabled: false},
-                warehouse:      {require: false,         enabled: false},
-
-                // housing
-                hut:            {require: 'wood',        enabled: false},
-                logHouse:       {require: 'minerals',    enabled: false},
-                mansion:        {require: 'titanium',    enabled: false},
+                // science
+                library:        {require: 'wood',        enabled: true},
+                academy:        {require: 'wood',        enabled: true},
+                observatory:    {require: 'iron',        enabled: true},
 
                 // other
                 amphitheatre:   {require: 'minerals',    enabled: true, stage: 0},
@@ -81,7 +76,12 @@ var options = {
                 mint:           {require: false,         enabled: false},
                 unicornPasture: {require: false,         enabled: true},
                 ziggurat:       {require: false,         enabled: true},
-                chronosphere:   {require: 'unobtainium', enabled: true}
+                chronosphere:   {require: 'unobtainium', enabled: true},
+
+                // storage
+                barn:           {require: 'wood',        enabled: true},
+                harbor:         {require: false,         enabled: false},
+                warehouse:      {require: false,         enabled: false}
             }
         },
         space: {
