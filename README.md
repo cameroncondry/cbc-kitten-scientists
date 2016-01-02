@@ -2,122 +2,61 @@
 
 <p align="center"><img src="https://i.imgur.com/AWHGIGH.jpg" /></p>
 
-Kitten Scientists is a simple automation script for the complex kittens. [Kittens Game](http://bloodrizer.ru/games/kittens/)
+Kitten Scientists (KS) is a simple automation script for the complex [Kittens Game](http://bloodrizer.ru/games/kittens/).
 
 ## Basic Usage
 
 Create the following JavaScript bookmarklet (create a new bookmark and past this as the URL):
 
-    javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.js';d.body.appendChild(s);})();
+    javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.user.js';d.body.appendChild(s);})();
+
+### Alternative Installation
+
+You can also permanently install Kitten Scientists with a userscript manager.
+
+- On **Firefox**, you'd want to use [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/).
+- On **Chrome** and **Opera**, you'd want to use [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
+
+Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.user.js) and you should be prompted to install it. 
 
 ## Functionality
 
-#### User Interface
+- Several UI adjustments (depending on selected theme).
+- Automates:
+    - Building
+    - Crafting
+    - Hunting
+    - Praising
+    - Holding festivals
 
-- Switched to a monospace font and descreased the overall size.
-- Removed rounded edges on buttons.
-- Set up columns to span 100% of the width of the screen.
-- Toggle button for the script above the game log.
+### Building
 
-#### Resources
+By default, buildings are built if their required resources are at 75% of their storage capacity. For space structures,
+the default threshold is 95%.
 
-Crafts the following resources when at 95% capacity, will only use 50% of total resources:
+### Crafting
 
-    wood:           enabled: true  
-    beam:           enabled: true  
-    slab:           enabled: true  
-    steel:          enabled: true  
-    plate:          enabled: true  
-    alloy:          enabled: false  
-    concrete:       enabled: false  
-    gear:           enabled: false  
-    scaffold:       enabled: false  
-    ship:           enabled: false  
-    tanker:         enabled: false  
-    parchment:      enabled: true  
-    megalith:       enabled: false  
+Craftable resources are crafted when the resources required for the craft are at 95% of their storage capacity.
+ 
+Additionally, you can set a *consumption rate* (60% by default). This defines how much of the available resources can be
+used for crafting.
 
-Luxury crafts follows the same rules as normal crafts except they are auto built during hunts:
+### Trading
 
-    manuscript:     enabled: true  
-    compendium:     enabled: true  
-    blueprint:      enabled: false  
+Trades happen when the traded resource is at 95% of the storage capacity. The trades are optimized to only happen during
+seasons when the trade is most effective.
 
-#### Buildings
-
-Builds the following buildings when required resource is at 75% capacity:
-
-    // science
-    library:        enabled: true
-    academy:        enabled: true
-    observatory:    enabled: true
-    
-    // craft bonuses
-    workshop:       enabled: true
-    factory:        enabled: true
-    
-    // production
-    field:          enabled: true
-    pasture:        enabled: true
-    mine:           enabled: true
-    lumberMill:     enabled: true
-    aqueduct:       enabled: true
-    oilWell:        enabled: true
-    quarry:         enabled: true
-    
-    // conversion
-    smelter:        enabled: true
-    biolab:         enabled: false
-    calciner:       enabled: false
-    reactor:        enabled: false
-    accelerator:    enabled: false
-    steamworks:     enabled: false
-    magneto:        enabled: false
-    
-    // storage
-    barn:           enabled: true
-    harbor:         enabled: false
-    warehouse:      enabled: false
-    
-    // housing
-    hut:            enabled: false
-    logHouse:       enabled: false
-    mansion:        enabled: false
-    
-    // other
-    amphitheatre:   enabled: true
-    tradepost:      enabled: true
-    chapel:         enabled: true
-    temple:         enabled: true
-    mint:           enabled: false
-    unicornPasture: enabled: true
-    ziggurat:       enabled: true
-    choronosphere:  enabled: true
-
-#### Trading
-
-Trades with the following races when gold is at 90% and the maximum resource is not met. Ex: zebras will trade when gold is at 90% and titanium is below 99% to prevent over trading.
-
-    zebras: (summer)    enabled true
-    lizards: (summer)   enabled: false
-    sharks: (winter)    enabled: false
-    griffins: (autumn)  enabled: false
-    nagas: (spring)     enabled: false
-    spiders: (autumn)   enabled: false
-    dragons: (all)      enabled: false
-    leviathans: (all)   enabled: false
-
-#### Cat Power
+### Hunting
 
 Hunts when catpower is at 95% capacity and builds luxury items before the hunt is sent.
 
-#### Religion
+### Praising
 
 Praises when faith is at 99% capacity.
 
-#### Game Log
+### Game Log
 
-Observes astronomical events.
+Automatically observes astronomical events.
 
 ## Contributors
 
