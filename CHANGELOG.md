@@ -1,5 +1,10 @@
 ## History
 
+### Unreleased - Version 1.3.1
+
+#### Changes by [oliversalzburg](https://github.com/oliversalzburg)
+- Fixed upgradeable buildings not being built.
+
 ### 2016.01.01 - Version 1.3.0
 
 #### Changes by [jacob-keller](https://github.com/jacob-keller)
