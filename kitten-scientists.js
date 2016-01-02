@@ -503,7 +503,7 @@ BuildManager.prototype = {
     getBuild: function (name) {
         return game.bld.getBuilding(name);
     },
-    getBuildButton: function (name) {
+    getBuildButton: function (name, stage) {
         var buttons = this.manager.tab.buttons;
         var build = this.getBuild(name);
         var label = typeof stage !== 'undefined' ? build.stages[stage].label : build.label;
