@@ -924,7 +924,8 @@ var kittenStorageVersion = 1;
 var kittenStorage = {
     version: kittenStorageVersion,
     items: {},
-    resources: {}
+    resources: {},
+    triggers: {}
 };
 
 var initializeKittenStorage = function () {
@@ -937,6 +938,14 @@ var initializeKittenStorage = function () {
 
 var saveToKittenStorage = function () {
     kittenStorage.resources = options.auto.resources;
+    kittenStorage.triggers = {
+        faith: options.auto.faith.trigger,
+        hunt: options.auto.hunt.trigger,
+        build: options.auto.build.trigger,
+        space: options.auto.space.trigger,
+        craft: options.auto.craft.trigger,
+        trade: options.auto.trade.trigger
+    };
     localStorage['cbc.kitten-scientists'] = JSON.stringify(kittenStorage);
 };
 
@@ -968,7 +977,7 @@ var loadFromKittenStorage = function () {
         for (var resource in kittenStorage.resources) {
             var res = kittenStorage.resources[resource];
 
-            if ($("#resource-" + resource).length === 0) {
+            if ($('#resource-' + resource).length === 0) {
                 list.append(addNewResourceOption(resource));
                 if ('stock' in res) {
                     setStockValue(resource, res.stock);
@@ -978,6 +987,23 @@ var loadFromKittenStorage = function () {
                 }
             }
         }
+        
+        if (saved.triggers) {
+            options.auto.faith.trigger = saved.triggers.faith;
+            options.auto.hunt.trigger = saved.triggers.hunt;
+            options.auto.build.trigger = saved.triggers.build;
+            options.auto.space.trigger = saved.triggers.space;
+            options.auto.craft.trigger = saved.triggers.craft;
+            options.auto.trade.trigger = saved.triggers.trade;
+
+            $('#trigger-faith')[0].title = options.auto.faith.trigger;
+            $('#trigger-hunt')[0].title = options.auto.hunt.trigger;
+            $('#trigger-build')[0].title = options.auto.build.trigger;
+            $('#trigger-space')[0].title = options.auto.space.trigger;
+            $('#trigger-craft')[0].title = options.auto.craft.trigger;
+            $('#trigger-trade')[0].title = options.auto.trade.trigger;
+        }
+
     } else {
         initializeKittenStorage();
     }
@@ -1321,6 +1347,30 @@ var getToggle = function (toggleName, text) {
             element.append(resourcesList);
         }
 
+    }
+    
+    if (auto.trigger) {
+        var triggerButton = $('<div/>', {
+            id: 'trigger-' + toggleName,
+            text: 'trigger',
+            title: auto.trigger,
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                float: 'right',
+                paddingRight: '5px',
+                textShadow: '3px 3px 4px gray'}
+        });
+
+        triggerButton.on('click', function () {
+            var value = window.prompt('Enter a new trigger value for ' + text + '. Should be in the range of 0 to 1.', auto.trigger);
+            if (value !== null) {
+                auto.trigger = parseFloat(value);
+                saveToKittenStorage();
+                triggerButton[0].title = auto.trigger;
+            }
+        });
+
+        element.append(triggerButton);
     }
 
     return element;
