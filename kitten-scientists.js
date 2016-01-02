@@ -18,21 +18,66 @@ var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
 var game    = gamePage;
 
 var options = {
-    debug:         false,
-    interval:      2000,
-    msgcolor:      '#aa50fe', // dark purple
-    summarycolor:  '#009933', // light green
+    // When debug is enabled, messages that go to the game log are also logged using window.console.
+    debug: false,
+
+    // The interval at which the internal processing loop is run, in milliseconds.
+    interval: 2000,
+
+    // The default color for KS messages in the game log (like enabling and disabling items).
+    msgcolor: '#aa50fe', // dark purple
+    // The color for activity summaries.
+    summarycolor: '#009933', // light green
+    // The color for log messages that are about activities (like festivals and star observations).
     activitycolor: '#E65C00', // orange
-    showactivity:  true,
-    consume:       0.6,
+
+    // Should activity be logged to the game log?
+    showactivity: true,
+
+    // The default consume rate.
+    consume: 0.6,
+
+    // How many messages to keep in the game log.
     logMessages:   100,
+
+    // The default settings for game automation.
     auto: {
-        engine:   {enabled: false},
-        faith:    {enabled: true, trigger: 0.99},
-        festival: {enabled: true},
-        hunt:     {enabled: true, trigger: 0.6},
+        // Settings related to KS itself.
+        engine: {
+            // Should any automation run at all?
+            enabled: false
+        },
+        faith: {
+            // Should praising be automated?
+            enabled: true,
+            // At what percentage of the faith storage capacity should KS praise the sun?
+            trigger: 0.99
+        },
+        festival: {
+            // Should festivals be held automatically?
+            enabled: true
+        },
+        hunt: {
+            // Should hunters be sent on hunts automatically?
+            enabled: true,
+            // At what percentage of the catpower storage capacity should KS send hunters on hunts?
+            trigger: 0.6
+        },
         build: {
-            enabled: true, trigger: 0.75, items: {
+            // Should buildings be built automatically?
+            enabled: true,
+            // When a building requires a certain resource (this is what their *require* property refers to), then
+            // this is the percentage of the storage capacity of that resource, that has to be met for the building
+            // to be built.
+            trigger: 0.75,
+            // The items that be automatically built.
+            // Every item can define a required resource. This resource has to be available at a certain capacity for
+            // the building to be built. The capacity requirement is defined by the trigger value set for the section.
+            //
+            // Additionally, for upgradeable buildings, the item can define which upgrade stage it refers to.
+            // For upgraded buildings, the ID (or internal name) of the building can be controlled through the *name*
+            // property. For other buildings, the key of the item itself is used.
+            items: {
                 // housing
                 hut:            {require: 'wood',        enabled: false},
                 logHouse:       {require: 'minerals',    enabled: false},
@@ -85,36 +130,51 @@ var options = {
             }
         },
         space: {
-            enabled: false, trigger: 0.95, items: {
+            // Should space buildings be built automatically?
+            enabled: false,
+            // The functionality of the space section is identical to the build section. It just needs to be treated
+            // seperately, because the game internals are slightly different.
+            trigger: 0.95,
+            items: {
                 // Cath
                 spaceElevator:  {require: 'unobtainium', enabled: false},
                 sattelite:      {require: 'titanium',    enabled: false},
                 spaceStation:   {require: 'oil',         enabled: false},
-                
+
                 // Moon
                 moonOutpost:    {require: 'uranium',     enabled: false},
                 moonBase:       {require: 'unobtainium', enabled: false},
-                
+
                 // Dune
                 planetCracker:  {require: 'science',     enabled: false},
                 hydrofracturer: {require: 'science',     enabled: false},
-                
+
                 // Piscine
                 researchVessel: {require: 'titanium',    enabled: false},
                 orbitalArray:   {require: 'eludium',     enabled: false},
-                
+
                 // Helios
                 sunlifter:      {require: 'eludium',     enabled: false},
-                
+
                 // T-Minus
                 cryostation:    {require: 'eludium',     enabled: false},
-                
+
                 // Kairo
                 spaceBeacon:    {require: 'antimatter',  enabled: false}
             }
         },
         craft: {
-            enabled: true, trigger: 0.95, items: {
+            // Should resources be crafted automatically?
+            enabled: true,
+            // Every item can define a required resource with the *require* property.
+            // At what percentage of the storage capacity of that required resource should the listed resource be crafted?
+            trigger: 0.95,
+            // The items that can be crafted.
+            // In addition to the *require* property, which is explained above, items can also define a *max*. If they
+            // do, no more than that resource will be automatically produced. This feature can not be controlled through 
+            // the UI and is not used for any resource by default.
+            // The *limited* property tells KS to only craft the resource once per season.
+            items: {
                 wood:       {require: 'catnip',      max: 0, limited: false, enabled: true},
                 beam:       {require: 'wood',        max: 0, limited: false, enabled: true},
                 slab:       {require: 'minerals',    max: 0, limited: false, enabled: true},
@@ -136,30 +196,38 @@ var options = {
             }
         },
         trade: {
-            enabled: true, trigger: 0.95, items: {
+            // Should KS automatically trade?
+            enabled: true,
+            // Every trade can define a required resource with the *require* property.
+            // At what percentage of the storage capacity of that required resource should the trade happen? 
+            trigger: 0.95,
+            // Trades can be limited to only happen during specific seasons. This is because trades with certain races 
+            // are more effective during specific seasons.
+            // The *allowcapped* property allows us to trade even if the sold resources are at their cap.
+            items: {
                 dragons:    {enabled: false, trigger: 0.80,  require: 'titanium',    allowcapped: false,
-                             summer:  true,  autumn:  true,  winter:  true,          spring:      true},
+                    summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
                 zebras:     {enabled: true,  trigger: 0.80,  require: false,         allowcapped: false,
-                             summer:  true,  autumn:  true,  winter:  true,          spring:      true},
+                    summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
                 lizards:    {enabled: false, trigger: 0.80,  require: 'minerals',    allowcapped: false,
-                             summer:  true,  autumn:  false, winter:  false,         spring:      false},
+                    summer:  true,  autumn:  false, winter:  false,         spring:      false},
 
                 sharks:     {enabled: false, trigger: 0.80,  require: 'iron',        allowcapped: false,
-                             summer:  false, autumn:  false, winter:  true,          spring:      false},
+                    summer:  false, autumn:  false, winter:  true,          spring:      false},
 
                 griffins:   {enabled: false, trigger: 0.80,  require: 'wood',        allowcapped: false,
-                             summer:  false, autumn:  true,  winter:  false,         spring:      false},
+                    summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
                 nagas:      {enabled: false, trigger: 0.80,  require: false,         allowcapped: false,
-                             summer:  false, autumn:  false, winter:  false,         spring:      true},
+                    summer:  false, autumn:  false, winter:  false,         spring:      true},
 
                 spiders:    {enabled: false, trigger: 0.80,  require: false,         allowcapped: false,
-                             summer:  false, autumn:  true,  winter:  false,         spring:      false},
+                    summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
                 leviathans: {enabled: false, trigger: 0.80,  require: 'unobtainium', allowcapped: true,
-                             summer:  true,  autumn:  true,  winter:  true,          spring: true}
+                    summer:  true,  autumn:  true,  winter:  true,          spring:      true}
             }
         },
         resources: {
@@ -303,7 +371,7 @@ Engine.prototype = {
         var buildManager = this.buildManager;
         var craftManager = this.craftManager;
         var trigger = options.auto.build.trigger;
-        
+
         // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
         buildManager.manager.render();
 
@@ -380,10 +448,10 @@ Engine.prototype = {
         }
     },
     observeStars: function () {
-       if (game.calendar.observeBtn != null){
+        if (game.calendar.observeBtn != null){
             game.calendar.observeHandler();
             activity('Kitten Scientists have observed a star', 'ks-star');
-            storeForSummary('stars', 1); 
+            storeForSummary('stars', 1);
         }
     },
     praiseSun: function () {
@@ -496,7 +564,7 @@ BuildManager.prototype = {
         //need to simulate a click so the game updates everything properly
         button.domNode.click(build);
         storeForSummary(name, 1, 'build');
-        
+
         var label = build.label ? build.label : build.stages[0].label;
         activity('Kittens have built a new ' + label, 'ks-build');
     },
@@ -543,7 +611,7 @@ SpaceManager.prototype = {
     },
     getBuildButton: function (name) {
         var panels = this.manager.tab.planetPanels;
-        
+
         for (var panel in panels) {
             for (var child in panels[panel].children) {
                 if (panels[panel].children[child].id === name) return panels[panel].children[child];
@@ -601,10 +669,10 @@ CraftManager.prototype = {
     getLowestCraftAmount: function (name) {
         var amount = undefined;
         var materials = this.getMaterials(name);
-        
+
         // Safeguard if materials for craft cannot be determined.
         if (!materials) return 0;
-        
+
         var res = this.getResource(name);
 
         for (var i in materials) {
@@ -625,10 +693,10 @@ CraftManager.prototype = {
     getMaterials: function (name) {
         var materials = {};
         var craft = this.getCraft(name);
-        
+
         // Safeguard against craft items that aren't actually available yet.
         if (!craft) return;
-        
+
         var prices = craft.prices;
 
         for (var i in prices) {
@@ -987,7 +1055,7 @@ var loadFromKittenStorage = function () {
                 }
             }
         }
-        
+
         if (saved.triggers) {
             options.auto.faith.trigger = saved.triggers.faith;
             options.auto.hunt.trigger = saved.triggers.hunt;
@@ -1024,8 +1092,8 @@ var setStockValue = function (name, value) {
     var n = Number(value);
 
     if (isNaN(n) || n < 0) {
-       warning('ignoring non-numeric or invalid stock value ' + value);
-       return;
+        warning('ignoring non-numeric or invalid stock value ' + value);
+        return;
     }
 
     if (!options.auto.resources[name]) options.auto.resources[name] = {};
@@ -1037,8 +1105,8 @@ var setConsumeRate = function (name, value) {
     var n = parseFloat(value);
 
     if (isNaN(n) || n < 0.0 || n > 1.0) {
-       warning('ignoring non-numeric or invalid consume rate ' + value);
-       return;
+        warning('ignoring non-numeric or invalid consume rate ' + value);
+        return;
     }
 
     if (!options.auto.resources[name]) options.auto.resources[name] = {};
@@ -1082,10 +1150,10 @@ var addNewResourceOption = function (name, title) {
         id: 'resource-delete-' + name,
         text: 'del',
         css: {cursor: 'pointer',
-              display: 'inline-block',
-              float: 'right',
-              paddingRight: '5px',
-              textShadow: '3px 3px 4px gray'},
+            display: 'inline-block',
+            float: 'right',
+            paddingRight: '5px',
+            textShadow: '3px 3px 4px gray'},
     });
 
     container.append(label, stock, consume, del);
@@ -1130,17 +1198,17 @@ var getAvailableResourceOptions = function () {
                 id: 'resource-add-' + res.name,
                 text: ucfirst(res.title ? res.title : res.name),
                 css: {cursor: 'pointer',
-                      textShadow: '3px 3px 4px gray'},
+                    textShadow: '3px 3px 4px gray'},
             });
 
             // Wrapper function needed to make closure work
             (function (res, item) {
                 item.on('click', function () {
-                   item.remove();
-                   if (!options.auto.resources[res.name]) options.auto.resources[res.name] = {};
-                   options.auto.resources[res.name].stock = 0;
-                   options.auto.resources[res.name].consume = options.consume;
-                   $('#toggle-list-resources').append(addNewResourceOption(res.name, res.title));
+                    item.remove();
+                    if (!options.auto.resources[res.name]) options.auto.resources[res.name] = {};
+                    options.auto.resources[res.name].stock = 0;
+                    options.auto.resources[res.name].consume = options.consume;
+                    $('#toggle-list-resources').append(addNewResourceOption(res.name, res.title));
                 });
             })(res, item);
 
@@ -1161,31 +1229,31 @@ var getResourceOptions = function () {
         id: 'resources-add',
         text: 'add resources',
         css: {cursor: 'pointer',
-              display: 'inline-block',
-              textShadow: '3px 3px 4px gray',
-              borderBottom: '1px solid rgba(185, 185, 185, 0.7)' },
+            display: 'inline-block',
+            textShadow: '3px 3px 4px gray',
+            borderBottom: '1px solid rgba(185, 185, 185, 0.7)' },
     });
 
     var clearunused = $('<div/>', {
         id: 'resources-clear-unused',
         text: 'clear unused',
         css: {cursor: 'pointer',
-              display: 'inline-block',
-              float: 'right',
-              paddingRight: '5px',
-              textShadow: '3px 3px 4px gray' },
+            display: 'inline-block',
+            float: 'right',
+            paddingRight: '5px',
+            textShadow: '3px 3px 4px gray' },
     });
 
     clearunused.on('click', function () {
-       for (var name in options.auto.resources) {
-           // Only delete resources with unmodified values. Require manual
-           // removal of resources with non-standard values.
-           if (!options.auto.resources[name].stock &&
-               options.auto.resources[name].consume == options.consume ||
-               options.auto.resources[name].consume == undefined) {
-               $('#resource-' + name).remove();
-           }
-       }
+        for (var name in options.auto.resources) {
+            // Only delete resources with unmodified values. Require manual
+            // removal of resources with non-standard values.
+            if (!options.auto.resources[name].stock &&
+                options.auto.resources[name].consume == options.consume ||
+                options.auto.resources[name].consume == undefined) {
+                $('#resource-' + name).remove();
+            }
+        }
     });
 
     allresources = $('<ul/>', {
@@ -1254,9 +1322,9 @@ var getToggle = function (toggleName, text) {
             id: 'toggle-items-' + toggleName,
             text: 'items',
             css: {cursor: 'pointer',
-                  display: 'inline-block',
-                  paddingRight: '5px',
-                  textShadow: '3px 3px 4px gray'}
+                display: 'inline-block',
+                paddingRight: '5px',
+                textShadow: '3px 3px 4px gray'}
         });
 
         toggle.append(button);
@@ -1270,9 +1338,9 @@ var getToggle = function (toggleName, text) {
             id: 'toggle-all-items-' + toggleName,
             text: 'disable all',
             css: {cursor: 'pointer',
-                  display: 'inline-block',
-                  textShadow: '3px 3px 4px gray',
-                  marginRight: '8px'}
+                display: 'inline-block',
+                textShadow: '3px 3px 4px gray',
+                marginRight: '8px'}
         });
 
         disableall.on('click', function () {
@@ -1284,13 +1352,13 @@ var getToggle = function (toggleName, text) {
         });
 
         list.append(disableall);
-        
+
         var enableall = $('<div/>', {
             id: 'toggle-all-items-' + toggleName,
             text: 'enable all',
             css: {cursor: 'pointer',
-                  display: 'inline-block',
-                  textShadow: '3px 3px 4px gray'}
+                display: 'inline-block',
+                textShadow: '3px 3px 4px gray'}
         });
 
         enableall.on('click', function () {
@@ -1325,9 +1393,9 @@ var getToggle = function (toggleName, text) {
                 id: 'toggle-resource-controls',
                 text: 'resources',
                 css: {cursor: 'pointer',
-                      display: 'inline-block',
-                      paddingRight: '5px',
-                      textShadow: '3px 3px 4px gray'},
+                    display: 'inline-block',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'},
             });
 
             var resourcesList = getResourceOptions();
@@ -1348,7 +1416,7 @@ var getToggle = function (toggleName, text) {
         }
 
     }
-    
+
     if (auto.trigger) {
         var triggerButton = $('<div/>', {
             id: 'trigger-' + toggleName,
@@ -1384,10 +1452,10 @@ var getTradeOption = function (name, option) {
         id: 'toggle-seasons-' + name,
         text: 'seasons',
         css: {cursor: 'pointer',
-              display: 'inline-block',
-              float: 'right',
-              paddingRight: '5px',
-              textShadow: '3px 3px 4px gray'},
+            display: 'inline-block',
+            float: 'right',
+            paddingRight: '5px',
+            textShadow: '3px 3px 4px gray'},
     });
 
     var list = $('<ul/>', {
@@ -1565,7 +1633,7 @@ var resetActivitySummary = function () {
         craft:    {},
         trade:    {},
         build:    {},
-        other:    {} 
+        other:    {}
     };
 };
 
