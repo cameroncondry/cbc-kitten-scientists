@@ -205,28 +205,28 @@ var options = {
             // are more effective during specific seasons.
             // The *allowcapped* property allows us to trade even if the sold resources are at their cap.
             items: {
-                dragons:    {enabled: false, trigger: 0.80,  require: 'titanium',    allowcapped: false,
+                dragons:    {enabled: false,  require: 'titanium',    allowcapped: false,
                     summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
-                zebras:     {enabled: true,  trigger: 0.80,  require: false,         allowcapped: false,
+                zebras:     {enabled: true,  require: false,         allowcapped: false,
                     summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
-                lizards:    {enabled: false, trigger: 0.80,  require: 'minerals',    allowcapped: false,
+                lizards:    {enabled: false,  require: 'minerals',    allowcapped: false,
                     summer:  true,  autumn:  false, winter:  false,         spring:      false},
 
-                sharks:     {enabled: false, trigger: 0.80,  require: 'iron',        allowcapped: false,
+                sharks:     {enabled: false,  require: 'iron',        allowcapped: false,
                     summer:  false, autumn:  false, winter:  true,          spring:      false},
 
-                griffins:   {enabled: false, trigger: 0.80,  require: 'wood',        allowcapped: false,
+                griffins:   {enabled: false,  require: 'wood',        allowcapped: false,
                     summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
-                nagas:      {enabled: false, trigger: 0.80,  require: false,         allowcapped: false,
+                nagas:      {enabled: false,  require: false,         allowcapped: false,
                     summer:  false, autumn:  false, winter:  false,         spring:      true},
 
-                spiders:    {enabled: false, trigger: 0.80,  require: false,         allowcapped: false,
+                spiders:    {enabled: false,  require: false,         allowcapped: false,
                     summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
-                leviathans: {enabled: false, trigger: 0.80,  require: 'unobtainium', allowcapped: true,
+                leviathans: {enabled: false,  require: 'unobtainium', allowcapped: true,
                     summer:  true,  autumn:  true,  winter:  true,          spring:      true}
             }
         },
@@ -495,7 +495,7 @@ Engine.prototype = {
             if (!trade[season]) continue;
 
             var require = !trade.require ? false : craftManager.getResource(trade.require);
-            var requireTrigger = trade.trigger;
+            var requireTrigger = options.auto.trade.trigger;
 
             // If we have enough to trigger the check, then attempt to trade
             if (!require || requireTrigger <= require.value / require.maxValue) {
