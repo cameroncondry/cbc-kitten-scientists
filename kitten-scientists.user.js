@@ -1672,17 +1672,17 @@ var displayActivitySummary = function () {
 
     // Buildings
     for (var name in activitySummary.build) {
-        summary('Build: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
+        summary('Built: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
     }
 
     // Crafts
     for (var name in activitySummary.craft) {
-        summary('Craft: +' + game.getDisplayValueExt(activitySummary.craft[name]) + ' ' + ucfirst(name));
+        summary('Crafted: +' + game.getDisplayValueExt(activitySummary.craft[name]) + ' ' + ucfirst(name));
     }
 
     // Trading
     for (var name in activitySummary.trade) {
-        summary('Trade: ' + game.getDisplayValueExt(activitySummary.trade[name]) + 'x ' + ucfirst(name));
+        summary('Traded: ' + game.getDisplayValueExt(activitySummary.trade[name]) + 'x ' + ucfirst(name));
     }
 
     // Show time since last run. Assumes that the day and year are always higher.
