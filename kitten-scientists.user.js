@@ -469,7 +469,8 @@ Engine.prototype = {
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue && catpower.value >= 100) {
             // No way to send only some hunters. Thus, we hunt with everything
             storeForSummary('hunt', catpower.value);
-            activity('Sent ' + game.getDisplayValueExt(catpower.value) + ' kittens on the hunt', 'ks-hunt');
+            var hunters = game.village.getJob('hunter').value;
+            activity('Sent ' + hunters + ' kitten' + (hunters == 1 ? '' : 's') + ' on the hunt', 'ks-hunt');
             game.village.huntAll();
         }
     },
