@@ -468,9 +468,9 @@ Engine.prototype = {
 
         if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue && catpower.value >= 100) {
             // No way to send only some hunters. Thus, we hunt with everything
-            storeForSummary('hunt', catpower.value);
             var hunters = game.village.getJob('hunter').value;
-            activity('Sent ' + hunters + ' kitten' + (hunters == 1 ? '' : 's') + ' on the hunt', 'ks-hunt');
+            storeForSummary('hunt', hunters);
+            activity('Sent ' + game.getDisplayValueExt(hunters) + ' kitten' + (hunters == 1 ? '' : 's') + ' on the hunt', 'ks-hunt');
             game.village.huntAll();
         }
     },
@@ -1668,7 +1668,7 @@ var displayActivitySummary = function () {
 
     // Hunters
     if (activitySummary.other.hunt) {
-        summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt / 100) + ' adorable kitten hunters');
+        summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt) + ' adorable kitten hunter' + (activitySummary.other.hunt == 1 ? '' : 's'));
     }
 
     // Buildings
