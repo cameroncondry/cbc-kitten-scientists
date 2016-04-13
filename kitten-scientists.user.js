@@ -51,7 +51,21 @@ var options = {
             // Should praising be automated?
             enabled: true,
             // At what percentage of the faith storage capacity should KS praise the sun?
-            trigger: 0.99
+            trigger: 0.99,
+            // Which religious upgrades should be researched?
+            items: {
+                // Order of the Sun
+                solarchant:      {require: 'faith', enabled: true},
+                scholasticism:   {require: 'faith', enabled: true},
+                goldenSpire:     {require: 'faith', enabled: true},
+                sunAltar:        {require: 'faith', enabled: true},
+                stainedGlass:    {require: 'faith', enabled: true},
+                solarRevolution: {require: 'faith', enabled: true},
+                basilica:        {require: 'faith', enabled: true},
+                templars:        {require: 'faith', enabled: true},
+                apocripha:       {require: 'faith', enabled: false},
+                transcendence:   {require: 'faith', enabled: true},
+            }
         },
         festival: {
             // Should festivals be held automatically?
@@ -329,6 +343,7 @@ var warning = function () {
 // =================================
 
 var Engine = function () {
+    this.religionManager = new ReligionManager();
     this.buildManager = new BuildManager();
     this.spaceManager = new SpaceManager();
     this.craftManager = new CraftManager();
@@ -337,6 +352,7 @@ var Engine = function () {
 };
 
 Engine.prototype = {
+    religionManager: undefined,
     buildManager: undefined,
     spaceManager: undefined,
     craftManager: undefined,
@@ -358,13 +374,33 @@ Engine.prototype = {
     },
     iterate: function () {
         this.observeStars();
-        if (options.auto.faith.enabled) this.praiseSun();
+        if (options.auto.faith.enabled) this.worship();
         if (options.auto.festival.enabled) this.holdFestival();
         if (options.auto.build.enabled) this.build();
         if (options.auto.space.enabled) this.space();
         if (options.auto.craft.enabled) this.craft();
         if (options.auto.trade.enabled) this.trade();
         if (options.auto.hunt.enabled) this.hunt();
+    },
+    worship: function () {
+        var builds = options.auto.faith.items;
+        var buildManager = this.religionManager;
+        var craftManager = this.craftManager;
+        var trigger = options.auto.faith.trigger;
+
+        // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+        buildManager.manager.render();
+
+        for (var name in builds) {
+            var build = builds[name];
+            var require = !build.require ? false : craftManager.getResource(build.require);
+
+            if (!require || trigger <= require.value / require.maxValue) {
+                buildManager.build(name);
+            }
+        }
+        // Praise the sun with any faith left over
+        this.praiseSun();
     },
     build: function () {
         var builds = options.auto.build.items;
@@ -542,6 +578,41 @@ TabManager.prototype = {
         }
 
         this.tab ? this.render() : warning('unable to find tab ' + name);
+    }
+};
+
+// Religion manager
+// ================
+
+var ReligionManager = function () {
+    this.manager = new TabManager('Religion');
+    this.crafts = new CraftManager();
+};
+
+ReligionManager.prototype = {
+    manager: undefined,
+    crafts: undefined,
+    build: function (name) {
+        var build = this.getBuild(name);
+        var button = this.getBuildButton(name);
+
+        if (!button || !button.enabled || !button.hasResources()) return;
+
+        button.domNode.click(build);
+        storeForSummary(name, 1, 'faith');
+
+        activity('Kittens have discovered ' + build.label, 'ks-faith');
+    },
+    getBuild: function (name) {
+        return game.religion.getRU(name);
+    },
+    getBuildButton: function (name) {
+        var buttons = this.manager.tab.rUpgradeButtons;
+        var build = this.getBuild(name);
+
+        for (var i in buttons) {
+            if (buttons[i].name === build.label) return buttons[i];
+        }
     }
 };
 
@@ -1581,6 +1652,15 @@ var getCraftOption = function (name, option) {
     return element;
 };
 
+// Grab button labels for religion options
+var religionManager = new ReligionManager();
+for (var buildOption in options.auto.faith.items) {
+    var buildItem = options.auto.faith.items[buildOption];
+    var build = religionManager.getBuild(buildItem.name || buildOption);
+    if (build) {
+        options.auto.faith.items[buildOption].label = build.label;
+    }
+}
 // Grab button labels for build options
 var buildManager = new BuildManager();
 for (var buildOption in options.auto.build.items) {
