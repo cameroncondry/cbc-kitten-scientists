@@ -265,7 +265,17 @@ gameLog.msg = function (message, type, tag) {
         }
     }
 
+    /**
+     * This code snippet groups the messages under a single date header based on a date stamp.
+     * The logic is not straightforward and a bit hacky. Maybe there is a better way to handle it like tracking the reference to a date node
+     */
     var spans = this.spans;
+    if (spans.length > 1 && type == 'date' && message == spans[spans.length - 2].innerHTML) {
+        dojo.destroy(spans[spans.length - 2]);
+        spans.splice(spans.length - 2, 1);
+    }
+    //----------------------------------------------------------------------------------------------------------
+
     spans.push(span);
     if (spans.length > options.logMessages){
         dojo.destroy(spans.shift()); //remove the first element from the array and destroy it
