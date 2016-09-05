@@ -15,7 +15,9 @@
 
 var version = 'Kitten Scientists version 1.3.0';
 var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
-var game    = gamePage;
+var game = null;
+
+var run = function() {
 
 var options = {
     // When debug is enabled, messages that go to the game log are also logged using window.console.
@@ -1814,3 +1816,18 @@ toggleEngine.on('change', function () {
 loadFromKittenStorage();
 
 if (console && console.log) console.log(version + " loaded");
+
+}
+
+var test = function() {
+    if (typeof gamePage === 'undefined') {
+        setTimeout(function(){
+            test();
+        }, 2000);
+    } else {
+        game = gamePage;
+        run();
+    }
+}
+
+test();
