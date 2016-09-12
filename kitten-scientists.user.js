@@ -653,7 +653,7 @@ var run = function() {
             game.craft(craft.name, amount);
 
             // determine actual amount after crafting upgrades
-            amount = (amount * (game.bld.getEffect(ratio) + 1)).toFixed(2);
+            amount = (amount * (game.getEffect(ratio) + 1)).toFixed(2);
 
             storeForSummary(name, amount, 'craft');
             activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name), 'ks-craft');
@@ -836,7 +836,7 @@ var run = function() {
                     max = Math.ceil(val);
                 } else {
                     var sratio = item.seasons[game.calendar.getCurSeason().name];
-                    var tratio = game.bld.getEffect("tradeRatio");
+                    var tratio = game.getEffect("tradeRatio");
                     var val = item.value + item.value * tratio;
 
                     max = val * sratio * (1 + item.delta/2);
