@@ -4,7 +4,7 @@
 // @description Launch Kitten Scientists
 // @include     *bloodrizer.ru/games/kittens/*
 // @include     file:///*kitten-game*
-// @version     1.3.0
+// @version     1.3.1
 // @grant       none
 // @copyright   2015, cameroncondry
 // ==/UserScript==
@@ -13,7 +13,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.3.0';
+var version = 'Kitten Scientists version 1.3.1';
 var address = '1AQ1AC9W5CEAPgG5739XGXC5vXqyafhoLp';
 // Game will be referenced in loadTest function
 var game = null;
@@ -580,16 +580,16 @@ var run = function() {
             button.domNode.click(build);
             storeForSummary(name, 1, 'build');
 
-            var label = build.label ? build.label : build.stages[0].label;
+            var label = build.label ? build.label : build.meta.stages[0].label;
             activity('Kittens have built a new ' + label, 'ks-build');
         },
         getBuild: function (name) {
-            return game.bld.getBuilding(name);
+            return game.bld.getBuildingExt(name);
         },
         getBuildButton: function (name, stage) {
             var buttons = this.manager.tab.buttons;
             var build = this.getBuild(name);
-            var label = typeof stage !== 'undefined' ? build.stages[stage].label : build.label;
+            var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.label;
 
             for (var i in buttons) {
                 if (buttons[i].name === label) return buttons[i];
@@ -1602,7 +1602,7 @@ var run = function() {
         var build = buildManager.getBuild(buildItem.name || buildOption);
         if (build) {
             if ("stage" in buildItem) {
-                options.auto.build.items[buildOption].label = build.stages[buildItem.stage].label;
+                options.auto.build.items[buildOption].label = build.meta.stages[buildItem.stage].label;
             } else {
                 options.auto.build.items[buildOption].label = build.label;
             }
