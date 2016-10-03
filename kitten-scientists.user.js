@@ -580,7 +580,7 @@ var run = function() {
             button.domNode.click(build);
             storeForSummary(name, 1, 'build');
 
-            var label = build.label ? build.label : build.meta.stages[0].label;
+            var label = build.meta.label ? build.meta.label : build.meta.stages[0].label;
             activity('Kittens have built a new ' + label, 'ks-build');
         },
         getBuild: function (name) {
@@ -589,7 +589,7 @@ var run = function() {
         getBuildButton: function (name, stage) {
             var buttons = this.manager.tab.buttons;
             var build = this.getBuild(name);
-            var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.label;
+            var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.meta.label;
 
             for (var i in buttons) {
                 if (buttons[i].name === label) return buttons[i];
@@ -1604,7 +1604,7 @@ var run = function() {
             if ("stage" in buildItem) {
                 options.auto.build.items[buildOption].label = build.meta.stages[buildItem.stage].label;
             } else {
-                options.auto.build.items[buildOption].label = build.label;
+                options.auto.build.items[buildOption].label = build.meta.label;
             }
         }
     }
