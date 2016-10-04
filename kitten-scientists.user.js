@@ -1613,7 +1613,9 @@ var run = function() {
     for (var spaceOption in options.auto.space.items) {
         var build = spaceManager.getBuild(spaceOption);
         if (build) {
-            options.auto.space.items[spaceOption].label = build.title;
+            // It's changed to label in 1.3.0.0
+            var title = build.title ? build.title : build.label;
+            options.auto.space.items[spaceOption].label = title;
         }
     }
 
