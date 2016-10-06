@@ -1759,6 +1759,10 @@ var run = function() {
         }
     });
 
+    var activityLabel = $('<label/>', {
+        for: 'enable-activity'
+    });
+
     if (options.showactivity)
         activityCheckbox.prop('checked', true);
 
@@ -1774,7 +1778,7 @@ var run = function() {
 
     showActivity.on('click', displayActivitySummary);
 
-    activityBox.append(activityCheckbox, showActivity);
+    activityBox.append(activityCheckbox, activityLabel, showActivity);
 
     $('#clearLog').append(activityBox);
 
