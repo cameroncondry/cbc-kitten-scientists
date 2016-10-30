@@ -163,7 +163,14 @@ var run = function() {
                     cryostation:    {require: 'eludium',     enabled: false},
 
                     // Kairo
-                    spaceBeacon:    {require: 'antimatter',  enabled: false}
+                    spaceBeacon:    {require: 'antimatter',  enabled: false},
+
+                    // Yarn
+                    terraformingStation: {require: 'antimatter',  enabled: false},
+                    hydroponics:         {require: 'kerosene',    enabled: false},
+
+                    // Centaurus
+                    tectonic: {require: 'antimatter', enabled: false}
                 }
             },
             craft: {
