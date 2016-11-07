@@ -254,7 +254,7 @@ var run = function() {
     var gameLog = com.nuclearunicorn.game.log.Console().static;
 
     // Increase the game log's message capacity
-    gameLog.msg = function (message, type, tag) {
+    gameLog.msg = function (message, type, tag, noBullet) {
         if (tag && this.filters[tag]) {
             var filter = this.filters[tag];
 
@@ -274,6 +274,9 @@ var run = function() {
             for (i = 0; i < typeArray.length; ++i) {
                 dojo.addClass(span, "type_"+typeArray[i]);
             }
+        }
+        if (noBullet) {
+            dojo.addClass(span, "noBullet");
         }
 
         /**
