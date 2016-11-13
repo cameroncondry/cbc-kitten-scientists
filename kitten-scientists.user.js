@@ -157,7 +157,8 @@ var run = function() {
                     orbitalArray:   {require: 'eludium',     enabled: false},
 
                     // Helios
-                    sunlifter:      {require: 'eludium',     enabled: false},
+                    sunlifter:          {require: 'eludium', enabled: false},
+                    containmentChamber: {require: 'science', enabled: false},
 
                     // T-Minus
                     cryostation:    {require: 'eludium',     enabled: false},
