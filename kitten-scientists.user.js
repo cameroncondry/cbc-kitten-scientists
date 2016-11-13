@@ -628,7 +628,7 @@ var run = function() {
             button.domNode.click(build);
             storeForSummary(name, 1, 'build');
 
-            var label = build.title;
+            var label = build.label;
             activity('Kittens have built a new ' + label, 'ks-build');
         },
         getBuild: function (name) {
