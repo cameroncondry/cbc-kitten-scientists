@@ -623,7 +623,7 @@ var run = function() {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name);
 
-            if (!button || !button.enabled || !button.hasResources() || !options.auto.space.items[name].enabled) return;
+            if (!build.unlocked || !button || !button.enabled || !button.hasResources() || !options.auto.space.items[name].enabled) return;
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
