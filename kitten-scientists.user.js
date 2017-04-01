@@ -284,7 +284,7 @@ var run = function() {
          * This code snippet groups the messages under a single date header based on a date stamp.
          * The logic is not straightforward and a bit hacky. Maybe there is a better way to handle it like tracking the reference to a date node
          */
-        var spans = this.spans;
+        var spans = this.spans || [];
         if (spans.length > 1 && type == 'date' && message == spans[spans.length - 2].innerHTML) {
             dojo.destroy(spans[spans.length - 2]);
             spans.splice(spans.length - 2, 1);
@@ -585,7 +585,7 @@ var run = function() {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name, stage);
 
-            if (!button || !button.enabled || !button.hasResources()) return;
+            if (!button || !button.model.enabled || !button.controller.hasResources()) return;
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
@@ -623,7 +623,7 @@ var run = function() {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name);
 
-            if (!build.unlocked || !button || !button.enabled || !button.hasResources() || !options.auto.space.items[name].enabled) return;
+            if (!build.unlocked || !button || !button.model.enabled || !button.controller.hasResources() || !options.auto.space.items[name].enabled) return;
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
@@ -809,7 +809,7 @@ var run = function() {
 
             var button = this.getTradeButton(race.title);
 
-            if (!button.hasResources() || !options.auto.trade.items[name].enabled) return;
+            if (!button.controller.hasResources() || !options.auto.trade.items[name].enabled) return;
 
             button.tradeMultiple(amount);
             storeForSummary(name, amount, 'trade');
