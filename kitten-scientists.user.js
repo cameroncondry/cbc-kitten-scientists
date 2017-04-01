@@ -305,7 +305,7 @@ var run = function() {
         enabled: true,
         unlocked: true
     };
-    gameLog.renderFilters();
+    game.ui.renderFilters();
 
     var printoutput = function (args) {
         var color = args.pop();
