@@ -463,7 +463,7 @@ var run = function() {
             }
         },
         holdFestival: function () {
-            if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && this.villageManager.tab.festivalBtn.hasResources()) {
+            if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && this.villageManager.tab.festivalBtn.model.enabled) {
                 this.villageManager.tab.festivalBtn.onClick();
 
                 if (game.calendar.festivalDays !== 0) {
@@ -585,7 +585,7 @@ var run = function() {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name, stage);
 
-            if (!button || !button.model.enabled || !button.controller.hasResources()) return;
+            if (!button || !button.model.enabled) return;
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
@@ -623,7 +623,7 @@ var run = function() {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name);
 
-            if (!build.unlocked || !button || !button.model.enabled || !button.controller.hasResources() || !options.auto.space.items[name].enabled) return;
+            if (!build.unlocked || !button || !button.model.enabled || !options.auto.space.items[name].enabled) return;
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
@@ -809,7 +809,7 @@ var run = function() {
 
             var button = this.getTradeButton(race.title);
 
-            if (!button.controller.hasResources() || !options.auto.trade.items[name].enabled) return;
+            if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
             button.tradeMultiple(amount);
             storeForSummary(name, amount, 'trade');
