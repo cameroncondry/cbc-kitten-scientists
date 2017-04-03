@@ -252,68 +252,24 @@ var run = function() {
     // GameLog Modification
     // ====================
 
-    var gameLog = com.nuclearunicorn.game.log.Console().static;
-
-    // Increase the game log's message capacity
-    gameLog.msg = function (message, type, tag, noBullet) {
-        if (tag && this.filters[tag]) {
-            var filter = this.filters[tag];
-
-            if (!filter.unlocked) {
-                filter.unlocked = true;
-                this.renderFilters();
-            } else if (!filter.enabled) {
-                return;
-            }
-        }
-
-        var gameLog = dojo.byId("gameLog");
-        var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
-
-        if (type){
-            var typeArray = type.split(',');
-            for (i = 0; i < typeArray.length; ++i) {
-                dojo.addClass(span, "type_"+typeArray[i]);
-            }
-        }
-        if (noBullet) {
-            dojo.addClass(span, "noBullet");
-        }
-
-        /**
-         * This code snippet groups the messages under a single date header based on a date stamp.
-         * The logic is not straightforward and a bit hacky. Maybe there is a better way to handle it like tracking the reference to a date node
-         */
-        var spans = this.spans || [];
-        if (spans.length > 1 && type == 'date' && message == spans[spans.length - 2].innerHTML) {
-            dojo.destroy(spans[spans.length - 2]);
-            spans.splice(spans.length - 2, 1);
-        }
-        //----------------------------------------------------------------------------------------------------------
-
-        spans.push(span);
-        if (spans.length > options.logMessages){
-            dojo.destroy(spans.shift()); //remove the first element from the array and destroy it
-        }
-
-        return span;
-    };
-
     // Add a message filter for trades
-    gameLog.filters.trade = {
+    game.console.static.filters.trade = {
         title: "Trades",
         enabled: true,
         unlocked: true
     };
     game.ui.renderFilters();
 
+    // Increase messages displayed in log
+    game.console.maxMessages = 1000;
+
     var printoutput = function (args) {
         var color = args.pop();
         args[1] = args[1] || 'ks-default';
 
         // update the color of the message immediately after adding
-        gameLog.msg.apply(gameLog, args);
-        $('.type_' + args[1]).css('color', color);
+        var msg = game.msg.apply(game, args);
+        $(msg.span).css('color', color);
 
         if (options.debug && console) console.log(args);
     };
