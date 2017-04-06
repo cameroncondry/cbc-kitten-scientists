@@ -265,6 +265,7 @@ var run = function() {
     // it returns the DOM node for the last created message, it doesn't really
     // do that. (Liars.) So some hackery is needed to do this right.
     gameLog.msg = function (message, type, tag, noBullet) {
+        type = type.split(",");
         game.msg(message, type.pop(), tag, noBullet);
         // since that doesn't return anything, we'll just assume it worked and
         // add the second css tag to the newest element in the log.
