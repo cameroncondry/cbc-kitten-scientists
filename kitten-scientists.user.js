@@ -271,7 +271,8 @@ var run = function() {
         // add the second css tag to the newest element in the log.
         var gameLog = dojo.byId("gameLog");
         while (t = type.pop()) {
-            gameLog.childNodes[0].addClass(span, "type_"+t);
+            span = gameLog.childNodes[0];
+            dojo.addClass(span, "type_"+t);
         }
     };
 
