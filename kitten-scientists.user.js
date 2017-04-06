@@ -254,49 +254,24 @@ var run = function() {
 
     var gameLog = com.nuclearunicorn.game.log.Console().static;
 
-    // Increase the game log's message capacity
+    // game.msg, part of com.nuclearunicorn.game.log.Console, now works by
+    // adding messages to a messages array and then calling renderConsoleLog.
+    // Unfortunately, the messages array isn't exposed for use to extend it.
+    // As such, we can just call game.msg ourselves. Unfortunately again, KS
+    // has made a practice of having the "type" function be an array, where 
+    // each element will be added as a separate css class, whereas game.msg
+    // (or, more appropriately, renderConsoleLog) assumes its a string.
+    // Unfortunately for the third time, while game.msg says in the code that
+    // it returns the DOM node for the last created message, it doesn't really
+    // do that. (Liars.) So some hackery is needed to do this right.
     gameLog.msg = function (message, type, tag, noBullet) {
-        if (tag && this.filters[tag]) {
-            var filter = this.filters[tag];
-
-            if (!filter.unlocked) {
-                filter.unlocked = true;
-                this.renderFilters();
-            } else if (!filter.enabled) {
-                return;
-            }
-        }
-
+        game.msg(message, type.pop(), tag, noBullet);
+        // since that doesn't return anything, we'll just assume it worked and
+        // add the second css tag to the newest element in the log.
         var gameLog = dojo.byId("gameLog");
-        var span = dojo.create("span", { innerHTML: message, className: "msg" }, gameLog, "first");
-
-        if (type){
-            var typeArray = type.split(',');
-            for (i = 0; i < typeArray.length; ++i) {
-                dojo.addClass(span, "type_"+typeArray[i]);
-            }
+        while (t = type.pop()) {
+            gameLog.childNodes[0].addClass(span, "type_"+t);
         }
-        if (noBullet) {
-            dojo.addClass(span, "noBullet");
-        }
-
-        /**
-         * This code snippet groups the messages under a single date header based on a date stamp.
-         * The logic is not straightforward and a bit hacky. Maybe there is a better way to handle it like tracking the reference to a date node
-         */
-        var spans = this.spans || [];
-        if (spans.length > 1 && type == 'date' && message == spans[spans.length - 2].innerHTML) {
-            dojo.destroy(spans[spans.length - 2]);
-            spans.splice(spans.length - 2, 1);
-        }
-        //----------------------------------------------------------------------------------------------------------
-
-        spans.push(span);
-        if (spans.length > options.logMessages){
-            dojo.destroy(spans.shift()); //remove the first element from the array and destroy it
-        }
-
-        return span;
     };
 
     // Add a message filter for trades
