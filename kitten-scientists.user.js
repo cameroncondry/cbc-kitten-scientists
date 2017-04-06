@@ -252,7 +252,7 @@ var run = function() {
     // GameLog Modification
     // ====================
 
-    var gameLog = com.nuclearunicorn.game.log.Console().static;
+  var gameLog = com.nuclearunicorn.game.log.Console().static;
 
     // game.msg, part of com.nuclearunicorn.game.log.Console, now works by
     // adding messages to a messages array and then calling renderConsoleLog.
@@ -277,20 +277,23 @@ var run = function() {
     };
 
     // Add a message filter for trades
-    gameLog.filters.trade = {
+    game.console.static.filters.trade = {
         title: "Trades",
         enabled: true,
         unlocked: true
     };
     game.ui.renderFilters();
 
+    // Increase messages displayed in log
+    game.console.maxMessages = 1000;
+
     var printoutput = function (args) {
         var color = args.pop();
         args[1] = args[1] || 'ks-default';
 
         // update the color of the message immediately after adding
-        gameLog.msg.apply(gameLog, args);
-        $('.type_' + args[1]).css('color', color);
+        var msg = game.msg.apply(game, args);
+        $(msg.span).css('color', color);
 
         if (options.debug && console) console.log(args);
     };
