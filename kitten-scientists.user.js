@@ -767,7 +767,7 @@ var run = function() {
 
             if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
-            button.tradeMultiple(amount);
+            game.diplomacy.tradeMultiple(race, amount);
             storeForSummary(name, amount, 'trade');
             activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name), 'ks-trade');
         },
