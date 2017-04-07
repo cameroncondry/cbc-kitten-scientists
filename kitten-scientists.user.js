@@ -583,7 +583,10 @@ var run = function() {
             var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.meta.label;
 
             for (var i in buttons) {
-                if (buttons[i].opts.name === label) return buttons[i];
+                var haystack = buttons[i].buttonContent.innerText;
+                if(haystack.indexOf(label) !== -1){
+                    return buttons[i];
+                }
             }
         }
     };
@@ -791,7 +794,7 @@ var run = function() {
 
             if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
-            button.tradeMultiple(amount);
+            game.diplomacy.tradeMultiple(race, amount);
             storeForSummary(name, amount, 'trade');
             activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name), 'ks-trade');
         },
