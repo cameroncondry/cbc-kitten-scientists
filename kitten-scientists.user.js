@@ -559,7 +559,7 @@ var run = function() {
             var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.meta.label;
 
             for (var i in buttons) {
-				if (buttons[i].opts.name === label) return buttons[i];
+                if (buttons[i].opts.name === label) return buttons[i];
             }
         }
     };
