@@ -253,12 +253,14 @@ var run = function() {
     // ====================
 
     // Add a message filter for trades
-    game.console.static.filters.trade = {
-        title: "Trades",
-        enabled: true,
-        unlocked: true
-    };
-    game.ui.renderFilters();
+    if (!game.console.filters.trade){
+        game.console.filters.trade = {
+            title: "Trades",
+            enabled: true,
+            unlocked: true
+        };
+        game.ui.renderFilters();
+    }
 
     // Increase messages displayed in log
     game.console.maxMessages = 1000;
