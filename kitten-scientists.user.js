@@ -1030,12 +1030,12 @@ var run = function() {
 
                 if ($('#resource-' + resource).length === 0) {
                     list.append(addNewResourceOption(resource));
-                    if ('stock' in res) {
-                        setStockValue(resource, res.stock);
-                    }
-                    if ('consume' in res) {
-                        setConsumeRate(resource, res.consume);
-                    }
+                }
+                if ('stock' in res) {
+                    setStockValue(resource, res.stock);
+                }
+                if ('consume' in res) {
+                    setConsumeRate(resource, res.consume);
                 }
             }
 
