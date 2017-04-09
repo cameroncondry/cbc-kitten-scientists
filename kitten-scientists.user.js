@@ -285,7 +285,7 @@ var run = function() {
     var activity = function () {
         if (options.showactivity) {
             var args = Array.prototype.slice.call(arguments);
-            var activityClass = args.length > 1 ? ',' + args.pop() : '';
+            var activityClass = args.length > 1 ? ' type_' + args.pop() : '';
             args.push('ks-activity' + activityClass);
             args.push(options.activitycolor);
             printoutput(args);
