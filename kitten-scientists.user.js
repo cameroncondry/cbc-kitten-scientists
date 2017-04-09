@@ -252,6 +252,30 @@ var run = function() {
     // GameLog Modification
     // ====================
 
+  var gameLog = com.nuclearunicorn.game.log.Console().static;
+
+    // game.msg, part of com.nuclearunicorn.game.log.Console, now works by
+    // adding messages to a messages array and then calling renderConsoleLog.
+    // Unfortunately, the messages array isn't exposed for use to extend it.
+    // As such, we can just call game.msg ourselves. Unfortunately again, KS
+    // has made a practice of having the "type" function be an array, where 
+    // each element will be added as a separate css class, whereas game.msg
+    // (or, more appropriately, renderConsoleLog) assumes its a string.
+    // Unfortunately for the third time, while game.msg says in the code that
+    // it returns the DOM node for the last created message, it doesn't really
+    // do that. (Liars.) So some hackery is needed to do this right.
+    gameLog.msg = function (message, type, tag, noBullet) {
+        type = type.split(",");
+        game.msg(message, type.pop(), tag, noBullet);
+        // since that doesn't return anything, we'll just assume it worked and
+        // add the second css tag to the newest element in the log.
+        var gameLog = dojo.byId("gameLog");
+        while (t = type.pop()) {
+            span = gameLog.childNodes[0];
+            dojo.addClass(span, "type_"+t);
+        }
+    };
+
     // Add a message filter for trades
     if (!game.console.filters.trade){
         game.console.filters.trade = {
