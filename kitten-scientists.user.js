@@ -422,15 +422,14 @@ var run = function() {
             }
         },
         holdFestival: function () {
-            if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && this.villageManager.tab.festivalBtn.model.enabled) {
-                this.villageManager.tab.festivalBtn.onClick();
-
+            if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && game.villageTab.festivalBtn.model.enabled) {
+                game.villageTab.festivalBtn.onClick();
                 if (game.calendar.festivalDays !== 0) {
                     storeForSummary('festival');
                     activity('Kittens begin holding a festival', 'ks-festival');
                 }
             }
-        },
+        }
         observeStars: function () {
             if (game.calendar.observeBtn != null){
                 game.calendar.observeHandler();
