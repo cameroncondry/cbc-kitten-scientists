@@ -429,7 +429,7 @@ var run = function() {
                     activity('Kittens begin holding a festival', 'ks-festival');
                 }
             }
-        }
+        },
         observeStars: function () {
             if (game.calendar.observeBtn != null){
                 game.calendar.observeHandler();
