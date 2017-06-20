@@ -332,6 +332,7 @@ var run = function() {
         this.craftManager = new CraftManager();
         this.tradeManager = new TradeManager();
         this.religionManager = new ReligionManager();
+        this.villageManager = new TabManager('Village');
     };
 
     Engine.prototype = {
@@ -340,6 +341,7 @@ var run = function() {
         craftManager: undefined,
         tradeManager: undefined,
         religionManager: undefined,
+        villageManager: undefined,
         loop: undefined,
         start: function () {
             if (this.loop) return;
@@ -466,7 +468,7 @@ var run = function() {
         },
         holdFestival: function () {
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
-            game.villageTab.render();
+            this.villageManager.render();
 
             if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && game.villageTab.festivalBtn.model.enabled) {
                 game.villageTab.festivalBtn.onClick();
@@ -549,7 +551,7 @@ var run = function() {
     TabManager.prototype = {
         tab: undefined,
         render: function () {
-            if (this.tab && game.activeTabId !== this.tab.tabId) this.tab.render();
+            if (this.tab && game.ui.activeTabId !== this.tab.tabId) this.tab.render();
 
             return this;
         },
@@ -634,7 +636,7 @@ var run = function() {
             var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.meta.label;
 
             for (var i in buttons) {
-                var haystack = buttons[i].buttonContent.innerText;
+                var haystack = buttons[i].model.name;
                 if(haystack.indexOf(label) !== -1){
                     return buttons[i];
                 }
