@@ -422,6 +422,9 @@ var run = function() {
             }
         },
         holdFestival: function () {
+            // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+            game.villageTab.render();
+
             if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && game.villageTab.festivalBtn.model.enabled) {
                 game.villageTab.festivalBtn.onClick();
                 if (game.calendar.festivalDays !== 0) {
