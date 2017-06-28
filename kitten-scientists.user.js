@@ -598,7 +598,10 @@ var run = function() {
             var build = this.getBuild(name);
 
             for (var i in buttons) {
-                if (buttons[i].name === build.label) return buttons[i];
+                var haystack = buttons[i].model.name;
+                if (haystack.indexOf(build.label) !== -1){
+                    return buttons[i];
+                }
             }
         }
     };
@@ -637,7 +640,7 @@ var run = function() {
 
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
-                if(haystack.indexOf(label) !== -1){
+                if (haystack.indexOf(label) !== -1){
                     return buttons[i];
                 }
             }
