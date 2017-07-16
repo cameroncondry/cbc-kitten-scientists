@@ -444,7 +444,7 @@ var run = function() {
                 var craft = crafts[name];
                 var current = !craft.max ? false : manager.getResource(name);
                 var require = !craft.require ? false : manager.getResource(craft.require);
-                var season = game.calendar.getCurSeason().name;
+                var season = game.calendar.season;
 
                 // Ensure that we have reached our cap
                 if (current && current.value > craft.max) continue;
