@@ -390,7 +390,7 @@ var run = function() {
             var faith = craftManager.getResource('faith');
 
             if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
-                storeForSummary('faith', faith.value);
+                storeForSummary('faith', faith.value * (1 + game.religion.getFaithBonus()));
                 activity('Praised the sun!', 'ks-praise');
                 game.religion.praise();
             }
