@@ -453,14 +453,11 @@ var run = function() {
                 if (!require || trigger <= require.value / require.maxValue) {
                     var amount = Math.floor(craft.limited ? manager.getLimitedLowestCraftAmount(name) : manager.getLowestCraftAmount(name));
 
-                    // console.log("name : " + name + ", amount : " + amount + ", limited : " + craft.limited + ", vanilla : " + manager.getLowestCraftAmount(name) + ", modified : " +  manager.getLimitedLowestCraftAmount(name));
-
                     if (amount > 0) {
                         manager.craft(name, amount);
                     }
                 }
             }
-            // console.log("=====");
         },
         holdFestival: function () {
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
@@ -761,26 +758,17 @@ var run = function() {
             var res = this.getResource(name);
 
             for (var i in materials) {
-                // Only craft "half" (TODO: document this behaviour)
-                // Use res.name or res.title ?
-                // if(name !== 'steel') return 0; // Test only one material at a time
-                // console.log("==========");
-                // console.log("b : " + name);
-
                 var delta = undefined;
                 if(this.getResource(i).maxValue > 0) {
                     // If there is a storage limit, we can just use everything returned by getValueAvailable
-                    // console.log("a : " + i + " (limited storage)");
                     delta = this.getValueAvailable(i) / materials[i];
                 } else {
-                    // console.log("a : " + i + " (unlimited storage)");
                     // Take the currently present amount of material to craft into account
+                    // Only craft "half" (TODO: document this behaviour)
                     delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
                 }
-                // console.log(delta);
 
                 amount = (amount === undefined || delta < amount) ? delta : amount;
-                // console.log("==========");
             }
 
             // If we have a maximum value, ensure that we don't produce more than
