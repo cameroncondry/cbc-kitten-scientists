@@ -767,14 +767,23 @@ var run = function() {
             for (var i in materials) {
                 // Only craft "half" (TODO: document this behaviour)
                 // Use res.name or res.title ?
-                var delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
-                // console.log("==========");
-                // console.log("b : " + name);
-                // console.log(res);
-                // console.log(i);
-                // console.log(materials);
-                // console.log(delta);
-                // console.log("==========");
+                // if(name !== 'steel') return 0; // Test only one material at a time
+                console.log("==========");
+
+                var delta = undefined;
+                if(this.getResource(i).maxValue > 0) {
+                  // If there is a storage limit, we can just use everything returned by getValueAvailable
+                  console.log('a');
+                  delta = this.getValueAvailable(i) / materials[i];
+                } else {
+                  console.log('b');
+                  // Take the currently present amount of material to craft into account
+                  delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
+                }
+                console.log("b : " + name);
+                console.log("a : " + i);
+                console.log(delta);
+                console.log("==========");
 
                 amount = (amount === undefined || delta < amount) ? delta : amount;
             }
