@@ -454,11 +454,11 @@ var run = function() {
 
                 // Craft the resource if we meet the trigger requirement
                 if (!require || trigger <= require.value / require.maxValue) {
-                    var amount = Math.floor(manager.getLowestCraftAmount(name));
+                    var amount = Math.floor(manager.getLimitedLowestCraftAmount(name));
 
                     // Only update season if we actually craft anything.
                     if (amount > 0) {
-                        manager.craft(name, manager.getLowestCraftAmount(name));
+                        manager.craft(name, manager.getLimitedLowestCraftAmount(name));
 
                         // Store the season for future reference
                         craft.lastSeason = season;
@@ -744,6 +744,39 @@ var run = function() {
                 var total = this.getValueAvailable(i) / materials[i];
 
                 amount = (amount === undefined || total < amount) ? total : amount;
+            }
+
+            // If we have a maximum value, ensure that we don't produce more than
+            // this value. This should currently only impact wood crafting, but is
+            // written generically to ensure it works for any craft that produces a
+            // good with a maximum value.
+            if (res.maxValue > 0 && amount > (res.maxValue - res.value))
+                amount = res.maxValue - res.value;
+
+            return amount;
+        },
+        getLimitedLowestCraftAmount: function (name) {
+            var amount = undefined;
+            var materials = this.getMaterials(name);
+
+            // Safeguard if materials for craft cannot be determined.
+            if (!materials) return 0;
+
+            var res = this.getResource(name);
+
+            for (var i in materials) {
+                // Only craft "half" (TODO: document this behaviour)
+                // Use res.name or res.title ?
+                var delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
+                // console.log("==========");
+                // console.log("b : " + name);
+                // console.log(res);
+                // console.log(i);
+                // console.log(materials);
+                // console.log(delta);
+                // console.log("==========");
+
+                amount = (amount === undefined || delta < amount) ? delta : amount;
             }
 
             // If we have a maximum value, ensure that we don't produce more than
