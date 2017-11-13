@@ -451,7 +451,7 @@ var run = function() {
 
                 // Craft the resource if we meet the trigger requirement
                 if (!require || trigger <= require.value / require.maxValue) {
-                    var amount = Math.floor(craft.limited ? manager.getLimitedLowestCraftAmount(name) : manager.getLowestCraftAmount(name));
+                    var amount = manager.getLowestCraftAmount(name,craft.limited);
 
                     if (amount > 0) {
                         manager.craft(name, amount);
@@ -724,31 +724,7 @@ var run = function() {
         getCraft: function (name) {
             return game.workshop.getCraft(this.getName(name));
         },
-        getLowestCraftAmount: function (name) {
-            var amount = undefined;
-            var materials = this.getMaterials(name);
-
-            // Safeguard if materials for craft cannot be determined.
-            if (!materials) return 0;
-
-            var res = this.getResource(name);
-
-            for (var i in materials) {
-                var total = this.getValueAvailable(i) / materials[i];
-
-                amount = (amount === undefined || total < amount) ? total : amount;
-            }
-
-            // If we have a maximum value, ensure that we don't produce more than
-            // this value. This should currently only impact wood crafting, but is
-            // written generically to ensure it works for any craft that produces a
-            // good with a maximum value.
-            if (res.maxValue > 0 && amount > (res.maxValue - res.value))
-                amount = res.maxValue - res.value;
-
-            return amount;
-        },
-        getLimitedLowestCraftAmount: function (name) {
+        getLowestCraftAmount: function (name, limited) {
             var amount = undefined;
             var materials = this.getMaterials(name);
 
@@ -759,8 +735,8 @@ var run = function() {
 
             for (var i in materials) {
                 var delta = undefined;
-                if(this.getResource(i).maxValue > 0) {
-                    // If there is a storage limit, we can just use everything returned by getValueAvailable
+                if(this.getResource(i).maxValue > 0 || ! limited) {
+                    // If there is a storage limit, we can just use everything returned by getValueAvailable, since the regulation happens there
                     delta = this.getValueAvailable(i) / materials[i];
                 } else {
                     // Take the currently present amount of material to craft into account
@@ -778,7 +754,7 @@ var run = function() {
             if (res.maxValue > 0 && amount > (res.maxValue - res.value))
                 amount = res.maxValue - res.value;
 
-            return amount;
+            return Math.floor(amount);
         },
         getMaterials: function (name) {
             var materials = {};
