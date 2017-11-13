@@ -725,7 +725,7 @@ var run = function() {
             return game.workshop.getCraft(this.getName(name));
         },
         getLowestCraftAmount: function (name, limited) {
-            var amount = undefined;
+            var amount = Number.MAX_VALUE;
             var materials = this.getMaterials(name);
 
             // Safeguard if materials for craft cannot be determined.
@@ -744,7 +744,7 @@ var run = function() {
                     delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
                 }
 
-                amount = (amount === undefined || delta < amount) ? delta : amount;
+                amount = Math.min(delta,amount);
             }
 
             // If we have a maximum value, ensure that we don't produce more than
