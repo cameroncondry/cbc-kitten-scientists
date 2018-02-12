@@ -411,6 +411,12 @@ var run = function() {
                 var require = !build.require ? false : craftManager.getResource(build.require);
 
                 if (!require || trigger <= require.value / require.maxValue) {
+                    // verify that the building prices is within the current stock settings
+                    var prices = game.bld.getPrices(name);
+                    for (var p = 0; p < prices.length; p++) {
+                        if (craftManager.getValueAvailable(prices[p].name, true) < prices[p].val) continue;
+                    }
+
                     // If the build overrides the name, use that name instead.
                     // This is usually true for buildings that can be upgraded.
                     buildManager.build(build.name || name, build.stage);
