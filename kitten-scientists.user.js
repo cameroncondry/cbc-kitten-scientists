@@ -33,6 +33,8 @@ var run = function() {
         summarycolor: '#009933', // light green
         // The color for log messages that are about activities (like festivals and star observations).
         activitycolor: '#E65C00', // orange
+        // The color for resources with stock counts higher than current resource max
+        stockwarncolor: '#DD1E00',
 
         // Should activity be logged to the game log?
         showactivity: true,
@@ -1053,6 +1055,10 @@ var run = function() {
         + 'width: 100%;'
         + '}');
 
+    addRule('#ks-options #toggle-list-resources .stockWarn {'
+        + 'color: ' + options.stockwarncolor + ';'
+        + '}');
+
     // Local Storage
     // =============
 
@@ -1157,6 +1163,15 @@ var run = function() {
         return +(Math.round(n + "e+2") + "e-2")
     };
 
+    var setStockWarning = function(name, value) {
+        // simplest way to ensure it doesn't stick around too often; always do 
+        // a remove first then re-add only if needed
+        $("#resource-" + name).removeClass("stockWarn");
+
+        var maxValue = game.resPool.resources.filter(i => i.name == name)[0].maxValue;
+        if (value > maxValue && !(maxValue === 0)) $("#resource-" + name).addClass("stockWarn");
+    }
+
     var setStockValue = function (name, value) {
         var n = Number(value);
 
@@ -1168,6 +1183,8 @@ var run = function() {
         if (!options.auto.resources[name]) options.auto.resources[name] = {};
         options.auto.resources[name].stock = n;
         $('#stock-value-' + name).text('Stock: ' + game.getDisplayValueExt(n));
+
+        setStockWarning(name, n);
     };
 
     var setConsumeRate = function (name, value) {
@@ -1226,6 +1243,9 @@ var run = function() {
         });
 
         container.append(label, stock, consume, del);
+
+        // once created, set color if relevant
+        setStockWarning(name, res.stock);
 
         stock.on('click', function () {
             var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
