@@ -414,7 +414,7 @@ var run = function() {
 
                 if (!require || trigger <= require.value / require.maxValue) {
                     // verify that the building prices is within the current stock settings
-                    var prices = game.bld.getPrices(name);
+                    var prices = game.bld.getPrices(build.name || name);
                     for (var p = 0; p < prices.length; p++) {
                         if (craftManager.getValueAvailable(prices[p].name, true) < prices[p].val) continue;
                     }
