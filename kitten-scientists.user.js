@@ -406,6 +406,9 @@ var run = function() {
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
 
+            // Using labeled for loop to break out of a nested loop
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label
+            buildLoop:
             for (var name in builds) {
                 if (!builds[name].enabled) continue;
 
@@ -416,7 +419,7 @@ var run = function() {
                     // verify that the building prices is within the current stock settings
                     var prices = game.bld.getPrices(build.name || name);
                     for (var p = 0; p < prices.length; p++) {
-                        if (craftManager.getValueAvailable(prices[p].name, true) < prices[p].val) continue;
+                        if (craftManager.getValueAvailable(prices[p].name, true) < prices[p].val) continue buildLoop;
                     }
 
                     // If the build overrides the name, use that name instead.
@@ -1245,7 +1248,7 @@ var run = function() {
         container.append(label, stock, consume, del);
 
         // once created, set color if relevant
-        setStockWarning(name, res.stock);
+        if (res.stock != undefined) setStockWarning(name, res.stock);
 
         stock.on('click', function () {
             var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
