@@ -1248,7 +1248,7 @@ var run = function() {
         container.append(label, stock, consume, del);
 
         // once created, set color if relevant
-        if (res.stock != undefined) setStockWarning(name, res.stock);
+        if (res != undefined && res.stock != undefined) setStockWarning(name, res.stock);
 
         stock.on('click', function () {
             var value = window.prompt('Stock for ' + ucfirst(title ? title : name));
