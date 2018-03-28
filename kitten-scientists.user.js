@@ -460,19 +460,12 @@ var run = function() {
                 // Ensure that we have reached our cap
                 if (current && current.value > craft.max) continue;
 
-                // Enforce season limited on specific crafts
-                if (craft.limited && craft.lastSeason === season) continue;
-
                 // Craft the resource if we meet the trigger requirement
                 if (!require || trigger <= require.value / require.maxValue) {
-                    var amount = Math.floor(manager.getLowestCraftAmount(name));
+                    var amount = manager.getLowestCraftAmount(name,craft.limited);
 
-                    // Only update season if we actually craft anything.
                     if (amount > 0) {
-                        manager.craft(name, manager.getLowestCraftAmount(name));
-
-                        // Store the season for future reference
-                        craft.lastSeason = season;
+                        manager.craft(name, amount);
                     }
                 }
             }
@@ -742,8 +735,8 @@ var run = function() {
         getCraft: function (name) {
             return game.workshop.getCraft(this.getName(name));
         },
-        getLowestCraftAmount: function (name) {
-            var amount = undefined;
+        getLowestCraftAmount: function (name, limited) {
+            var amount = Number.MAX_VALUE;
             var materials = this.getMaterials(name);
 
             // Safeguard if materials for craft cannot be determined.
@@ -752,9 +745,17 @@ var run = function() {
             var res = this.getResource(name);
 
             for (var i in materials) {
-                var total = this.getValueAvailable(i) / materials[i];
+                var delta = undefined;
+                if(this.getResource(i).maxValue > 0 || ! limited) {
+                    // If there is a storage limit, we can just use everything returned by getValueAvailable, since the regulation happens there
+                    delta = this.getValueAvailable(i) / materials[i];
+                } else {
+                    // Take the currently present amount of material to craft into account
+                    // Only craft "half" (TODO: document this behaviour)
+                    delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
+                }
 
-                amount = (amount === undefined || total < amount) ? total : amount;
+                amount = Math.min(delta,amount);
             }
 
             // If we have a maximum value, ensure that we don't produce more than
@@ -764,7 +765,7 @@ var run = function() {
             if (res.maxValue > 0 && amount > (res.maxValue - res.value))
                 amount = res.maxValue - res.value;
 
-            return amount;
+            return Math.floor(amount);
         },
         getMaterials: function (name) {
             var materials = {};
