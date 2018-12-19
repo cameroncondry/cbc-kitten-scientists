@@ -53,6 +53,16 @@ var run = function() {
                 // Should any automation run at all?
                 enabled: false
             },
+            crypto: {
+                // Should crypto exchange be automated?
+                enabled: true,
+                // At what percentage of the relic storage capacity should KS exchange?
+                trigger: 10000
+            },
+			explore: {
+				// Should exploring be automated?
+                enabled: true,
+			},
             faith: {
                 // Should praising be automated?
                 enabled: true,
@@ -142,6 +152,7 @@ var run = function() {
                     unicornPasture: {require: false,         enabled: true},
                     ziggurat:       {require: false,         enabled: true},
                     chronosphere:   {require: 'unobtainium', enabled: true},
+                    aiCore:         {require: false,         enabled: false},
 
                     // storage
                     barn:           {require: 'wood',        enabled: true},
@@ -177,6 +188,8 @@ var run = function() {
                     // Helios
                     sunlifter:          {require: 'eludium', enabled: false},
                     containmentChamber: {require: 'science', enabled: false},
+                    heatsink:           {require: 'thorium', enabled: false},
+                    sunforge:           {require: false,     enabled: false},
 
                     // T-Minus
                     cryostation:    {require: 'eludium',     enabled: false},
@@ -187,6 +200,12 @@ var run = function() {
                     // Yarn
                     terraformingStation: {require: 'antimatter',  enabled: false},
                     hydroponics:         {require: 'kerosene',    enabled: false},
+
+                    // Umbra
+                    hrHarvester:    {require: 'antimatter',  enabled: false},
+
+                    // Charon
+                    entangler:    {require: 'antimatter',  enabled: false},
 
                     // Centaurus
                     tectonic: {require: 'antimatter', enabled: false}
@@ -335,6 +354,7 @@ var run = function() {
         this.craftManager = new CraftManager();
         this.tradeManager = new TradeManager();
         this.religionManager = new ReligionManager();
+        this.explorationManager = new ExplorationManager();
         this.villageManager = new TabManager('Village');
     };
 
@@ -344,6 +364,7 @@ var run = function() {
         craftManager: undefined,
         tradeManager: undefined,
         religionManager: undefined,
+        explorationManager: undefined,
         villageManager: undefined,
         loop: undefined,
         start: function () {
@@ -368,7 +389,61 @@ var run = function() {
             if (options.auto.trade.enabled) this.trade();
             if (options.auto.hunt.enabled) this.hunt();
             if (options.auto.faith.enabled) this.worship();
+            if (options.auto.crypto.enabled) this.crypto();
+            if (options.auto.explore.enabled) this.explore();
         },
+		crypto: function () {
+            var coinPrice = game.calendar.cryptoPrice;
+            var previousRelic = game.resPool.get('relic').value;
+            var previousCoin = game.resPool.get('blackcoin').value;
+            var exchangedCoin = 0.0;
+            var exchangedRelic = 0.0;
+			var waitForBestPrice = false;
+
+            // Only exchange if it's enabled
+            if (!options.auto.crypto.enabled) return;
+
+			// Waits for coin price to drop below a certain treshold before starting the exchange process
+			if (waitForBestPrice == true && coinPrice < 860.0) { waitForBestPrice = false; }
+
+			// Exchanges up to a certain threshold, in order to keep a good exchange rate, then waits for a higher treshold before exchanging for relics.
+            if (waitForBestPrice == false && coinPrice < 950.0 && previousRelic > options.auto.crypto.trigger) {
+                var currentCoin;
+
+                game.diplomacy.buyEcoin();
+
+                currentCoin = game.resPool.get('blackcoin').value;
+                exchangedCoin = Math.round(currentCoin - previousCoin);
+                activity('Kittens sold your Relics and bought '+ exchangedCoin +' Blackcoins');
+            }
+            else if (coinPrice > 1050.0 && game.resPool.get('blackcoin').value > 0) {
+                var currentRelic;
+
+				waitForBestPrice = true;
+
+                game.diplomacy.sellEcoin();
+
+                currentRelic = game.resPool.get('blackcoin').value;
+                exchangedRelic = Math.round(currentRelic - previousRelic);
+
+                activity('Kittens sold your Blackcoins and bought '+ exchangedRelic +' Relics');
+            }
+        },
+		explore: function () {
+			var manager = this.explorationManager;
+			var expeditionNode = game.village.map.expeditionNode;
+
+			// Only exchange if it's enabled
+            if (!options.auto.explore.enabled) return;
+
+			if( expeditionNode == null) {
+				manager.getCheapestNode();
+
+				manager.explore(manager.cheapestNodeX, manager.cheapestNodeY);
+
+				activity('Your kittens started exploring node '+ manager.cheapestNodeX +'-'+ manager.cheapestNodeY +' of the map.');
+			}
+		},
         worship: function () {
             var builds = options.auto.faith.items;
             var buildManager = this.religionManager;
@@ -571,6 +646,69 @@ var run = function() {
             this.tab ? this.render() : warning('unable to find tab ' + name);
         }
     };
+
+	// Exploration Manager
+	// ===================
+
+	var ExplorationManager = function () {
+		this.manager = new TabManager('Village');
+	};
+
+	ExplorationManager.prototype = {
+		manager: undefined,
+		currentCheapestNode: null,
+		currentCheapestNodeValue: null,
+		cheapestNodeX: null,
+		cheapestNodeY: null,
+		explore: function(x, y) {
+			game.village.map.expeditionNode = {x, y};
+			game.village.map.explore(x, y);
+		},
+		getCheapestNode: function () {
+			var tileArray = game.village.map.villageData;
+			var tileKey = "";
+
+			this.currentCheapestNode = null;
+
+			for (var i in tileArray) {
+				tileKey = i;
+
+				// Discards locked nodes
+				if (i.unlocked == false) { break; }
+
+				// Discards junk nodes
+				if(tileKey.includes('-')) { break; }
+
+				// Acquire node coordinates
+				var regex = /(\d).(\d*)/g;
+				var keyMatch = regex.exec(tileKey);
+				var xCoord = parseInt(keyMatch[1]);
+				var yCoord = parseInt(keyMatch[2]);
+
+				if(this.currentCheapestNode == null) {
+					this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
+					this.currentCheapestNode = i;
+					this.cheapestNodeX = xCoord;
+					this.cheapestNodeY = yCoord;
+				}
+
+				if (this.currentCheapestNode != null && this.getNodeValue(xCoord, yCoord) < this.currentCheapestNodeValue) {
+					this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
+					this.currentCheapestNode = i;
+					this.cheapestNodeX = xCoord;
+					this.cheapestNodeY = yCoord;
+				}
+			}
+		},
+		getNodeValue: function (x, y){
+			var nodePrice = game.village.map.toLevel(x, y);
+			var exploreCost = game.village.map.getExplorationPrice(x,y);
+
+			var tileValue = nodePrice / exploreCost;
+
+			return tileValue;
+		}
+	};
 
     // Religion manager
     // ================
@@ -1039,6 +1177,17 @@ var run = function() {
             + 'margin: 0 5px 7px 0;'
             + 'width: 290px;'
             + '}');
+
+        addRule('#game .map-viewport {'
+            + 'height: 340px;'
+            + 'max-width: 500px;'
+            + 'overflow: visible;'
+            + '}');
+
+        addRule('#game .map-dashboard {'
+            + 'height: 120px;'
+            + 'width: 292px;'
+            + '}');
     }
 
     addRule('#ks-options ul {'
@@ -1092,6 +1241,8 @@ var run = function() {
             build: options.auto.build.trigger,
             space: options.auto.space.trigger,
             craft: options.auto.craft.trigger,
+            crypto: options.auto.crypto.trigger,
+            explore: options.auto.explore.trigger,
             trade: options.auto.trade.trigger
         };
         localStorage['cbc.kitten-scientists'] = JSON.stringify(kittenStorage);
@@ -1143,6 +1294,8 @@ var run = function() {
                 options.auto.space.trigger = saved.triggers.space;
                 options.auto.craft.trigger = saved.triggers.craft;
                 options.auto.trade.trigger = saved.triggers.trade;
+                options.auto.crypto.trigger = saved.triggers.crypto;
+                options.auto.explore.trigger = saved.triggers.explore;
 
                 $('#trigger-faith')[0].title = options.auto.faith.trigger;
                 $('#trigger-hunt')[0].title = options.auto.hunt.trigger;
@@ -1150,6 +1303,7 @@ var run = function() {
                 $('#trigger-space')[0].title = options.auto.space.trigger;
                 $('#trigger-craft')[0].title = options.auto.craft.trigger;
                 $('#trigger-trade')[0].title = options.auto.trade.trigger;
+                $('#trigger-crypto')[0].title = options.auto.crypto.trigger;				
             }
 
         } else {
@@ -1524,7 +1678,10 @@ var run = function() {
             });
 
             triggerButton.on('click', function () {
-                var value = window.prompt('Enter a new trigger value for ' + text + '. Should be in the range of 0 to 1.', auto.trigger);
+                var value;
+                if (text == 'Crypto'){value = window.prompt('Enter a new trigger value for ' + text + '. Corresponds to the amount of Relics needed before the exchange is made.', auto.trigger);}
+                else{value = window.prompt('Enter a new trigger value for ' + text + '. Should be in the range of 0 to 1.', auto.trigger);}
+
                 if (value !== null) {
                     auto.trigger = parseFloat(value);
                     saveToKittenStorage();
@@ -1699,6 +1856,7 @@ var run = function() {
             }
         }
     }
+
     // Grab button labels for space options
     var spaceManager = new SpaceManager();
     for (var spaceOption in options.auto.space.items) {
@@ -1727,6 +1885,8 @@ var run = function() {
     optionsListElement.append(getToggle('hunt',     'Hunting'));
     optionsListElement.append(getToggle('faith',    'Religion'));
     optionsListElement.append(getToggle('festival', 'Festival'));
+    optionsListElement.append(getToggle('crypto',   'Crypto'));
+    optionsListElement.append(getToggle('explore',  'Explore'));
 
     // add activity button
     // ===================
