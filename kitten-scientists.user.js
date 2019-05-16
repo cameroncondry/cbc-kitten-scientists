@@ -1220,6 +1220,7 @@ var run = function() {
 
     var kittenStorage = {
         version: kittenStorageVersion,
+        toggles: {},
         items: {},
         resources: {},
         triggers: {}
@@ -1234,6 +1235,17 @@ var run = function() {
     };
 
     var saveToKittenStorage = function () {
+        kittenStorage.toggles = {
+            build: options.auto.build.enabled,
+            space: options.auto.space.enabled,
+            craft: options.auto.craft.enabled,
+            trade: options.auto.trade.enabled,
+            hunt: options.auto.hunt.enabled,
+            faith: options.auto.faith.enabled,
+            festival: options.auto.festival.enabled,
+            crypto: options.auto.crypto.enabled,
+            explore: options.auto.explore.enabled
+        };
         kittenStorage.resources = options.auto.resources;
         kittenStorage.triggers = {
             faith: options.auto.faith.trigger,
@@ -1252,6 +1264,16 @@ var run = function() {
         var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
         if (saved && saved.version == kittenStorageVersion) {
             kittenStorage = saved;
+
+            if (saved.toggles) {
+                for (var toggle in saved.toggles) {
+                    if (toggle !== 'engine' && options.auto[toggle]) {
+                        options.auto[toggle].enabled = !!saved.toggles[toggle];
+                        var el = $('#toggle-' + toggle);
+                        el.prop('checked', options.auto[toggle].enabled);
+                    }
+                }
+            }
 
             for (var item in kittenStorage.items) {
                 var value = kittenStorage.items[item];
@@ -1549,9 +1571,11 @@ var run = function() {
                 if (input.is(':checked') && auto.enabled == false) {
                     auto.enabled = true;
                     message('Enabled Auto ' + ucfirst(text));
+                    saveToKittenStorage();
                 } else if (input.not(':checked') && auto.enabled == true) {
                     auto.enabled = false;
                     message('Disabled Auto ' + ucfirst(text));
+                    saveToKittenStorage();
                 }
             });
         }
