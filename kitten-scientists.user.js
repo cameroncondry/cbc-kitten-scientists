@@ -61,7 +61,7 @@ var run = function() {
             },
 			explore: {
 				// Should exploring be automated?
-                enabled: true,
+                enabled: false,
 			},
             faith: {
                 // Should praising be automated?
@@ -138,7 +138,8 @@ var run = function() {
                     magneto:        {require: false,         enabled: false},
 
                     // science
-                    library:        {require: 'wood',        enabled: true},
+                    library:        {require: 'wood',        enabled: true, stage: 0},
+                    dataCenter:     {require: false,         enabled: true, stage: 1, name: 'library'},
                     academy:        {require: 'wood',        enabled: true},
                     observatory:    {require: 'iron',        enabled: true},
 
@@ -288,16 +289,6 @@ var run = function() {
 
     // GameLog Modification
     // ====================
-
-    // Add a message filter for trades
-    if (!game.console.filters.trade){
-        game.console.filters.trade = {
-            title: "Trades",
-            enabled: true,
-            unlocked: true
-        };
-        game.ui.renderFilters();
-    }
 
     // Increase messages displayed in log
     game.console.maxMessages = 1000;
@@ -913,7 +904,7 @@ var run = function() {
             // Safeguard against craft items that aren't actually available yet.
             if (!craft) return;
 
-            var prices = craft.prices;
+            var prices = game.workshop.getCraftPrice(craft);
 
             for (var i in prices) {
                 var price = prices[i];
@@ -1527,7 +1518,7 @@ var run = function() {
 
     var getToggle = function (toggleName, text) {
         var auto = options.auto[toggleName];
-        var element = $('<li/>');
+        var element = $('<li/>', {id: 'ks-' + toggleName});
 
         var label = $('<label/>', {
             'for': 'toggle-' + toggleName,
@@ -2036,7 +2027,7 @@ var run = function() {
     // Donation Button
     // ===============
 
-    var donate = $('<li/>').append($('<a/>', {
+    var donate = $('<li/>', {id: "ks-donate"}).append($('<a/>', {
         href: 'bitcoin:' + address + '?amount=0.005&label=Kittens Donation',
         target: '_blank',
         text: address
@@ -2075,6 +2066,7 @@ var run = function() {
     loadFromKittenStorage();
 
     if (console && console.log) console.log(version + " loaded");
+    game._publish("kitten_scientists/ready", version);
 
 }
 
