@@ -1099,12 +1099,6 @@ var run = function() {
     // Configure overall page display
     // ==============================
 
-    var container = $('#game');
-    var column = $('.column');
-    var body = $('body');
-    var button = $('.btn.modern');
-    var left = $('#leftColumn');
-    var middle = $('#midColumn');
     var right = $('#rightColumn');
 
     var addRule = function (rule) {
@@ -1112,83 +1106,77 @@ var run = function() {
         sheets[0].insertRule(rule, 0);
     };
 
-    if (game.colorScheme !== 'sleek') {
-        container.css({
-            fontFamily: 'monospace',
-            fontSize: '12px',
-            minWidth: '1300px',
-            top: '32px'
-        });
+    var defaultSelector = 'body[data-ks-style]:not(.scheme_sleek)';
 
-        body.css({
-            fontFamily: 'monospace',
-            fontSize: '12px'
-        });
+    addRule(defaultSelector + ' #game {'
+        + 'font-family: monospace;'
+        + 'font-size: 12px;'
+        + 'min-width: 1300px;'
+        + 'top: 32px;'
+        + '}');
 
-        button.css({
-            fontFamily: 'monospace',
-            fontSize: '12px',
-            width: '290px'
-        });
+    addRule(defaultSelector + ' {'
+        + 'font-family: monospace;'
+        + 'font-size: 12px;'
+        + '}');
 
-        column.css({
-            minHeight: 'inherit',
-            maxWidth: 'inherit',
-            padding: '1%',
-            margin: 0,
-            overflowY: 'auto'
-        });
+    addRule(defaultSelector + ' .column {'
+        + 'min-height: inherit;'
+        + 'max-width: inherit !important;'
+        + 'padding: 1%;'
+        + 'margin: 0;'
+        + 'overflow-y: auto;'
+        + '}');
 
-        left.css({
-            height: '92%',
-            width: '26%'
-        });
+    addRule(defaultSelector + ' #leftColumn {'
+        + 'height: 92%;'
+        + 'width: 26%;'
+        + '}');
 
-        middle.css({
-            marginTop: '1%',
-            height: '90%',
-            width: '48%'
-        });
+    addRule(defaultSelector + ' #midColumn {'
+        + 'margin-top: 1% !important;'
+        + 'height: 90%;'
+        + 'width: 48%;'
+        + '}');
 
-        right.css({
-            overflowY: 'scroll',
-            height: '92%',
-            width: '19%'
-        });
+    addRule(defaultSelector + ' #rightColumn {'
+        + 'overflow-y: scroll;'
+        + 'height: 92%;'
+        + 'width: 19%;'
+        + '}');
 
-        addRule('#gameLog .msg {'
-            + 'display: block;'
-            + '}');
+    addRule(defaultSelector + ' #gameLog .msg {'
+        + 'display: block;'
+        + '}');
 
-        addRule('#gameLog {'
-            + 'overflow-y: hidden !important;'
-            + 'width: 100% !important;'
-            + 'padding-top: 5px !important;'
-            + '}');
+    addRule(defaultSelector + ' #gameLog {'
+        + 'overflow-y: hidden !important;'
+        + 'width: 100% !important;'
+        + 'padding-top: 5px !important;'
+        + '}');
 
-        addRule('#resContainer .maxRes {'
-            + 'color: #676766;'
-            + '}');
+    addRule(defaultSelector + ' #resContainer .maxRes {'
+        + 'color: #676766;'
+        + '}');
 
-        addRule('#game .btn {'
-            + 'border-radius: 0px;'
-            + 'font-family: monospace;'
-            + 'font-size: 12px !important;'
-            + 'margin: 0 5px 7px 0;'
-            + 'width: 290px;'
-            + '}');
+    addRule(defaultSelector + ' #game .btn {'
+        + 'border-radius: 0px;'
+        + 'font-family: monospace;'
+        + 'font-size: 12px !important;'
+        + 'margin: 0 5px 7px 0;'
+        + 'width: 290px;'
+        + '}');
 
-        addRule('#game .map-viewport {'
-            + 'height: 340px;'
-            + 'max-width: 500px;'
-            + 'overflow: visible;'
-            + '}');
+    addRule(defaultSelector + ' #game .map-viewport {'
+        + 'height: 340px;'
+        + 'max-width: 500px;'
+        + 'overflow: visible;'
+        + '}');
 
-        addRule('#game .map-dashboard {'
-            + 'height: 120px;'
-            + 'width: 292px;'
-            + '}');
-    }
+    addRule(' #game .map-dashboard {'
+        + 'height: 120px;'
+        + 'width: 292px;'
+        + '}');
 
     addRule('#ks-options ul {'
         + 'list-style: none;'
@@ -1212,6 +1200,8 @@ var run = function() {
     addRule('#ks-options #toggle-list-resources .stockWarn {'
         + 'color: ' + options.stockwarncolor + ';'
         + '}');
+
+    document.body.toggleAttribute("data-ks-style", true);
 
     // Local Storage
     // =============
