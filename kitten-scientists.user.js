@@ -70,17 +70,38 @@ var run = function() {
                 trigger: 0.99,
                 // Which religious upgrades should be researched?
                 items: {
+		    // Ziggurats
+		    unicornTomb:    	 {require: false, enabled: false, variant: 'z'},
+		    ivoryTower:    	 {require: false, enabled: false, variant: 'z'},
+		    ivoryCitadel:    	 {require: false, enabled: false, variant: 'z'},
+		    skyPalace:    	 {require: false, enabled: false, variant: 'z'},
+		    unicornUtopia:    	 {require: 'gold', enabled: false, variant: 'z'},
+		    sunspire:    	 {require: 'gold', enabled: false, variant: 'z'},
+		    marker:    	 	 {require: 'unobtainium', enabled: false, variant: 'z'},
+		    unicornGraveyard:    {require: false, enabled: false, variant: 'z'},
+		    unicornNecropolis:   {require: false, enabled: false, variant: 'z'},
+		    blackPyramid:    	 {require: 'unobtainium', enabled: false, variant: 'z'},
                     // Order of the Sun
-                    solarchant:      {require: 'faith', enabled: true},
-                    scholasticism:   {require: 'faith', enabled: true},
-                    goldenSpire:     {require: 'faith', enabled: true},
-                    sunAltar:        {require: 'faith', enabled: true},
-                    stainedGlass:    {require: 'faith', enabled: true},
-                    solarRevolution: {require: 'faith', enabled: true},
-                    basilica:        {require: 'faith', enabled: true},
-                    templars:        {require: 'faith', enabled: true},
-                    apocripha:       {require: 'faith', enabled: false},
-                    transcendence:   {require: 'faith', enabled: true},
+                    solarchant:      {require: 'faith', enabled: true, variant: 's'},
+                    scholasticism:   {require: 'faith', enabled: true, variant: 's'},
+                    goldenSpire:     {require: 'faith', enabled: true, variant: 's'},
+                    sunAltar:        {require: 'faith', enabled: true, variant: 's'},
+                    stainedGlass:    {require: 'faith', enabled: true, variant: 's'},
+                    solarRevolution: {require: 'faith', enabled: true, variant: 's'},
+                    basilica:        {require: 'faith', enabled: true, variant: 's'},
+                    templars:        {require: 'faith', enabled: true, variant: 's'},
+                    apocripha:       {require: 'faith', enabled: false, variant: 's'},
+                    transcendence:   {require: 'faith', enabled: true, variant: 's'},
+		    // Cryptotheology
+		    blackObelisk:    {require: false, enabled: false, variant: 'c'},
+		    blackNexus:      {require: false, enabled: false, variant: 'c'},
+		    blackCore:       {require: false, enabled: false, variant: 'c'},
+		    singularity:     {require: false, enabled: false, variant: 'c'},
+		    blackLibrary:    {require: false, enabled: false, variant: 'c'},
+		    blackRadiance:   {require: false, enabled: false, variant: 'c'},
+		    blazar:          {require: false, enabled: false, variant: 'c'},
+		    darkNova:        {require: false, enabled: false, variant: 'c'},
+		    holyGenocide:    {require: false, enabled: false, variant: 'c'},
                 }
             },
             festival: {
@@ -209,7 +230,8 @@ var run = function() {
                     entangler:    {require: 'antimatter',  enabled: false},
 
                     // Centaurus
-                    tectonic: {require: 'antimatter', enabled: false}
+                    tectonic:      {require: 'antimatter', enabled: false},
+                    moltenCore:    {require: 'uranium',     enabled: false}
                 }
             },
             craft: {
@@ -451,7 +473,7 @@ var run = function() {
                 var require = !build.require ? false : craftManager.getResource(build.require);
 
                 if (!require || trigger <= require.value / require.maxValue) {
-                    buildManager.build(name);
+                    buildManager.build(name, build.variant);
                 }
             }
 
@@ -712,25 +734,39 @@ var run = function() {
     ReligionManager.prototype = {
         manager: undefined,
         crafts: undefined,
-        build: function (name) {
-            var build = this.getBuild(name);
-            var button = this.getBuildButton(name);
+        build: function (name, variant) {
+            var build = this.getBuild(name, variant);
+            var button = this.getBuildButton(name, variant);
 
             if (!button || !button.model.enabled) return;
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
             storeForSummary(name, 1, 'faith');
-
-            activity('Kittens have discovered ' + build.label, 'ks-faith');
+			if (variant === "s") {
+				activity('Kittens have discovered ' + build.label, 'ks-faith');
+			} else {
+				activity('Kittens have built a new ' + build.label, 'ks-faith');
+			}
         },
-        getBuild: function (name) {
-            return game.religion.getRU(name);
-        },
-        getBuildButton: function (name) {
-            var buttons = this.manager.tab.rUpgradeButtons;
-            var build = this.getBuild(name);
-
+		getBuild: function (name, variant) {
+			if (variant === "z"){
+				return game.religion.getZU(name);
+			}else if (variant === "s"){
+				return game.religion.getRU(name);
+			}else if (variant === "c"){
+				return game.religion.getTU(name);
+			}
+		},
+        getBuildButton: function (name, variant) {
+			if (variant === "z"){
+				var buttons = this.manager.tab.zgUpgradeButtons;
+			}else if (variant === "s"){
+				var buttons = this.manager.tab.rUpgradeButtons;
+			}else if (variant === "c"){
+				var buttons = this.manager.tab.children[0].children[0].children;
+			}
+            var build = this.getBuild(name, variant);
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
                 if (haystack.indexOf(build.label) !== -1){
@@ -1842,7 +1878,7 @@ var run = function() {
     var religionManager = new ReligionManager();
     for (var buildOption in options.auto.faith.items) {
         var buildItem = options.auto.faith.items[buildOption];
-        var build = religionManager.getBuild(buildItem.name || buildOption);
+        var build = religionManager.getBuild(buildItem.name || buildOption, buildItem.variant);
         if (build) {
             options.auto.faith.items[buildOption].label = build.label;
         }
