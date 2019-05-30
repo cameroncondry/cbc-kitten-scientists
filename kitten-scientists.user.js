@@ -70,38 +70,39 @@ var run = function() {
                 trigger: 0.99,
                 // Which religious upgrades should be researched?
                 items: {
-		    // Ziggurats
-		    unicornTomb:    	 {require: false, enabled: false, variant: 'z'},
-		    ivoryTower:    	 {require: false, enabled: false, variant: 'z'},
-		    ivoryCitadel:    	 {require: false, enabled: false, variant: 'z'},
-		    skyPalace:    	 {require: false, enabled: false, variant: 'z'},
-		    unicornUtopia:    	 {require: 'gold', enabled: false, variant: 'z'},
-		    sunspire:    	 {require: 'gold', enabled: false, variant: 'z'},
-		    marker:    	 	 {require: 'unobtainium', enabled: false, variant: 'z'},
-		    unicornGraveyard:    {require: false, enabled: false, variant: 'z'},
-		    unicornNecropolis:   {require: false, enabled: false, variant: 'z'},
-		    blackPyramid:    	 {require: 'unobtainium', enabled: false, variant: 'z'},
-                    // Order of the Sun
-                    solarchant:      {require: 'faith', enabled: true, variant: 's'},
-                    scholasticism:   {require: 'faith', enabled: true, variant: 's'},
-                    goldenSpire:     {require: 'faith', enabled: true, variant: 's'},
-                    sunAltar:        {require: 'faith', enabled: true, variant: 's'},
-                    stainedGlass:    {require: 'faith', enabled: true, variant: 's'},
-                    solarRevolution: {require: 'faith', enabled: true, variant: 's'},
-                    basilica:        {require: 'faith', enabled: true, variant: 's'},
-                    templars:        {require: 'faith', enabled: true, variant: 's'},
-                    apocripha:       {require: 'faith', enabled: false, variant: 's'},
-                    transcendence:   {require: 'faith', enabled: true, variant: 's'},
-		    // Cryptotheology
-		    blackObelisk:    {require: false, enabled: false, variant: 'c'},
-		    blackNexus:      {require: false, enabled: false, variant: 'c'},
-		    blackCore:       {require: false, enabled: false, variant: 'c'},
-		    singularity:     {require: false, enabled: false, variant: 'c'},
-		    blackLibrary:    {require: false, enabled: false, variant: 'c'},
-		    blackRadiance:   {require: false, enabled: false, variant: 'c'},
-		    blazar:          {require: false, enabled: false, variant: 'c'},
-		    darkNova:        {require: false, enabled: false, variant: 'c'},
-		    holyGenocide:    {require: false, enabled: false, variant: 'c'},
+                    // Variant denotes which category the building or upgrade falls within in the Religion tab.
+		            // Ziggurats are variant z.
+		            unicornTomb:        {require: false,         enabled: false, variant: 'z'},
+		            ivoryTower:         {require: false,         enabled: false, variant: 'z'},
+		            ivoryCitadel:       {require: false,         enabled: false, variant: 'z'},
+		            skyPalace:          {require: false,         enabled: false, variant: 'z'},
+		            unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z'},
+		            sunspire:           {require: 'gold',        enabled: false, variant: 'z'},
+		            marker:             {require: 'unobtainium', enabled: false, variant: 'z'},
+		            unicornGraveyard:   {require: false,         enabled: false, variant: 'z'},
+		            unicornNecropolis:  {require: false,         enabled: false, variant: 'z'},
+		            blackPyramid:       {require: 'unobtainium', enabled: false, variant: 'z'},
+                    // Order of the Sun is variant s.
+                    solarchant:         {require: 'faith', enabled: true,  variant: 's'},
+                    scholasticism:      {require: 'faith', enabled: true,  variant: 's'},
+                    goldenSpire:        {require: 'faith', enabled: true,  variant: 's'},
+                    sunAltar:           {require: 'faith', enabled: true,  variant: 's'},
+                    stainedGlass:       {require: 'faith', enabled: true,  variant: 's'},
+                    solarRevolution:    {require: 'faith', enabled: true,  variant: 's'},
+                    basilica:           {require: 'faith', enabled: true,  variant: 's'},
+                    templars:           {require: 'faith', enabled: true,  variant: 's'},
+                    apocripha:          {require: 'faith', enabled: false, variant: 's'},
+                    transcendence:      {require: 'faith', enabled: true,  variant: 's'},
+		            // Cryptotheology is variant c.
+		            blackObelisk:       {require: false, enabled: false, variant: 'c'},
+		            blackNexus:         {require: false, enabled: false, variant: 'c'},
+		            blackCore:          {require: false, enabled: false, variant: 'c'},
+		            singularity:        {require: false, enabled: false, variant: 'c'},
+		            blackLibrary:       {require: false, enabled: false, variant: 'c'},
+		            blackRadiance:      {require: false, enabled: false, variant: 'c'},
+		            blazar:             {require: false, enabled: false, variant: 'c'},
+		            darkNova:           {require: false, enabled: false, variant: 'c'},
+		            holyGenocide:       {require: false, enabled: false, variant: 'c'},
                 }
             },
             festival: {
@@ -230,8 +231,8 @@ var run = function() {
                     entangler:    {require: 'antimatter',  enabled: false},
 
                     // Centaurus
-                    tectonic:      {require: 'antimatter', enabled: false},
-                    moltenCore:    {require: 'uranium',     enabled: false}
+                    tectonic:   {require: 'antimatter', enabled: false},
+                    moltenCore: {require: 'uranium',    enabled: false}
                 }
             },
             craft: {
@@ -743,33 +744,37 @@ var run = function() {
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
             storeForSummary(name, 1, 'faith');
-			if (variant === "s") {
-				activity('Kittens have discovered ' + build.label, 'ks-faith');
-			} else {
-				activity('Kittens have built a new ' + build.label, 'ks-faith');
-			}
+            if (variant === "s") {
+                activity('Kittens have discovered ' + build.label, 'ks-faith');
+            } else {
+                activity('Kittens have built a new ' + build.label, 'ks-faith');
+            }
         },
-		getBuild: function (name, variant) {
-			if (variant === "z"){
-				return game.religion.getZU(name);
-			}else if (variant === "s"){
-				return game.religion.getRU(name);
-			}else if (variant === "c"){
-				return game.religion.getTU(name);
-			}
-		},
+        getBuild: function (name, variant) {
+            switch (variant) {
+                case 'z':
+                    return game.religion.getZU(name);
+                case 's':
+                    return game.religion.getRU(name);
+                case 'c':
+                    return game.religion.getTU(name);
+            }
+        },
         getBuildButton: function (name, variant) {
-			if (variant === "z"){
-				var buttons = this.manager.tab.zgUpgradeButtons;
-			}else if (variant === "s"){
-				var buttons = this.manager.tab.rUpgradeButtons;
-			}else if (variant === "c"){
-				var buttons = this.manager.tab.children[0].children[0].children;
-			}
+            switch (variant) {
+                case 'z':
+                    var buttons = this.manager.tab.zgUpgradeButtons;
+                    break;
+                case 's':
+                    var buttons = this.manager.tab.rUpgradeButtons;
+                    break;
+                case 'c':
+                    var buttons = this.manager.tab.children[0].children[0].children;
+            }
             var build = this.getBuild(name, variant);
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
-                if (haystack.indexOf(build.label) !== -1){
+                if (haystack.indexOf(build.label) !== -1) {
                     return buttons[i];
                 }
             }
