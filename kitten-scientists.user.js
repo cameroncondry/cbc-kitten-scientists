@@ -71,17 +71,17 @@ var run = function() {
                 // Which religious upgrades should be researched?
                 items: {
                     // Variant denotes which category the building or upgrade falls within in the Religion tab.
-		            // Ziggurats are variant z.
-		            unicornTomb:        {require: false,         enabled: false, variant: 'z'},
-		            ivoryTower:         {require: false,         enabled: false, variant: 'z'},
-		            ivoryCitadel:       {require: false,         enabled: false, variant: 'z'},
-		            skyPalace:          {require: false,         enabled: false, variant: 'z'},
-		            unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z'},
-		            sunspire:           {require: 'gold',        enabled: false, variant: 'z'},
-		            marker:             {require: 'unobtainium', enabled: false, variant: 'z'},
-		            unicornGraveyard:   {require: false,         enabled: false, variant: 'z'},
-		            unicornNecropolis:  {require: false,         enabled: false, variant: 'z'},
-		            blackPyramid:       {require: 'unobtainium', enabled: false, variant: 'z'},
+                    // Ziggurats are variant z.
+                    unicornTomb:        {require: false,         enabled: false, variant: 'z'},
+                    ivoryTower:         {require: false,         enabled: false, variant: 'z'},
+                    ivoryCitadel:       {require: false,         enabled: false, variant: 'z'},
+                    skyPalace:          {require: false,         enabled: false, variant: 'z'},
+                    unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z'},
+                    sunspire:           {require: 'gold',        enabled: false, variant: 'z'},
+                    marker:             {require: 'unobtainium', enabled: false, variant: 'z'},
+                    unicornGraveyard:   {require: false,         enabled: false, variant: 'z'},
+                    unicornNecropolis:  {require: false,         enabled: false, variant: 'z'},
+                    blackPyramid:       {require: 'unobtainium', enabled: false, variant: 'z'},
                     // Order of the Sun is variant s.
                     solarchant:         {require: 'faith', enabled: true,  variant: 's'},
                     scholasticism:      {require: 'faith', enabled: true,  variant: 's'},
@@ -93,16 +93,16 @@ var run = function() {
                     templars:           {require: 'faith', enabled: true,  variant: 's'},
                     apocripha:          {require: 'faith', enabled: false, variant: 's'},
                     transcendence:      {require: 'faith', enabled: true,  variant: 's'},
-		            // Cryptotheology is variant c.
-		            blackObelisk:       {require: false, enabled: false, variant: 'c'},
-		            blackNexus:         {require: false, enabled: false, variant: 'c'},
-		            blackCore:          {require: false, enabled: false, variant: 'c'},
-		            singularity:        {require: false, enabled: false, variant: 'c'},
-		            blackLibrary:       {require: false, enabled: false, variant: 'c'},
-		            blackRadiance:      {require: false, enabled: false, variant: 'c'},
-		            blazar:             {require: false, enabled: false, variant: 'c'},
-		            darkNova:           {require: false, enabled: false, variant: 'c'},
-		            holyGenocide:       {require: false, enabled: false, variant: 'c'},
+                    // Cryptotheology is variant c.
+                    blackObelisk:       {require: false, enabled: false, variant: 'c'},
+                    blackNexus:         {require: false, enabled: false, variant: 'c'},
+                    blackCore:          {require: false, enabled: false, variant: 'c'},
+                    singularity:        {require: false, enabled: false, variant: 'c'},
+                    blackLibrary:       {require: false, enabled: false, variant: 'c'},
+                    blackRadiance:      {require: false, enabled: false, variant: 'c'},
+                    blazar:             {require: false, enabled: false, variant: 'c'},
+                    darkNova:           {require: false, enabled: false, variant: 'c'},
+                    holyGenocide:       {require: false, enabled: false, variant: 'c'},
                 }
             },
             festival: {
