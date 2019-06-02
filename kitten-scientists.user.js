@@ -83,26 +83,26 @@ var run = function() {
                     unicornNecropolis:  {require: false,         enabled: false, variant: 'z'},
                     blackPyramid:       {require: 'unobtainium', enabled: false, variant: 'z'},
                     // Order of the Sun is variant s.
-                    solarchant:         {require: 'faith', enabled: true,  variant: 's'},
-                    scholasticism:      {require: 'faith', enabled: true,  variant: 's'},
-                    goldenSpire:        {require: 'faith', enabled: true,  variant: 's'},
-                    sunAltar:           {require: 'faith', enabled: true,  variant: 's'},
-                    stainedGlass:       {require: 'faith', enabled: true,  variant: 's'},
-                    solarRevolution:    {require: 'faith', enabled: true,  variant: 's'},
-                    basilica:           {require: 'faith', enabled: true,  variant: 's'},
-                    templars:           {require: 'faith', enabled: true,  variant: 's'},
-                    apocripha:          {require: 'faith', enabled: false, variant: 's'},
-                    transcendence:      {require: 'faith', enabled: true,  variant: 's'},
+                    solarchant:         {require: 'faith',       enabled: true,  variant: 's'},
+                    scholasticism:      {require: 'faith',       enabled: true,  variant: 's'},
+                    goldenSpire:        {require: 'faith',       enabled: true,  variant: 's'},
+                    sunAltar:           {require: 'faith',       enabled: true,  variant: 's'},
+                    stainedGlass:       {require: 'faith',       enabled: true,  variant: 's'},
+                    solarRevolution:    {require: 'faith',       enabled: true,  variant: 's'},
+                    basilica:           {require: 'faith',       enabled: true,  variant: 's'},
+                    templars:           {require: 'faith',       enabled: true,  variant: 's'},
+                    apocripha:          {require: 'faith',       enabled: false, variant: 's'},
+                    transcendence:      {require: 'faith',       enabled: true,  variant: 's'},
                     // Cryptotheology is variant c.
-                    blackObelisk:       {require: false, enabled: false, variant: 'c'},
-                    blackNexus:         {require: false, enabled: false, variant: 'c'},
-                    blackCore:          {require: false, enabled: false, variant: 'c'},
-                    singularity:        {require: false, enabled: false, variant: 'c'},
-                    blackLibrary:       {require: false, enabled: false, variant: 'c'},
-                    blackRadiance:      {require: false, enabled: false, variant: 'c'},
-                    blazar:             {require: false, enabled: false, variant: 'c'},
-                    darkNova:           {require: false, enabled: false, variant: 'c'},
-                    holyGenocide:       {require: false, enabled: false, variant: 'c'},
+                    blackObelisk:       {require: false,         enabled: false, variant: 'c'},
+                    blackNexus:         {require: false,         enabled: false, variant: 'c'},
+                    blackCore:          {require: false,         enabled: false, variant: 'c'},
+                    singularity:        {require: false,         enabled: false, variant: 'c'},
+                    blackLibrary:       {require: false,         enabled: false, variant: 'c'},
+                    blackRadiance:      {require: false,         enabled: false, variant: 'c'},
+                    blazar:             {require: false,         enabled: false, variant: 'c'},
+                    darkNova:           {require: false,         enabled: false, variant: 'c'},
+                    holyGenocide:       {require: false,         enabled: false, variant: 'c'},
                 }
             },
             festival: {
@@ -747,7 +747,7 @@ var run = function() {
             if (variant === "s") {
                 activity('Kittens have discovered ' + build.label, 'ks-faith');
             } else {
-                activity('Kittens have built a new ' + build.label, 'ks-faith');
+                activity('Kittens have built a new ' + build.label, 'ks-build');
             }
         },
         getBuild: function (name, variant) {
