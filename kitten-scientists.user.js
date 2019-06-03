@@ -212,6 +212,27 @@ var run = function() {
                     tectonic: {require: 'antimatter', enabled: false}
                 }
             },
+            time: {
+                // Should time upgrades be built automatically?
+                enabled: false,
+                trigger: 0.95,
+                items: {
+                    // Variants denote whether these buildings fall within the Chronoforge or Void categories.
+                    // Chronoforge has variant chrono.
+                    temporalBattery:     {require: false,          enabled: false, variant: 'chrono'},
+                    blastFurnace:        {require: false,          enabled: false, variant: 'chrono'},
+                    temporalAccelerator: {require: false,          enabled: false, variant: 'chrono'},
+                    temporalImpedance:   {require: false,          enabled: false, variant: 'chrono'},
+                    ressourceRetrieval:  {require: false,          enabled: false, variant: 'chrono'},
+                    
+                    // Void Space has variant void.
+                    cryochambers:        {require: false,          enabled: false, variant: 'void'},
+                    voidHoover:          {require: 'antimatter',   enabled: false, variant: 'void'},
+                    voidRift:            {require: false,          enabled: false, variant: 'void'},
+                    chronocontrol:       {require: 'temporalFlux', enabled: false, variant: 'void'},
+                    voidResonator:       {require: false,          enabled: false, variant: 'void'}
+                }
+            },
             craft: {
                 // Should resources be crafted automatically?
                 enabled: true,
@@ -345,6 +366,7 @@ var run = function() {
         this.craftManager = new CraftManager();
         this.tradeManager = new TradeManager();
         this.religionManager = new ReligionManager();
+        this.timeManager = new TimeManager();
         this.explorationManager = new ExplorationManager();
         this.villageManager = new TabManager('Village');
     };
@@ -355,6 +377,7 @@ var run = function() {
         craftManager: undefined,
         tradeManager: undefined,
         religionManager: undefined,
+        timeManager: undefined,
         explorationManager: undefined,
         villageManager: undefined,
         loop: undefined,
@@ -380,6 +403,7 @@ var run = function() {
             if (options.auto.trade.enabled) this.trade();
             if (options.auto.hunt.enabled) this.hunt();
             if (options.auto.faith.enabled) this.worship();
+            if (options.auto.time.enabled) this.chrono();
             if (options.auto.crypto.enabled) this.crypto();
             if (options.auto.explore.enabled) this.explore();
         },
@@ -462,6 +486,26 @@ var run = function() {
                 storeForSummary('faith', faith.value * (1 + game.religion.getFaithBonus()));
                 activity('Praised the sun!', 'ks-praise');
                 game.religion.praise();
+            }
+        },
+        chrono: function () {
+            var builds = options.auto.time.items;
+            var buildManager = this.timeManager;
+            var craftManager = this.craftManager;
+            var trigger = options.auto.time.trigger;
+            
+            // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+            buildManager.manager.render();
+            
+            for (var name in builds) {
+                if (!builds[name].enabled) continue;
+
+                var build = builds[name];
+                var require = !build.require ? false : craftManager.getResource(build.require);
+
+                if (!require || trigger <= require.value / require.maxValue) {
+                    buildManager.build(name, build.variant);
+                }
             }
         },
         build: function () {
@@ -740,6 +784,53 @@ var run = function() {
         }
     };
 
+    // Time manager
+    // ============
+    
+    var TimeManager = function () {
+        this.manager = new TabManager('Time');
+        this.crafts = new CraftManager();
+    };
+    
+    TimeManager.prototype = {
+        manager: undefined,
+        crafts: undefined,
+        build: function (name, variant) {
+            var build = this.getBuild(name, variant);
+            var button = this.getBuildButton(name, variant);
+
+            if (!button || !button.model.enabled) return;
+
+            //need to simulate a click so the game updates everything properly
+            button.domNode.click(build);
+            storeForSummary(name, 1, 'build');
+
+            var label = build.label;
+            activity('Kittens have built a new ' + label, 'ks-build');
+        },
+        getBuild: function (name, variant) {
+            if (variant === 'chrono') {
+                return game.time.getCFU(name);
+            } else {
+                return game.time.getVSU(name);
+            }
+        },
+        getBuildButton: function (name, variant) {
+            if (variant === 'chrono') {
+                var buttons = this.manager.tab.children[2].children[0].children;
+            } else {
+                var buttons = this.manager.tab.children[3].children[0].children;
+            }
+            var build = this.getBuild(name, variant);
+            for (var i in buttons) {
+                var haystack = buttons[i].model.name;
+                if (haystack.indexOf(build.label) !== -1) {
+                    return buttons[i];
+                }
+            }
+        }
+    };
+    
     // Building manager
     // ================
 
@@ -1223,6 +1314,7 @@ var run = function() {
             trade: options.auto.trade.enabled,
             hunt: options.auto.hunt.enabled,
             faith: options.auto.faith.enabled,
+            time: options.auto.time.enabled,
             festival: options.auto.festival.enabled,
             crypto: options.auto.crypto.enabled,
             explore: options.auto.explore.enabled
@@ -1230,6 +1322,7 @@ var run = function() {
         kittenStorage.resources = options.auto.resources;
         kittenStorage.triggers = {
             faith: options.auto.faith.trigger,
+            time: options.auto.time.trigger,
             hunt: options.auto.hunt.trigger,
             build: options.auto.build.trigger,
             space: options.auto.space.trigger,
@@ -1292,6 +1385,7 @@ var run = function() {
 
             if (saved.triggers) {
                 options.auto.faith.trigger = saved.triggers.faith;
+                options.auto.time.trigger = saved.triggers.time;
                 options.auto.hunt.trigger = saved.triggers.hunt;
                 options.auto.build.trigger = saved.triggers.build;
                 options.auto.space.trigger = saved.triggers.space;
@@ -1301,6 +1395,7 @@ var run = function() {
                 options.auto.explore.trigger = saved.triggers.explore;
 
                 $('#trigger-faith')[0].title = options.auto.faith.trigger;
+                $('#trigger-time')[0].title = options.auto.time.trigger;
                 $('#trigger-hunt')[0].title = options.auto.hunt.trigger;
                 $('#trigger-build')[0].title = options.auto.build.trigger;
                 $('#trigger-space')[0].title = options.auto.space.trigger;
@@ -1848,6 +1943,16 @@ var run = function() {
         }
     }
 
+    // Grab button labels for time options
+    var timeManager = new TimeManager();
+    for (var buildOption in options.auto.time.items) {
+        var buildItem = options.auto.time.items[buildOption];
+        var build = timeManager.getBuild(buildItem.name || buildOption, buildItem.variant);
+        if (build) {
+            options.auto.time.items[buildOption].label = build.label;
+        }
+    }
+
     // Grab button labels for build options
     var buildManager = new BuildManager();
     for (var buildOption in options.auto.build.items) {
@@ -1889,6 +1994,7 @@ var run = function() {
     optionsListElement.append(getToggle('trade',    'Trading'));
     optionsListElement.append(getToggle('hunt',     'Hunting'));
     optionsListElement.append(getToggle('faith',    'Religion'));
+    optionsListElement.append(getToggle('time',     'Time'));
     optionsListElement.append(getToggle('festival', 'Festival'));
     optionsListElement.append(getToggle('crypto',   'Crypto'));
     optionsListElement.append(getToggle('explore',  'Explore'));
