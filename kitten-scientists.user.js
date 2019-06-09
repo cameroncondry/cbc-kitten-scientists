@@ -909,6 +909,9 @@ var run = function() {
         getLowestCraftAmount: function (name, limited) {
             var amount = Number.MAX_VALUE;
             var materials = this.getMaterials(name);
+            
+            var craft = this.getCraft(name);
+            var ratio = game.getResCraftRatio(craft);
 
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
@@ -923,7 +926,7 @@ var run = function() {
                 } else {
                     // Take the currently present amount of material to craft into account
                     // Only craft "half" (TODO: document this behaviour)
-                    delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
+                    delta = (this.getValueAvailable(i) - (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / (2 * materials[i]);
                 }
 
                 amount = Math.min(delta,amount);
