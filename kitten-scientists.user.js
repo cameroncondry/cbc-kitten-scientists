@@ -245,7 +245,9 @@ var run = function() {
                 // In addition to the *require* property, which is explained above, items can also define a *max*. If they
                 // do, no more than that resource will be automatically produced. This feature can not be controlled through
                 // the UI and is not used for any resource by default.
-                // The *limited* property tells KS to only craft the resource once per season.
+                // The *limited* property tells KS to craft resources such the ratio of the stored resources to the stored components
+                // is equal to the cost of the resource per component (Meaning if gear crafting is limited, and you can craft 30 gears
+                // per 50 steel, then having 600 gears and 1000 steel would be an equilibrium point for limited autocrafting).
                 items: {
                     wood:       {require: 'catnip',      max: 0, limited: false, enabled: true},
                     beam:       {require: 'wood',        max: 0, limited: false, enabled: true},
@@ -925,7 +927,9 @@ var run = function() {
                     delta = this.getValueAvailable(i) / materials[i];
                 } else {
                     // Take the currently present amount of material to craft into account
-                    // Only craft "half" (TODO: document this behaviour)
+                    // Currently this determines the amount of resources that can be crafted such that the produced resources and their components
+                    // in storage both are "worth" the same number of base materials (as determined by price and craft ratio).
+                    // This could be modified to an arbitrary ratio in the future.
                     delta = (this.getValueAvailable(i) - (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / (2 * materials[i]);
                 }
 
@@ -1868,7 +1872,7 @@ var run = function() {
         input.on('change', function () {
             if (input.is(':checked') && option.limited == false) {
                 option.limited = true;
-                message('Crafting ' + ucfirst(name) + ': limited once per season');
+                message('Crafting ' + ucfirst(name) + ': limited to be proportional to cost ratio');
             } else if (input.not(':checked') && option.limited == true) {
                 option.limited = false;
                 message('Crafting ' + ucfirst(name) + ': unlimited');
