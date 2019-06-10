@@ -245,29 +245,32 @@ var run = function() {
                 // In addition to the *require* property, which is explained above, items can also define a *max*. If they
                 // do, no more than that resource will be automatically produced. This feature can not be controlled through
                 // the UI and is not used for any resource by default.
-                // The *limited* property tells KS to craft resources such the ratio of the stored resources to the stored components
-                // is equal to the cost of the resource per component (Meaning if gear crafting is limited, and you can craft 30 gears
-                // per 50 steel, then having 600 gears and 1000 steel would be an equilibrium point for limited autocrafting).
+                // The *limited* property tells KS to craft resources whenever the ratio of the component cost of the stored resources
+                // to the number of stored components is greater than the limit ratio "limRat".
+                // This means that if limRat is 0.5, then if you have 1000 beams and 500 beams worth of scaffolds, 250 of the beams
+                // will be crafted into scaffolds. If instead limRat is 0.75, 625 of the beams will be crafted into scaffolds for a final result
+                // of 1125 beams-worth of scaffolds and 375 remaining beams.
+                // Currently, limRat is not modifiable through the UI, though if there is demand, perhaps this will be added in the future.
                 items: {
-                    wood:       {require: 'catnip',      max: 0, limited: false, enabled: true},
-                    beam:       {require: 'wood',        max: 0, limited: false, enabled: true},
-                    slab:       {require: 'minerals',    max: 0, limited: false, enabled: true},
-                    steel:      {require: 'coal',        max: 0, limited: false, enabled: true},
-                    plate:      {require: 'iron',        max: 0, limited: false, enabled: true},
-                    alloy:      {require: 'titanium',    max: 0, limited: true,  enabled: false},
-                    concrete:   {require: false,         max: 0, limited: true,  enabled: false},
-                    gear:       {require: false,         max: 0, limited: true,  enabled: false},
-                    scaffold:   {require: false,         max: 0, limited: true,  enabled: false},
-                    ship:       {require: false,         max: 0, limited: true,  enabled: false},
-                    tanker:     {require: false,         max: 0, limited: true,  enabled: false},
-                    parchment:  {require: false,         max: 0, limited: true,  enabled: true},
-                    manuscript: {require: 'culture',     max: 0, limited: true,  enabled: true},
-                    compendium: {require: 'science',     max: 0, limited: true,  enabled: true},
-                    blueprint:  {require: 'science',     max: 0, limited: true,  enabled: false},
-                    kerosene:   {require: 'oil',         max: 0, limited: true,  enabled: false},
-                    megalith:   {require: false,         max: 0, limited: true,  enabled: false},
-                    eludium:    {require: 'unobtainium', max: 0, limited: true,  enabled: false},
-                    thorium:    {require: 'uranium',     max: 0, limited: true,  enabled: false}
+                    wood:       {require: 'catnip',      max: 0, limited: false, limRat: 0.5, enabled: true},
+                    beam:       {require: 'wood',        max: 0, limited: false, limRat: 0.5, enabled: true},
+                    slab:       {require: 'minerals',    max: 0, limited: false, limRat: 0.5, enabled: true},
+                    steel:      {require: 'coal',        max: 0, limited: false, limRat: 0.5, enabled: true},
+                    plate:      {require: 'iron',        max: 0, limited: false, limRat: 0.5, enabled: true},
+                    alloy:      {require: 'titanium',    max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    concrete:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    gear:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    scaffold:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    ship:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    tanker:     {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    parchment:  {require: false,         max: 0, limited: false, limRat: 0.5, enabled: true},
+                    manuscript: {require: 'culture',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    compendium: {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    blueprint:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    kerosene:   {require: 'oil',         max: 0, limited: false, limRat: 0.5, enabled: false},
+                    megalith:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    eludium:    {require: 'unobtainium', max: 0, limited: false, limRat: 0.5, enabled: false},
+                    thorium:    {require: 'uranium',     max: 0, limited: false, limRat: 0.5, enabled: false}
                 }
             },
             trade: {
@@ -554,7 +557,7 @@ var run = function() {
 
                 // Craft the resource if we meet the trigger requirement
                 if (!require || trigger <= require.value / require.maxValue) {
-                    var amount = manager.getLowestCraftAmount(name,craft.limited);
+                    var amount = manager.getLowestCraftAmount(name, craft.limited, craft.limRat);
 
                     if (amount > 0) {
                         manager.craft(name, amount);
@@ -908,13 +911,12 @@ var run = function() {
         getCraft: function (name) {
             return game.workshop.getCraft(this.getName(name));
         },
-        getLowestCraftAmount: function (name, limited) {
+        getLowestCraftAmount: function (name, limited, limRat) {
             var amount = Number.MAX_VALUE;
             var materials = this.getMaterials(name);
             
             var craft = this.getCraft(name);
             var ratio = game.getResCraftRatio(craft);
-            var limRatio = 0.5;
             
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
@@ -930,9 +932,9 @@ var run = function() {
                     // Take the currently present amount of material to craft into account
                     // Currently this determines the amount of resources that can be crafted such that the produced resources and their components
                     // in storage both are "worth" the same number of base materials (as determined by price and craft ratio).
-                    // This base material distribution is governed by limRatio which defaults to 0.5, corresponding to half of the possible components being further crafted.
+                    // This base material distribution is governed by limRat "limited ratio" which defaults to 0.5, corresponding to half of the possible components being further crafted.
                     // If this were another value, such as 0.75, then if you had 10000 beams and 0 scaffolds, 7500 of the beams would be crafted into scaffolds.
-                    delta = limRatio * ((this.getValueAvailable(i) + (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / materials[i]) - (this.getValueAvailable(res.name) / (1 + ratio));
+                    delta = limRat * ((this.getValueAvailable(i) + (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / materials[i]) - (this.getValueAvailable(res.name) / (1 + ratio));
                 }
 
                 amount = Math.min(delta,amount);
