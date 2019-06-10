@@ -914,7 +914,8 @@ var run = function() {
             
             var craft = this.getCraft(name);
             var ratio = game.getResCraftRatio(craft);
-
+            var limRatio = 0.5;
+            
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
 
@@ -929,8 +930,9 @@ var run = function() {
                     // Take the currently present amount of material to craft into account
                     // Currently this determines the amount of resources that can be crafted such that the produced resources and their components
                     // in storage both are "worth" the same number of base materials (as determined by price and craft ratio).
-                    // This could be modified to an arbitrary ratio in the future.
-                    delta = (this.getValueAvailable(i) - (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / (2 * materials[i]);
+                    // This base material distribution is governed by limRatio which defaults to 0.5, corresponding to half of the possible components being further crafted.
+                    // If this were another value, such as 0.75, then if you had 10000 beams and 0 scaffolds, 7500 of the beams would be crafted into scaffolds.
+                    delta = limRatio * ((this.getValueAvailable(i) + (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / materials[i]) - (this.getValueAvailable(res.name) / (1 + ratio));
                 }
 
                 amount = Math.min(delta,amount);
