@@ -4,7 +4,7 @@
 // @description Launch Kitten Scientists
 // @include     *bloodrizer.ru/games/kittens/*
 // @include     file:///*kitten-game*
-// @version     1.3.2
+// @version     1.3.3
 // @grant       none
 // @copyright   2015, cameroncondry
 // ==/UserScript==
@@ -13,7 +13,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.3.2';
+var version = 'Kitten Scientists version 1.3.3';
 var address = '19ZBVyaXQhikcuUszY2MVRb1MGL2YqicDX';
 
 // Game will be referenced in loadTest function
