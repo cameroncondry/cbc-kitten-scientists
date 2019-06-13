@@ -235,6 +235,27 @@ var run = function() {
                     moltenCore: {require: 'uranium',    enabled: false}
                 }
             },
+            time: {
+                // Should time upgrades be built automatically?
+                enabled: false,
+                trigger: 0.95,
+                items: {
+                    // Variants denote whether these buildings fall within the Chronoforge or Void categories.
+                    // Chronoforge has variant chrono.
+                    temporalBattery:     {require: false,          enabled: false, variant: 'chrono'},
+                    blastFurnace:        {require: false,          enabled: false, variant: 'chrono'},
+                    temporalAccelerator: {require: false,          enabled: false, variant: 'chrono'},
+                    temporalImpedance:   {require: false,          enabled: false, variant: 'chrono'},
+                    ressourceRetrieval:  {require: false,          enabled: false, variant: 'chrono'},
+                    
+                    // Void Space has variant void.
+                    cryochambers:        {require: false,          enabled: false, variant: 'void'},
+                    voidHoover:          {require: 'antimatter',   enabled: false, variant: 'void'},
+                    voidRift:            {require: false,          enabled: false, variant: 'void'},
+                    chronocontrol:       {require: 'temporalFlux', enabled: false, variant: 'void'},
+                    voidResonator:       {require: false,          enabled: false, variant: 'void'}
+                }
+            },
             craft: {
                 // Should resources be crafted automatically?
                 enabled: true,
@@ -245,27 +266,32 @@ var run = function() {
                 // In addition to the *require* property, which is explained above, items can also define a *max*. If they
                 // do, no more than that resource will be automatically produced. This feature can not be controlled through
                 // the UI and is not used for any resource by default.
-                // The *limited* property tells KS to only craft the resource once per season.
+                // The *limited* property tells KS to craft resources whenever the ratio of the component cost of the stored resources
+                // to the number of stored components is greater than the limit ratio "limRat".
+                // This means that if limRat is 0.5, then if you have 1000 beams and 500 beams worth of scaffolds, 250 of the beams
+                // will be crafted into scaffolds. If instead limRat is 0.75, 625 of the beams will be crafted into scaffolds for a final result
+                // of 1125 beams-worth of scaffolds and 375 remaining beams.
+                // Currently, limRat is not modifiable through the UI, though if there is demand, perhaps this will be added in the future.
                 items: {
-                    wood:       {require: 'catnip',      max: 0, limited: false, enabled: true},
-                    beam:       {require: 'wood',        max: 0, limited: false, enabled: true},
-                    slab:       {require: 'minerals',    max: 0, limited: false, enabled: true},
-                    steel:      {require: 'coal',        max: 0, limited: false, enabled: true},
-                    plate:      {require: 'iron',        max: 0, limited: false, enabled: true},
-                    alloy:      {require: 'titanium',    max: 0, limited: true,  enabled: false},
-                    concrete:   {require: false,         max: 0, limited: true,  enabled: false},
-                    gear:       {require: false,         max: 0, limited: true,  enabled: false},
-                    scaffold:   {require: false,         max: 0, limited: true,  enabled: false},
-                    ship:       {require: false,         max: 0, limited: true,  enabled: false},
-                    tanker:     {require: false,         max: 0, limited: true,  enabled: false},
-                    parchment:  {require: false,         max: 0, limited: true,  enabled: true},
-                    manuscript: {require: 'culture',     max: 0, limited: true,  enabled: true},
-                    compendium: {require: 'science',     max: 0, limited: true,  enabled: true},
-                    blueprint:  {require: 'science',     max: 0, limited: true,  enabled: false},
-                    kerosene:   {require: 'oil',         max: 0, limited: true,  enabled: false},
-                    megalith:   {require: false,         max: 0, limited: true,  enabled: false},
-                    eludium:    {require: 'unobtainium', max: 0, limited: true,  enabled: false},
-                    thorium:    {require: 'uranium',     max: 0, limited: true,  enabled: false}
+                    wood:       {require: 'catnip',      max: 0, limited: false, limRat: 0.5, enabled: true},
+                    beam:       {require: 'wood',        max: 0, limited: false, limRat: 0.5, enabled: true},
+                    slab:       {require: 'minerals',    max: 0, limited: false, limRat: 0.5, enabled: true},
+                    steel:      {require: 'coal',        max: 0, limited: false, limRat: 0.5, enabled: true},
+                    plate:      {require: 'iron',        max: 0, limited: false, limRat: 0.5, enabled: true},
+                    alloy:      {require: 'titanium',    max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    concrete:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    gear:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    scaffold:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    ship:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    tanker:     {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    parchment:  {require: false,         max: 0, limited: false, limRat: 0.5, enabled: true},
+                    manuscript: {require: 'culture',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    compendium: {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    blueprint:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    kerosene:   {require: 'oil',         max: 0, limited: false, limRat: 0.5, enabled: false},
+                    megalith:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
+                    eludium:    {require: 'unobtainium', max: 0, limited: false, limRat: 0.5, enabled: false},
+                    thorium:    {require: 'uranium',     max: 0, limited: false, limRat: 0.5, enabled: false}
                 }
             },
             trade: {
@@ -368,6 +394,7 @@ var run = function() {
         this.craftManager = new CraftManager();
         this.tradeManager = new TradeManager();
         this.religionManager = new ReligionManager();
+        this.timeManager = new TimeManager();
         this.explorationManager = new ExplorationManager();
         this.villageManager = new TabManager('Village');
     };
@@ -378,6 +405,7 @@ var run = function() {
         craftManager: undefined,
         tradeManager: undefined,
         religionManager: undefined,
+        timeManager: undefined,
         explorationManager: undefined,
         villageManager: undefined,
         loop: undefined,
@@ -403,6 +431,7 @@ var run = function() {
             if (options.auto.trade.enabled) this.trade();
             if (options.auto.hunt.enabled) this.hunt();
             if (options.auto.faith.enabled) this.worship();
+            if (options.auto.time.enabled) this.chrono();
             if (options.auto.crypto.enabled) this.crypto();
             if (options.auto.explore.enabled) this.explore();
         },
@@ -487,6 +516,26 @@ var run = function() {
                 game.religion.praise();
             }
         },
+        chrono: function () {
+            var builds = options.auto.time.items;
+            var buildManager = this.timeManager;
+            var craftManager = this.craftManager;
+            var trigger = options.auto.time.trigger;
+            
+            // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
+            buildManager.manager.render();
+            
+            for (var name in builds) {
+                if (!builds[name].enabled) continue;
+
+                var build = builds[name];
+                var require = !build.require ? false : craftManager.getResource(build.require);
+
+                if (!require || trigger <= require.value / require.maxValue) {
+                    buildManager.build(name, build.variant);
+                }
+            }
+        },
         build: function () {
             var builds = options.auto.build.items;
             var buildManager = this.buildManager;
@@ -552,7 +601,7 @@ var run = function() {
 
                 // Craft the resource if we meet the trigger requirement
                 if (!require || trigger <= require.value / require.maxValue) {
-                    var amount = manager.getLowestCraftAmount(name,craft.limited);
+                    var amount = manager.getLowestCraftAmount(name, craft.limited, craft.limRat);
 
                     if (amount > 0) {
                         manager.craft(name, amount);
@@ -781,6 +830,53 @@ var run = function() {
         }
     };
 
+    // Time manager
+    // ============
+    
+    var TimeManager = function () {
+        this.manager = new TabManager('Time');
+        this.crafts = new CraftManager();
+    };
+    
+    TimeManager.prototype = {
+        manager: undefined,
+        crafts: undefined,
+        build: function (name, variant) {
+            var build = this.getBuild(name, variant);
+            var button = this.getBuildButton(name, variant);
+
+            if (!button || !button.model.enabled) return;
+
+            //need to simulate a click so the game updates everything properly
+            button.domNode.click(build);
+            storeForSummary(name, 1, 'build');
+
+            var label = build.label;
+            activity('Kittens have built a new ' + label, 'ks-build');
+        },
+        getBuild: function (name, variant) {
+            if (variant === 'chrono') {
+                return game.time.getCFU(name);
+            } else {
+                return game.time.getVSU(name);
+            }
+        },
+        getBuildButton: function (name, variant) {
+            if (variant === 'chrono') {
+                var buttons = this.manager.tab.children[2].children[0].children;
+            } else {
+                var buttons = this.manager.tab.children[3].children[0].children;
+            }
+            var build = this.getBuild(name, variant);
+            for (var i in buttons) {
+                var haystack = buttons[i].model.name;
+                if (haystack.indexOf(build.label) !== -1) {
+                    return buttons[i];
+                }
+            }
+        }
+    };
+    
     // Building manager
     // ================
 
@@ -906,10 +1002,13 @@ var run = function() {
         getCraft: function (name) {
             return game.workshop.getCraft(this.getName(name));
         },
-        getLowestCraftAmount: function (name, limited) {
+        getLowestCraftAmount: function (name, limited, limRat) {
             var amount = Number.MAX_VALUE;
             var materials = this.getMaterials(name);
-
+            
+            var craft = this.getCraft(name);
+            var ratio = game.getResCraftRatio(craft);
+            
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
 
@@ -922,8 +1021,11 @@ var run = function() {
                     delta = this.getValueAvailable(i) / materials[i];
                 } else {
                     // Take the currently present amount of material to craft into account
-                    // Only craft "half" (TODO: document this behaviour)
-                    delta = (this.getValueAvailable(i) - materials[i] * this.getValueAvailable(res.name)) / (2 * materials[i]);
+                    // Currently this determines the amount of resources that can be crafted such that the produced resources and their components
+                    // in storage both are "worth" the same number of base materials (as determined by price and craft ratio).
+                    // This base material distribution is governed by limRat "limited ratio" which defaults to 0.5, corresponding to half of the possible components being further crafted.
+                    // If this were another value, such as 0.75, then if you had 10000 beams and 0 scaffolds, 7500 of the beams would be crafted into scaffolds.
+                    delta = limRat * ((this.getValueAvailable(i) + (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / materials[i]) - (this.getValueAvailable(res.name) / (1 + ratio));
                 }
 
                 amount = Math.min(delta,amount);
@@ -1264,6 +1366,7 @@ var run = function() {
             trade: options.auto.trade.enabled,
             hunt: options.auto.hunt.enabled,
             faith: options.auto.faith.enabled,
+            time: options.auto.time.enabled,
             festival: options.auto.festival.enabled,
             crypto: options.auto.crypto.enabled,
             explore: options.auto.explore.enabled
@@ -1271,6 +1374,7 @@ var run = function() {
         kittenStorage.resources = options.auto.resources;
         kittenStorage.triggers = {
             faith: options.auto.faith.trigger,
+            time: options.auto.time.trigger,
             hunt: options.auto.hunt.trigger,
             build: options.auto.build.trigger,
             space: options.auto.space.trigger,
@@ -1333,6 +1437,7 @@ var run = function() {
 
             if (saved.triggers) {
                 options.auto.faith.trigger = saved.triggers.faith;
+                options.auto.time.trigger = saved.triggers.time;
                 options.auto.hunt.trigger = saved.triggers.hunt;
                 options.auto.build.trigger = saved.triggers.build;
                 options.auto.space.trigger = saved.triggers.space;
@@ -1342,6 +1447,7 @@ var run = function() {
                 options.auto.explore.trigger = saved.triggers.explore;
 
                 $('#trigger-faith')[0].title = options.auto.faith.trigger;
+                $('#trigger-time')[0].title = options.auto.time.trigger;
                 $('#trigger-hunt')[0].title = options.auto.hunt.trigger;
                 $('#trigger-build')[0].title = options.auto.build.trigger;
                 $('#trigger-space')[0].title = options.auto.space.trigger;
@@ -1865,7 +1971,7 @@ var run = function() {
         input.on('change', function () {
             if (input.is(':checked') && option.limited == false) {
                 option.limited = true;
-                message('Crafting ' + ucfirst(name) + ': limited once per season');
+                message('Crafting ' + ucfirst(name) + ': limited to be proportional to cost ratio');
             } else if (input.not(':checked') && option.limited == true) {
                 option.limited = false;
                 message('Crafting ' + ucfirst(name) + ': unlimited');
@@ -1886,6 +1992,16 @@ var run = function() {
         var build = religionManager.getBuild(buildItem.name || buildOption, buildItem.variant);
         if (build) {
             options.auto.faith.items[buildOption].label = build.label;
+        }
+    }
+
+    // Grab button labels for time options
+    var timeManager = new TimeManager();
+    for (var buildOption in options.auto.time.items) {
+        var buildItem = options.auto.time.items[buildOption];
+        var build = timeManager.getBuild(buildItem.name || buildOption, buildItem.variant);
+        if (build) {
+            options.auto.time.items[buildOption].label = build.label;
         }
     }
 
@@ -1930,6 +2046,7 @@ var run = function() {
     optionsListElement.append(getToggle('trade',    'Trading'));
     optionsListElement.append(getToggle('hunt',     'Hunting'));
     optionsListElement.append(getToggle('faith',    'Religion'));
+    optionsListElement.append(getToggle('time',     'Time'));
     optionsListElement.append(getToggle('festival', 'Festival'));
     optionsListElement.append(getToggle('crypto',   'Crypto'));
     optionsListElement.append(getToggle('explore',  'Explore'));
