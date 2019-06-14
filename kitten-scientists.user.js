@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name        Kitten Scientists autofeed
+// @name        Kitten Scientists
 // @namespace   http://www.reddit.com/r/kittensgame/comments/34gb2u/kitten_scientists_automation_script/
 // @description Launch Kitten Scientists
 // @include     *bloodrizer.ru/games/kittens/*
 // @include     file:///*kitten-game*
-// @version     1.3.3
+// @version     1.3.2
 // @grant       none
 // @copyright   2015, cameroncondry
 // ==/UserScript==
