@@ -1721,7 +1721,7 @@ var run = function() {
                     auto.enabled = true;
                     message('Enabled Auto ' + ucfirst(text));
                     saveToKittenStorage();
-                } else if (input.not(':checked') && auto.enabled == true) {
+                } else if ((!input.is(':checked')) && auto.enabled == true) {
                     auto.enabled = false;
                     message('Disabled Auto ' + ucfirst(text));
                     saveToKittenStorage();
@@ -1923,7 +1923,7 @@ var run = function() {
             if (input.is(':checked') && option[season] == false) {
                 option[season] = true;
                 message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
-            } else if (input.not(':checked') && option[season] == true) {
+            } else if ((!input.is(':checked')) && option[season] == true) {
                 option[season] = false;
                 message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
             }
@@ -1959,7 +1959,7 @@ var run = function() {
             if (input.is(':checked') && option.enabled == false) {
                 option.enabled = true;
                 message('Enabled Auto ' + elementLabel);
-            } else if (input.not(':checked') && option.enabled == true) {
+            } else if ((!input.is(':checked')) && option.enabled == true) {
                 option.enabled = false;
                 message('Disabled Auto ' + elementLabel);
             }
@@ -1993,7 +1993,7 @@ var run = function() {
             if (input.is(':checked') && option.limited == false) {
                 option.limited = true;
                 message('Crafting ' + ucfirst(name) + ': limited to be proportional to cost ratio');
-            } else if (input.not(':checked') && option.limited == true) {
+            } else if ((!input.is(':checked')) && option.limited == true) {
                 option.limited = false;
                 message('Crafting ' + ucfirst(name) + ': unlimited');
             }
