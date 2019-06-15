@@ -63,6 +63,10 @@ var run = function() {
 				// Should exploring be automated?
                 enabled: false,
 			},
+			autofeed: {
+				// Should feeding elders be automated?
+                enabled: true,
+            },
             faith: {
                 // Should praising be automated?
                 enabled: true,
@@ -396,6 +400,7 @@ var run = function() {
         this.religionManager = new ReligionManager();
         this.timeManager = new TimeManager();
         this.explorationManager = new ExplorationManager();
+        // this.autofeedManager = new AutofeedManager();
         this.villageManager = new TabManager('Village');
     };
 
@@ -407,6 +412,7 @@ var run = function() {
         religionManager: undefined,
         timeManager: undefined,
         explorationManager: undefined,
+        // autofeedManager: undefined,
         villageManager: undefined,
         loop: undefined,
         start: function () {
@@ -434,7 +440,19 @@ var run = function() {
             if (options.auto.time.enabled) this.chrono();
             if (options.auto.crypto.enabled) this.crypto();
             if (options.auto.explore.enabled) this.explore();
+            if (options.auto.autofeed.enabled) this.autofeed();
         },
+        autofeed: function(){
+        // var manager = this.autofeedManager;
+        // Only feed if it's enabled
+        if (!options.auto.autofeed.enabled) return;
+        if(game.diplomacy.get("leviathans").unlocked && game.resPool.get("necrocorn").value>=1) {
+        if(game.diplomacy.get("leviathans").energy<game.religion.getZU("marker").val * 5 + 5) {
+        game.diplomacy.feedElders();
+        activity('Kittens fed the Elders. The elders are pleased');
+        }}
+    },
+
 		crypto: function () {
             var coinPrice = game.calendar.cryptoPrice;
             var previousRelic = game.resPool.get('relic').value;
@@ -1380,6 +1398,7 @@ var run = function() {
             space: options.auto.space.trigger,
             craft: options.auto.craft.trigger,
             crypto: options.auto.crypto.trigger,
+            autofeed: options.auto.autofeed.trigger,
             explore: options.auto.explore.trigger,
             trade: options.auto.trade.trigger
         };
@@ -1444,6 +1463,7 @@ var run = function() {
                 options.auto.craft.trigger = saved.triggers.craft;
                 options.auto.trade.trigger = saved.triggers.trade;
                 options.auto.crypto.trigger = saved.triggers.crypto;
+                options.auto.autofeed.trigger = saved.triggers.autofeed;
                 options.auto.explore.trigger = saved.triggers.explore;
 
                 $('#trigger-faith')[0].title = options.auto.faith.trigger;
@@ -1453,7 +1473,8 @@ var run = function() {
                 $('#trigger-space')[0].title = options.auto.space.trigger;
                 $('#trigger-craft')[0].title = options.auto.craft.trigger;
                 $('#trigger-trade')[0].title = options.auto.trade.trigger;
-                $('#trigger-crypto')[0].title = options.auto.crypto.trigger;				
+                $('#trigger-crypto')[0].title = options.auto.crypto.trigger;
+                $('#trigger-autofeed')[0].title = options.auto.autofeed.trigger;
             }
 
         } else {
@@ -1473,7 +1494,7 @@ var run = function() {
     };
 
     var setStockWarning = function(name, value) {
-        // simplest way to ensure it doesn't stick around too often; always do 
+        // simplest way to ensure it doesn't stick around too often; always do
         // a remove first then re-add only if needed
         $("#resource-" + name).removeClass("stockWarn");
 
@@ -2049,6 +2070,7 @@ var run = function() {
     optionsListElement.append(getToggle('time',     'Time'));
     optionsListElement.append(getToggle('festival', 'Festival'));
     optionsListElement.append(getToggle('crypto',   'Crypto'));
+    optionsListElement.append(getToggle('autofeed',   'Autofeed'));
     optionsListElement.append(getToggle('explore',  'Explore'));
 
     // add activity button
