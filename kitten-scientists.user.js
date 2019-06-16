@@ -1387,6 +1387,7 @@ var run = function() {
             time: options.auto.time.enabled,
             festival: options.auto.festival.enabled,
             crypto: options.auto.crypto.enabled,
+            autofeed: options.auto.autofeed.enabled,
             explore: options.auto.explore.enabled
         };
         kittenStorage.resources = options.auto.resources;
@@ -1398,7 +1399,6 @@ var run = function() {
             space: options.auto.space.trigger,
             craft: options.auto.craft.trigger,
             crypto: options.auto.crypto.trigger,
-            autofeed: options.auto.autofeed.trigger,
             explore: options.auto.explore.trigger,
             trade: options.auto.trade.trigger
         };
@@ -1463,7 +1463,6 @@ var run = function() {
                 options.auto.craft.trigger = saved.triggers.craft;
                 options.auto.trade.trigger = saved.triggers.trade;
                 options.auto.crypto.trigger = saved.triggers.crypto;
-                options.auto.autofeed.trigger = saved.triggers.autofeed;
                 options.auto.explore.trigger = saved.triggers.explore;
 
                 $('#trigger-faith')[0].title = options.auto.faith.trigger;
@@ -1474,7 +1473,6 @@ var run = function() {
                 $('#trigger-craft')[0].title = options.auto.craft.trigger;
                 $('#trigger-trade')[0].title = options.auto.trade.trigger;
                 $('#trigger-crypto')[0].title = options.auto.crypto.trigger;
-                $('#trigger-autofeed')[0].title = options.auto.autofeed.trigger;
             }
 
         } else {
