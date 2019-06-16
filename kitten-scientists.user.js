@@ -337,8 +337,8 @@ var run = function() {
                 //Should KS automatically upgrade?
                 enabled: false,
                 items: {
-                    workshop:  {enabled: false},
-                    science:   {enabled: false},
+                    upgrades:  {enabled: false},
+                    techs:     {enabled: false},
                     buildings: {enabled: false}
                 }
             },
@@ -573,7 +573,7 @@ var run = function() {
             
             buildManager.manager.render();
             
-            if (upgrades.workshop.enabled) {
+            if (upgrades.upgrades.enabled) {
                 var work = game.workshop.upgrades;
                 workLoop:
                 for (var upg in work) {
@@ -583,11 +583,11 @@ var run = function() {
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
                     }
-                    upgradeManager.upgrade(work[upg], 'workshop');
+                    upgradeManager.build(work[upg], 'workshop');
                 }
             }
             
-            if(upgrades.science.enabled) {
+            if(upgrades.techs.enabled) {
                 var tech = game.science.techs;
                 techLoop:
                 for (var upg in tech) {
@@ -597,7 +597,7 @@ var run = function() {
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue techLoop;}
                     }
-                    upgradeManager.upgrade(tech[upg], 'science');
+                    upgradeManager.build(tech[upg], 'science');
                 }
             }
             
@@ -971,11 +971,9 @@ var run = function() {
         },
         getBuildButton: function (upgrade, variant) {
             if (variant === 'workshop') {
-                var buttons = this.workManager.tab;
-                intentionalError;
+                var buttons = this.workManager.tab.buttons;
             } else if (variant === 'science') {
-                var buttons = this.sciManager.tab;
-                intentionalError;
+                var buttons = this.sciManager.tab.buttons;
             }
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
