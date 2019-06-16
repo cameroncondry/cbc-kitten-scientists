@@ -333,6 +333,15 @@ var run = function() {
                         summer:  true,  autumn:  true,  winter:  true,          spring:      true}
                 }
             },
+            upgrade: {
+                //Should KS automatically upgrade?
+                enabled: false,
+                items: {
+                    workshop:  {enabled: false},
+                    science:   {enabled: false},
+                    buildings: {enabled: false}
+                }
+            },
             resources: {
                 furs:        {stock: 1000},
                 unobtainium: {consume: 1.0}
@@ -393,6 +402,7 @@ var run = function() {
     // =================================
 
     var Engine = function () {
+        this.upgradeManager = new UpgradeManager();
         this.buildManager = new BuildManager();
         this.spaceManager = new SpaceManager();
         this.craftManager = new CraftManager();
@@ -405,6 +415,7 @@ var run = function() {
     };
 
     Engine.prototype = {
+        upgradeManager: undefined,
         buildManager: undefined,
         spaceManager: undefined,
         craftManager: undefined,
@@ -430,6 +441,7 @@ var run = function() {
         },
         iterate: function () {
             this.observeStars();
+            if (options.auto.upgrade.enabled) this.upgrade();
             if (options.auto.festival.enabled) this.holdFestival();
             if (options.auto.build.enabled) this.build();
             if (options.auto.space.enabled) this.space();
@@ -553,6 +565,44 @@ var run = function() {
                     buildManager.build(name, build.variant);
                 }
             }
+        },
+        upgrade: function () {
+            var upgrades = options.auto.upgrade.items;
+            var upgradeManager = this.upgradeManager;
+            var craftManager = this.craftManager;
+            
+            buildManager.manager.render();
+            
+            if (upgrades.workshop.enabled) {
+                var work = game.workshop.upgrades;
+                workLoop:
+                for (var upg in work) {
+                    if (work[upg].researched || !work[upg].unlocked) {continue;}
+                    
+                    var prices = work[upg].prices;
+                    for (var resource in prices) {
+                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
+                    }
+                    upgradeManager.upgrade(work[upg], 'workshop');
+                }
+            }
+            
+            if(upgrades.science.enabled) {
+                var tech = game.science.techs;
+                techLoop:
+                for (var upg in tech) {
+                    if (tech[upg].researched || !tech[upg].unlocked) {continue;}
+                    
+                    var prices = tech[upg].prices;
+                    for (var resource in prices) {
+                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue techLoop;}
+                    }
+                    upgradeManager.upgrade(tech[upg], 'science');
+                }
+            }
+            
+            //if (upgrades.buildings.enabled) {
+            //}
         },
         build: function () {
             var builds = options.auto.build.items;
@@ -889,6 +939,47 @@ var run = function() {
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
                 if (haystack.indexOf(build.label) !== -1) {
+                    return buttons[i];
+                }
+            }
+        }
+    };
+    
+    // Upgrade manager
+    // ============
+    
+    var UpgradeManager = function () {
+        this.workManager = new TabManager('Workshop');
+        this.sciManager = new TabManager('Science');
+        this.crafts = new CraftManager();
+    };
+    
+    UpgradeManager.prototype = {
+        manager: undefined,
+        crafts: undefined,
+        build: function (upgrade, variant) {
+            var button = this.getBuildButton(upgrade, variant);
+
+            if (!button || !button.model.enabled) return;
+
+            //need to simulate a click so the game updates everything properly
+            button.domNode.click(upgrade);
+            storeForSummary(build.name, 1, 'upgrade');
+
+            var label = upgrade.label;
+            activity('Kittens have bought the upgrade ' + label, 'ks-upgrade');
+        },
+        getBuildButton: function (upgrade, variant) {
+            if (variant === 'workshop') {
+                var buttons = this.workManager.tab;
+                intentionalError;
+            } else if (variant === 'science') {
+                var buttons = this.sciManager.tab;
+                intentionalError;
+            }
+            for (var i in buttons) {
+                var haystack = buttons[i].model.name;
+                if (haystack.indexOf(upgrade.label) !== -1) {
                     return buttons[i];
                 }
             }
@@ -1381,6 +1472,7 @@ var run = function() {
             build: options.auto.build.enabled,
             space: options.auto.space.enabled,
             craft: options.auto.craft.enabled,
+            upgrade: options.auto.upgrade.enabled,
             trade: options.auto.trade.enabled,
             hunt: options.auto.hunt.enabled,
             faith: options.auto.faith.enabled,
@@ -2064,6 +2156,7 @@ var run = function() {
     optionsListElement.append(getToggle('build',    'Building'));
     optionsListElement.append(getToggle('space',    'Space'));
     optionsListElement.append(getToggle('craft',    'Crafting'));
+    optionsListElement.append(getToggle('upgrade',  'Upgrading'));
     optionsListElement.append(getToggle('trade',    'Trading'));
     optionsListElement.append(getToggle('hunt',     'Hunting'));
     optionsListElement.append(getToggle('faith',    'Religion'));
