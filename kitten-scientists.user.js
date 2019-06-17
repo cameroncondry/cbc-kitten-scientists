@@ -603,45 +603,48 @@ var run = function() {
             }
             
             if (upgrades.buildings.enabled) {
-                
-                if (game.bld.getBuildingExt('pasture').meta.stage === 0) {
-                    if (game.bld.getBuildingExt('pasture').meta.stages[1].stageUnlocked) {
-                        game.bld.getBuildingExt('pasture').meta.on = 0;
-                        game.bld.getBuildingExt('pasture').meta.val = 0;
-                        game.bld.getBuildingExt('pasture').meta.stage = 1;
+                var pastureMeta = game.bld.getBuildingExt('pasture').meta;
+                if (pastureMeta.stage === 0) {
+                    if (pastureMeta.stages[1].stageUnlocked) {
+                        pastureMeta.on = 0;
+                        pastureMeta.val = 0;
+                        pastureMeta.stage = 1;
                         game.render();
                         activity('Upgraded pastures to solar farms!', 'ks-upgrade');
                     }
                 }
                 
-                if (game.bld.getBuildingExt('aqueduct').meta.stage === 0) {
-                    if (game.bld.getBuildingExt('aqueduct').meta.stages[1].stageUnlocked) {
-                        game.bld.getBuildingExt('aqueduct').meta.on = 0
-                        game.bld.getBuildingExt('aqueduct').meta.val = 0
-                        game.bld.getBuildingExt('aqueduct').meta.stage = 1
-                        game.bld.getBuildingExt('aqueduct').meta.calculateEffects(game.bld.getBuildingExt('aqueduct').meta, game)
+                var aqueductMeta = game.bld.getBuildingExt('aqueduct').meta;
+                if (aqueductMeta.stage === 0) {
+                    if (aqueductMeta.stages[1].stageUnlocked) {
+                        aqueductMeta.on = 0
+                        aqueductMeta.val = 0
+                        aqueductMeta.stage = 1
+                        aqueductMeta.calculateEffects(aqueductMeta, game)
                         game.render()
                         activity('Upgraded aqueducts to hydro plants!', 'ks-upgrade');
                     }
                 }
                 
-                if (game.bld.getBuildingExt('library').meta.stage === 0) {
-                    if (game.bld.getBuildingExt('library').meta.stages[1].stageUnlocked) {
-                        game.bld.getBuildingExt('library').meta.on = 0
-                        game.bld.getBuildingExt('library').meta.val = 0
-                        game.bld.getBuildingExt('library').meta.stage = 1
-                        game.bld.getBuildingExt('library').meta.calculateEffects(game.bld.getBuildingExt('library').meta, game)
+                var libraryMeta = game.bld.getBuildingExt('library').meta;
+                if (libraryMeta.stage === 0) {
+                    if (libraryMeta.stages[1].stageUnlocked) {
+                        libraryMeta.on = 0
+                        libraryMeta.val = 0
+                        libraryMeta.stage = 1
+                        libraryMeta.calculateEffects(libraryMeta, game)
                         game.render()
                         activity('Upgraded libraries to data centers!', 'ks-upgrade');
                     }
                     
                 }
                 
-                if (game.bld.getBuildingExt('amphitheatre').meta.stage === 0) {
-                    if (game.bld.getBuildingExt('amphitheatre').meta.stages[1].stageUnlocked) {
-                        game.bld.getBuildingExt('amphitheatre').meta.on = 0
-                        game.bld.getBuildingExt('amphitheatre').meta.val = 0
-                        game.bld.getBuildingExt('amphitheatre').meta.stage = 1
+                var amphitheatreMeta = game.bld.getBuildingExt('amphitheatre').meta;
+                if (amphitheatreMeta.stage === 0) {
+                    if (amphitheatreMeta.stages[1].stageUnlocked) {
+                        amphitheatreMeta.on = 0
+                        amphitheatreMeta.val = 0
+                        amphitheatreMeta.stage = 1
                         game.render()
                         activity('Upgraded amphitheatres to broadcast towers!', 'ks-upgrade');
                     }
