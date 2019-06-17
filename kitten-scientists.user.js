@@ -662,7 +662,9 @@ var run = function() {
             var tradeManager = this.tradeManager;
             var gold = craftManager.getResource('gold');
             var trades = [];
-
+            
+            tradeManager.manager.render();
+            
             // Only trade if it's enabled
             if (!options.auto.trade.enabled) return;
 
@@ -1134,8 +1136,6 @@ var run = function() {
     var TradeManager = function () {
         this.craftManager = new CraftManager();
         this.manager = new TabManager('Trade');
-
-        this.manager.render();
     };
 
     TradeManager.prototype = {
@@ -1149,7 +1149,7 @@ var run = function() {
 
             if (!race.unlocked) return;
 
-            var button = this.getTradeButton(race.title);
+            var button = this.getTradeButton(race.name);
 
             if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
@@ -1240,7 +1240,7 @@ var run = function() {
             for (var i in this.manager.tab.racePanels) {
                 var panel = this.manager.tab.racePanels[i];
 
-                if (panel.name.indexOf(race) > -1) return panel.tradeBtn;
+                if (panel.race.name === race) return panel.tradeBtn;
             }
 
             warning('unable to find trade button for ' + name);
