@@ -572,7 +572,7 @@ var run = function() {
             var craftManager = this.craftManager;
             
             upgradeManager.workManager.render();
-          	upgradeManager.sciManager.render();
+            upgradeManager.sciManager.render();
             
             if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
                 var work = game.workshop.upgrades;
@@ -602,8 +602,47 @@ var run = function() {
                 }
             }
             
-            //if (upgrades.buildings.enabled) {
-            //}
+            if (upgrades.buildings.enabled) {
+                
+                if (game.bld.getBuildingExt('pasture').meta.stage === 0) {
+                    if (game.bld.getBuildingExt('pasture').meta.stages[1].stageUnlocked) {
+                        game.bld.getBuildingExt('pasture').meta.on = 0;
+                        game.bld.getBuildingExt('pasture').meta.val = 0;
+                        game.bld.getBuildingExt('pasture').meta.stage = 1;
+                        game.render();
+                    }
+                }
+                
+                if (game.bld.getBuildingExt('aqueduct').meta.stage === 0) {
+                    if (game.bld.getBuildingExt('aqueduct').meta.stages[1].stageUnlocked) {
+                        game.bld.getBuildingExt('aqueduct').meta.on = 0
+                        game.bld.getBuildingExt('aqueduct').meta.val = 0
+                        game.bld.getBuildingExt('aqueduct').meta.stage = 1
+                        game.bld.getBuildingExt('aqueduct').meta.calculateEffects(game.bld.getBuildingExt('aqueduct').meta, game)
+                        game.render()
+                    }
+                }
+                
+                if (game.bld.getBuildingExt('library').meta.stage === 0) {
+                    if (game.bld.getBuildingExt('library').meta.stages[1].stageUnlocked) {
+                        game.bld.getBuildingExt('library').meta.on = 0
+                        game.bld.getBuildingExt('library').meta.val = 0
+                        game.bld.getBuildingExt('library').meta.stage = 1
+                        game.bld.getBuildingExt('library').meta.calculateEffects(game.bld.getBuildingExt('library').meta, game)
+                        game.render()
+                    }
+                    
+                }
+                
+                if (game.bld.getBuildingExt('amphitheatre').meta.stage === 0) {
+                    if (game.bld.getBuildingExt('amphitheatre').meta.stages[1].stageUnlocked) {
+                        game.bld.getBuildingExt('pasture').meta.on = 0
+                        game.bld.getBuildingExt('pasture').meta.val = 0
+                        game.bld.getBuildingExt('pasture').meta.stage = 1
+                        game.render()
+                    }
+                }
+            }
         },
         build: function () {
             var builds = options.auto.build.items;
