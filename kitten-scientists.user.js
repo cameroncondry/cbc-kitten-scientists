@@ -636,9 +636,9 @@ var run = function() {
                 
                 if (game.bld.getBuildingExt('amphitheatre').meta.stage === 0) {
                     if (game.bld.getBuildingExt('amphitheatre').meta.stages[1].stageUnlocked) {
-                        game.bld.getBuildingExt('pasture').meta.on = 0
-                        game.bld.getBuildingExt('pasture').meta.val = 0
-                        game.bld.getBuildingExt('pasture').meta.stage = 1
+                        game.bld.getBuildingExt('amphitheatre').meta.on = 0
+                        game.bld.getBuildingExt('amphitheatre').meta.val = 0
+                        game.bld.getBuildingExt('amphitheatre').meta.stage = 1
                         game.render()
                     }
                 }
