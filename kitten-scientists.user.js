@@ -333,6 +333,15 @@ var run = function() {
                         summer:  true,  autumn:  true,  winter:  true,          spring:      true}
                 }
             },
+            upgrade: {
+                //Should KS automatically upgrade?
+                enabled: false,
+                items: {
+                    upgrades:  {enabled: false},
+                    techs:     {enabled: false},
+                    buildings: {enabled: false}
+                }
+            },
             resources: {
                 furs:        {stock: 1000},
                 unobtainium: {consume: 1.0}
@@ -393,6 +402,7 @@ var run = function() {
     // =================================
 
     var Engine = function () {
+        this.upgradeManager = new UpgradeManager();
         this.buildManager = new BuildManager();
         this.spaceManager = new SpaceManager();
         this.craftManager = new CraftManager();
@@ -405,6 +415,7 @@ var run = function() {
     };
 
     Engine.prototype = {
+        upgradeManager: undefined,
         buildManager: undefined,
         spaceManager: undefined,
         craftManager: undefined,
@@ -430,6 +441,7 @@ var run = function() {
         },
         iterate: function () {
             this.observeStars();
+            if (options.auto.upgrade.enabled) this.upgrade();
             if (options.auto.festival.enabled) this.holdFestival();
             if (options.auto.build.enabled) this.build();
             if (options.auto.space.enabled) this.space();
@@ -551,6 +563,91 @@ var run = function() {
 
                 if (!require || trigger <= require.value / require.maxValue) {
                     buildManager.build(name, build.variant);
+                }
+            }
+        },
+        upgrade: function () {
+            var upgrades = options.auto.upgrade.items;
+            var upgradeManager = this.upgradeManager;
+            var craftManager = this.craftManager;
+            
+            upgradeManager.workManager.render();
+            upgradeManager.sciManager.render();
+            
+            if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
+                var work = game.workshop.upgrades;
+                workLoop:
+                for (var upg in work) {
+                    if (work[upg].researched || !work[upg].unlocked) {continue;}
+                    
+                    var prices = work[upg].prices;
+                    for (var resource in prices) {
+                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
+                    }
+                    upgradeManager.build(work[upg], 'workshop');
+                }
+            }
+            
+            if(upgrades.techs.enabled && gamePage.tabs[2].visible) {
+                var tech = game.science.techs;
+                techLoop:
+                for (var upg in tech) {
+                    if (tech[upg].researched || !tech[upg].unlocked) {continue;}
+                    
+                    var prices = tech[upg].prices;
+                    for (var resource in prices) {
+                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue techLoop;}
+                    }
+                    upgradeManager.build(tech[upg], 'science');
+                }
+            }
+            
+            if (upgrades.buildings.enabled) {
+                var pastureMeta = game.bld.getBuildingExt('pasture').meta;
+                if (pastureMeta.stage === 0) {
+                    if (pastureMeta.stages[1].stageUnlocked) {
+                        pastureMeta.on = 0;
+                        pastureMeta.val = 0;
+                        pastureMeta.stage = 1;
+                        game.render();
+                        activity('Upgraded pastures to solar farms!', 'ks-upgrade');
+                    }
+                }
+                
+                var aqueductMeta = game.bld.getBuildingExt('aqueduct').meta;
+                if (aqueductMeta.stage === 0) {
+                    if (aqueductMeta.stages[1].stageUnlocked) {
+                        aqueductMeta.on = 0
+                        aqueductMeta.val = 0
+                        aqueductMeta.stage = 1
+                        aqueductMeta.calculateEffects(aqueductMeta, game)
+                        game.render()
+                        activity('Upgraded aqueducts to hydro plants!', 'ks-upgrade');
+                    }
+                }
+                
+                var libraryMeta = game.bld.getBuildingExt('library').meta;
+                if (libraryMeta.stage === 0) {
+                    if (libraryMeta.stages[1].stageUnlocked) {
+                        libraryMeta.on = 0
+                        libraryMeta.val = 0
+                        libraryMeta.stage = 1
+                        libraryMeta.calculateEffects(libraryMeta, game)
+                        game.render()
+                        activity('Upgraded libraries to data centers!', 'ks-upgrade');
+                    }
+                    
+                }
+                
+                var amphitheatreMeta = game.bld.getBuildingExt('amphitheatre').meta;
+                if (amphitheatreMeta.stage === 0) {
+                    if (amphitheatreMeta.stages[1].stageUnlocked) {
+                        amphitheatreMeta.on = 0
+                        amphitheatreMeta.val = 0
+                        amphitheatreMeta.stage = 1
+                        game.render()
+                        activity('Upgraded amphitheatres to broadcast towers!', 'ks-upgrade');
+                    }
                 }
             }
         },
@@ -891,6 +988,45 @@ var run = function() {
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
                 if (haystack.indexOf(build.label) !== -1) {
+                    return buttons[i];
+                }
+            }
+        }
+    };
+    
+    // Upgrade manager
+    // ============
+    
+    var UpgradeManager = function () {
+        this.workManager = new TabManager('Workshop');
+        this.sciManager = new TabManager('Science');
+        this.crafts = new CraftManager();
+    };
+    
+    UpgradeManager.prototype = {
+        manager: undefined,
+        crafts: undefined,
+        build: function (upgrade, variant) {
+            var button = this.getBuildButton(upgrade, variant);
+
+            if (!button || !button.model.enabled) return;
+
+            //need to simulate a click so the game updates everything properly
+            button.domNode.click(upgrade);
+            storeForSummary(build.name, 1, 'upgrade');
+
+            var label = upgrade.label;
+            activity('Kittens have bought the upgrade ' + label, 'ks-upgrade');
+        },
+        getBuildButton: function (upgrade, variant) {
+            if (variant === 'workshop') {
+                var buttons = this.workManager.tab.buttons;
+            } else if (variant === 'science') {
+                var buttons = this.sciManager.tab.buttons;
+            }
+            for (var i in buttons) {
+                var haystack = buttons[i].model.name;
+                if (haystack === upgrade.label) {
                     return buttons[i];
                 }
             }
@@ -1381,6 +1517,7 @@ var run = function() {
             build: options.auto.build.enabled,
             space: options.auto.space.enabled,
             craft: options.auto.craft.enabled,
+            upgrade: options.auto.upgrade.enabled,
             trade: options.auto.trade.enabled,
             hunt: options.auto.hunt.enabled,
             faith: options.auto.faith.enabled,
@@ -2062,6 +2199,7 @@ var run = function() {
     optionsListElement.append(getToggle('build',    'Building'));
     optionsListElement.append(getToggle('space',    'Space'));
     optionsListElement.append(getToggle('craft',    'Crafting'));
+    optionsListElement.append(getToggle('upgrade',  'Upgrading'));
     optionsListElement.append(getToggle('trade',    'Trading'));
     optionsListElement.append(getToggle('hunt',     'Hunting'));
     optionsListElement.append(getToggle('faith',    'Religion'));
