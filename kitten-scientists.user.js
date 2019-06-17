@@ -333,6 +333,15 @@ var run = function() {
                         summer:  true,  autumn:  true,  winter:  true,          spring:      true}
                 }
             },
+            upgrade: {
+                //Should KS automatically upgrade?
+                enabled: false,
+                items: {
+                    upgrades:  {enabled: false},
+                    techs:     {enabled: false},
+                    buildings: {enabled: false}
+                }
+            },
             resources: {
                 furs:        {stock: 1000},
                 unobtainium: {consume: 1.0}
@@ -393,6 +402,7 @@ var run = function() {
     // =================================
 
     var Engine = function () {
+        this.upgradeManager = new UpgradeManager();
         this.buildManager = new BuildManager();
         this.spaceManager = new SpaceManager();
         this.craftManager = new CraftManager();
@@ -405,6 +415,7 @@ var run = function() {
     };
 
     Engine.prototype = {
+        upgradeManager: undefined,
         buildManager: undefined,
         spaceManager: undefined,
         craftManager: undefined,
@@ -430,6 +441,7 @@ var run = function() {
         },
         iterate: function () {
             this.observeStars();
+            if (options.auto.upgrade.enabled) this.upgrade();
             if (options.auto.festival.enabled) this.holdFestival();
             if (options.auto.build.enabled) this.build();
             if (options.auto.space.enabled) this.space();
@@ -554,6 +566,91 @@ var run = function() {
                 }
             }
         },
+        upgrade: function () {
+            var upgrades = options.auto.upgrade.items;
+            var upgradeManager = this.upgradeManager;
+            var craftManager = this.craftManager;
+            
+            upgradeManager.workManager.render();
+            upgradeManager.sciManager.render();
+            
+            if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
+                var work = game.workshop.upgrades;
+                workLoop:
+                for (var upg in work) {
+                    if (work[upg].researched || !work[upg].unlocked) {continue;}
+                    
+                    var prices = work[upg].prices;
+                    for (var resource in prices) {
+                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
+                    }
+                    upgradeManager.build(work[upg], 'workshop');
+                }
+            }
+            
+            if(upgrades.techs.enabled && gamePage.tabs[2].visible) {
+                var tech = game.science.techs;
+                techLoop:
+                for (var upg in tech) {
+                    if (tech[upg].researched || !tech[upg].unlocked) {continue;}
+                    
+                    var prices = tech[upg].prices;
+                    for (var resource in prices) {
+                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue techLoop;}
+                    }
+                    upgradeManager.build(tech[upg], 'science');
+                }
+            }
+            
+            if (upgrades.buildings.enabled) {
+                var pastureMeta = game.bld.getBuildingExt('pasture').meta;
+                if (pastureMeta.stage === 0) {
+                    if (pastureMeta.stages[1].stageUnlocked) {
+                        pastureMeta.on = 0;
+                        pastureMeta.val = 0;
+                        pastureMeta.stage = 1;
+                        game.render();
+                        activity('Upgraded pastures to solar farms!', 'ks-upgrade');
+                    }
+                }
+                
+                var aqueductMeta = game.bld.getBuildingExt('aqueduct').meta;
+                if (aqueductMeta.stage === 0) {
+                    if (aqueductMeta.stages[1].stageUnlocked) {
+                        aqueductMeta.on = 0
+                        aqueductMeta.val = 0
+                        aqueductMeta.stage = 1
+                        aqueductMeta.calculateEffects(aqueductMeta, game)
+                        game.render()
+                        activity('Upgraded aqueducts to hydro plants!', 'ks-upgrade');
+                    }
+                }
+                
+                var libraryMeta = game.bld.getBuildingExt('library').meta;
+                if (libraryMeta.stage === 0) {
+                    if (libraryMeta.stages[1].stageUnlocked) {
+                        libraryMeta.on = 0
+                        libraryMeta.val = 0
+                        libraryMeta.stage = 1
+                        libraryMeta.calculateEffects(libraryMeta, game)
+                        game.render()
+                        activity('Upgraded libraries to data centers!', 'ks-upgrade');
+                    }
+                    
+                }
+                
+                var amphitheatreMeta = game.bld.getBuildingExt('amphitheatre').meta;
+                if (amphitheatreMeta.stage === 0) {
+                    if (amphitheatreMeta.stages[1].stageUnlocked) {
+                        amphitheatreMeta.on = 0
+                        amphitheatreMeta.val = 0
+                        amphitheatreMeta.stage = 1
+                        game.render()
+                        activity('Upgraded amphitheatres to broadcast towers!', 'ks-upgrade');
+                    }
+                }
+            }
+        },
         build: function () {
             var builds = options.auto.build.items;
             var buildManager = this.buildManager;
@@ -662,7 +759,9 @@ var run = function() {
             var tradeManager = this.tradeManager;
             var gold = craftManager.getResource('gold');
             var trades = [];
-
+            
+            tradeManager.manager.render();
+            
             // Only trade if it's enabled
             if (!options.auto.trade.enabled) return;
 
@@ -889,6 +988,45 @@ var run = function() {
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
                 if (haystack.indexOf(build.label) !== -1) {
+                    return buttons[i];
+                }
+            }
+        }
+    };
+    
+    // Upgrade manager
+    // ============
+    
+    var UpgradeManager = function () {
+        this.workManager = new TabManager('Workshop');
+        this.sciManager = new TabManager('Science');
+        this.crafts = new CraftManager();
+    };
+    
+    UpgradeManager.prototype = {
+        manager: undefined,
+        crafts: undefined,
+        build: function (upgrade, variant) {
+            var button = this.getBuildButton(upgrade, variant);
+
+            if (!button || !button.model.enabled) return;
+
+            //need to simulate a click so the game updates everything properly
+            button.domNode.click(upgrade);
+            storeForSummary(build.name, 1, 'upgrade');
+
+            var label = upgrade.label;
+            activity('Kittens have bought the upgrade ' + label, 'ks-upgrade');
+        },
+        getBuildButton: function (upgrade, variant) {
+            if (variant === 'workshop') {
+                var buttons = this.workManager.tab.buttons;
+            } else if (variant === 'science') {
+                var buttons = this.sciManager.tab.buttons;
+            }
+            for (var i in buttons) {
+                var haystack = buttons[i].model.name;
+                if (haystack === upgrade.label) {
                     return buttons[i];
                 }
             }
@@ -1134,8 +1272,6 @@ var run = function() {
     var TradeManager = function () {
         this.craftManager = new CraftManager();
         this.manager = new TabManager('Trade');
-
-        this.manager.render();
     };
 
     TradeManager.prototype = {
@@ -1149,7 +1285,7 @@ var run = function() {
 
             if (!race.unlocked) return;
 
-            var button = this.getTradeButton(race.title);
+            var button = this.getTradeButton(race.name);
 
             if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
@@ -1240,10 +1376,10 @@ var run = function() {
             for (var i in this.manager.tab.racePanels) {
                 var panel = this.manager.tab.racePanels[i];
 
-                if (panel.name.indexOf(race) > -1) return panel.tradeBtn;
+                if (panel.race.name === race) return panel.tradeBtn;
             }
 
-            warning('unable to find trade button for ' + name);
+            warning('unable to find trade button for ' + race);
         }
     };
 
@@ -1381,12 +1517,14 @@ var run = function() {
             build: options.auto.build.enabled,
             space: options.auto.space.enabled,
             craft: options.auto.craft.enabled,
+            upgrade: options.auto.upgrade.enabled,
             trade: options.auto.trade.enabled,
             hunt: options.auto.hunt.enabled,
             faith: options.auto.faith.enabled,
             time: options.auto.time.enabled,
             festival: options.auto.festival.enabled,
             crypto: options.auto.crypto.enabled,
+            autofeed: options.auto.autofeed.enabled,
             explore: options.auto.explore.enabled
         };
         kittenStorage.resources = options.auto.resources;
@@ -1398,7 +1536,6 @@ var run = function() {
             space: options.auto.space.trigger,
             craft: options.auto.craft.trigger,
             crypto: options.auto.crypto.trigger,
-            autofeed: options.auto.autofeed.trigger,
             explore: options.auto.explore.trigger,
             trade: options.auto.trade.trigger
         };
@@ -1463,7 +1600,6 @@ var run = function() {
                 options.auto.craft.trigger = saved.triggers.craft;
                 options.auto.trade.trigger = saved.triggers.trade;
                 options.auto.crypto.trigger = saved.triggers.crypto;
-                options.auto.autofeed.trigger = saved.triggers.autofeed;
                 options.auto.explore.trigger = saved.triggers.explore;
 
                 $('#trigger-faith')[0].title = options.auto.faith.trigger;
@@ -1474,7 +1610,6 @@ var run = function() {
                 $('#trigger-craft')[0].title = options.auto.craft.trigger;
                 $('#trigger-trade')[0].title = options.auto.trade.trigger;
                 $('#trigger-crypto')[0].title = options.auto.crypto.trigger;
-                $('#trigger-autofeed')[0].title = options.auto.autofeed.trigger;
             }
 
         } else {
@@ -1721,7 +1856,7 @@ var run = function() {
                     auto.enabled = true;
                     message('Enabled Auto ' + ucfirst(text));
                     saveToKittenStorage();
-                } else if (input.not(':checked') && auto.enabled == true) {
+                } else if ((!input.is(':checked')) && auto.enabled == true) {
                     auto.enabled = false;
                     message('Disabled Auto ' + ucfirst(text));
                     saveToKittenStorage();
@@ -1923,7 +2058,7 @@ var run = function() {
             if (input.is(':checked') && option[season] == false) {
                 option[season] = true;
                 message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
-            } else if (input.not(':checked') && option[season] == true) {
+            } else if ((!input.is(':checked')) && option[season] == true) {
                 option[season] = false;
                 message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
             }
@@ -1959,7 +2094,7 @@ var run = function() {
             if (input.is(':checked') && option.enabled == false) {
                 option.enabled = true;
                 message('Enabled Auto ' + elementLabel);
-            } else if (input.not(':checked') && option.enabled == true) {
+            } else if ((!input.is(':checked')) && option.enabled == true) {
                 option.enabled = false;
                 message('Disabled Auto ' + elementLabel);
             }
@@ -1993,7 +2128,7 @@ var run = function() {
             if (input.is(':checked') && option.limited == false) {
                 option.limited = true;
                 message('Crafting ' + ucfirst(name) + ': limited to be proportional to cost ratio');
-            } else if (input.not(':checked') && option.limited == true) {
+            } else if ((!input.is(':checked')) && option.limited == true) {
                 option.limited = false;
                 message('Crafting ' + ucfirst(name) + ': unlimited');
             }
@@ -2064,6 +2199,7 @@ var run = function() {
     optionsListElement.append(getToggle('build',    'Building'));
     optionsListElement.append(getToggle('space',    'Space'));
     optionsListElement.append(getToggle('craft',    'Crafting'));
+    optionsListElement.append(getToggle('upgrade',  'Upgrading'));
     optionsListElement.append(getToggle('trade',    'Trading'));
     optionsListElement.append(getToggle('hunt',     'Hunting'));
     optionsListElement.append(getToggle('faith',    'Religion'));
