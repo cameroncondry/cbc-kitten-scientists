@@ -610,6 +610,7 @@ var run = function() {
                         game.bld.getBuildingExt('pasture').meta.val = 0;
                         game.bld.getBuildingExt('pasture').meta.stage = 1;
                         game.render();
+                        activity('Upgraded pastures to solar farms!', 'ks-upgrade');
                     }
                 }
                 
@@ -620,6 +621,7 @@ var run = function() {
                         game.bld.getBuildingExt('aqueduct').meta.stage = 1
                         game.bld.getBuildingExt('aqueduct').meta.calculateEffects(game.bld.getBuildingExt('aqueduct').meta, game)
                         game.render()
+                        activity('Upgraded aqueducts to hydro plants!', 'ks-upgrade');
                     }
                 }
                 
@@ -630,6 +632,7 @@ var run = function() {
                         game.bld.getBuildingExt('library').meta.stage = 1
                         game.bld.getBuildingExt('library').meta.calculateEffects(game.bld.getBuildingExt('library').meta, game)
                         game.render()
+                        activity('Upgraded libraries to data centers!', 'ks-upgrade');
                     }
                     
                 }
@@ -640,6 +643,7 @@ var run = function() {
                         game.bld.getBuildingExt('amphitheatre').meta.val = 0
                         game.bld.getBuildingExt('amphitheatre').meta.stage = 1
                         game.render()
+                        activity('Upgraded amphitheatres to broadcast towers!', 'ks-upgrade');
                     }
                 }
             }
