@@ -662,7 +662,9 @@ var run = function() {
             var tradeManager = this.tradeManager;
             var gold = craftManager.getResource('gold');
             var trades = [];
-
+            
+            tradeManager.manager.render();
+            
             // Only trade if it's enabled
             if (!options.auto.trade.enabled) return;
 
@@ -1134,8 +1136,6 @@ var run = function() {
     var TradeManager = function () {
         this.craftManager = new CraftManager();
         this.manager = new TabManager('Trade');
-
-        this.manager.render();
     };
 
     TradeManager.prototype = {
@@ -1149,7 +1149,7 @@ var run = function() {
 
             if (!race.unlocked) return;
 
-            var button = this.getTradeButton(race.title);
+            var button = this.getTradeButton(race.name);
 
             if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
@@ -1240,10 +1240,10 @@ var run = function() {
             for (var i in this.manager.tab.racePanels) {
                 var panel = this.manager.tab.racePanels[i];
 
-                if (panel.name.indexOf(race) > -1) return panel.tradeBtn;
+                if (panel.race.name === race) return panel.tradeBtn;
             }
 
-            warning('unable to find trade button for ' + name);
+            warning('unable to find trade button for ' + race);
         }
     };
 
@@ -1719,7 +1719,7 @@ var run = function() {
                     auto.enabled = true;
                     message('Enabled Auto ' + ucfirst(text));
                     saveToKittenStorage();
-                } else if (input.not(':checked') && auto.enabled == true) {
+                } else if ((!input.is(':checked')) && auto.enabled == true) {
                     auto.enabled = false;
                     message('Disabled Auto ' + ucfirst(text));
                     saveToKittenStorage();
@@ -1921,7 +1921,7 @@ var run = function() {
             if (input.is(':checked') && option[season] == false) {
                 option[season] = true;
                 message('Enabled trading with ' + ucfirst(name) + ' in the ' + ucfirst(season));
-            } else if (input.not(':checked') && option[season] == true) {
+            } else if ((!input.is(':checked')) && option[season] == true) {
                 option[season] = false;
                 message('Disabled trading ' + ucfirst(name) + ' in the ' + ucfirst(season));
             }
@@ -1957,7 +1957,7 @@ var run = function() {
             if (input.is(':checked') && option.enabled == false) {
                 option.enabled = true;
                 message('Enabled Auto ' + elementLabel);
-            } else if (input.not(':checked') && option.enabled == true) {
+            } else if ((!input.is(':checked')) && option.enabled == true) {
                 option.enabled = false;
                 message('Disabled Auto ' + elementLabel);
             }
@@ -1991,7 +1991,7 @@ var run = function() {
             if (input.is(':checked') && option.limited == false) {
                 option.limited = true;
                 message('Crafting ' + ucfirst(name) + ': limited to be proportional to cost ratio');
-            } else if (input.not(':checked') && option.limited == true) {
+            } else if ((!input.is(':checked')) && option.limited == true) {
                 option.limited = false;
                 message('Crafting ' + ucfirst(name) + ': unlimited');
             }
