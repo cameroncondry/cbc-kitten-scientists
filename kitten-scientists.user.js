@@ -1243,7 +1243,7 @@ var run = function() {
                 if (panel.race.name === race) return panel.tradeBtn;
             }
 
-            warning('unable to find trade button for ' + name);
+            warning('unable to find trade button for ' + race);
         }
     };
 
