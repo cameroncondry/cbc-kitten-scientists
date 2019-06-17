@@ -571,9 +571,10 @@ var run = function() {
             var upgradeManager = this.upgradeManager;
             var craftManager = this.craftManager;
             
-            buildManager.manager.render();
+            upgradeManager.workManager.render();
+          	upgradeManager.sciManager.render();
             
-            if (upgrades.upgrades.enabled) {
+            if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
                 var work = game.workshop.upgrades;
                 workLoop:
                 for (var upg in work) {
@@ -587,7 +588,7 @@ var run = function() {
                 }
             }
             
-            if(upgrades.techs.enabled) {
+            if(upgrades.techs.enabled && gamePage.tabs[2].visible) {
                 var tech = game.science.techs;
                 techLoop:
                 for (var upg in tech) {
@@ -977,7 +978,7 @@ var run = function() {
             }
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
-                if (haystack.indexOf(upgrade.label) !== -1) {
+                if (haystack === upgrade.label) {
                     return buttons[i];
                 }
             }
