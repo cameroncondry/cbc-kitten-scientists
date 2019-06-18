@@ -659,9 +659,38 @@ var run = function() {
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-
+            
+            var bList = [];
+          	var i=0;
+            for (name in builds) {
+              	var build = builds[name];
+                if (!build.enabled) continue;
+                var require = !build.require ? false : craftManager.getResource(build.require);
+                if (!require || trigger <= require.value / require.maxValue) {
+                    if(typeof(build.stage) !== 'undefined' && build.stage !== game.bld.getBuildingExt(build.name || name).meta.stage) { 
+                      continue;
+                    }
+                    bList.push(new Object());
+                  	bList[i].id = name;
+                  	bList[i].label = build.label;
+                  	bList[i].name = build.name;
+                    bList[i].stage = build.stage;
+                  	i++;
+                }
+            }
+            
+            var tempPool = [];
+            for (res in game.resPool.resources) {
+              	tempPool.push(new Object());
+            		tempPool[res].name=game.resPool.resources[res].name;
+            }
+          
+            for (var res in tempPool) {tempPool[res].value = craftManager.getValueAvailable(tempPool[res].name, true);}
+            
+            
             // Using labeled for loop to break out of a nested loop
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label
+            
             buildLoop:
             for (var name in builds) {
                 if (!builds[name].enabled) continue;
@@ -1054,6 +1083,12 @@ var run = function() {
             button.domNode.click(build);
             storeForSummary(name, 1, 'build');
 
+            
+          	/*button.controller.build(button.model, 10000);
+          	game.render()
+          	storeForSummary(name, amount, 'build');*/
+          
+            
             var label = build.meta.label ? build.meta.label : build.meta.stages[0].label;
             activity('Kittens have built a new ' + label, 'ks-build');
         },
