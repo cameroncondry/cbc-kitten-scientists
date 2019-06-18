@@ -661,7 +661,8 @@ var run = function() {
             buildManager.manager.render();
             
             var bList = [];
-          	var i=0;
+            var countList = [];
+            var i = 0;
             for (name in builds) {
               	var build = builds[name];
                 if (!build.enabled) continue;
@@ -671,44 +672,57 @@ var run = function() {
                       continue;
                     }
                     bList.push(new Object());
-                  	bList[i].id = name;
-                  	bList[i].label = build.label;
-                  	bList[i].name = build.name;
+                    bList[i].id = name;
+                    bList[i].label = build.label;
+                    bList[i].name = build.name;
                     bList[i].stage = build.stage;
-                  	i++;
+                    countList.push(new Object());
+                    countList[i].id = name;
+                    countList[i].label = build.label;
+                    countList[i].name = build.name;
+                    countList[i].stage = build.stage;
+                    countList[i].count = 0;
+                    countList[i].spot = i;
+                    i++;
                 }
             }
+            console.log(bList);
+            console.log(countList);
             
             var tempPool = [];
-            for (res in game.resPool.resources) {
-              	tempPool.push(new Object());
-            		tempPool[res].name=game.resPool.resources[res].name;
+            for (var res in game.resPool.resources) {
+              	tempPool.push(game.resPool.resources[res].name = new Object());
+                tempPool[res].name=game.resPool.resources[res].name;
             }
           
             for (var res in tempPool) {tempPool[res].value = craftManager.getValueAvailable(tempPool[res].name, true);}
-            
+            console.log(tempPool);
             
             // Using labeled for loop to break out of a nested loop
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label
-            
-            buildLoop:
-            for (var name in builds) {
-                if (!builds[name].enabled) continue;
-
-                var build = builds[name];
-                var require = !build.require ? false : craftManager.getResource(build.require);
-
-                if (!require || trigger <= require.value / require.maxValue) {
-                    // verify that the building prices is within the current stock settings
-                    var prices = game.bld.getPrices(build.name || name);
+            while(countList.length !== 0) {
+                var k = 0;
+                buildLoop:
+                for (var j = 0; j < countList.length; j++) {
+                    var build = countList[j];
+                    var prices = game.bld.getPrices(build.name || build.id);
+                    var priceRatio = game.bld.getPriceRatio(build.name || build.id);
                     for (var p = 0; p < prices.length; p++) {
-                        if (craftManager.getValueAvailable(prices[p].name, true) < prices[p].val) continue buildLoop;
+                        if (tempPool[prices[p].name].value * Math.pow(priceRatio, k) < prices[p].val) {
+                            bList[countList[j].spot].count = countList[j].count;
+                            countList.splice(j, 1);
+                            j--;
+                            continue buildLoop;
+                        }
                     }
-
-                    // If the build overrides the name, use that name instead.
-                    // This is usually true for buildings that can be upgraded.
-                    buildManager.build(build.name || name, build.stage);
+                    countList[j].count++;
                 }
+                k++;
+            }
+            console.log(bList);
+            
+            for (var entry in bList) {
+                if (entry.count > 0) {buildManager.build(entry.name || entry.id, entry.stage, entry.count);}
             }
         },
         space: function () {
