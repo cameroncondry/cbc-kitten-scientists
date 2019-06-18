@@ -686,45 +686,51 @@ var run = function() {
                     i++;
                 }
             }
-            console.log(bList);
-            console.log(countList);
             
-            var tempPool = [];
+            var tempPool = new Object();
             for (var res in game.resPool.resources) {
-              	tempPool.push(game.resPool.resources[res].name = new Object());
-                tempPool[res].name=game.resPool.resources[res].name;
-            }
+              	tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
+						}
+          	
+          	//console.log(tempPool);
           
-            for (var res in tempPool) {tempPool[res].value = craftManager.getValueAvailable(tempPool[res].name, true);}
-            console.log(tempPool);
-            
-            // Using labeled for loop to break out of a nested loop
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label
+            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
+          	
+          	//console.log('megaliths are '+tempPool['megalith']);	
+          
+            var k = 0;
             while(countList.length !== 0) {
-                var k = 0;
                 buildLoop:
                 for (var j = 0; j < countList.length; j++) {
                     var build = countList[j];
                     var prices = game.bld.getPrices(build.name || build.id);
                     var priceRatio = game.bld.getPriceRatio(build.name || build.id);
                     for (var p = 0; p < prices.length; p++) {
-                        if (tempPool[prices[p].name].value * Math.pow(priceRatio, k) < prices[p].val) {
+                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
+                          	for (var p2 = 0; p2 < p; p2++) {
+                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
+                            }
                             bList[countList[j].spot].count = countList[j].count;
+                          	//console.log(prices[p].name+' failed for '+countList[j].id+' after iteration '+countList[j].count+' as it had only '+tempPool[prices[p].name]+' out of '+(prices[p].val * Math.pow(priceRatio, k)) + ' a deficit of ' + (prices[p].val * Math.pow(priceRatio, k) - tempPool[prices[p].name]));
                             countList.splice(j, 1);
                             j--;
                             continue buildLoop;
                         }
+                    		tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
                     }
                     countList[j].count++;
                 }
                 k++;
             }
-            console.log(bList);
+            //console.log(bList);
+          	//console.log(tempPool);
+          	//console.log('megaliths are '+tempPool['megalith']);	
             
             for (var entry in bList) {
-                if (entry.count > 0) {buildManager.build(entry.name || entry.id, entry.stage, entry.count);}
+                if (bList[entry].count > 0) {buildManager.build(bList[entry].name || bList[entry].id, bList[entry].stage, bList[entry].count);}
             }
-        },
+          	game.render();
+	},
         space: function () {
             var builds = options.auto.space.items;
             var buildManager = this.spaceManager;
@@ -1087,24 +1093,22 @@ var run = function() {
     BuildManager.prototype = {
         manager: undefined,
         crafts: undefined,
-        build: function (name, stage) {
+        build: function (name, stage, amount) {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name, stage);
 
             if (!button || !button.model.enabled) return;
-
-            //need to simulate a click so the game updates everything properly
-            button.domNode.click(build);
-            storeForSummary(name, 1, 'build');
-
-            
-          	/*button.controller.build(button.model, 10000);
-          	game.render()
-          	storeForSummary(name, amount, 'build');*/
+						
+            //YeeHaw, we're in outlaw country now
+            /*button.domNode.click(build);
+            storeForSummary(name, 1, 'build');*/
+						
           
-            
+          	button.controller.build(button.model, amount);
+          	storeForSummary(name, amount, 'build');
+          
             var label = build.meta.label ? build.meta.label : build.meta.stages[0].label;
-            activity('Kittens have built a new ' + label, 'ks-build');
+            activity('Kittens have built a new ' + label + ' ' + amount + ' times.', 'ks-build');
         },
         getBuild: function (name) {
             return game.bld.getBuildingExt(name);
