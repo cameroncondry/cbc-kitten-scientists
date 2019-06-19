@@ -664,8 +664,8 @@ var run = function() {
             var countList = [];
             var i = 0;
             for (name in builds) {
-              	var build = builds[name];
-                if (!build.enabled) continue;
+                var build = builds[name];
+                if (!build.enabled || !game.bld.getBuildingExt(build.name || name).meta.unlocked) continue;
                 var require = !build.require ? false : craftManager.getResource(build.require);
                 if (!require || trigger <= require.value / require.maxValue) {
                     if(typeof(build.stage) !== 'undefined' && build.stage !== game.bld.getBuildingExt(build.name || name).meta.stage) { 
@@ -678,9 +678,7 @@ var run = function() {
                     bList[i].stage = build.stage;
                     countList.push(new Object());
                     countList[i].id = name;
-                    countList[i].label = build.label;
                     countList[i].name = build.name;
-                    countList[i].stage = build.stage;
                     countList[i].count = 0;
                     countList[i].spot = i;
                     i++;
@@ -689,15 +687,10 @@ var run = function() {
             
             var tempPool = new Object();
             for (var res in game.resPool.resources) {
-              	tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
-						}
-          	
-          	//console.log(tempPool);
-          
+                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
+            }
             for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
-          	
-          	//console.log('megaliths are '+tempPool['megalith']);	
-          
+
             var k = 0;
             while(countList.length !== 0) {
                 buildLoop:
@@ -707,30 +700,28 @@ var run = function() {
                     var priceRatio = game.bld.getPriceRatio(build.name || build.id);
                     for (var p = 0; p < prices.length; p++) {
                         if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
-                          	for (var p2 = 0; p2 < p; p2++) {
+                            for (var p2 = 0; p2 < p; p2++) {
                               tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
                             }
                             bList[countList[j].spot].count = countList[j].count;
-                          	//console.log(prices[p].name+' failed for '+countList[j].id+' after iteration '+countList[j].count+' as it had only '+tempPool[prices[p].name]+' out of '+(prices[p].val * Math.pow(priceRatio, k)) + ' a deficit of ' + (prices[p].val * Math.pow(priceRatio, k) - tempPool[prices[p].name]));
                             countList.splice(j, 1);
                             j--;
                             continue buildLoop;
                         }
-                    		tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
+                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
                     }
                     countList[j].count++;
                 }
                 k++;
             }
-            //console.log(bList);
-          	//console.log(tempPool);
-          	//console.log('megaliths are '+tempPool['megalith']);	
             
             for (var entry in bList) {
-                if (bList[entry].count > 0) {buildManager.build(bList[entry].name || bList[entry].id, bList[entry].stage, bList[entry].count);}
+                if (bList[entry].count > 0) {
+                    buildManager.build(bList[entry].name || bList[entry].id, bList[entry].stage, bList[entry].count);
+                }
             }
-          	game.render();
-	},
+            game.render();
+        },
         space: function () {
             var builds = options.auto.space.items;
             var buildManager = this.spaceManager;
@@ -1098,17 +1089,16 @@ var run = function() {
             var button = this.getBuildButton(name, stage);
 
             if (!button || !button.model.enabled) return;
-						
-            //YeeHaw, we're in outlaw country now
-            /*button.domNode.click(build);
-            storeForSummary(name, 1, 'build');*/
-						
-          
-          	button.controller.build(button.model, amount);
-          	storeForSummary(name, amount, 'build');
+                
+            amount=this.construct(button.model, button, amount);
+            storeForSummary(name, amount, 'build');
           
             var label = build.meta.label ? build.meta.label : build.meta.stages[0].label;
-            activity('Kittens have built a new ' + label + ' ' + amount + ' times.', 'ks-build');
+            if (amount === 1) {
+                activity('Kittens have built a new ' + label, 'ks-build');
+            } else {
+                activity('Kittens have built a new ' + label + ' ' + amount + ' times.', 'ks-build');
+            }
         },
         getBuild: function (name) {
             return game.bld.getBuildingExt(name);
@@ -1124,6 +1114,26 @@ var run = function() {
                     return buttons[i];
                 }
             }
+        },
+        construct: function (model, button, amount) {
+            var meta = model.metadata;
+            var counter = 0;
+            if (typeof meta.limitBuild == "number" && meta.limitBuild - meta.val < amount) {
+                amount = meta.limitBuild - meta.val;
+            }
+            if (model.enabled && button.controller.hasResources(model) || game.devMode ) {
+                while (button.controller.hasResources(model) && amount > 0) {
+                    model.prices=button.controller.getPrices(model);
+                    button.controller.payPrice(model);
+                    button.controller.incrementValue(model);
+                    counter++;
+                    amount--;
+                }
+                if (meta.breakIronWill) {game.ironWill = false;}
+                if (meta.unlocks) {game.unlock(meta.unlocks);}
+                if (meta.upgrades) {game.upgrade(meta.upgrades);}
+            }
+            return counter;
         }
     };
 
