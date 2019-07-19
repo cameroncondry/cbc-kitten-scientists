@@ -2358,7 +2358,7 @@ var run = function() {
     // ===============
 
     var donate = $('<li/>', {id: "ks-donate"}).append($('<a/>', {
-        href: 'bitcoin:' + address + '?amount=0.005&label=Kittens Donation',
+        href: 'bitcoin:' + address + '?amount=0.00048&label=Kittens Donation',
         target: '_blank',
         text: address
     })).prepend($('<img/>', {
