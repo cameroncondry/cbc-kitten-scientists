@@ -659,28 +659,68 @@ var run = function() {
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-
-            // Using labeled for loop to break out of a nested loop
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label
-            buildLoop:
-            for (var name in builds) {
-                if (!builds[name].enabled) continue;
-
+            
+            var bList = [];
+            var countList = [];
+            var i = 0;
+            for (name in builds) {
                 var build = builds[name];
+                if (!build.enabled || !game.bld.getBuildingExt(build.name || name).meta.unlocked) continue;
                 var require = !build.require ? false : craftManager.getResource(build.require);
-
                 if (!require || trigger <= require.value / require.maxValue) {
-                    // verify that the building prices is within the current stock settings
-                    var prices = game.bld.getPrices(build.name || name);
-                    for (var p = 0; p < prices.length; p++) {
-                        if (craftManager.getValueAvailable(prices[p].name, true) < prices[p].val) continue buildLoop;
+                    if(typeof(build.stage) !== 'undefined' && build.stage !== game.bld.getBuildingExt(build.name || name).meta.stage) { 
+                      continue;
                     }
-
-                    // If the build overrides the name, use that name instead.
-                    // This is usually true for buildings that can be upgraded.
-                    buildManager.build(build.name || name, build.stage);
+                    bList.push(new Object());
+                    bList[i].id = name;
+                    bList[i].label = build.label;
+                    bList[i].name = build.name;
+                    bList[i].stage = build.stage;
+                    countList.push(new Object());
+                    countList[i].id = name;
+                    countList[i].name = build.name;
+                    countList[i].count = 0;
+                    countList[i].spot = i;
+                    i++;
                 }
             }
+            
+            var tempPool = new Object();
+            for (var res in game.resPool.resources) {
+                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
+            }
+            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
+
+            var k = 0;
+            while(countList.length !== 0) {
+                buildLoop:
+                for (var j = 0; j < countList.length; j++) {
+                    var build = countList[j];
+                    var prices = game.bld.getPrices(build.name || build.id);
+                    var priceRatio = game.bld.getPriceRatio(build.name || build.id);
+                    for (var p = 0; p < prices.length; p++) {
+                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
+                            for (var p2 = 0; p2 < p; p2++) {
+                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
+                            }
+                            bList[countList[j].spot].count = countList[j].count;
+                            countList.splice(j, 1);
+                            j--;
+                            continue buildLoop;
+                        }
+                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
+                    }
+                    countList[j].count++;
+                }
+                k++;
+            }
+            
+            for (var entry in bList) {
+                if (bList[entry].count > 0) {
+                    buildManager.build(bList[entry].name || bList[entry].id, bList[entry].stage, bList[entry].count);
+                }
+            }
+            game.render();
         },
         space: function () {
             var builds = options.auto.space.items;
@@ -1044,18 +1084,21 @@ var run = function() {
     BuildManager.prototype = {
         manager: undefined,
         crafts: undefined,
-        build: function (name, stage) {
+        build: function (name, stage, amount) {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name, stage);
 
             if (!button || !button.model.enabled) return;
-
-            //need to simulate a click so the game updates everything properly
-            button.domNode.click(build);
-            storeForSummary(name, 1, 'build');
-
+                
+            amount=this.construct(button.model, button, amount);
+            storeForSummary(name, amount, 'build');
+          
             var label = build.meta.label ? build.meta.label : build.meta.stages[0].label;
-            activity('Kittens have built a new ' + label, 'ks-build');
+            if (amount === 1) {
+                activity('Kittens have built a new ' + label, 'ks-build');
+            } else {
+                activity('Kittens have built a new ' + label + ' ' + amount + ' times.', 'ks-build');
+            }
         },
         getBuild: function (name) {
             return game.bld.getBuildingExt(name);
@@ -1071,6 +1114,26 @@ var run = function() {
                     return buttons[i];
                 }
             }
+        },
+        construct: function (model, button, amount) {
+            var meta = model.metadata;
+            var counter = 0;
+            if (typeof meta.limitBuild == "number" && meta.limitBuild - meta.val < amount) {
+                amount = meta.limitBuild - meta.val;
+            }
+            if (model.enabled && button.controller.hasResources(model) || game.devMode ) {
+                while (button.controller.hasResources(model) && amount > 0) {
+                    model.prices=button.controller.getPrices(model);
+                    button.controller.payPrice(model);
+                    button.controller.incrementValue(model);
+                    counter++;
+                    amount--;
+                }
+                if (meta.breakIronWill) {game.ironWill = false;}
+                if (meta.unlocks) {game.unlock(meta.unlocks);}
+                if (meta.upgrades) {game.upgrade(meta.upgrades);}
+            }
+            return counter;
         }
     };
 
