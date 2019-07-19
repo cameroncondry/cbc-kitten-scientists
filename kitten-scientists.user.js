@@ -1489,7 +1489,7 @@ var run = function() {
         + 'color: ' + options.stockwarncolor + ';'
         + '}');
 
-    document.body.toggleAttribute("data-ks-style", true);
+    document.body.setAttribute("data-ks-style", "");
 
     // Local Storage
     // =============
