@@ -276,6 +276,11 @@ var run = function() {
                 // will be crafted into scaffolds. If instead limRat is 0.75, 625 of the beams will be crafted into scaffolds for a final result
                 // of 1125 beams-worth of scaffolds and 375 remaining beams.
                 // Currently, limRat is not modifiable through the UI, though if there is demand, perhaps this will be added in the future.
+                // Limited has a few other effects like balancing plates and steel while minimizing iron waste
+                
+                // TLDR: The purpose of the limited property is to proportionally distribute raw materials
+                // across all crafted resources without wasting raw materials.
+                
                 items: {
                     wood:       {require: 'catnip',      max: 0, limited: true, limRat: 0.5, enabled: true},
                     beam:       {require: 'wood',        max: 0, limited: true, limRat: 0.5, enabled: true},
@@ -1255,8 +1260,7 @@ var run = function() {
                     delta = this.getValueAvailable(i) / materials[i];
                 } else {
                     // Take the currently present amount of material to craft into account
-                    // Currently this determines the amount of resources that can be crafted such that the produced resources and their components
-                    // in storage both are "worth" the same number of base materials (as determined by price and craft ratio).
+                    // Currently this determines the amount of resources that can be crafted such that base materials are proportionally distributed across limited resources.
                     // This base material distribution is governed by limRat "limited ratio" which defaults to 0.5, corresponding to half of the possible components being further crafted.
                     // If this were another value, such as 0.75, then if you had 10000 beams and 0 scaffolds, 7500 of the beams would be crafted into scaffolds.
                     delta = limRat * ((this.getValueAvailable(i, true) + (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name, true)) / materials[i]) - (this.getValueAvailable(res.name, true) / (1 + ratio));
