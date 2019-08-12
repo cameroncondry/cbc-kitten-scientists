@@ -1323,6 +1323,7 @@ var run = function() {
         getValueAvailable: function (name, all) {
             var value = this.getValue(name);
             var stock = this.getStock(name);
+            var trigger = options.auto.craft.trigger;
 
             if ('catnip' === name) {
                 var resPerTick = game.getResourcePerTick(name, false, {
@@ -1341,7 +1342,7 @@ var run = function() {
                 var res = options.auto.resources[name];
                 var consume = res && (res.consume != undefined) ? res.consume : options.consume;
 
-                value -= Math.min(this.getResource(name).maxValue, value) * (1 - consume);
+                value -= Math.min(this.getResource(name).maxValue * trigger, value) * (1 - consume);
             }
 
             return value;
