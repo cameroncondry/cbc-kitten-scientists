@@ -834,14 +834,29 @@ var run = function() {
             // Figure out how much we can currently trade
             var maxTrades = tradeManager.getLowestTradeAmount(undefined);
 
-            // Try our best not to starve any single race
-            maxTrades = (trades.length > 0) ? Math.floor(maxTrades / trades.length) : 0;
+            // Distribute max trades without starving any race
 
-            if (maxTrades < 1) return;
-
-            for (var i in trades) {
+            if (maxTrades < 1 || trades.length === 0) return;
+          
+            var maxByRace = [];
+            for (var i = 0; i < trades.length; i++) {
                 var name = trades[i];
-                tradeManager.trade(name, Math.min(tradeManager.getLowestTradeAmount(name), maxTrades));
+                maxByRace[i] = tradeManager.getLowestTradeAmount(name);
+            }
+            
+            while (trades.length > 0) {
+                var minTrades = Math.floor(maxTrades / trades.length);
+                var minTradePos = 0;
+                for (var i = 0; i < trades.length; i++) {
+                    if (maxByRace[i] < minTrades) {
+                        minTrades = maxByRace[i];
+                    minTradePos = i;
+                    }
+                }
+                tradeManager.trade(trades[minTradePos], minTrades);
+                maxTrades -= minTrades;
+                trades.splice(minTradePos, 1);
+                maxByRace.splice(minTradePos, 1);
             }
         }
     };
@@ -1320,11 +1335,17 @@ var run = function() {
 
             return !stock ? 0 : stock;
         },
-        getValueAvailable: function (name, all) {
+        getValueAvailable: function (name, all, typeTrigger) {
             var value = this.getValue(name);
             var stock = this.getStock(name);
-            var trigger = options.auto.craft.trigger;
-
+          
+            if(!typeTrigger && typeTrigger !== 0) {
+                var trigger = options.auto.craft.trigger;
+            }
+            else {
+              var trigger = typeTrigger;
+            }
+            
             if ('catnip' === name) {
                 var resPerTick = game.getResourcePerTick(name, false, {
                     modifiers: {
@@ -1383,7 +1404,12 @@ var run = function() {
             var race = this.getRace(name);
 
             for (var i in materials) {
-                var total = this.craftManager.getValueAvailable(i) / materials[i];
+                if (i === "catpower") {
+                  var total = this.craftManager.getValueAvailable(i, true) / materials[i];
+                }
+                else {
+                    var total = this.craftManager.getValueAvailable(i, false, options.auto.trade.trigger) / materials[i];
+                }
 
                 amount = (amount === undefined || total < amount) ? total : amount;
             }
@@ -1414,7 +1440,7 @@ var run = function() {
                     max = val * sratio * (1 + item.delta/2);
                 }
 
-                capacity = (resource.maxValue - resource.value) / max;
+                capacity = Math.max((resource.maxValue - resource.value) / max, 0);
 
                 highestCapacity = (capacity < highestCapacity) ? highestCapacity : capacity;
             }
