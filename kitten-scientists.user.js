@@ -276,26 +276,31 @@ var run = function() {
                 // will be crafted into scaffolds. If instead limRat is 0.75, 625 of the beams will be crafted into scaffolds for a final result
                 // of 1125 beams-worth of scaffolds and 375 remaining beams.
                 // Currently, limRat is not modifiable through the UI, though if there is demand, perhaps this will be added in the future.
+                // Limited has a few other effects like balancing plates and steel while minimizing iron waste
+                
+                // TLDR: The purpose of the limited property is to proportionally distribute raw materials
+                // across all crafted resources without wasting raw materials.
+                
                 items: {
-                    wood:       {require: 'catnip',      max: 0, limited: false, limRat: 0.5, enabled: true},
-                    beam:       {require: 'wood',        max: 0, limited: false, limRat: 0.5, enabled: true},
-                    slab:       {require: 'minerals',    max: 0, limited: false, limRat: 0.5, enabled: true},
-                    steel:      {require: 'coal',        max: 0, limited: false, limRat: 0.5, enabled: true},
-                    plate:      {require: 'iron',        max: 0, limited: false, limRat: 0.5, enabled: true},
-                    alloy:      {require: 'titanium',    max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    concrete:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    gear:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    scaffold:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    ship:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    tanker:     {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    parchment:  {require: false,         max: 0, limited: false, limRat: 0.5, enabled: true},
-                    manuscript: {require: 'culture',     max: 0, limited: true,  limRat: 0.5, enabled: true},
-                    compendium: {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
-                    blueprint:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    kerosene:   {require: 'oil',         max: 0, limited: false, limRat: 0.5, enabled: false},
-                    megalith:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: false},
-                    eludium:    {require: 'unobtainium', max: 0, limited: false, limRat: 0.5, enabled: false},
-                    thorium:    {require: 'uranium',     max: 0, limited: false, limRat: 0.5, enabled: false}
+                    wood:       {require: 'catnip',      max: 0, limited: true, limRat: 0.5, enabled: true},
+                    beam:       {require: 'wood',        max: 0, limited: true, limRat: 0.5, enabled: true},
+                    slab:       {require: 'minerals',    max: 0, limited: true, limRat: 0.5, enabled: true},
+                    steel:      {require: 'coal',        max: 0, limited: true, limRat: 0.5, enabled: true},
+                    plate:      {require: 'iron',        max: 0, limited: true, limRat: 0.5, enabled: true},
+                    alloy:      {require: 'titanium',    max: 0, limited: true, limRat: 0.5, enabled: true},
+                    concrete:   {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    gear:       {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    scaffold:   {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    ship:       {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    tanker:     {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    parchment:  {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    manuscript: {require: 'culture',     max: 0, limited: true, limRat: 0.5, enabled: true},
+                    compendium: {require: 'science',     max: 0, limited: true, limRat: 0.5, enabled: true},
+                    blueprint:  {require: 'science',     max: 0, limited: true, limRat: 0.5, enabled: true},
+                    kerosene:   {require: 'oil',         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    megalith:   {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
+                    eludium:    {require: 'unobtainium', max: 0, limited: true, limRat: 0.5, enabled: true},
+                    thorium:    {require: 'uranium',     max: 0, limited: true, limRat: 0.5, enabled: true}
                 }
             },
             trade: {
@@ -343,8 +348,7 @@ var run = function() {
                 }
             },
             resources: {
-                furs:        {stock: 1000},
-                unobtainium: {consume: 1.0}
+                
             }
         }
     };
@@ -609,7 +613,7 @@ var run = function() {
                         pastureMeta.on = 0;
                         pastureMeta.val = 0;
                         pastureMeta.stage = 1;
-                        game.render();
+                        game.ui.render();
                         activity('Upgraded pastures to solar farms!', 'ks-upgrade');
                     }
                 }
@@ -621,7 +625,7 @@ var run = function() {
                         aqueductMeta.val = 0
                         aqueductMeta.stage = 1
                         aqueductMeta.calculateEffects(aqueductMeta, game)
-                        game.render()
+                        game.ui.render();
                         activity('Upgraded aqueducts to hydro plants!', 'ks-upgrade');
                     }
                 }
@@ -633,7 +637,7 @@ var run = function() {
                         libraryMeta.val = 0
                         libraryMeta.stage = 1
                         libraryMeta.calculateEffects(libraryMeta, game)
-                        game.render()
+                        game.ui.render();
                         activity('Upgraded libraries to data centers!', 'ks-upgrade');
                     }
                     
@@ -645,7 +649,7 @@ var run = function() {
                         amphitheatreMeta.on = 0
                         amphitheatreMeta.val = 0
                         amphitheatreMeta.stage = 1
-                        game.render()
+                        game.ui.render();
                         activity('Upgraded amphitheatres to broadcast towers!', 'ks-upgrade');
                     }
                 }
@@ -720,7 +724,7 @@ var run = function() {
                     buildManager.build(bList[entry].name || bList[entry].id, bList[entry].stage, bList[entry].count);
                 }
             }
-            game.render();
+            game.ui.render();
         },
         space: function () {
             var builds = options.auto.space.items;
@@ -750,17 +754,18 @@ var run = function() {
                 var current = !craft.max ? false : manager.getResource(name);
                 var require = !craft.require ? false : manager.getResource(craft.require);
                 var season = game.calendar.season;
-
+                var amount = 0;
                 // Ensure that we have reached our cap
                 if (current && current.value > craft.max) continue;
 
                 // Craft the resource if we meet the trigger requirement
                 if (!require || trigger <= require.value / require.maxValue) {
-                    var amount = manager.getLowestCraftAmount(name, craft.limited, craft.limRat);
-
-                    if (amount > 0) {
-                        manager.craft(name, amount);
-                    }
+                    amount = manager.getLowestCraftAmount(name, craft.limited, craft.limRat, true);
+                } else if (craft.limited) {
+                    amount = manager.getLowestCraftAmount(name, craft.limited, craft.limRat, false);
+                }
+                if (amount > 0) {
+                    manager.craft(name, amount);
                 }
             }
         },
@@ -829,14 +834,29 @@ var run = function() {
             // Figure out how much we can currently trade
             var maxTrades = tradeManager.getLowestTradeAmount(undefined);
 
-            // Try our best not to starve any single race
-            maxTrades = (trades.length > 0) ? Math.floor(maxTrades / trades.length) : 0;
+            // Distribute max trades without starving any race
 
-            if (maxTrades < 1) return;
-
-            for (var i in trades) {
+            if (maxTrades < 1 || trades.length === 0) return;
+          
+            var maxByRace = [];
+            for (var i = 0; i < trades.length; i++) {
                 var name = trades[i];
-                tradeManager.trade(name, Math.min(tradeManager.getLowestTradeAmount(name), maxTrades));
+                maxByRace[i] = tradeManager.getLowestTradeAmount(name);
+            }
+            
+            while (trades.length > 0) {
+                var minTrades = Math.floor(maxTrades / trades.length);
+                var minTradePos = 0;
+                for (var i = 0; i < trades.length; i++) {
+                    if (maxByRace[i] < minTrades) {
+                        minTrades = maxByRace[i];
+                    minTradePos = i;
+                    }
+                }
+                tradeManager.trade(trades[minTradePos], minTrades);
+                maxTrades -= minTrades;
+                trades.splice(minTradePos, 1);
+                maxByRace.splice(minTradePos, 1);
             }
         }
     };
@@ -1221,33 +1241,47 @@ var run = function() {
         getCraft: function (name) {
             return game.workshop.getCraft(this.getName(name));
         },
-        getLowestCraftAmount: function (name, limited, limRat) {
+        getLowestCraftAmount: function (name, limited, limRat, aboveTrigger) {
             var amount = Number.MAX_VALUE;
+            var plateMax = Number.MAX_VALUE;
             var materials = this.getMaterials(name);
             
             var craft = this.getCraft(name);
             var ratio = game.getResCraftRatio(craft);
-            
+            var trigger = options.auto.craft.trigger;
+          
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
+            
+            if (name==='steel' && limited) {
+                var plateRatio=game.getResCraftRatio(this.getCraft('plate'));
+                if (this.getValueAvailable('plate')/this.getValueAvailable('steel') < ((plateRatio+1)/125)/((ratio+1)/100)) {
+                    return 0;
+                }
+            } else if (name==='plate' && limited) {
+                var steelRatio=game.getResCraftRatio(this.getCraft('steel'));
+                if (this.getValueAvailable('plate')/this.getValueAvailable('steel') > ((ratio+1)/125)/((steelRatio+1)/100)) {
+                    var ironInTime = ((this.getResource('coal').maxValue*trigger - this.getValue('coal'))/game.getResourcePerTick('coal', false))*game.getResourcePerTick('iron', false);
+                    plateMax = (this.getValueAvailable('iron') - Math.max(this.getResource('coal').maxValue*trigger - ironInTime,0))/125;
+                }
+            }
 
             var res = this.getResource(name);
 
             for (var i in materials) {
                 var delta = undefined;
-                if(this.getResource(i).maxValue > 0 || ! limited) {
+                if(! limited || (this.getResource(i).maxValue > 0 && aboveTrigger)) {
                     // If there is a storage limit, we can just use everything returned by getValueAvailable, since the regulation happens there
                     delta = this.getValueAvailable(i) / materials[i];
                 } else {
                     // Take the currently present amount of material to craft into account
-                    // Currently this determines the amount of resources that can be crafted such that the produced resources and their components
-                    // in storage both are "worth" the same number of base materials (as determined by price and craft ratio).
+                    // Currently this determines the amount of resources that can be crafted such that base materials are proportionally distributed across limited resources.
                     // This base material distribution is governed by limRat "limited ratio" which defaults to 0.5, corresponding to half of the possible components being further crafted.
                     // If this were another value, such as 0.75, then if you had 10000 beams and 0 scaffolds, 7500 of the beams would be crafted into scaffolds.
-                    delta = limRat * ((this.getValueAvailable(i) + (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name)) / materials[i]) - (this.getValueAvailable(res.name) / (1 + ratio));
+                    delta = limRat * ((this.getValueAvailable(i, true) + (materials[i] / (1 + ratio)) * this.getValueAvailable(res.name, true)) / materials[i]) - (this.getValueAvailable(res.name, true) / (1 + ratio));
                 }
 
-                amount = Math.min(delta,amount);
+                amount = Math.min(delta,amount,plateMax);
             }
 
             // If we have a maximum value, ensure that we don't produce more than
@@ -1301,10 +1335,17 @@ var run = function() {
 
             return !stock ? 0 : stock;
         },
-        getValueAvailable: function (name, all) {
+        getValueAvailable: function (name, all, typeTrigger) {
             var value = this.getValue(name);
             var stock = this.getStock(name);
-
+          
+            if(!typeTrigger && typeTrigger !== 0) {
+                var trigger = options.auto.craft.trigger;
+            }
+            else {
+              var trigger = typeTrigger;
+            }
+            
             if ('catnip' === name) {
                 var resPerTick = game.getResourcePerTick(name, false, {
                     modifiers: {
@@ -1322,7 +1363,7 @@ var run = function() {
                 var res = options.auto.resources[name];
                 var consume = res && (res.consume != undefined) ? res.consume : options.consume;
 
-                value *= consume;
+                value -= Math.min(this.getResource(name).maxValue * trigger, value) * (1 - consume);
             }
 
             return value;
@@ -1363,7 +1404,12 @@ var run = function() {
             var race = this.getRace(name);
 
             for (var i in materials) {
-                var total = this.craftManager.getValueAvailable(i) / materials[i];
+                if (i === "catpower") {
+                  var total = this.craftManager.getValueAvailable(i, true) / materials[i];
+                }
+                else {
+                    var total = this.craftManager.getValueAvailable(i, false, options.auto.trade.trigger) / materials[i];
+                }
 
                 amount = (amount === undefined || total < amount) ? total : amount;
             }
@@ -1394,7 +1440,7 @@ var run = function() {
                     max = val * sratio * (1 + item.delta/2);
                 }
 
-                capacity = (resource.maxValue - resource.value) / max;
+                capacity = Math.max((resource.maxValue - resource.value) / max, 0);
 
                 highestCapacity = (capacity < highestCapacity) ? highestCapacity : capacity;
             }
