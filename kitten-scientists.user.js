@@ -308,33 +308,33 @@ var run = function() {
                 enabled: true,
                 // Every trade can define a required resource with the *require* property.
                 // At what percentage of the storage capacity of that required resource should the trade happen?
-                trigger: 0.95,
+                trigger: 0.98,
                 // Trades can be limited to only happen during specific seasons. This is because trades with certain races
                 // are more effective during specific seasons.
                 // The *allowcapped* property allows us to trade even if the sold resources are at their cap.
                 items: {
-                    dragons:    {enabled: false,  require: 'titanium',    allowcapped: false,
+                    dragons:    {enabled: true,  require: 'titanium',    allowcapped: false,    limited: true,
                         summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
-                    zebras:     {enabled: true,  require: false,         allowcapped: false,
+                    zebras:     {enabled: true,  require: false,         allowcapped: false,    limited: true,
                         summer:  true,  autumn:  true,  winter:  true,          spring:      true},
 
-                    lizards:    {enabled: false,  require: 'minerals',    allowcapped: false,
+                    lizards:    {enabled: true,  require: 'minerals',    allowcapped: false,    limited: true,
                         summer:  true,  autumn:  false, winter:  false,         spring:      false},
 
-                    sharks:     {enabled: false,  require: 'iron',        allowcapped: false,
+                    sharks:     {enabled: true,  require: 'iron',        allowcapped: false,    limited: true,
                         summer:  false, autumn:  false, winter:  true,          spring:      false},
 
-                    griffins:   {enabled: false,  require: 'wood',        allowcapped: false,
+                    griffins:   {enabled: true,  require: 'wood',        allowcapped: false,    limited: true,
                         summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
-                    nagas:      {enabled: false,  require: false,         allowcapped: false,
+                    nagas:      {enabled: true,  require: false,         allowcapped: false,    limited: true,
                         summer:  false, autumn:  false, winter:  false,         spring:      true},
 
-                    spiders:    {enabled: false,  require: false,         allowcapped: false,
+                    spiders:    {enabled: true,  require: false,         allowcapped: false,    limited: true,
                         summer:  false, autumn:  true,  winter:  false,         spring:      false},
 
-                    leviathans: {enabled: false,  require: 'unobtainium', allowcapped: true,
+                    leviathans: {enabled: true,  require: 'unobtainium', allowcapped: true,     limited: true,
                         summer:  true,  autumn:  true,  winter:  true,          spring:      true}
                 }
             },
@@ -804,14 +804,12 @@ var run = function() {
             var tradeManager = this.tradeManager;
             var gold = craftManager.getResource('gold');
             var trades = [];
-            
+            var requireTrigger = options.auto.trade.trigger;
+          
             tradeManager.manager.render();
             
             // Only trade if it's enabled
             if (!options.auto.trade.enabled) return;
-
-            // Trade when we have enough gold. Don't worry about catpower.
-            if (options.auto.trade.trigger >= gold.value / gold.maxValue) return;
 
             // Determine how many races we will trade this cycle
             for (var name in options.auto.trade.items) {
@@ -823,16 +821,17 @@ var run = function() {
                 if (!trade[season]) continue;
 
                 var require = !trade.require ? false : craftManager.getResource(trade.require);
-                var requireTrigger = options.auto.trade.trigger;
 
                 // If we have enough to trigger the check, then attempt to trade
-                if (!require || requireTrigger <= require.value / require.maxValue) {
+                if (trade.limited && tradeManager.getProfitability(name)) {
+                    trades.push(name);
+                } else if ((!require || requireTrigger <= require.value / require.maxValue) && requireTrigger <= gold.value / gold.maxValue) {
                     trades.push(name);
                 }
             }
 
             // Figure out how much we can currently trade
-            var maxTrades = tradeManager.getLowestTradeAmount(undefined);
+            var maxTrades = tradeManager.getLowestTradeAmount(undefined, true, false);
 
             // Distribute max trades without starving any race
 
@@ -841,7 +840,10 @@ var run = function() {
             var maxByRace = [];
             for (var i = 0; i < trades.length; i++) {
                 var name = trades[i];
-                maxByRace[i] = tradeManager.getLowestTradeAmount(name);
+                var trade = options.auto.trade.items[name];
+                var require = !trade.require ? false : craftManager.getResource(trade.require);
+                var trigConditions = ((!require || requireTrigger <= require.value / require.maxValue) && requireTrigger <= gold.value / gold.maxValue);
+                maxByRace[i] = tradeManager.getLowestTradeAmount(name, trade.limited, trigConditions);
             }
             
             while (trades.length > 0) {
@@ -850,7 +852,7 @@ var run = function() {
                 for (var i = 0; i < trades.length; i++) {
                     if (maxByRace[i] < minTrades) {
                         minTrades = maxByRace[i];
-                    minTradePos = i;
+                        minTradePos = i;
                     }
                 }
                 tradeManager.trade(trades[minTradePos], minTrades);
@@ -1260,8 +1262,9 @@ var run = function() {
                 }
             } else if (name==='plate' && limited) {
                 var steelRatio=game.getResCraftRatio(this.getCraft('steel'));
+                if (game.getResourcePerTick('coal', true) <= 0) {return 0;}
                 if (this.getValueAvailable('plate')/this.getValueAvailable('steel') > ((ratio+1)/125)/((steelRatio+1)/100)) {
-                    var ironInTime = ((this.getResource('coal').maxValue*trigger - this.getValue('coal'))/game.getResourcePerTick('coal', false))*game.getResourcePerTick('iron', false);
+                    var ironInTime = ((this.getResource('coal').maxValue*trigger - this.getValue('coal'))/game.getResourcePerTick('coal', true))*Math.max(game.getResourcePerTick('iron', true), 0);
                     plateMax = (this.getValueAvailable('iron') - Math.max(this.getResource('coal').maxValue*trigger - ironInTime,0))/125;
                 }
             }
@@ -1319,6 +1322,7 @@ var run = function() {
             return name;
         },
         getResource: function (name) {
+            if (name === 'slabs') {name = 'slab';} //KG BETA BUGFIX
             for (var i in game.resPool.resources) {
                 var res = game.resPool.resources[i];
                 if (res.name === this.getName(name)) return res;
@@ -1397,7 +1401,115 @@ var run = function() {
             storeForSummary(name, amount, 'trade');
             activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name), 'ks-trade');
         },
-        getLowestTradeAmount: function (name) {
+        getProfitability: function (name) {
+            var race = this.getRace(name);
+          
+            var materials = this.getMaterials(name);
+            var cost = 0;
+            for (var mat in materials) {
+                var tick = this.getTickVal(this.craftManager.getResource(mat));
+                if (tick <= 0) {return false;}
+                cost += materials[mat]/tick;
+            }
+          
+            var output = this.getAverageTrade(race);
+            var profit = 0;
+            for (var prod in output) {
+                var tick = this.getTickVal(this.craftManager.getResource(prod));
+                if (tick <= 0) {return true;}
+                profit += output[prod]/tick;
+            }
+            return (cost <= profit);
+        },
+        getCost: function (name) {
+            var race = this.getRace(name);
+          
+            var materials = race.buys;
+            var cost = 0;
+            for (var mat in materials) {
+                var tick = this.getTickVal(this.craftManager.getResource(materials[mat].name));
+                cost += materials[mat].val/tick;
+            }
+            return cost;
+        },
+        getCostResPool: function (name) {
+            var race = this.getRace(name);
+          
+            var materials = race.buys;
+            var cost = 0;
+            for (var mat in materials) {
+                var tick = this.getTickVal(this.craftManager.getResource(materials[mat].name));
+                cost += this.craftManager.getValueAvailable(materials[mat].name, true)/tick;
+            }
+            return cost;
+        },
+        getProfit: function (name) {
+            var race = this.getRace(name);
+          
+            var output = this.getAverageTrade(race);
+            var profit = 0;
+            for (var prod in output) {
+                var tick = this.getTickVal(this.craftManager.getResource(prod));
+                if (tick <= 0) {return 'All';}
+                profit += output[prod]/tick;
+            }
+            return profit;
+        },
+        getProfitResPool: function (name) {
+            var race = this.getRace(name);
+          
+            var output = this.getAverageTrade(race);
+            var profit = 0;
+            for (var prod in output) {
+                var tick = this.getTickVal(this.craftManager.getResource(prod));
+                if (tick <= 0) {return 'All';}
+                profit += this.craftManager.getValueAvailable(prod, true)/tick;
+            }
+            return profit;
+        },
+        getTickVal: function (res) {
+            var prod = game.getResourcePerTick(res.name,true);
+            if (res.craftable) {
+                var minProd=Number.MAX_VALUE;
+                var materials = this.craftManager.getMaterials(res.name);
+                for (var mat in materials) {
+                    var rat = (1+game.getResCraftRatio(res.name))/materials[mat];
+                    var addProd = this.getTickVal(this.craftManager.getResource(mat));
+                    minProd = Math.min(addProd * rat, minProd);
+                }
+                prod += (minProd!==Number.MAX_VALUE) ? minProd : 0;
+            }
+            return prod;
+        },
+        getAverageTrade: function (race) {
+            var standRat = game.getEffect("standingRatio");
+            standRat += (game.prestige.getPerk("diplomacy").researched) ? 10 : 0;
+            var rRatio = (race.name === "leviathans") ? (1 + 0.02 * race.energy) : 1;
+            var tRatio = 1 + game.diplomacy.getTradeRatio();
+            var successRat = (race.attitude === "hostile") ? Math.min(race.standing + standRat/100, 1) : 1;
+            var bonusRat = (race.attitude === "friendly") ? Math.min(race.standing + standRat/200, 1) : 0;
+            var output = {};
+            for (var s in race.sells) {
+                var item = race.sells[s];
+                var resource = this.craftManager.getResource(item.name);
+                var mean = 0;
+
+                if (race.name == "zebras" && item.name == "titanium") {
+                    var shipCount = game.resPool.get("ship").value;
+                    var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
+                    var titanRat = 1 + shipCount / 50;
+                    mean = 1.5 * titanRat * (successRat * titanProb); 
+                } else {
+                    var sRatio = (!item.seasons) ? 1 : item.seasons[game.calendar.getCurSeason().name];
+                    var normBought = (successRat - bonusRat) * item.chance/100;
+                    var normBonus = bonusRat * item.chance/100;
+                    mean = (normBought + 1.25 * normBonus) * item.value * rRatio * sRatio * tRatio;
+                }
+                output[item.name] = mean;
+            }
+            return output;
+        },
+        getLowestTradeAmount: function (name, limited, trigConditions) {
             var amount = undefined;
             var highestCapacity = undefined;
             var materials = this.getMaterials(name);
@@ -1408,7 +1520,7 @@ var run = function() {
                   var total = this.craftManager.getValueAvailable(i, true) / materials[i];
                 }
                 else {
-                    var total = this.craftManager.getValueAvailable(i, false, options.auto.trade.trigger) / materials[i];
+                    var total = this.craftManager.getValueAvailable(i, limited, options.auto.trade.trigger) / materials[i];
                 }
 
                 amount = (amount === undefined || total < amount) ? total : amount;
@@ -1420,6 +1532,8 @@ var run = function() {
             // which good has the most space left. Once we've determined this,
             // reduce the amount by this capacity. This ensures that we continue to trade
             // as long as at least one resource has capacity, and we never over-trade.
+            
+            var tradeOutput = this.getAverageTrade(race);
             for (var s in race.sells) {
                 var item = race.sells[s];
                 var resource = this.craftManager.getResource(item.name);
@@ -1428,17 +1542,7 @@ var run = function() {
                 // No need to process resources that don't cap
                 if (!resource.maxValue) continue;
 
-                // Zebras special cased titanium taken directly from game code
-                if (race.name == "zebras" && item.name == "titanium") {
-                    var val = 1.5 + (1.5 * game.resPool.get("ship").value / 100 * 2);
-                    max = Math.ceil(val);
-                } else {
-                    var sratio = item.seasons[game.calendar.getCurSeason().name];
-                    var tratio = game.getEffect("tradeRatio");
-                    var val = item.value + item.value * tratio;
-
-                    max = val * sratio * (1 + item.delta/2);
-                }
+                max = tradeOutput[item.name];
 
                 capacity = Math.max((resource.maxValue - resource.value) / max, 0);
 
@@ -1457,6 +1561,18 @@ var run = function() {
             // then we just
             amount = (highestCapacity < amount) ? highestCapacity : amount;
 
+            // Calculates the amount of "production time" that the resources are worth and prevents limited trading from having the profit materials' "production time" exceed the cost materials' "production time".
+            // This should prevent limited trading from completely wiping out resources while keeping the cost and profit materials proportional.
+            if (limited && !trigConditions) {
+                var cPool =this.getCostResPool(name);
+                var pPool =this.getProfitResPool(name);
+                var cVal =this.getCost(name);
+                var pVal =this.getProfit(name);
+                if (pVal !== 'All') {
+                    var limAmount = Math.max(Math.floor((cPool-pPool)/(cVal+pVal)), 0);
+                }
+            }
+            amount = (limAmount < amount) ? limAmount : amount;
             return Math.floor(amount);
         },
         getMaterials: function (name) {
@@ -2115,7 +2231,37 @@ var run = function() {
     var getTradeOption = function (name, option) {
         var element = getOption(name, option);
         element.css('borderBottom', '1px solid rgba(185, 185, 185, 0.7)');
+				
+      	//Limited Trading
+      	var label = $('<label/>', {
+            'for': 'toggle-limited-' + name,
+            text: 'Limited'
+        });
 
+        var input = $('<input/>', {
+            id: 'toggle-limited-' + name,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option.limited) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option.limited == false) {
+                option.limited = true;
+                message('Trading with ' + ucfirst(name) + ': limited to only occur when profitable based off relative production time');
+            } else if ((!input.is(':checked')) && option.limited == true) {
+                option.limited = false;
+                message('Trading with ' + ucfirst(name) + ': unlimited');
+            }
+            kittenStorage.items[input.attr('id')] = option.limited;
+            saveToKittenStorage();
+        });
+
+        element.append(input, label);
+      	//Limited Trading End
+        
         var button = $('<div/>', {
             id: 'toggle-seasons-' + name,
             text: 'seasons',
