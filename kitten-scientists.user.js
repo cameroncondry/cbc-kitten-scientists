@@ -1495,7 +1495,7 @@ var run = function() {
                 if (!this.isValidTrade(item, race)) {continue;}
                 var resource = this.craftManager.getResource(item.name);
                 var mean = 0;
-                var tradeChance = (!race.embassyPrices) ? item.chance : item.chance * (1 + game.getHyperbolicEffect(0.01 * race.embassyLevel, 0.75));
+                var tradeChance = (!race.embassyPrices) ? item.chance : item.chance * (1 + (0.01 * race.embassyLevel));
 
                 if (race.name == "zebras" && item.name == "titanium") {
                     var shipCount = game.resPool.get("ship").value;
