@@ -1492,8 +1492,10 @@ var run = function() {
             var output = {};
             for (var s in race.sells) {
                 var item = race.sells[s];
+                if (!this.isValidTrade(item, race)) {continue;}
                 var resource = this.craftManager.getResource(item.name);
                 var mean = 0;
+                var tradeChance = (!race.embassyPrices) ? item.chance : item.chance * (1 + game.getHyperbolicEffect(0.01 * race.embassyLevel, 0.75));
 
                 if (race.name == "zebras" && item.name == "titanium") {
                     var shipCount = game.resPool.get("ship").value;
@@ -1502,13 +1504,17 @@ var run = function() {
                     mean = 1.5 * titanRat * (successRat * titanProb); 
                 } else {
                     var sRatio = (!item.seasons) ? 1 : item.seasons[game.calendar.getCurSeason().name];
-                    var normBought = (successRat - bonusRat) * item.chance/100;
-                    var normBonus = bonusRat * item.chance/100;
+                    var normBought = (successRat - bonusRat) * Math.min(tradeChance/100, 1);
+                    var normBonus = bonusRat * Math.min(tradeChance/100, 1);
                     mean = (normBought + 1.25 * normBonus) * item.value * rRatio * sRatio * tRatio;
                 }
                 output[item.name] = mean;
             }
             return output;
+        },
+        isValidTrade: function (item, race) {
+            if (!race.embassyPrices) {return game.resPool.get(item.name).unlocked;}
+            return (!(item.minLevel && race.embassyLevel < item.minLevel) && game.resPool.get(item.name).unlocked);
         },
         getLowestTradeAmount: function (name, limited, trigConditions) {
             var amount = undefined;
