@@ -969,7 +969,7 @@ var run = function() {
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
-            storeForSummary(name, 1, 'faith');
+            storeForSummary(build.label, 1, 'faith');
             if (variant === "s") {
                 activity('Kittens have discovered ' + build.label, 'ks-faith');
             } else {
@@ -1109,11 +1109,10 @@ var run = function() {
             var button = this.getBuildButton(name, stage);
 
             if (!button || !button.model.enabled) return;
-                
+            var label = build.meta.label ? build.meta.label : build.meta.stages[stage].label;
             amount=this.construct(button.model, button, amount);
-            storeForSummary(name, amount, 'build');
+            storeForSummary(label, amount, 'build');
           
-            var label = build.meta.label ? build.meta.label : build.meta.stages[0].label;
             if (amount === 1) {
                 activity('Kittens have built a new ' + label, 'ks-build');
             } else {
@@ -1176,9 +1175,9 @@ var run = function() {
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
-            storeForSummary(name, 1, 'build');
-
             var label = build.label;
+            storeForSummary(label, 1, 'build');
+
             activity('Kittens have built a new ' + label, 'ks-build');
         },
         getBuild: function (name) {
@@ -1215,7 +1214,7 @@ var run = function() {
             // determine actual amount after crafting upgrades
             amount = (amount * (1 + ratio)).toFixed(2);
 
-            storeForSummary(name, amount, 'craft');
+            storeForSummary(ucfirst(name), amount, 'craft');
             activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name), 'ks-craft');
         },
         canCraft: function (name, amount) {
@@ -1394,7 +1393,7 @@ var run = function() {
             if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
             game.diplomacy.tradeMultiple(race, amount);
-            storeForSummary(name, amount, 'trade');
+            storeForSummary(ucfirst(name), amount, 'trade');
             activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name), 'ks-trade');
         },
         getLowestTradeAmount: function (name) {
