@@ -1026,9 +1026,9 @@ var run = function() {
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
-            storeForSummary(name, 1, 'build');
-
             var label = build.label;
+            storeForSummary(label, 1, 'build');
+
             activity('Kittens have built a new ' + label, 'ks-build');
         },
         getBuild: function (name, variant) {
@@ -1073,9 +1073,9 @@ var run = function() {
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(upgrade);
-            storeForSummary(build.name, 1, 'upgrade');
-
             var label = upgrade.label;
+            storeForSummary(label, 1, 'upgrade');
+
             activity('Kittens have bought the upgrade ' + label, 'ks-upgrade');
         },
         getBuildButton: function (upgrade, variant) {
