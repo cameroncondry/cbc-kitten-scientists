@@ -1416,9 +1416,10 @@ var run = function() {
             var output = this.getAverageTrade(race);
             var profit = 0;
             for (var prod in output) {
-                var tick = this.getTickVal(this.craftManager.getResource(prod));
+                var res = this.craftManager.getResource(prod);
+                var tick = this.getTickVal(res);
                 if (tick <= 0) {return true;}
-                profit += output[prod]/tick;
+                profit += (res.maxValue > 0) ? Math.min(output[prod], Math.max(res.maxValue - res.value, 0))/tick : output[prod]/tick;
             }
             return (cost <= profit);
         },
@@ -1462,9 +1463,12 @@ var run = function() {
             var output = this.getAverageTrade(race);
             var profit = 0;
             for (var prod in output) {
-                var tick = this.getTickVal(this.craftManager.getResource(prod));
-                if (tick <= 0) {return 'All';}
-                profit += this.craftManager.getValueAvailable(prod, true)/tick;
+              	var res = this.craftManager.getResource(prod);
+              	if (res.maxValue > 0) {
+                	var tick = this.getTickVal(res);
+                	if (tick <= 0) {return 'All';}
+                	profit += this.craftManager.getValueAvailable(prod, true)/tick;
+                }
             }
             return profit;
         },
@@ -1567,18 +1571,33 @@ var run = function() {
             // essentially ignore blueprints here. In addition, if highestCapacity was never set,
             // then we just
             amount = (highestCapacity < amount) ? highestCapacity : amount;
-
-            // Calculates the amount of "production time" that the resources are worth and prevents limited trading from having the profit materials' "production time" exceed the cost materials' "production time".
-            // This should prevent limited trading from completely wiping out resources while keeping the cost and profit materials proportional.
+            
+            //Prevents limited trades from draining the input resources by considering how many "trades" the inputs and outputs are worth.
             if (limited && !trigConditions) {
-                var cPool =this.getCostResPool(name);
-                var pPool =this.getProfitResPool(name);
-                var cVal =this.getCost(name);
-                var pVal =this.getProfit(name);
-                if (pVal !== 'All') {
-                    var limAmount = Math.max(Math.floor((cPool-pPool)/(cVal+pVal)), 0);
+                var inMin = Number.MAX_VALUE;
+                var materials = this.getMaterials(name);
+                var leastMat, leastMatVal, leastMatStored;
+                for (var mat in materials) {
+                    var tradeIn = this.craftManager.getValueAvailable(mat, true)/materials[mat];
+                    if(tradeIn < inMin) {
+                    inMin = tradeIn;
+                    leastMat = mat;
+                    leastMatVal = materials[mat];
+                    leastMatStored = this.craftManager.getValueAvailable(mat, true);
+                    }
                 }
+              
+                var outMin = Number.MAX_VALUE;
+                var output = this.getAverageTrade(race);
+                for (var prod in output) {
+                    outMin = Math.min(this.craftManager.getValueAvailable(prod, true)/output[prod], outMin);
+                }
+              
+                var propTrades = (inMin + outMin)/2;
+              
+                var limAmount = Math.max(Math.ceil((leastMatStored/leastMatVal)-propTrades), 0);
             }
+          
             amount = (limAmount < amount) ? limAmount : amount;
             return Math.floor(amount);
         },
