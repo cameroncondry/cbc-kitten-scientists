@@ -1524,6 +1524,7 @@ var run = function() {
             amount = (highestCapacity < amount) ? highestCapacity : amount;
             
             //Prevents limited trades from draining the input resources by considering how many "trades" the inputs and outputs are worth.
+            var limAmount = Number.MAX_VALUE;
             if (limited && !trigConditions && this.getProfitability(name)!=='All') {
                 var inMin = Number.MAX_VALUE;
                 var materials = this.getMaterials(name);
@@ -1546,7 +1547,7 @@ var run = function() {
               
                 var propTrades = (inMin + outMin)/2;
               
-                var limAmount = Math.max(Math.ceil((leastMatStored/leastMatVal)-propTrades), 0);
+                limAmount = Math.max(Math.ceil((leastMatStored/leastMatVal)-propTrades), 0);
             }
           
             amount = (limAmount < amount) ? limAmount : amount;
