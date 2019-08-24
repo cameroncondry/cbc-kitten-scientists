@@ -823,7 +823,7 @@ var run = function() {
                 var require = !trade.require ? false : craftManager.getResource(trade.require);
 
                 // If we have enough to trigger the check, then attempt to trade
-                if (trade.limited && tradeManager.getProfitability(name)) {
+                if (trade.limited && (tradeManager.getProfitability(name) === 'All' || tradeManager.getProfitability(name))) {
                     trades.push(name);
                 } else if ((!require || requireTrigger <= require.value / require.maxValue) && requireTrigger <= gold.value / gold.maxValue) {
                     trades.push(name);
@@ -1432,7 +1432,7 @@ var run = function() {
             for (var prod in output) {
                 var res = this.craftManager.getResource(prod);
                 var tick = this.craftManager.getTickVal(res);
-                if (tick <= 0) {return true;}
+                if (tick <= 0) {return 'All';}
                 profit += (res.maxValue > 0) ? Math.min(output[prod], Math.max(res.maxValue - res.value, 0))/tick : output[prod]/tick;
             }
             return (cost <= profit);
@@ -1524,7 +1524,7 @@ var run = function() {
             amount = (highestCapacity < amount) ? highestCapacity : amount;
             
             //Prevents limited trades from draining the input resources by considering how many "trades" the inputs and outputs are worth.
-            if (limited && !trigConditions) {
+            if (limited && !trigConditions && this.getProfitability(name)!=='All') {
                 var inMin = Number.MAX_VALUE;
                 var materials = this.getMaterials(name);
                 var leastMat, leastMatVal, leastMatStored;
