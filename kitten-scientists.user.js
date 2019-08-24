@@ -1314,6 +1314,20 @@ var run = function() {
 
             return materials;
         },
+        getTickVal: function (res) {
+            var prod = game.getResourcePerTick(res.name,true);
+            if (res.craftable) {
+                var minProd=Number.MAX_VALUE;
+                var materials = this.getMaterials(res.name);
+                for (var mat in materials) {
+                    var rat = (1+game.getResCraftRatio(res.name))/materials[mat];
+                    var addProd = this.getTickVal(this.getResource(mat));
+                    minProd = Math.min(addProd * rat, minProd);
+                }
+                prod += (minProd!==Number.MAX_VALUE) ? minProd : 0;
+            }
+            return prod;
+        },
         getName: function (name) {
             // adjust for spelling discrepancies in core game logic
             if ('catpower' === name) name = 'manpower';
@@ -1408,7 +1422,7 @@ var run = function() {
             var materials = this.getMaterials(name);
             var cost = 0;
             for (var mat in materials) {
-                var tick = this.getTickVal(this.craftManager.getResource(mat));
+                var tick = this.craftManager.getTickVal(this.craftManager.getResource(mat));
                 if (tick <= 0) {return false;}
                 cost += materials[mat]/tick;
             }
@@ -1417,74 +1431,11 @@ var run = function() {
             var profit = 0;
             for (var prod in output) {
                 var res = this.craftManager.getResource(prod);
-                var tick = this.getTickVal(res);
+                var tick = this.craftManager.getTickVal(res);
                 if (tick <= 0) {return true;}
                 profit += (res.maxValue > 0) ? Math.min(output[prod], Math.max(res.maxValue - res.value, 0))/tick : output[prod]/tick;
             }
             return (cost <= profit);
-        },
-        getCost: function (name) {
-            var race = this.getRace(name);
-          
-            var materials = race.buys;
-            var cost = 0;
-            for (var mat in materials) {
-                var tick = this.getTickVal(this.craftManager.getResource(materials[mat].name));
-                cost += materials[mat].val/tick;
-            }
-            return cost;
-        },
-        getCostResPool: function (name) {
-            var race = this.getRace(name);
-          
-            var materials = race.buys;
-            var cost = 0;
-            for (var mat in materials) {
-                var tick = this.getTickVal(this.craftManager.getResource(materials[mat].name));
-                cost += this.craftManager.getValueAvailable(materials[mat].name, true)/tick;
-            }
-            return cost;
-        },
-        getProfit: function (name) {
-            var race = this.getRace(name);
-          
-            var output = this.getAverageTrade(race);
-            var profit = 0;
-            for (var prod in output) {
-                var tick = this.getTickVal(this.craftManager.getResource(prod));
-                if (tick <= 0) {return 'All';}
-                profit += output[prod]/tick;
-            }
-            return profit;
-        },
-        getProfitResPool: function (name) {
-            var race = this.getRace(name);
-          
-            var output = this.getAverageTrade(race);
-            var profit = 0;
-            for (var prod in output) {
-              	var res = this.craftManager.getResource(prod);
-              	if (res.maxValue > 0) {
-                	var tick = this.getTickVal(res);
-                	if (tick <= 0) {return 'All';}
-                	profit += this.craftManager.getValueAvailable(prod, true)/tick;
-                }
-            }
-            return profit;
-        },
-        getTickVal: function (res) {
-            var prod = game.getResourcePerTick(res.name,true);
-            if (res.craftable) {
-                var minProd=Number.MAX_VALUE;
-                var materials = this.craftManager.getMaterials(res.name);
-                for (var mat in materials) {
-                    var rat = (1+game.getResCraftRatio(res.name))/materials[mat];
-                    var addProd = this.getTickVal(this.craftManager.getResource(mat));
-                    minProd = Math.min(addProd * rat, minProd);
-                }
-                prod += (minProd!==Number.MAX_VALUE) ? minProd : 0;
-            }
-            return prod;
         },
         getAverageTrade: function (race) {
             var standRat = game.getEffect("standingRatio");
