@@ -734,15 +734,64 @@ var run = function() {
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-
-            for (var name in builds) {
+            
+            var bList = [];
+            var countList = [];
+            var i = 0;
+            for (name in builds) {
                 var build = builds[name];
+                if (!build.enabled || !game.space.getBuilding(name).unlocked) continue;
                 var require = !build.require ? false : craftManager.getResource(build.require);
-
                 if (!require || trigger <= require.value / require.maxValue) {
-                    buildManager.build(name);
+                    bList.push(new Object());
+                    bList[i].id = name;
+                    bList[i].label = build.label;
+                    bList[i].name = build.name;
+                    countList.push(new Object());
+                    countList[i].id = name;
+                    countList[i].name = build.name;
+                    countList[i].count = 0;
+                    countList[i].spot = i;
+                    i++;
                 }
             }
+            
+            var tempPool = new Object();
+            for (var res in game.resPool.resources) {
+                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
+            }
+            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
+
+            var k = 0;
+            while(countList.length !== 0) {
+                buildLoop:
+                for (var j = 0; j < countList.length; j++) {
+                    var build = countList[j];
+                    var prices = game.space.getBuilding(build.id).prices;
+                    var priceRatio = game.space.getBuilding(build.id).priceRatio;
+                    for (var p = 0; p < prices.length; p++) {
+                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
+                            for (var p2 = 0; p2 < p; p2++) {
+                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
+                            }
+                            bList[countList[j].spot].count = countList[j].count;
+                            countList.splice(j, 1);
+                            j--;
+                            continue buildLoop;
+                        }
+                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
+                    }
+                    countList[j].count++;
+                }
+                k++;
+            }
+            
+            for (var entry in bList) {
+                if (bList[entry].count > 0) {
+                    buildManager.build(bList[entry].id, bList[entry].count);
+                }
+            }
+            game.ui.render();
         },
         craft: function () {
             var crafts = options.auto.craft.items;
@@ -1168,18 +1217,21 @@ var run = function() {
     SpaceManager.prototype = {
         manager: undefined,
         crafts: undefined,
-        build: function (name) {
+        build: function (name, amount) {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name);
 
             if (!build.unlocked || !button || !button.model.enabled || !options.auto.space.items[name].enabled) return;
 
-            //need to simulate a click so the game updates everything properly
-            button.domNode.click(build);
             var label = build.label;
-            storeForSummary(label, 1, 'build');
-
-            activity('Kittens have built a new ' + label, 'ks-build');
+            amount=this.construct(button.model, button, amount);
+            storeForSummary(label, amount, 'build');
+          
+            if (amount === 1) {
+                activity('Kittens have built a new ' + label, 'ks-build');
+            } else {
+                activity('Kittens have built a new ' + label + ' ' + amount + ' times.', 'ks-build');
+            }
         },
         getBuild: function (name) {
             return game.space.getProgram(name);
@@ -1192,6 +1244,26 @@ var run = function() {
                     if (panels[panel].children[child].id === name) return panels[panel].children[child];
                 }
             }
+        },
+        construct: function (model, button, amount) {
+            var meta = model.metadata;
+            var counter = 0;
+            if (typeof meta.limitBuild == "number" && meta.limitBuild - meta.val < amount) {
+                amount = meta.limitBuild - meta.val;
+            }
+            if (model.enabled && button.controller.hasResources(model) || game.devMode ) {
+                while (button.controller.hasResources(model) && amount > 0) {
+                    model.prices=button.controller.getPrices(model);
+                    button.controller.payPrice(model);
+                    button.controller.incrementValue(model);
+                    counter++;
+                    amount--;
+                }
+                if (meta.breakIronWill) {game.ironWill = false;}
+                if (meta.unlocks) {game.unlock(meta.unlocks);}
+                if (meta.upgrades) {game.upgrade(meta.upgrades);}
+            }
+            return counter;
         }
     };
 
