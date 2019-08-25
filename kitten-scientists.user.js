@@ -622,17 +622,6 @@ var run = function() {
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
             
-            for (var name in builds) {
-                if (!builds[name].enabled) continue;
-
-                var build = builds[name];
-                var require = !build.require ? false : craftManager.getResource(build.require);
-
-                if (!require || trigger <= require.value / require.maxValue) {
-                    buildManager.build(name, build.variant);
-                }
-            }
-            
             var bList = [];
             var countList = [];
             var i = 0;
@@ -1586,6 +1575,88 @@ var run = function() {
             }
 
             return value;
+        }
+    };
+    
+    // Bulk Manager
+    // ============
+    
+    var BulkManager = function () {
+        this.craftManager = new CraftManager();
+    };
+    
+    BulkManager.prototype = {
+        craftManager: undefined,
+        bulk: function (builds, metaData, trigger) {
+            var bList = [];
+            var countList = [];
+            var i = 0;
+            for (name in builds) {
+                var build = builds[name];
+                var data = metaData[name];
+                if (!build.enabled || !data.unlocked) continue;
+                var require = !build.require ? false : craftManager.getResource(build.require);
+                if (!require || trigger <= require.value / require.maxValue) {
+                    if(typeof(build.stage) !== 'undefined' && build.stage !== data.stage) { 
+                      continue;
+                    }
+                    bList.push(new Object());
+                    bList[i].id = name;
+                    bList[i].label = build.label;
+                    bList[i].name = build.name;
+                    bList[i].stage = build.stage;
+                    countList.push(new Object());
+                    countList[i].id = name;
+                    countList[i].name = build.name;
+                    countList[i].count = 0;
+                    countList[i].spot = i;
+                    i++;
+                }
+            }
+            
+            var tempPool = new Object();
+            for (var res in game.resPool.resources) {
+                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
+            }
+            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
+
+            var k = 0;
+            while(countList.length !== 0) {
+                bulkLoop:
+                for (var j = 0; j < countList.length; j++) {
+                    var build = countList[j];
+                    var data = metaData[name];
+                    var prices = data.prices;
+                    var priceRatio = this.getPriceRatio(data);
+                    for (var p = 0; p < prices.length; p++) {
+                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
+                            for (var p2 = 0; p2 < p; p2++) {
+                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
+                            }
+                            bList[countList[j].spot].count = countList[j].count;
+                            countList.splice(j, 1);
+                            j--;
+                            continue bulkLoop;
+                        }
+                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
+                    }
+                    countList[j].count++;
+                }
+                k++;
+            }
+            return bList;
+        },
+        /*construct: function () {
+        },*/
+        getPriceRatio: function (data) {
+            var ratio = data.priceRatio;
+
+		    var ratioDiff = game.getEffect(data.name + "PriceRatio") +
+			    game.getEffect("priceRatio") +
+			    game.getEffect("mapPriceReduction");
+
+		    ratioDiff = game.getHyperbolicEffect(ratioDiff, ratio - 1);
+		    return ratio + ratioDiff;
         }
     };
 
