@@ -638,7 +638,7 @@ var run = function() {
             var i = 0;
             for (name in builds) {
                 var build = builds[name];
-                var meta = (build.variant === 'chrono') ? game.time.getCFU(name) : game.space.getVSU(name);
+                var meta = (build.variant === 'chrono') ? game.time.getCFU(name) : game.time.getVSU(name);
                 if (!build.enabled || !meta.unlocked) continue;
                 var require = !build.require ? false : craftManager.getResource(build.require);
                 if (!require || trigger <= require.value / require.maxValue) {
