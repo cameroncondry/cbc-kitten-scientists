@@ -569,6 +569,64 @@ var run = function() {
                     buildManager.build(name, build.variant);
                 }
             }
+            
+            /*var bList = [];
+            var countList = [];
+            var i = 0;
+            for (name in builds) {
+                var build = builds[name];
+                if (!build.enabled || !game.space.getBuilding(name).unlocked) continue;
+                var require = !build.require ? false : craftManager.getResource(build.require);
+                if (!require || trigger <= require.value / require.maxValue) {
+                    bList.push(new Object());
+                    bList[i].id = name;
+                    bList[i].label = build.label;
+                    bList[i].name = build.name;
+                    countList.push(new Object());
+                    countList[i].id = name;
+                    countList[i].name = build.name;
+                    countList[i].count = 0;
+                    countList[i].spot = i;
+                    i++;
+                }
+            }
+            
+            var tempPool = new Object();
+            for (var res in game.resPool.resources) {
+                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
+            }
+            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
+
+            var k = 0;
+            while(countList.length !== 0) {
+                buildLoop:
+                for (var j = 0; j < countList.length; j++) {
+                    var build = countList[j];
+                    var prices = game.space.getBuilding(build.id).prices;
+                    var priceRatio = game.space.getBuilding(build.id).priceRatio;
+                    for (var p = 0; p < prices.length; p++) {
+                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
+                            for (var p2 = 0; p2 < p; p2++) {
+                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
+                            }
+                            bList[countList[j].spot].count = countList[j].count;
+                            countList.splice(j, 1);
+                            j--;
+                            continue buildLoop;
+                        }
+                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
+                    }
+                    countList[j].count++;
+                }
+                k++;
+            }
+            
+            for (var entry in bList) {
+                if (bList[entry].count > 0) {
+                    buildManager.build(bList[entry].id, bList[entry].count);
+                }
+            }
+            game.ui.render();*/
         },
         upgrade: function () {
             var upgrades = options.auto.upgrade.items;
@@ -1234,7 +1292,7 @@ var run = function() {
             }
         },
         getBuild: function (name) {
-            return game.space.getProgram(name);
+            return game.space.getBuilding(name);
         },
         getBuildButton: function (name) {
             var panels = this.manager.tab.planetPanels;
