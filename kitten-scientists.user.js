@@ -969,10 +969,11 @@ var run = function() {
 
             //need to simulate a click so the game updates everything properly
             button.domNode.click(build);
-            storeForSummary(build.label, 1, 'faith');
             if (variant === "s") {
+                storeForSummary(build.label, 1, 'faith');
                 activity('Kittens have discovered ' + build.label, 'ks-faith');
             } else {
+                storeForSummary(build.label, 1, 'build');
                 activity('Kittens have built a new ' + build.label, 'ks-build');
             }
         },
@@ -2340,9 +2341,9 @@ var run = function() {
             activitySummary[section] = {};
 
         if (activitySummary[section][name] === undefined) {
-            activitySummary[section][name] = parseInt(amount, 10);
+            activitySummary[section][name] = parseFloat(amount);
         } else {
-            activitySummary[section][name] += parseInt(amount, 10);
+            activitySummary[section][name] += parseFloat(amount);
         }
     };
 
@@ -2366,10 +2367,20 @@ var run = function() {
         if (activitySummary.other.hunt) {
             summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt) + ' adorable kitten hunter' + (activitySummary.other.hunt == 1 ? '' : 's'));
         }
-
+        
+        // Upgrades
+        for (var name in activitySummary.upgrade) {
+            summary('Researched: ' + ucfirst(name));
+        }
+        
         // Buildings
         for (var name in activitySummary.build) {
             summary('Built: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
+        }
+        
+        // Order of the Sun
+        for (var name in activitySummary.faith) {
+            summary('Discovered: +' + game.getDisplayValueExt(activitySummary.faith[name]) + ' ' + ucfirst(name));
         }
 
         // Crafts
