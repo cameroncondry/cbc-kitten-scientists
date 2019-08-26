@@ -81,18 +81,23 @@ Thanks to these past and present contributors!
 - [cokernel](https://github.com/cokernel)
 - [DirCattus](https://www.reddit.com/user/DirCattus)
 - [DrGaellon](https://github.com/DrGaellon)
+- Eliezer Kanal
 - [enki1337](https://github.com/enki1337)
 - [FancyRabbitt](https://www.reddit.com/user/FancyRabbitt)
 - [gnidan](https://github.com/gnidan)
 - [Hastebro](https://github.com/Hastebro)
 - [hypehuman](https://github.com/hypehuman)
+- Iris Ward
+- ironchefpython
 - [jacob-keller](https://github.com/jacob-keller)
+- Jason Carver
 - [jcranmer](https://github.com/jcranmer)
 - [KMChappell](https://github.com/KMChappell)
 - [Kobata](https://github.com/Kobata)
 - [magus424](https://github.com/magus424)
 - [mammothb](https://github.com/mammothb)
 - [markuskeunecke](https://github.com/markuskeunecke)
+- Meleneth
 - [Mewnine](https://www.reddit.com/user/Mewnine)
 - [mjdillon](https://github.com/mjdillon)
 - [mmccubbing](https://github.com/mmccubbing)
@@ -107,6 +112,7 @@ Thanks to these past and present contributors!
 - [sjdrodge](https://github.com/sjdrodge)
 - [SphtMarathon](https://www.reddit.com/user/SphtMarathon)
 - [TeWeBu](https://github.com/TeWeBu)
+- Tom Rauchenwald
 - [toadjaune](https://github.com/toadjaune)
 - [trini](https://github.com/trini)
 - [woutershep](https://github.com/woutershep)
