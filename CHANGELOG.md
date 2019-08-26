@@ -11,54 +11,109 @@
 ### 2019.06.13 - Version 1.3.3
 
 #### Changes by [coderpatsy](https://github.com/coderpatsy)
+- Allowed activity messages to have multiple types.
+- Fixed craft setting loading.
+- Fixed trade message filter.
+- Fixed libraries and data centers.
+- Removed trade filter.
+- Fixed ship craft prices.
+- Disabled exploring by default.
+- Added some features for external scripts.
+- Made top level toggles save.
+- Some CSS changes.
 
 #### Changes by [Phoenix09](https://github.com/Phoenix09)
+- Added spice refinery.
+- Changed praise summary to use faith bonus.
+- Changed crafting logging to use correct ratio.
 
 #### Changes by [markuskeunecke](https://github.com/markuskeunecke)
+- Fixed autofestival.
 
 #### Changes by Tom Rauchenwald
+- Fixed missing comma.
 
 #### Changes by [romanalexander](https://github.com/romanalexander)
+- Fixed another missing comma.
 
 #### Changes by [amaranth](https://github.com/amaranth)
+- Added order of the sun functionality.
+- Added rendered tab checks.
+- Changed limited crafting to use season id.
 
 #### Changes by [toadjaune](https://github.com/toadjaune)
+- Begun overhaul of limited crafting to use quantities of involved materials.
+- Prevented limited crafting from occuring when a maximum is present
 
 #### Changes by Eliezer Kanal
+- Prevented building from using stock resources.
+- Added visual warning for when stock exceeds resource cap.
+- Fixed backwards resource check.
+- Fixed loop continuing incorrectly.
+- Fixed initial loading of stock.
 
 #### Changes by [Kobata](https://github.com/Kobata)
+- Fixed building price checking for buildings with stages.
 
 #### Changes by [Hastebro](https://github.com/Hastebro)
+- Added cryptocurrency and exploration automation.
 
 #### Changes by [NoobKitten](https://github.com/NoobKitten)
+- Added autofeeding necrocorns.
 
 #### Changes by [Wymrite](https://github.com/Wymrite)
+- Added ziggurats and cryptotheology functionality.
+- Added molten core.
+- Added time tab building automation.
+- Added craft ratio to limited crafting formula.
+- Updated limited crafting documentation.
 
 ### 2017.04.07 - Version 1.3.2
 
 #### Changes by [trini](https://github.com/trini)
+- Removed per race trade trigger.
 
 #### Changes by [cokernel](https://github.com/cokernel)
+- Improved logging of hunting.
+- Switched activity summary to use past tense.
 
 #### Changes by [coderpatsy](https://github.com/coderpatsy)
+- Updated logging messaging.
+- Fixed space auto-build message.
+- Modified logging methods.
 
 #### Changes by [zelenay](https://github.com/zelenay)
+- Added tampermonkey functionality and script load check.
 
 #### Changes by [Xanidel](https://github.com/Xanidel)
+- Added thorium crafting option.
 
 #### Changes by [woutershep](https://github.com/woutershep)
+- Fixed trade ratio calculation.
+- Added missing space buildings.
+- Added check to prevent early space building.
 
 #### Changes by [poizan42](https://github.com/poizan42)
+- Changed getBuilding function to getBuildingExt.
+- Fixed space building labels.
+- Fixed show activity checkbox for 1.3.0.0.
 
 #### Changes by [oliversalzburg](https://github.com/oliversalzburg)
+- Numerous building and ui bugfixes.
 
 #### Changes by [KMChappell](https://github.com/KMChappell)
+- Corrected renderFilters crash.
 
 #### Changes by [riannucci](https://github.com/riannucci)
+- Fixed hasResource call.
 
 #### Changes by Meleneth
+- Added check to find buildings from button text.
 
 #### Changes by [TeWeBu](https://github.com/TeWeBu)
+- Fixed getBuildButton method.
+- Fixed tradeMultiple method.
+- Formatting fixes.
 
 ### 2016.01.02 - Version 1.3.1
 
