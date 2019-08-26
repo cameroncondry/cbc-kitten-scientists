@@ -53,7 +53,7 @@ Techs and workshop upgrades are automatically bought when affordable, prioritizi
 
 ### Trading
 
-Trades happen when the traded resource and gold is at 95% of the storage capacity. By default, the trades are optimized to only happen during seasons when the trade is most effective.
+Trades happen when the traded resource and gold is at 98% of the storage capacity. By default, the trades are optimized to only happen during seasons when the trade is most effective.
 
 Trading also has a *limited* trading mode. This mode determines how much production time is needed to make the trade's input resources versus the time to make the trade's average output resources to determine if a trade is profitable. It also checks how many trades each resource involved is worth, and prevents trading if the least input resource is less than the least output resource. This prevents limited trading from depleting the input resources.
 
