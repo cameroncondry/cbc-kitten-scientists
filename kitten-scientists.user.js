@@ -59,12 +59,12 @@ var run = function() {
                 // At what percentage of the relic storage capacity should KS exchange?
                 trigger: 10000
             },
-			explore: {
-				// Should exploring be automated?
+            explore: {
+                // Should exploring be automated?
                 enabled: false,
-			},
-			autofeed: {
-				// Should feeding elders be automated?
+            },
+            autofeed: {
+                // Should feeding elders be automated?
                 enabled: true,
             },
             faith: {
@@ -410,6 +410,7 @@ var run = function() {
         this.buildManager = new BuildManager();
         this.spaceManager = new SpaceManager();
         this.craftManager = new CraftManager();
+        this.bulkManager = new BulkManager();
         this.tradeManager = new TradeManager();
         this.religionManager = new ReligionManager();
         this.timeManager = new TimeManager();
@@ -423,6 +424,7 @@ var run = function() {
         buildManager: undefined,
         spaceManager: undefined,
         craftManager: undefined,
+        bulkManager: undefined,
         tradeManager: undefined,
         religionManager: undefined,
         timeManager: undefined,
@@ -469,21 +471,21 @@ var run = function() {
         }}
     },
 
-		crypto: function () {
+        crypto: function () {
             var coinPrice = game.calendar.cryptoPrice;
             var previousRelic = game.resPool.get('relic').value;
             var previousCoin = game.resPool.get('blackcoin').value;
             var exchangedCoin = 0.0;
             var exchangedRelic = 0.0;
-			var waitForBestPrice = false;
+            var waitForBestPrice = false;
 
             // Only exchange if it's enabled
             if (!options.auto.crypto.enabled) return;
 
-			// Waits for coin price to drop below a certain treshold before starting the exchange process
-			if (waitForBestPrice == true && coinPrice < 860.0) { waitForBestPrice = false; }
+            // Waits for coin price to drop below a certain treshold before starting the exchange process
+            if (waitForBestPrice == true && coinPrice < 860.0) { waitForBestPrice = false; }
 
-			// Exchanges up to a certain threshold, in order to keep a good exchange rate, then waits for a higher treshold before exchanging for relics.
+            // Exchanges up to a certain threshold, in order to keep a good exchange rate, then waits for a higher treshold before exchanging for relics.
             if (waitForBestPrice == false && coinPrice < 950.0 && previousRelic > options.auto.crypto.trigger) {
                 var currentCoin;
 
@@ -496,7 +498,7 @@ var run = function() {
             else if (coinPrice > 1050.0 && game.resPool.get('blackcoin').value > 0) {
                 var currentRelic;
 
-				waitForBestPrice = true;
+                waitForBestPrice = true;
 
                 game.diplomacy.sellEcoin();
 
@@ -506,103 +508,51 @@ var run = function() {
                 activity('Kittens sold your Blackcoins and bought '+ exchangedRelic +' Relics');
             }
         },
-		explore: function () {
-			var manager = this.explorationManager;
-			var expeditionNode = game.village.map.expeditionNode;
+        explore: function () {
+            var manager = this.explorationManager;
+            var expeditionNode = game.village.map.expeditionNode;
 
-			// Only exchange if it's enabled
+            // Only exchange if it's enabled
             if (!options.auto.explore.enabled) return;
 
-			if( expeditionNode == null) {
-				manager.getCheapestNode();
+            if( expeditionNode == null) {
+                manager.getCheapestNode();
 
-				manager.explore(manager.cheapestNodeX, manager.cheapestNodeY);
+                manager.explore(manager.cheapestNodeX, manager.cheapestNodeY);
 
-				activity('Your kittens started exploring node '+ manager.cheapestNodeX +'-'+ manager.cheapestNodeY +' of the map.');
-			}
-		},
+                activity('Your kittens started exploring node '+ manager.cheapestNodeX +'-'+ manager.cheapestNodeY +' of the map.');
+            }
+        },
         worship: function () {
             var builds = options.auto.faith.items;
             var buildManager = this.religionManager;
             var craftManager = this.craftManager;
+            var bulkManager = this.bulkManager;
             var trigger = options.auto.faith.trigger;
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-
+          
+            var metaData = {};
             for (var name in builds) {
-                if (!builds[name].enabled) continue;
-
-                var build = builds[name];
-                var require = !build.require ? false : craftManager.getResource(build.require);
-
-                if (!require || trigger <= require.value / require.maxValue) {
-                    buildManager.build(name, build.variant);
+                var build = builds[name]
+                metaData[name] = buildManager.getBuild(name, build.variant);
+                if(!buildManager.getBuildButton(name, build.variant)) {
+                    metaData[name].rHidden = true;
+                } else {
+                    var model = buildManager.getBuildButton(name, build.variant).model;
+                    var panel = (build.variant === 'c') ? game.science.techs[58].researched : true;
+                    metaData[name].rHidden = !(model.visible && model.enabled && panel);
                 }
             }
             
-            /*var bList = [];
-            var countList = [];
-            var i = 0;
-            for (name in builds) {
-                var build = builds[name];
-                var meta = (build.variant === 'chrono') ? game.time.getCFU(name) : game.space.getVSU(name);
-                if (!build.enabled || !meta.unlocked) continue;
-                var require = !build.require ? false : craftManager.getResource(build.require);
-                if (!require || trigger <= require.value / require.maxValue) {
-                    bList.push(new Object());
-                    bList[i].id = name;
-                    bList[i].label = build.label;
-                    bList[i].name = build.name;
-                    bList[i].variant = build.variant;
-                    countList.push(new Object());
-                    countList[i].id = name;
-                    countList[i].name = build.name;
-                    countList[i].count = 0;
-                    countList[i].spot = i;
-                    countList[i].meta = meta;
-                    i++;
+            var buildList = bulkManager.bulk(builds, metaData, trigger);
+            
+            for (var entry in buildList) {
+                if (buildList[entry].count > 0) {
+                    buildManager.build(buildList[entry].id, buildList[entry].variant, buildList[entry].count);
                 }
             }
-            
-            var tempPool = new Object();
-            for (var res in game.resPool.resources) {
-                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
-            }
-            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
-
-            var k = 0;
-            while(countList.length !== 0) {
-                timeLoop:
-                for (var j = 0; j < countList.length; j++) {
-                    var build = countList[j];
-                    var prices = build.meta.prices;
-                    var priceRatio = build.meta.priceRatio;
-                    for (var p = 0; p < prices.length; p++) {
-                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
-                            for (var p2 = 0; p2 < p; p2++) {
-                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
-                            }
-                            bList[countList[j].spot].count = countList[j].count;
-                            countList.splice(j, 1);
-                            j--;
-                            continue timeLoop;
-                        }
-                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
-                    }
-                    countList[j].count++;
-                }
-                k++;
-            }
-            
-            for (var entry in bList) {
-                if (bList[entry].count > 0) {
-                    buildManager.build(bList[entry].id, bList[entry].variant, bList[entry].count);
-                }
-            }
-            game.ui.render();*/
-            
-            
 
             // Praise the sun with any faith left over
             var faith = craftManager.getResource('faith');
@@ -612,75 +562,36 @@ var run = function() {
                 activity('Praised the sun!', 'ks-praise');
                 game.religion.praise();
             }
+          
+            game.ui.render();
         },
         chrono: function () {
             var builds = options.auto.time.items;
             var buildManager = this.timeManager;
             var craftManager = this.craftManager;
+            var bulkManager = this.bulkManager;
             var trigger = options.auto.time.trigger;
             
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
             
-            var bList = [];
-            var countList = [];
-            var i = 0;
-            for (name in builds) {
-                var build = builds[name];
-                var meta = (build.variant === 'chrono') ? game.time.getCFU(name) : game.time.getVSU(name);
-                if (!build.enabled || !meta.unlocked) continue;
-                var require = !build.require ? false : craftManager.getResource(build.require);
-                if (!require || trigger <= require.value / require.maxValue) {
-                    bList.push(new Object());
-                    bList[i].id = name;
-                    bList[i].label = build.label;
-                    bList[i].name = build.name;
-                    bList[i].variant = build.variant;
-                    countList.push(new Object());
-                    countList[i].id = name;
-                    countList[i].name = build.name;
-                    countList[i].count = 0;
-                    countList[i].spot = i;
-                    countList[i].meta = meta;
-                    i++;
-                }
+            var metaData = {};
+            for (var name in builds) {
+                var build = builds[name]
+                metaData[name] = buildManager.getBuild(name, build.variant);
+                var model = buildManager.getBuildButton(name, build.variant).model;
+                var panel = (build.variant === 'chrono') ? game.tabs[7].cfPanel : game.tabs[7].vsPanel;
+                metaData[name].tHidden = (!model.visible || !model.enabled || !panel.visible);
             }
             
-            var tempPool = new Object();
-            for (var res in game.resPool.resources) {
-                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
-            }
-            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
-
-            var k = 0;
-            while(countList.length !== 0) {
-                timeLoop:
-                for (var j = 0; j < countList.length; j++) {
-                    var build = countList[j];
-                    var prices = build.meta.prices;
-                    var priceRatio = build.meta.priceRatio;
-                    for (var p = 0; p < prices.length; p++) {
-                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
-                            for (var p2 = 0; p2 < p; p2++) {
-                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
-                            }
-                            bList[countList[j].spot].count = countList[j].count;
-                            countList.splice(j, 1);
-                            j--;
-                            continue timeLoop;
-                        }
-                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
-                    }
-                    countList[j].count++;
-                }
-                k++;
-            }
+            var buildList = bulkManager.bulk(builds, metaData, trigger);
             
-            for (var entry in bList) {
-                if (bList[entry].count > 0) {
-                    buildManager.build(bList[entry].id, bList[entry].variant, bList[entry].count);
+            for (var entry in buildList) {
+                if (buildList[entry].count > 0) {
+                    buildManager.build(buildList[entry].id, buildList[entry].variant, buildList[entry].count);
                 }
             }
+          
             game.ui.render();
         },
         upgrade: function () {
@@ -772,69 +683,23 @@ var run = function() {
             var builds = options.auto.build.items;
             var buildManager = this.buildManager;
             var craftManager = this.craftManager;
+            var bulkManager = this.bulkManager;
             var trigger = options.auto.build.trigger;
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
             
-            var bList = [];
-            var countList = [];
-            var i = 0;
-            for (name in builds) {
-                var build = builds[name];
-                if (!build.enabled || !game.bld.getBuildingExt(build.name || name).meta.unlocked) continue;
-                var require = !build.require ? false : craftManager.getResource(build.require);
-                if (!require || trigger <= require.value / require.maxValue) {
-                    if(typeof(build.stage) !== 'undefined' && build.stage !== game.bld.getBuildingExt(build.name || name).meta.stage) { 
-                      continue;
-                    }
-                    bList.push(new Object());
-                    bList[i].id = name;
-                    bList[i].label = build.label;
-                    bList[i].name = build.name;
-                    bList[i].stage = build.stage;
-                    countList.push(new Object());
-                    countList[i].id = name;
-                    countList[i].name = build.name;
-                    countList[i].count = 0;
-                    countList[i].spot = i;
-                    i++;
-                }
+            var metaData = {};
+            for (var name in builds) {
+                var build = builds[name]
+                metaData[name] = buildManager.getBuild(build.name || name).meta;
             }
             
-            var tempPool = new Object();
-            for (var res in game.resPool.resources) {
-                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
-            }
-            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
-
-            var k = 0;
-            while(countList.length !== 0) {
-                buildLoop:
-                for (var j = 0; j < countList.length; j++) {
-                    var build = countList[j];
-                    var prices = game.bld.getPrices(build.name || build.id);
-                    var priceRatio = game.bld.getPriceRatio(build.name || build.id);
-                    for (var p = 0; p < prices.length; p++) {
-                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
-                            for (var p2 = 0; p2 < p; p2++) {
-                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
-                            }
-                            bList[countList[j].spot].count = countList[j].count;
-                            countList.splice(j, 1);
-                            j--;
-                            continue buildLoop;
-                        }
-                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
-                    }
-                    countList[j].count++;
-                }
-                k++;
-            }
+            var buildList = bulkManager.bulk(builds, metaData, trigger, true);
             
-            for (var entry in bList) {
-                if (bList[entry].count > 0) {
-                    buildManager.build(bList[entry].name || bList[entry].id, bList[entry].stage, bList[entry].count);
+            for (var entry in buildList) {
+                if (buildList[entry].count > 0) {
+                    buildManager.build(buildList[entry].name || buildList[entry].id, buildList[entry].stage, buildList[entry].count);
                 }
             }
             game.ui.render();
@@ -843,65 +708,23 @@ var run = function() {
             var builds = options.auto.space.items;
             var buildManager = this.spaceManager;
             var craftManager = this.craftManager;
+            var bulkManager = this.bulkManager;
             var trigger = options.auto.space.trigger;
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-            
-            var bList = [];
-            var countList = [];
-            var i = 0;
-            for (name in builds) {
-                var build = builds[name];
-                if (!build.enabled || !game.space.getBuilding(name).unlocked) continue;
-                var require = !build.require ? false : craftManager.getResource(build.require);
-                if (!require || trigger <= require.value / require.maxValue) {
-                    bList.push(new Object());
-                    bList[i].id = name;
-                    bList[i].label = build.label;
-                    bList[i].name = build.name;
-                    countList.push(new Object());
-                    countList[i].id = name;
-                    countList[i].name = build.name;
-                    countList[i].count = 0;
-                    countList[i].spot = i;
-                    i++;
-                }
+          
+            var metaData = {};
+            for (var name in builds) {
+                var build = builds[name]
+                metaData[name] = buildManager.getBuild(name);
             }
             
-            var tempPool = new Object();
-            for (var res in game.resPool.resources) {
-                tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
-            }
-            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
-
-            var k = 0;
-            while(countList.length !== 0) {
-                buildLoop:
-                for (var j = 0; j < countList.length; j++) {
-                    var build = countList[j];
-                    var prices = game.space.getBuilding(build.id).prices;
-                    var priceRatio = game.space.getBuilding(build.id).priceRatio;
-                    for (var p = 0; p < prices.length; p++) {
-                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
-                            for (var p2 = 0; p2 < p; p2++) {
-                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
-                            }
-                            bList[countList[j].spot].count = countList[j].count;
-                            countList.splice(j, 1);
-                            j--;
-                            continue buildLoop;
-                        }
-                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
-                    }
-                    countList[j].count++;
-                }
-                k++;
-            }
+            var buildList = bulkManager.bulk(builds, metaData, trigger);
             
-            for (var entry in bList) {
-                if (bList[entry].count > 0) {
-                    buildManager.build(bList[entry].id, bList[entry].count);
+            for (var entry in buildList) {
+                if (buildList[entry].count > 0) {
+                    buildManager.build(buildList[entry].id, buildList[entry].count);
                 }
             }
             game.ui.render();
@@ -1049,68 +872,68 @@ var run = function() {
         }
     };
 
-	// Exploration Manager
-	// ===================
+    // Exploration Manager
+    // ===================
 
-	var ExplorationManager = function () {
-		this.manager = new TabManager('Village');
-	};
+    var ExplorationManager = function () {
+        this.manager = new TabManager('Village');
+    };
 
-	ExplorationManager.prototype = {
-		manager: undefined,
-		currentCheapestNode: null,
-		currentCheapestNodeValue: null,
-		cheapestNodeX: null,
-		cheapestNodeY: null,
-		explore: function(x, y) {
-			game.village.map.expeditionNode = {x, y};
-			game.village.map.explore(x, y);
-		},
-		getCheapestNode: function () {
-			var tileArray = game.village.map.villageData;
-			var tileKey = "";
+    ExplorationManager.prototype = {
+        manager: undefined,
+        currentCheapestNode: null,
+        currentCheapestNodeValue: null,
+        cheapestNodeX: null,
+        cheapestNodeY: null,
+        explore: function(x, y) {
+            game.village.map.expeditionNode = {x, y};
+            game.village.map.explore(x, y);
+        },
+        getCheapestNode: function () {
+            var tileArray = game.village.map.villageData;
+            var tileKey = "";
 
-			this.currentCheapestNode = null;
+            this.currentCheapestNode = null;
 
-			for (var i in tileArray) {
-				tileKey = i;
+            for (var i in tileArray) {
+                tileKey = i;
 
-				// Discards locked nodes
-				if (i.unlocked == false) { break; }
+                // Discards locked nodes
+                if (i.unlocked == false) { break; }
 
-				// Discards junk nodes
-				if(tileKey.includes('-')) { break; }
+                // Discards junk nodes
+                if(tileKey.includes('-')) { break; }
 
-				// Acquire node coordinates
-				var regex = /(\d).(\d*)/g;
-				var keyMatch = regex.exec(tileKey);
-				var xCoord = parseInt(keyMatch[1]);
-				var yCoord = parseInt(keyMatch[2]);
+                // Acquire node coordinates
+                var regex = /(\d).(\d*)/g;
+                var keyMatch = regex.exec(tileKey);
+                var xCoord = parseInt(keyMatch[1]);
+                var yCoord = parseInt(keyMatch[2]);
 
-				if(this.currentCheapestNode == null) {
-					this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
-					this.currentCheapestNode = i;
-					this.cheapestNodeX = xCoord;
-					this.cheapestNodeY = yCoord;
-				}
+                if(this.currentCheapestNode == null) {
+                    this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
+                    this.currentCheapestNode = i;
+                    this.cheapestNodeX = xCoord;
+                    this.cheapestNodeY = yCoord;
+                }
 
-				if (this.currentCheapestNode != null && this.getNodeValue(xCoord, yCoord) < this.currentCheapestNodeValue) {
-					this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
-					this.currentCheapestNode = i;
-					this.cheapestNodeX = xCoord;
-					this.cheapestNodeY = yCoord;
-				}
-			}
-		},
-		getNodeValue: function (x, y){
-			var nodePrice = game.village.map.toLevel(x, y);
-			var exploreCost = game.village.map.getExplorationPrice(x,y);
+                if (this.currentCheapestNode != null && this.getNodeValue(xCoord, yCoord) < this.currentCheapestNodeValue) {
+                    this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
+                    this.currentCheapestNode = i;
+                    this.cheapestNodeX = xCoord;
+                    this.cheapestNodeY = yCoord;
+                }
+            }
+        },
+        getNodeValue: function (x, y){
+            var nodePrice = game.village.map.toLevel(x, y);
+            var exploreCost = game.village.map.getExplorationPrice(x,y);
 
-			var tileValue = nodePrice / exploreCost;
+            var tileValue = nodePrice / exploreCost;
 
-			return tileValue;
-		}
-	};
+            return tileValue;
+        }
+    };
 
     // Religion manager
     // ================
@@ -1118,25 +941,38 @@ var run = function() {
     var ReligionManager = function () {
         this.manager = new TabManager('Religion');
         this.crafts = new CraftManager();
+        this.bulkManager = new BulkManager();
     };
 
     ReligionManager.prototype = {
         manager: undefined,
         crafts: undefined,
-        build: function (name, variant) {
+        bulkManager: undefined,
+        build: function (name, variant, amount) {
             var build = this.getBuild(name, variant);
             var button = this.getBuildButton(name, variant);
 
             if (!button || !button.model.enabled) return;
-
-            //need to simulate a click so the game updates everything properly
-            button.domNode.click(build);
+          
+            var amountTemp = amount;
+            var label = build.label;
+            amount=this.bulkManager.construct(button.model, button, amount);
+            if(amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
+          
             if (variant === "s") {
-                storeForSummary(build.label, 1, 'faith');
-                activity('Kittens have discovered ' + build.label, 'ks-faith');
+                storeForSummary(label, amount, 'faith');
+                if (amount === 1) {
+                    activity('Kittens have discovered ' + label, 'ks-faith');
+                } else {
+                    activity('Kittens have discovered ' + label + ' ' + amount + ' times.', 'ks-faith');
+                }
             } else {
-                storeForSummary(build.label, 1, 'build');
-                activity('Kittens have built a new ' + build.label, 'ks-build');
+                storeForSummary(label, amount, 'build');
+                if (amount === 1) {
+                    activity('Kittens have built a new ' + label, 'ks-build');
+                } else {
+                    activity('Kittens have built a new ' + label + ' ' + amount + ' times.', 'ks-build');
+                }
             }
         },
         getBuild: function (name, variant) {
@@ -1176,20 +1012,25 @@ var run = function() {
     var TimeManager = function () {
         this.manager = new TabManager('Time');
         this.crafts = new CraftManager();
+        this.bulkManager = new BulkManager();
     };
     
     TimeManager.prototype = {
         manager: undefined,
         crafts: undefined,
+        bulkManager: undefined,
         build: function (name, variant, amount) {
             var build = this.getBuild(name, variant);
             var button = this.getBuildButton(name, variant);
 
             if (!button || !button.model.enabled) return;
 
+            var amountTemp = amount;
             var label = build.label;
-            amount=this.construct(button.model, button, amount);
+            amount=this.bulkManager.construct(button.model, button, amount);
+            if(amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
             storeForSummary(label, amount, 'build');
+          
           
             if (amount === 1) {
                 activity('Kittens have built a new ' + label, 'ks-build');
@@ -1217,26 +1058,6 @@ var run = function() {
                     return buttons[i];
                 }
             }
-        },
-        construct: function (model, button, amount) {
-            var meta = model.metadata;
-            var counter = 0;
-            if (typeof meta.limitBuild == "number" && meta.limitBuild - meta.val < amount) {
-                amount = meta.limitBuild - meta.val;
-            }
-            if (model.enabled && button.controller.hasResources(model) || game.devMode ) {
-                while (button.controller.hasResources(model) && amount > 0) {
-                    model.prices=button.controller.getPrices(model);
-                    button.controller.payPrice(model);
-                    button.controller.incrementValue(model);
-                    counter++;
-                    amount--;
-                }
-                if (meta.breakIronWill) {game.ironWill = false;}
-                if (meta.unlocks) {game.unlock(meta.unlocks);}
-                if (meta.upgrades) {game.upgrade(meta.upgrades);}
-            }
-            return counter;
         }
     };
     
@@ -1285,18 +1106,22 @@ var run = function() {
     var BuildManager = function () {
         this.manager = new TabManager('Bonfire');
         this.crafts = new CraftManager();
+        this.bulkManager = new BulkManager();
     };
 
     BuildManager.prototype = {
         manager: undefined,
         crafts: undefined,
+        bulkManager: undefined,
         build: function (name, stage, amount) {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name, stage);
 
             if (!button || !button.model.enabled) return;
+            var amountTemp = amount;
             var label = build.meta.label ? build.meta.label : build.meta.stages[stage].label;
-            amount=this.construct(button.model, button, amount);
+            amount=this.bulkManager.construct(button.model, button, amount);
+            if(amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
             storeForSummary(label, amount, 'build');
           
             if (amount === 1) {
@@ -1319,26 +1144,6 @@ var run = function() {
                     return buttons[i];
                 }
             }
-        },
-        construct: function (model, button, amount) {
-            var meta = model.metadata;
-            var counter = 0;
-            if (typeof meta.limitBuild == "number" && meta.limitBuild - meta.val < amount) {
-                amount = meta.limitBuild - meta.val;
-            }
-            if (model.enabled && button.controller.hasResources(model) || game.devMode ) {
-                while (button.controller.hasResources(model) && amount > 0) {
-                    model.prices=button.controller.getPrices(model);
-                    button.controller.payPrice(model);
-                    button.controller.incrementValue(model);
-                    counter++;
-                    amount--;
-                }
-                if (meta.breakIronWill) {game.ironWill = false;}
-                if (meta.unlocks) {game.unlock(meta.unlocks);}
-                if (meta.upgrades) {game.upgrade(meta.upgrades);}
-            }
-            return counter;
         }
     };
 
@@ -1348,19 +1153,24 @@ var run = function() {
     var SpaceManager = function () {
         this.manager = new TabManager('Space');
         this.crafts = new CraftManager();
+        this.bulkManager = new BulkManager();
     };
 
     SpaceManager.prototype = {
         manager: undefined,
         crafts: undefined,
+        bulkManager: undefined,
         build: function (name, amount) {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name);
 
             if (!build.unlocked || !button || !button.model.enabled || !options.auto.space.items[name].enabled) return;
-
+            var amountTemp = amount;
             var label = build.label;
-            amount=this.construct(button.model, button, amount);
+            amount=this.bulkManager.construct(button.model, button, amount);
+            if(amount !== amountTemp) {
+                warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);
+            }
             storeForSummary(label, amount, 'build');
           
             if (amount === 1) {
@@ -1380,26 +1190,6 @@ var run = function() {
                     if (panels[panel].children[child].id === name) return panels[panel].children[child];
                 }
             }
-        },
-        construct: function (model, button, amount) {
-            var meta = model.metadata;
-            var counter = 0;
-            if (typeof meta.limitBuild == "number" && meta.limitBuild - meta.val < amount) {
-                amount = meta.limitBuild - meta.val;
-            }
-            if (model.enabled && button.controller.hasResources(model) || game.devMode ) {
-                while (button.controller.hasResources(model) && amount > 0) {
-                    model.prices=button.controller.getPrices(model);
-                    button.controller.payPrice(model);
-                    button.controller.incrementValue(model);
-                    counter++;
-                    amount--;
-                }
-                if (meta.breakIronWill) {game.ironWill = false;}
-                if (meta.unlocks) {game.unlock(meta.unlocks);}
-                if (meta.upgrades) {game.upgrade(meta.upgrades);}
-            }
-            return counter;
         }
     };
 
@@ -1577,7 +1367,7 @@ var run = function() {
             return value;
         }
     };
-    
+  
     // Bulk Manager
     // ============
     
@@ -1587,58 +1377,65 @@ var run = function() {
     
     BulkManager.prototype = {
         craftManager: undefined,
-        bulk: function (builds, metaData, trigger) {
+        bulk: function (builds, metaData, trigger, bonfire) {
             var bList = [];
             var countList = [];
-            var i = 0;
-            for (name in builds) {
+            var counter = 0;
+            for (var name in builds) {
                 var build = builds[name];
                 var data = metaData[name];
-                if (!build.enabled || !data.unlocked) continue;
-                var require = !build.require ? false : craftManager.getResource(build.require);
+                if (!build.enabled) {continue;}
+                if (data.tHidden === true) {continue;}
+                if (data.rHidden === true) {continue;}
+                if ((data.rHidden === undefined) && !data.unlocked) {continue;}
+                if (name === 'cryochambers' && game.time.getVSU('usedCryochambers').val > 0) continue;
+                var require = !build.require ? false : this.craftManager.getResource(build.require);
                 if (!require || trigger <= require.value / require.maxValue) {
                     if(typeof(build.stage) !== 'undefined' && build.stage !== data.stage) { 
-                      continue;
+                        continue;
                     }
                     bList.push(new Object());
-                    bList[i].id = name;
-                    bList[i].label = build.label;
-                    bList[i].name = build.name;
-                    bList[i].stage = build.stage;
+                    bList[counter].id = name;
+                    bList[counter].label = build.label;
+                    bList[counter].name = build.name;
+                    bList[counter].stage = build.stage;
+                    bList[counter].variant = build.variant;
                     countList.push(new Object());
-                    countList[i].id = name;
-                    countList[i].name = build.name;
-                    countList[i].count = 0;
-                    countList[i].spot = i;
-                    i++;
+                    countList[counter].id = name;
+                    countList[counter].name = build.name;
+                    countList[counter].count = 0;
+                    countList[counter].spot = counter;
+                    countList[counter].prices = (data.stages) ? data.stages[data.stage].prices : data.prices;
+                    countList[counter].priceRatio = this.getPriceRatio(data, bonfire);
+                    counter++;
                 }
             }
-            
             var tempPool = new Object();
             for (var res in game.resPool.resources) {
                 tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
             }
-            for (var res in tempPool) {tempPool[res] = craftManager.getValueAvailable(res, true);}
-
+            for (var res in tempPool) {tempPool[res] = this.craftManager.getValueAvailable(res, true);}
+          
             var k = 0;
             while(countList.length !== 0) {
                 bulkLoop:
                 for (var j = 0; j < countList.length; j++) {
                     var build = countList[j];
-                    var data = metaData[name];
-                    var prices = data.prices;
-                    var priceRatio = this.getPriceRatio(data);
+                    var data = metaData[build.id];
+                    var prices = build.prices;
+                    var priceRatio = build.priceRatio;
                     for (var p = 0; p < prices.length; p++) {
-                        if (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k)) {
+                        var nextPriceCheck = (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k + data.val));
+                        if (nextPriceCheck || (data.noStackable && (k + data.val)>=1)) {
                             for (var p2 = 0; p2 < p; p2++) {
-                              tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k));
+                                tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k + data.val));
                             }
                             bList[countList[j].spot].count = countList[j].count;
                             countList.splice(j, 1);
                             j--;
                             continue bulkLoop;
                         }
-                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k));
+                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k + data.val));
                     }
                     countList[j].count++;
                 }
@@ -1646,17 +1443,38 @@ var run = function() {
             }
             return bList;
         },
-        /*construct: function () {
-        },*/
-        getPriceRatio: function (data) {
-            var ratio = data.priceRatio;
+        construct: function (model, button, amount) {
+            var meta = model.metadata;
+            var counter = 0;
+            if (typeof meta.limitBuild == "number" && meta.limitBuild - meta.val < amount) {
+                amount = meta.limitBuild - meta.val;
+            }
+            if (model.enabled && button.controller.hasResources(model) || game.devMode ) {
+                while (button.controller.hasResources(model) && amount > 0) {
+                    model.prices=button.controller.getPrices(model);
+                    button.controller.payPrice(model);
+                    button.controller.incrementValue(model);
+                    counter++;
+                    amount--;
+                }
+                if (meta.breakIronWill) {game.ironWill = false;}
+                if (meta.unlocks) {game.unlock(meta.unlocks);}
+                if (meta.upgrades) {game.upgrade(meta.upgrades);}
+            }
+            return counter;
+        },
+        getPriceRatio: function (data, bonfire) {
+            var ratio = (!data.stages) ? data.priceRatio : (data.priceRatio || data.stages[data.stage].priceRatio);
 
-		    var ratioDiff = game.getEffect(data.name + "PriceRatio") +
-			    game.getEffect("priceRatio") +
-			    game.getEffect("mapPriceReduction");
+            var ratioDiff = 0;
+            if (bonfire) {
+                ratioDiff = game.getEffect(data.name + "PriceRatio") +
+                    game.getEffect("priceRatio") +
+                    game.getEffect("mapPriceReduction");
 
-		    ratioDiff = game.getHyperbolicEffect(ratioDiff, ratio - 1);
-		    return ratio + ratioDiff;
+                ratioDiff = game.getHyperbolicEffect(ratioDiff, ratio - 1);
+            }
+            return ratio + ratioDiff;
         }
     };
 
