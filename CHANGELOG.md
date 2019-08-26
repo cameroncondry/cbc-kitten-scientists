@@ -3,10 +3,27 @@
 ### 2019.08.?? - Version 1.4.0
 
 #### Changes by [Wymrite](https://github.com/Wymrite)
+- Fixed broken enable-all button.
+- Added upgrade manager for automated upgrading.
+- Fixed issues with leviathan tradings.
+- Modified building system to build all possible buildings in a single KS cycle iteration.
+- Adjusted priority of limited crafting to override trigger and consumption rate settings.
+- Changed multiple default settings.
+- Modified crafting to reach equilibrium in one KS cycle iteration.
+- Changed how trades are distributed to reach equilibrium in one KS cycle iteration.
+- Added new limited trading system to trade when profitable, limited by the input/output resource ratio.
+- Changed logging to use correct numbers, use correct labels, and have the summary log everything it should.
+- Some formatting fixes.
+- Updated the changelog and readme.
+
 
 #### Changes by [hypehuman](https://github.com/hypehuman)
+- Moved autofeeding necrocorns to correct file.
 
 #### Changes by [coderpatsy](https://github.com/coderpatsy)
+- Fixed autofeed settings.
+- Changed toggleAttribute method to setAttribute.
+- Updated bookmarklet URL to jsdelivr.
 
 ### 2019.06.13 - Version 1.3.3
 
