@@ -1081,9 +1081,14 @@ var run = function() {
             //need to simulate a click so the game updates everything properly
             button.domNode.click(upgrade);
             var label = upgrade.label;
-            storeForSummary(label, 1, 'upgrade');
-
-            activity('Kittens have bought the upgrade ' + label, 'ks-upgrade');
+            
+            if (variant === 'workshop') {
+                storeForSummary(label, 1, 'upgrade');
+                activity('Kittens have bought the upgrade ' + label, 'ks-upgrade');
+            } else {
+                storeForSummary(label, 1, 'research');
+                activity('Kittens have bought the tech ' + label, 'ks-research');
+            }
         },
         getBuildButton: function (upgrade, variant) {
             if (variant === 'workshop') {
@@ -1213,7 +1218,7 @@ var run = function() {
             // determine actual amount after crafting upgrades
             amount = (amount * (1 + ratio)).toFixed(2);
 
-            storeForSummary(ucfirst(name), amount, 'craft');
+            storeForSummary(ucfirst(craft.title), amount, 'craft');
             activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name), 'ks-craft');
         },
         canCraft: function (name, amount) {
@@ -1502,7 +1507,7 @@ var run = function() {
             if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
 
             game.diplomacy.tradeMultiple(race, amount);
-            storeForSummary(ucfirst(name), amount, 'trade');
+            storeForSummary(race.title, amount, 'trade');
             activity('Kittens have traded ' + amount + 'x with ' + ucfirst(name), 'ks-trade');
         },
         getLowestTradeAmount: function (name) {
@@ -2476,9 +2481,14 @@ var run = function() {
             summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt) + ' adorable kitten hunter' + (activitySummary.other.hunt == 1 ? '' : 's'));
         }
         
+        // Techs
+        for (var name in activitySummary.research) {
+            summary('Researched: ' + ucfirst(name));
+        }
+        
         // Upgrades
         for (var name in activitySummary.upgrade) {
-            summary('Researched: ' + ucfirst(name));
+            summary('Upgraded: ' + ucfirst(name));
         }
         
         // Buildings
