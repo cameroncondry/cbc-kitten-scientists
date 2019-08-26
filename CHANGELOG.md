@@ -1,6 +1,66 @@
 ## History
 
-### Unreleased - Version 1.3.1
+### 2019.08.?? - Version 1.4.0
+
+#### Changes by [Wymrite](https://github.com/Wymrite)
+
+#### Changes by [hypehuman](https://github.com/hypehuman)
+
+#### Changes by [coderpatsy](https://github.com/coderpatsy)
+
+### 2019.06.13 - Version 1.3.3
+
+#### Changes by [coderpatsy](https://github.com/coderpatsy)
+
+#### Changes by [Phoenix09](https://github.com/Phoenix09)
+
+#### Changes by [markuskeunecke](https://github.com/markuskeunecke)
+
+#### Changes by Tom Rauchenwald
+
+#### Changes by [romanalexander](https://github.com/romanalexander)
+
+#### Changes by [amaranth](https://github.com/amaranth)
+
+#### Changes by [toadjaune](https://github.com/toadjaune)
+
+#### Changes by Eliezer Kanal
+
+#### Changes by [Kobata](https://github.com/Kobata)
+
+#### Changes by [Hastebro](https://github.com/Hastebro)
+
+#### Changes by [NoobKitten](https://github.com/NoobKitten)
+
+#### Changes by [Wymrite](https://github.com/Wymrite)
+
+### 2017.04.07 - Version 1.3.2
+
+#### Changes by [trini](https://github.com/trini)
+
+#### Changes by [cokernel](https://github.com/cokernel)
+
+#### Changes by [coderpatsy](https://github.com/coderpatsy)
+
+#### Changes by [zelenay](https://github.com/zelenay)
+
+#### Changes by [Xanidel](https://github.com/Xanidel)
+
+#### Changes by [woutershep](https://github.com/woutershep)
+
+#### Changes by [poizan42](https://github.com/poizan42)
+
+#### Changes by [oliversalzburg](https://github.com/oliversalzburg)
+
+#### Changes by [KMChappell](https://github.com/KMChappell)
+
+#### Changes by [riannucci](https://github.com/riannucci)
+
+#### Changes by Meleneth
+
+#### Changes by [TeWeBu](https://github.com/TeWeBu)
+
+### 2016.01.02 - Version 1.3.1
 
 #### Changes by [oliversalzburg](https://github.com/oliversalzburg)
 - Fixed upgradeable buildings not being built.
