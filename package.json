@@ -1,6 +1,6 @@
 {
   "name": "cbc-kitten-scientists",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "description": "Add-on for the wonderful incremental browser game: http://bloodrizer.ru/games/kittens/",
   "main": "kitten-scientists.js",
   "scripts": {
