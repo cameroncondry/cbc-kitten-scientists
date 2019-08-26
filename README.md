@@ -23,11 +23,17 @@ Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc
 
 - Several UI adjustments (depending on selected theme).
 - Automates:
-    - Building
+    - Building (Bonfire, Space, Religion, and Time Buildings)
     - Crafting
+    - Upgrading
+    - Trading
     - Hunting
     - Praising
-    - Holding festivals
+    - Holding Festivals
+    - Observing Astronomical Events
+    - Trading Cryptocurrency
+    - Autofeeding Necrocorns
+    - Exploring (Deprecated)
 
 ### Building
 
@@ -68,24 +74,42 @@ If you would like to contribute to the Kitten Scientists, then you can do so in 
 Thanks to these past and present contributors!
 
 - [adituv](https://github.com/adituv)
+- [amaranth](https://github.com/amaranth)
 - [Azulan](https://www.reddit.com/user/Azulan)
 - [carver](https://github.com/carver)
 - [coderpatsy](https://github.com/coderpatsy)
+- [cokernel](https://github.com/cokernel)
 - [DirCattus](https://www.reddit.com/user/DirCattus)
 - [DrGaellon](https://github.com/DrGaellon)
 - [enki1337](https://github.com/enki1337)
 - [FancyRabbitt](https://www.reddit.com/user/FancyRabbitt)
 - [gnidan](https://github.com/gnidan)
+- [Hastebro](https://github.com/Hastebro)
+- [hypehuman](https://github.com/hypehuman)
 - [jacob-keller](https://github.com/jacob-keller)
 - [jcranmer](https://github.com/jcranmer)
+- [KMChappell](https://github.com/KMChappell)
+- [Kobata](https://github.com/Kobata)
 - [magus424](https://github.com/magus424)
 - [mammothb](https://github.com/mammothb)
+- [markuskeunecke](https://github.com/markuskeunecke)
 - [Mewnine](https://www.reddit.com/user/Mewnine)
 - [mjdillon](https://github.com/mjdillon)
 - [mmccubbing](https://github.com/mmccubbing)
+- [NoobKitten](https://github.com/NoobKitten)
 - [oliversalzburg](https://github.com/oliversalzburg)
 - [pefoley2](https://www.reddit.com/user/pefoley2)
+- [Phoenix09](https://github.com/Phoenix09)
+- [poizan42](https://github.com/poizan42)
+- [riannucci](https://github.com/riannucci)
+- [romanalexander](https://github.com/romanalexander)
 - [sapid](https://github.com/sapid)
 - [sjdrodge](https://github.com/sjdrodge)
 - [SphtMarathon](https://www.reddit.com/user/SphtMarathon)
+- [TeWeBu](https://github.com/TeWeBu)
+- [toadjaune](https://github.com/toadjaune)
 - [trini](https://github.com/trini)
+- [woutershep](https://github.com/woutershep)
+- [Wymrite](https://github.com/Wymrite)
+- [Xanidel](https://github.com/Xanidel)
+- [zelenay](https://github.com/zelenay)
