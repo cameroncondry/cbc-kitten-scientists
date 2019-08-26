@@ -1218,7 +1218,7 @@ var run = function() {
             // determine actual amount after crafting upgrades
             amount = (amount * (1 + ratio)).toFixed(2);
 
-            storeForSummary(ucfirst(craft.title), amount, 'craft');
+            storeForSummary(ucfirst(name), amount, 'craft');
             activity('Kittens have crafted ' + game.getDisplayValueExt(amount) + ' ' + ucfirst(name), 'ks-craft');
         },
         canCraft: function (name, amount) {
