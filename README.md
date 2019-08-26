@@ -6,7 +6,7 @@ Kitten Scientists (KS) is a simple automation script for the complex [Kittens Ga
 
 ## Basic Usage
 
-Create the following JavaScript bookmarklet (create a new bookmark and past this as the URL):
+Create the following JavaScript bookmarklet (create a new bookmark and paste this as the URL):
 
     javascript:(function(){var d=document,s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/cameroncondry/cbc-kitten-scientists@master/kitten-scientists.user.js';d.body.appendChild(s);})();
 
@@ -37,28 +37,42 @@ Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc
 
 ### Building
 
-By default, buildings are built if their required resources are at 75% of their storage capacity. For space structures,
-the default threshold is 95%.
+By default, bonfire buildings are built if their required resources are at 75% of their storage capacity. For space and time structures, the default threshold is 95%. For religion structures, it is 99%.
 
 ### Crafting
 
-Craftable resources are crafted when the resources required for the craft are at 95% of their storage capacity.
- 
-Additionally, you can set a *consumption rate* (60% by default). This defines how much of the available resources can be
-used for crafting.
+Craftable resources are crafted when the resources required for the craft exceed the *trigger* value (95% by default) of their storage capacity, or always craft if the resource lacks a storage capacity.
+
+For each resource, you can set a *consumption rate* (60% by default) and a *stock* (0 by default). The consumption rate defines how much of the trigger value times the storage capacity that autocrafting is allowed to consume (meaning with the default consumption rate and a trigger value of 100%, autocrafting would leave 40% of the resource's storage capacity). The stock setting tells KS to ignore the specified amount of this resource.
+
+Furthermore, each resource can be set to be *limited* crafted. Limited crafting behaves normally when the resource exceeds the trigger value, but behaves differently when beneath the trigger value or for a resource that lacks a storage capacity. It crafts resources in an attempt to keep both the inputs and outputs in proportion. (Meaning if the player has 2000 minerals and 0 slabs, and each slab costs 50 minerals, it will craft 20 slabs for new totals of 1000 minerals and 20 slabs).
+
+### Upgrading
+
+Techs and workshop upgrades are automatically bought when affordable, prioritizing the workshop. Buildings can be set to be automatically upgraded to their second stage.
 
 ### Trading
 
-Trades happen when the traded resource is at 95% of the storage capacity. The trades are optimized to only happen during
-seasons when the trade is most effective.
+Trades happen when the traded resource and gold is at 95% of the storage capacity. By default, the trades are optimized to only happen during seasons when the trade is most effective.
+
+Trading also has a *limited* trading mode. This mode determines how much production time is needed to make the trade's input resources versus the time to make the trade's average output resources to determine if a trade is profitable. It also checks how many trades each resource involved is worth, and prevents trading if the least input resource is less than the least output resource. This prevents limited trading from depleting the input resources.
 
 ### Hunting
 
-Hunts when catpower is at 95% capacity and builds luxury items before the hunt is sent.
+Hunts when catpower is at 95% capacity.
 
 ### Praising
 
 Praises when faith is at 99% capacity.
+
+### Misc
+KS can be set to:
+
+Automatically buy cryptocurrency at low prices and sells near the peak.
+
+Automatically hold festivals when the resources are available.
+
+Autofeed necrocorns to leviathans.
 
 ### Game Log
 
