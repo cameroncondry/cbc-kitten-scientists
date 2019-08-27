@@ -2627,7 +2627,7 @@ var run = function() {
     optionsElement.append(optionsTitleElement);
 
     optionsListElement.append(getToggle('engine',   'Enable Scientists'));
-    optionsListElement.append(getToggle('build',    'Building'));
+    optionsListElement.append(getToggle('build',    'Bonfire'));
     optionsListElement.append(getToggle('space',    'Space'));
     optionsListElement.append(getToggle('craft',    'Crafting'));
     optionsListElement.append(getToggle('upgrade',  'Upgrading'));
