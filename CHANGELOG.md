@@ -1,6 +1,16 @@
 ## History
 
-### 2019.08.?? - Version 1.4.0
+### 2019.08.27 - Version 1.4.1
+
+#### Changes by [Wymrite](https://github.com/Wymrite)
+- Significant performance optimizations to code, particularly building.
+- Added KS log filters.
+- Fixed crash if kittenStorage contains an unused option.
+- Fixed moving trigger text bug.
+- Some formatting fixes.
+- Some minor ui changes.
+
+### 2019.08.26 - Version 1.4.0
 
 #### Changes by [Wymrite](https://github.com/Wymrite)
 - Fixed broken enable-all button.

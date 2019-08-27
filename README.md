@@ -78,6 +78,8 @@ Autofeed necrocorns to leviathans.
 
 Automatically observes astronomical events.
 
+All KS log output can be filtered.
+
 ## Contributors
 
 If you would like to contribute to the Kitten Scientists, then you can do so in these ways:
