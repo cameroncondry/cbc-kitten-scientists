@@ -37,9 +37,6 @@ var run = function() {
         // The color for resources with stock counts higher than current resource max
         stockwarncolor: '#DD1E00',
 
-        // Should activity be logged to the game log?
-        showactivity: true,
-
         // The default consume rate.
         consume: 0.6,
 
@@ -53,25 +50,11 @@ var run = function() {
                 // Should any automation run at all?
                 enabled: false
             },
-            crypto: {
-                // Should crypto exchange be automated?
-                enabled: true,
-                // At what percentage of the relic storage capacity should KS exchange?
-                trigger: 10000
-            },
-            explore: {
-                // Should exploring be automated?
-                enabled: false,
-            },
-            autofeed: {
-                // Should feeding elders be automated?
-                enabled: true,
-            },
             faith: {
-                // Should praising be automated?
+                // Should religion building be automated?
                 enabled: true,
-                // At what percentage of the faith storage capacity should KS praise the sun?
-                trigger: 0.99,
+                // At what percentage of the storage capacity should KS build faith buildings?
+                trigger: 0,
                 // Which religious upgrades should be researched?
                 items: {
                     // Variant denotes which category the building or upgrade falls within in the Religion tab.
@@ -109,23 +92,13 @@ var run = function() {
                     holyGenocide:       {require: false,         enabled: false, variant: 'c'},
                 }
             },
-            festival: {
-                // Should festivals be held automatically?
-                enabled: true
-            },
-            hunt: {
-                // Should hunters be sent on hunts automatically?
-                enabled: true,
-                // At what percentage of the catpower storage capacity should KS send hunters on hunts?
-                trigger: 0.6
-            },
             build: {
                 // Should buildings be built automatically?
                 enabled: true,
                 // When a building requires a certain resource (this is what their *require* property refers to), then
                 // this is the percentage of the storage capacity of that resource, that has to be met for the building
                 // to be built.
-                trigger: 0.75,
+                trigger: 0,
                 // The items that be automatically built.
                 // Every item can define a required resource. This resource has to be available at a certain capacity for
                 // the building to be built. The capacity requirement is defined by the trigger value set for the section.
@@ -192,7 +165,7 @@ var run = function() {
                 enabled: false,
                 // The functionality of the space section is identical to the build section. It just needs to be treated
                 // seperately, because the game internals are slightly different.
-                trigger: 0.95,
+                trigger: 0,
                 items: {
                     // Cath
                     spaceElevator:  {require: 'unobtainium', enabled: false},
@@ -242,7 +215,7 @@ var run = function() {
             time: {
                 // Should time upgrades be built automatically?
                 enabled: false,
-                trigger: 0.95,
+                trigger: 0,
                 items: {
                     // Variants denote whether these buildings fall within the Chronoforge or Void categories.
                     // Chronoforge has variant chrono.
@@ -282,25 +255,25 @@ var run = function() {
                 // across all crafted resources without wasting raw materials.
                 
                 items: {
-                    wood:       {require: 'catnip',      max: 0, limited: true, limRat: 0.5, enabled: true},
-                    beam:       {require: 'wood',        max: 0, limited: true, limRat: 0.5, enabled: true},
-                    slab:       {require: 'minerals',    max: 0, limited: true, limRat: 0.5, enabled: true},
-                    steel:      {require: 'coal',        max: 0, limited: true, limRat: 0.5, enabled: true},
-                    plate:      {require: 'iron',        max: 0, limited: true, limRat: 0.5, enabled: true},
-                    alloy:      {require: 'titanium',    max: 0, limited: true, limRat: 0.5, enabled: true},
-                    concrete:   {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    gear:       {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    scaffold:   {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    ship:       {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    tanker:     {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    parchment:  {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    manuscript: {require: 'culture',     max: 0, limited: true, limRat: 0.5, enabled: true},
-                    compendium: {require: 'science',     max: 0, limited: true, limRat: 0.5, enabled: true},
-                    blueprint:  {require: 'science',     max: 0, limited: true, limRat: 0.5, enabled: true},
-                    kerosene:   {require: 'oil',         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    megalith:   {require: false,         max: 0, limited: true, limRat: 0.5, enabled: true},
-                    eludium:    {require: 'unobtainium', max: 0, limited: true, limRat: 0.5, enabled: true},
-                    thorium:    {require: 'uranium',     max: 0, limited: true, limRat: 0.5, enabled: true}
+                    wood:       {require: 'catnip',      max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    beam:       {require: 'wood',        max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    slab:       {require: 'minerals',    max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    steel:      {require: 'coal',        max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    plate:      {require: 'iron',        max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    alloy:      {require: 'titanium',    max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    concrete:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    gear:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    scaffold:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    ship:       {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    tanker:     {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    parchment:  {require: false,         max: 0, limited: false, limRat: 0.5, enabled: true},
+                    manuscript: {require: 'culture',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    compendium: {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    blueprint:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    kerosene:   {require: 'oil',         max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    megalith:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    eludium:    {require: 'unobtainium', max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    thorium:    {require: 'uranium',     max: 0, limited: true,  limRat: 0.5, enabled: true}
                 }
             },
             trade: {
@@ -342,9 +315,26 @@ var run = function() {
                 //Should KS automatically upgrade?
                 enabled: false,
                 items: {
-                    upgrades:  {enabled: false},
-                    techs:     {enabled: false},
-                    buildings: {enabled: false}
+                    upgrades:  {enabled: true},
+                    techs:     {enabled: true},
+                    races:     {enabled: true},
+                    missions:  {enabled: true},
+                    buildings: {enabled: true}
+                }
+            },
+            options: {
+                //Which misc options should be enabled?
+                enabled: true,
+                items: {
+                    observe:            {enabled: true,                    misc: true, label: 'Observe Astro Events'},
+                    festival:           {enabled: true,                    misc: true, label: 'Hold Festivals'},
+                    autoPraise:         {enabled: true,                    misc: true, label: 'Auto Praise'},
+                    shipOverride:       {enabled: true,                    misc: true, label: 'Force Ships to 243'},
+                    autofeed:           {enabled: true,                    misc: true, label: 'Feed Leviathans'},
+                    hunt:               {enabled: true, subTrigger: 0.99,  misc: true, label: 'Hunt'},
+                    crypto:             {enabled: true, subTrigger: 10000, misc: true, label: 'Trade Blackcoin'},
+                    buildEmbassies:     {enabled: true, subTrigger: 0.8,   misc: true, label: 'Build Embassies (Beta)'},
+                    explore:            {enabled: false,                   misc: true, label: 'Explore (Deprecated)'}
                 }
             },
             filter: {
@@ -352,7 +342,7 @@ var run = function() {
                 enabled: false,
                 items: {
                     buildFilter:     {enabled: false, filter: true, label: 'Building',            variant: "ks-activity type_ks-build"},
-                    craftFilter:     {enabled: false, filter: true, label: 'Crafting',            variant: "ks-activity type_ks-craft"},
+                    craftFilter:     {enabled: true,  filter: true, label: 'Crafting',            variant: "ks-activity type_ks-craft"},
                     upgradeFilter:   {enabled: false, filter: true, label: 'Upgrading',           variant: "ks-activity type_ks-upgrade"},
                     researchFilter:  {enabled: false, filter: true, label: 'Researching',         variant: "ks-activity type_ks-research"},
                     tradeFilter:     {enabled: false, filter: true, label: 'Trading',             variant: "ks-activity type_ks-trade"},
@@ -365,7 +355,7 @@ var run = function() {
                 }
             },
             resources: {
-                
+                furs:   {stock: 1000}
             }
         }
     };
@@ -436,7 +426,6 @@ var run = function() {
         this.religionManager = new ReligionManager();
         this.timeManager = new TimeManager();
         this.explorationManager = new ExplorationManager();
-        // this.autofeedManager = new AutofeedManager();
         this.villageManager = new TabManager('Village');
     };
 
@@ -450,7 +439,6 @@ var run = function() {
         religionManager: undefined,
         timeManager: undefined,
         explorationManager: undefined,
-        // autofeedManager: undefined,
         villageManager: undefined,
         loop: undefined,
         start: function () {
@@ -467,28 +455,37 @@ var run = function() {
             message('Disabling the kitten scientists!');
         },
         iterate: function () {
-            this.observeStars();
-            if (options.auto.upgrade.enabled) this.upgrade();
-            if (options.auto.festival.enabled) this.holdFestival();
-            if (options.auto.build.enabled) this.build();
-            if (options.auto.space.enabled) this.space();
-            if (options.auto.craft.enabled) this.craft();
-            if (options.auto.trade.enabled) this.trade();
-            if (options.auto.hunt.enabled) this.hunt();
-            if (options.auto.faith.enabled) this.worship();
-            if (options.auto.time.enabled) this.chrono();
-            if (options.auto.crypto.enabled) this.crypto();
-            if (options.auto.explore.enabled) this.explore();
-            if (options.auto.autofeed.enabled) this.autofeed();
+            var subOptions = options.auto.options;
+            if (subOptions.enabled && subOptions.items.observe.enabled)  {this.observeStars()};
+            if (options.auto.upgrade.enabled)                            {this.upgrade()};
+            if (subOptions.enabled && subOptions.items.festival.enabled) {this.holdFestival()};
+            if (options.auto.build.enabled)                              {this.build()};
+            if (options.auto.space.enabled)                              {this.space()};
+            if (options.auto.craft.enabled)                              {this.craft()};
+            if (options.auto.trade.enabled)                              {this.trade()};
+            if (subOptions.enabled && subOptions.items.hunt.enabled)     {this.hunt()};
+            if (options.auto.faith.enabled)                              {this.worship()};
+            if (options.auto.time.enabled)                               {this.chrono()};
+            if (subOptions.enabled && subOptions.items.crypto.enabled)   {this.crypto()};
+            if (subOptions.enabled && subOptions.items.explore.enabled)  {this.explore()};
+            if (subOptions.enabled && subOptions.items.autofeed.enabled) {this.autofeed()};
+            if (subOptions.enabled)                                      {this.miscOptions()};
         },
         autofeed: function () {
-            // var manager = this.autofeedManager;
-            // Only feed if it's enabled
-            if (!options.auto.autofeed.enabled) return;
-            if(game.diplomacy.get("leviathans").unlocked && game.resPool.get("necrocorn").value>=1) {
-                if(game.diplomacy.get("leviathans").energy<game.religion.getZU("marker").val * 5 + 5) {
+            var levi = game.diplomacy.get("leviathans");
+            var nCorn = game.resPool.get("necrocorn");
+            if (!(levi.unlocked && nCorn.value > 0)) {return;}
+            if (nCorn.value >= 1) {
+                if (levi.energy < game.religion.getZU("marker").val * 5 + 5) {
                     game.diplomacy.feedElders();
                     activity('Kittens fed the Elders. The elders are pleased');
+                    storeForSummary('feed', 1);
+                }
+            } else {
+                if (0.25 * (1 + game.getEffect("corruptionBoostRatio")) < 1) {
+                    storeForSummary('feed', nCorn.value);
+                    game.diplomacy.feedElders();
+                    activity('Kittens disposed of inefficient necrocorns.');
                 }
             }
         },
@@ -500,14 +497,11 @@ var run = function() {
             var exchangedRelic = 0.0;
             var waitForBestPrice = false;
 
-            // Only exchange if it's enabled
-            if (!options.auto.crypto.enabled) return;
-
             // Waits for coin price to drop below a certain treshold before starting the exchange process
             if (waitForBestPrice == true && coinPrice < 860.0) { waitForBestPrice = false; }
 
             // Exchanges up to a certain threshold, in order to keep a good exchange rate, then waits for a higher treshold before exchanging for relics.
-            if (waitForBestPrice == false && coinPrice < 950.0 && previousRelic > options.auto.crypto.trigger) {
+            if (waitForBestPrice == false && coinPrice < 950.0 && previousRelic > options.auto.options.items.crypto.subTrigger) {
                 var currentCoin;
 
                 game.diplomacy.buyEcoin();
@@ -533,10 +527,7 @@ var run = function() {
             var manager = this.explorationManager;
             var expeditionNode = game.village.map.expeditionNode;
 
-            // Only exchange if it's enabled
-            if (!options.auto.explore.enabled) return;
-
-            if( expeditionNode == null) {
+            if ( expeditionNode == null) {
                 manager.getCheapestNode();
 
                 manager.explore(manager.cheapestNodeX, manager.cheapestNodeY);
@@ -558,7 +549,7 @@ var run = function() {
             for (var name in builds) {
                 var build = builds[name]
                 metaData[name] = buildManager.getBuild(name, build.variant);
-                if(!buildManager.getBuildButton(name, build.variant)) {
+                if (!buildManager.getBuildButton(name, build.variant)) {
                     metaData[name].rHidden = true;
                 } else {
                     var model = buildManager.getBuildButton(name, build.variant).model;
@@ -575,15 +566,6 @@ var run = function() {
                     buildManager.build(buildList[entry].id, buildList[entry].variant, buildList[entry].count);
                     refreshRequired = true;
                 }
-            }
-
-            // Praise the sun with any faith left over
-            var faith = craftManager.getResource('faith');
-
-            if (options.auto.faith.trigger <= faith.value / faith.maxValue) {
-                storeForSummary('faith', faith.value * (1 + game.religion.getFaithBonus()));
-                activity('Praised the sun!', 'ks-praise');
-                game.religion.praise();
             }
           
             if (refreshRequired) {game.ui.render();}
@@ -623,6 +605,8 @@ var run = function() {
             var upgrades = options.auto.upgrade.items;
             var upgradeManager = this.upgradeManager;
             var craftManager = this.craftManager;
+            var bulkManager = this.bulkManager;
+            var buildManager = this.buildManager;
             
             upgradeManager.workManager.render();
             upgradeManager.sciManager.render();
@@ -641,7 +625,7 @@ var run = function() {
                 }
             }
             
-            if(upgrades.techs.enabled && gamePage.tabs[2].visible) {
+            if (upgrades.techs.enabled && gamePage.tabs[2].visible) {
                 var tech = game.science.techs;
                 techLoop:
                 for (var upg in tech) {
@@ -654,40 +638,156 @@ var run = function() {
                     upgradeManager.build(tech[upg], 'science');
                 }
             }
+          
+            if (upgrades.missions.enabled && gamePage.tabs[6].visible) {
+                var missions = game.space.meta[0].meta;
+                missionLoop:
+                for (var i = 0; i < missions.length; i++) {
+                    if (!(missions[i].unlocked && missions[i].val < 1)) {continue;}
+                    
+                    var model = game.tabs[6].GCPanel.children[i];
+                    var prices = model.model.prices;
+                    for (var resource in prices) {
+                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue missionLoop;}
+                    }
+                    model.domNode.click();
+                }
+            }
+          
+            if (upgrades.races.enabled && gamePage.tabs[4].visible) {
+                var maxRaces = (game.diplomacy.get('leviathans').unlocked) ? 8 : 7;
+                if (game.diplomacyTab.racePanels.length < maxRaces) {
+                    var manpower = craftManager.getValueAvailable('manpower', true);
+                    if (!game.diplomacy.get('lizards').unlocked) {
+                        if (manpower >= 1000) {
+                            game.resPool.get('manpower').value -= 1000;
+                            game.diplomacy.unlockRandomRace();
+                            manpower -= 1000;
+                        }
+                    }
+                    if (!game.diplomacy.get('sharks').unlocked) {
+                        if (manpower >= 1000) {
+                            game.resPool.get('manpower').value -= 1000;
+                            game.diplomacy.unlockRandomRace();
+                            manpower -= 1000;
+                        }
+                    }
+                    if (!game.diplomacy.get('griffins').unlocked) {
+                        if (manpower >= 1000) {
+                            game.resPool.get('manpower').value -= 1000;
+                            game.diplomacy.unlockRandomRace();
+                            manpower -= 1000;
+                        }
+                    }
+                    if (!game.diplomacy.get('nagas').unlocked && game.resPool.get("culture").value >= 1500) {
+                        if (manpower >= 1000) {
+                            game.resPool.get('manpower').value -= 1000;
+                            game.diplomacy.unlockRandomRace();
+                            manpower -= 1000;
+                        }
+                    }
+                    if (!game.diplomacy.get('zebras').unlocked && game.resPool.get("ship").value >= 1) {
+                        if (manpower >= 1000) {
+                            game.resPool.get('manpower').value -= 1000;
+                            game.diplomacy.unlockRandomRace();
+                            manpower -= 1000;
+                        }
+                    }
+                    if (!game.diplomacy.get('spiders').unlocked && game.resPool.get("ship").value >= 100 && game.resPool.get("science").maxValue > 125000) {
+                        if (manpower >= 1000) {
+                            game.resPool.get('manpower').value -= 1000;
+                            game.diplomacy.unlockRandomRace();
+                            manpower -= 1000;
+                        }
+                    }
+                    if (!game.diplomacy.get('dragons').unlocked && game.science.get("nuclearFission").researched) {
+                        if (manpower >= 1000) {
+                            game.resPool.get('manpower').value -= 1000;
+                            game.diplomacy.unlockRandomRace();
+                            manpower -= 1000;
+                        }
+                    }
+                }
+            }
             
             if (upgrades.buildings.enabled) {
+                var pastures = (game.bld.getBuildingExt('pasture').meta.stage === 0) ? game.bld.getBuildingExt('pasture').meta.val: 0;
+                var aqueducts = (game.bld.getBuildingExt('aqueduct').meta.stage === 0) ? game.bld.getBuildingExt('aqueduct').meta.val: 0;
+              
                 var pastureMeta = game.bld.getBuildingExt('pasture').meta;
                 if (pastureMeta.stage === 0) {
                     if (pastureMeta.stages[1].stageUnlocked) {
-                        pastureMeta.on = 0;
-                        pastureMeta.val = 0;
-                        pastureMeta.stage = 1;
-                        game.ui.render();
-                        activity('Upgraded pastures to solar farms!', 'ks-upgrade');
+                        if (craftManager.getPotentialCatnip(true, 0, aqueducts) > 0) {
+                            var prices = pastureMeta.stages[1].prices;
+                            var priceRatio = bulkManager.getPriceRatio(pastureMeta, true);
+                            if (bulkManager.singleBuildPossible(pastureMeta, prices, 1)) {
+                                var button = buildManager.getBuildButton('pasture', 0);
+                                button.controller.sellInternal(button.model, 0);
+                                pastureMeta.on = 0;
+                                pastureMeta.val = 0;
+                                pastureMeta.stage = 1;
+                                activity('Upgraded pastures to solar farms!', 'ks-upgrade');
+                                game.ui.render();
+                                buildManager.build('pasture', 1, 1);
+                                game.ui.render();
+                                return;
+                            }
+                        }
                     }
                 }
                 
                 var aqueductMeta = game.bld.getBuildingExt('aqueduct').meta;
                 if (aqueductMeta.stage === 0) {
                     if (aqueductMeta.stages[1].stageUnlocked) {
-                        aqueductMeta.on = 0
-                        aqueductMeta.val = 0
-                        aqueductMeta.stage = 1
-                        aqueductMeta.calculateEffects(aqueductMeta, game)
-                        game.ui.render();
-                        activity('Upgraded aqueducts to hydro plants!', 'ks-upgrade');
+                        if (craftManager.getPotentialCatnip(true, pastures, 0) > 0) {
+                            var prices = aqueductMeta.stages[1].prices;
+                            var priceRatio = bulkManager.getPriceRatio(aqueductMeta, true);
+                            if (bulkManager.singleBuildPossible(aqueductMeta, prices, 1)) {
+                                var button = buildManager.getBuildButton('aqueduct', 0);
+                                button.controller.sellInternal(button.model, 0);
+                                aqueductMeta.on = 0
+                                aqueductMeta.val = 0
+                                aqueductMeta.stage = 1
+                                aqueductMeta.calculateEffects(aqueductMeta, game)
+                                activity('Upgraded aqueducts to hydro plants!', 'ks-upgrade');
+                                game.ui.render();
+                                buildManager.build('aqueduct', 1, 1);
+                                game.ui.render();
+                                return;
+                            }
+                        }
                     }
                 }
                 
                 var libraryMeta = game.bld.getBuildingExt('library').meta;
                 if (libraryMeta.stage === 0) {
                     if (libraryMeta.stages[1].stageUnlocked) {
-                        libraryMeta.on = 0
-                        libraryMeta.val = 0
-                        libraryMeta.stage = 1
-                        libraryMeta.calculateEffects(libraryMeta, game)
-                        game.ui.render();
-                        activity('Upgraded libraries to data centers!', 'ks-upgrade');
+                        var enCon = (game.workshop.get('cryocomputing').researched) ? 1 : 2;
+                        if (game.challenges.currentChallenge == 'energy') {enCon *= 2;}
+                        var libToDat = 3;
+                        if (game.workshop.get('uplink').researched) {
+                            libToDat *= (1 + game.bld.get('biolab').val * game.getEffect('uplinkDCRatio'));
+                        }
+                        if (game.workshop.get('machineLearning').researched) {
+                            libToDat *= (1 + game.bld.get('aiCore').on * game.getEffect('dataCenterAIRatio'));
+                        }
+                        if (game.resPool.energyProd >= game.resPool.energyCons + enCon*libraryMeta.val/libToDat) {
+                            var prices = libraryMeta.stages[1].prices;
+                            var priceRatio = bulkManager.getPriceRatio(libraryMeta, true);
+                            if (bulkManager.singleBuildPossible(libraryMeta, prices, 1)) {
+                                var button = buildManager.getBuildButton('library', 0);
+                                button.controller.sellInternal(button.model, 0);
+                                libraryMeta.on = 0
+                                libraryMeta.val = 0
+                                libraryMeta.stage = 1
+                                libraryMeta.calculateEffects(libraryMeta, game)
+                                activity('Upgraded libraries to data centers!', 'ks-upgrade');
+                                game.ui.render();
+                                buildManager.build('library', 1, 1);
+                                game.ui.render();
+                                return;
+                            }
+                        }
                     }
                     
                 }
@@ -695,11 +795,20 @@ var run = function() {
                 var amphitheatreMeta = game.bld.getBuildingExt('amphitheatre').meta;
                 if (amphitheatreMeta.stage === 0) {
                     if (amphitheatreMeta.stages[1].stageUnlocked) {
-                        amphitheatreMeta.on = 0
-                        amphitheatreMeta.val = 0
-                        amphitheatreMeta.stage = 1
-                        game.ui.render();
-                        activity('Upgraded amphitheatres to broadcast towers!', 'ks-upgrade');
+                        var prices = amphitheatreMeta.stages[1].prices;
+                        var priceRatio = bulkManager.getPriceRatio(amphitheatreMeta, true);
+                        if (bulkManager.singleBuildPossible(amphitheatreMeta, prices, 1)) {
+                            var button = buildManager.getBuildButton('amphitheatre', 0);
+                            button.controller.sellInternal(button.model, 0);
+                            amphitheatreMeta.on = 0
+                            amphitheatreMeta.val = 0
+                            amphitheatreMeta.stage = 1
+                            activity('Upgraded amphitheatres to broadcast towers!', 'ks-upgrade');
+                            game.ui.render();
+                            buildManager.build('amphitheatre', 1, 1);
+                            game.ui.render();
+                            return;
+                        }
                     }
                 }
             }
@@ -784,13 +893,28 @@ var run = function() {
             }
         },
         holdFestival: function () {
+            if (!(game.science.get('drama').researched && game.calendar.festivalDays < 400)) {return;}
+          
+            var craftManager = this.craftManager;
+            if (craftManager.getValueAvailable('manpower', true) < 1500 || craftManager.getValueAvailable('culture', true) < 5000 
+                || craftManager.getValueAvailable('parchment', true) < 2500) {return;}
+          
+            var catpowProf = 4000 * craftManager.getTickVal(craftManager.getResource('manpower')) > 1500;
+            var cultureProf = 4000 * craftManager.getTickVal(craftManager.getResource('culture')) > 5000;
+            var parchProf = 4000 * craftManager.getTickVal(craftManager.getResource('parchment')) > 2500;
+          
+            if (!(catpowProf && cultureProf && parchProf)) {return;}
+          
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             this.villageManager.render();
 
-            if (game.science.get('drama').researched && game.calendar.festivalDays === 0 && game.villageTab.festivalBtn.model.enabled) {
+            if (game.villageTab.festivalBtn.model.enabled) {
+                var beforeDays = game.calendar.festivalDays;
                 game.villageTab.festivalBtn.onClick();
-                if (game.calendar.festivalDays !== 0) {
-                    storeForSummary('festival');
+                storeForSummary('festival');
+                if (beforeDays > 0) {
+                    activity('Kittens extend the festival', 'ks-festival');
+                } else {
                     activity('Kittens begin holding a festival', 'ks-festival');
                 }
             }
@@ -805,7 +929,7 @@ var run = function() {
         hunt: function () {
             var catpower = this.craftManager.getResource('catpower');
 
-            if (options.auto.hunt.trigger <= catpower.value / catpower.maxValue && catpower.value >= 100) {
+            if (options.auto.options.items.hunt.subTrigger <= catpower.value / catpower.maxValue && catpower.value >= 100) {
                 // No way to send only some hunters. Thus, we hunt with everything
                 var hunters = game.village.getJob('hunter').value;
                 storeForSummary('hunt', hunters);
@@ -821,9 +945,6 @@ var run = function() {
             var requireTrigger = options.auto.trade.trigger;
           
             tradeManager.manager.render();
-            
-            // Only trade if it's enabled
-            if (!options.auto.trade.enabled) return;
           
             if (!tradeManager.singleTradePossible(undefined)) {return;}
           
@@ -833,15 +954,20 @@ var run = function() {
             for (var name in options.auto.trade.items) {
                 var trade = options.auto.trade.items[name];
 
-                // Only check if we are in season and enabled
+                // Check if the race is in season, enabled, unlocked, and can actually afford it
                 if (!trade.enabled) continue;
                 if (!trade[season]) continue;
+                var race = tradeManager.getRace(name);
+                if (!race.unlocked) {continue;}
+                var button = tradeManager.getTradeButton(race.name);
+                if (!button.model.enabled) {continue;}
                 if (!tradeManager.singleTradePossible(name)) {continue;}
 
                 var require = !trade.require ? false : craftManager.getResource(trade.require);
 
                 // If we have enough to trigger the check, then attempt to trade
-                if (trade.limited && (tradeManager.getProfitability(name) === 'All' || tradeManager.getProfitability(name))) {
+                var prof = tradeManager.getProfitability(name);
+                if (trade.limited && (prof === 'All' || prof)) {
                     trades.push(name);
                 } else if ((!require || requireTrigger <= require.value / require.maxValue) && requireTrigger <= gold.value / gold.maxValue) {
                     trades.push(name);
@@ -863,10 +989,24 @@ var run = function() {
                 var trade = options.auto.trade.items[name];
                 var require = !trade.require ? false : craftManager.getResource(trade.require);
                 var trigConditions = ((!require || requireTrigger <= require.value / require.maxValue) && requireTrigger <= gold.value / gold.maxValue);
-                maxByRace[i] = tradeManager.getLowestTradeAmount(name, trade.limited, trigConditions);
+                var tradePos = tradeManager.getLowestTradeAmount(name, trade.limited, trigConditions);
+                if (tradePos < 1) {
+                    trades.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                maxByRace[i] = tradePos;
             }
             
-            while (trades.length > 0) {
+            while (trades.length > 0 && maxTrades >= 1) {
+                if (maxTrades < trades.length) {
+                    var j = Math.floor(Math.random() * trades.length);
+                    tradeManager.trade(trades[j], 1);
+                    maxTrades -= 1;
+                    trades.splice(j, 1);
+                    maxByRace.splice(j, 1);
+                    continue;
+                }
                 var minTrades = Math.floor(maxTrades / trades.length);
                 var minTradePos = 0;
                 for (var i = 0; i < trades.length; i++) {
@@ -879,6 +1019,31 @@ var run = function() {
                 maxTrades -= minTrades;
                 trades.splice(minTradePos, 1);
                 maxByRace.splice(minTradePos, 1);
+            }
+        },
+        miscOptions: function () {
+            var craftManager = this.craftManager;
+            var optionVals = options.auto.options.items;
+            
+            if (optionVals.buildEmbassies.enabled) {
+                var racePanels = game.diplomacyTab.racePanels;
+                for (var i = 0; i < racePanels.length; i++) {
+                    if (!racePanels[i].embassyButton) {continue;}
+                    var culture = craftManager.getResource('culture');
+                    if (optionVals.buildEmbassies.subTrigger > culture.value / culture.maxValue) {continue;}
+                    if (racePanels[i].embassyButton.model.prices[0].val <= craftManager.getValueAvailable('culture', true)) {
+                        racePanels[i].embassyButton.domNode.click();
+                    }
+                }
+            }
+          
+            if (optionVals.autoPraise.enabled) {
+                var faith = craftManager.getResource('faith');
+                if (0.99 <= faith.value / faith.maxValue) {
+                    storeForSummary('faith', faith.value * (1 + game.religion.getFaithBonus()));
+                    activity('Praised the sun!', 'ks-praise');
+                    game.religion.praise();
+                }
             }
         }
     };
@@ -939,7 +1104,7 @@ var run = function() {
                 if (i.unlocked == false) { break; }
 
                 // Discards junk nodes
-                if(tileKey.includes('-')) { break; }
+                if (tileKey.includes('-')) { break; }
 
                 // Acquire node coordinates
                 var regex = /(\d).(\d*)/g;
@@ -947,7 +1112,7 @@ var run = function() {
                 var xCoord = parseInt(keyMatch[1]);
                 var yCoord = parseInt(keyMatch[2]);
 
-                if(this.currentCheapestNode == null) {
+                if (this.currentCheapestNode == null) {
                     this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
                     this.currentCheapestNode = i;
                     this.cheapestNodeX = xCoord;
@@ -994,7 +1159,7 @@ var run = function() {
             var amountTemp = amount;
             var label = build.label;
             amount=this.bulkManager.construct(button.model, button, amount);
-            if(amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
+            if (amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
           
             if (variant === "s") {
                 storeForSummary(label, amount, 'faith');
@@ -1065,7 +1230,7 @@ var run = function() {
             var amountTemp = amount;
             var label = build.label;
             amount=this.bulkManager.construct(button.model, button, amount);
-            if(amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
+            if (amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
             storeForSummary(label, amount, 'build');
           
           
@@ -1158,12 +1323,12 @@ var run = function() {
         build: function (name, stage, amount) {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name, stage);
-
+          
             if (!button || !button.model.enabled) return;
             var amountTemp = amount;
             var label = build.meta.label ? build.meta.label : build.meta.stages[stage].label;
             amount=this.bulkManager.construct(button.model, button, amount);
-            if(amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
+            if (amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
             storeForSummary(label, amount, 'build');
           
             if (amount === 1) {
@@ -1179,7 +1344,7 @@ var run = function() {
             var buttons = this.manager.tab.buttons;
             var build = this.getBuild(name);
             var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.meta.label;
-
+          
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
                 if (haystack.indexOf(label) !== -1){
@@ -1210,7 +1375,7 @@ var run = function() {
             var amountTemp = amount;
             var label = build.label;
             amount=this.bulkManager.construct(button.model, button, amount);
-            if(amount !== amountTemp) {
+            if (amount !== amountTemp) {
                 warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);
             }
             storeForSummary(label, amount, 'build');
@@ -1296,6 +1461,7 @@ var run = function() {
             var craft = this.getCraft(name);
             var ratio = game.getResCraftRatio(craft);
             var trigger = options.auto.craft.trigger;
+            var optionVal = options.auto.options.enabled && options.auto.options.items.shipOverride.enabled;
           
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
@@ -1319,7 +1485,7 @@ var run = function() {
 
             for (var i in materials) {
                 var delta = undefined;
-                if(! limited || (this.getResource(i).maxValue > 0 && aboveTrigger)) {
+                if (! limited || (this.getResource(i).maxValue > 0 && aboveTrigger) || (name === 'ship' && optionVal && (this.getResource('ship').value < 243)) ) {
                     // If there is a storage limit, we can just use everything returned by getValueAvailable, since the regulation happens there
                     delta = this.getValueAvailable(i) / materials[i];
                 } else {
@@ -1403,7 +1569,7 @@ var run = function() {
             var value = this.getValue(name);
             var stock = this.getStock(name);
           
-            if(!typeTrigger && typeTrigger !== 0) {
+            if (!typeTrigger && typeTrigger !== 0) {
                 var trigger = options.auto.craft.trigger;
             }
             else {
@@ -1411,10 +1577,9 @@ var run = function() {
             }
             
             if ('catnip' === name) {
-                var resPerTick = game.getResourcePerTick(name, false, {
-                    modifiers: {
-                        'catnip': 0.10 - game.calendar.getWeatherMod()
-                    }});
+                var pastures = (game.bld.getBuildingExt('pasture').meta.stage === 0) ? game.bld.getBuildingExt('pasture').meta.val: 0;
+                var aqueducts = (game.bld.getBuildingExt('aqueduct').meta.stage === 0) ? game.bld.getBuildingExt('aqueduct').meta.val: 0;
+                var resPerTick = this.getPotentialCatnip(true, pastures, aqueducts)
 
                 if (resPerTick < 0) stock -= resPerTick * 202 * 5;
             }
@@ -1431,6 +1596,50 @@ var run = function() {
             }
 
             return value;
+        },
+        getPotentialCatnip: function (worstWeather, pastures, aqueducts) {
+            var fieldProd = game.getEffect('catnipPerTickBase');
+            if (worstWeather) {
+                fieldProd *= 0.1;
+            } else {
+                fieldProd *= game.calendar.getWeatherMod() + game.calendar.getCurSeason().modifiers['catnip'];
+            }
+            var vilProd = (game.village.getResProduction().catnip) ? game.village.getResProduction().catnip * (1 + game.getEffect('catnipJobRatio')) : 0;
+            var baseProd = fieldProd + vilProd;
+            
+            var hydroponics = game.space.getBuilding('hydroponics').val;
+            if (game.prestige.meta[0].meta[21].researched) {
+                if (game.calendar.cycle === 2) {hydroponics *= 2;}
+                if (game.calendar.cycle === 7) {hydroponics *= 0.5;}
+            }
+            baseProd *= 1 + 0.03 * aqueducts + 0.025 * hydroponics;
+          
+            var paragonBonus = (game.challenges.currentChallenge == "winterIsComing") ? 0 : game.prestige.getParagonProductionRatio();
+            baseProd *= 1 + paragonBonus;
+          
+            baseProd *= 1 + game.religion.getProductionBonus()/100;
+          
+            if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
+          
+            baseProd = game.calendar.cycleEffectsFestival({catnip: baseProd})['catnip'];
+          
+            var baseDemand = game.village.getResConsumption()['catnip'];
+            var uniPastures = game.bld.getBuildingExt('unicornPasture').meta.val;
+            baseDemand *= 1 + (game.getHyperbolicEffect(pastures * -0.005 + uniPastures * -0.0015, 1.0));
+            if (game.village.sim.kittens.length > 0 && game.village.happiness > 1) {
+                var happyCon = game.village.happiness - 1;
+                if (game.challenges.currentChallenge == "anarchy") {
+                    baseDemand *= 1 + happyCon * (1 + game.getEffect("catnipDemandWorkerRatioGlobal"));
+                } else {
+                    baseDemand *= 1 + happyCon * (1 + game.getEffect("catnipDemandWorkerRatioGlobal")) * (1 - game.village.getFreeKittens() / game.village.sim.kittens.length);
+                }
+            }
+            baseProd += baseDemand;
+            
+            baseProd += game.getResourcePerTickConvertion('catnip');
+          
+            //Might need to eventually factor in time acceleration using game.timeAccelerationRatio().
+            return baseProd;
         }
     };
   
@@ -1457,10 +1666,10 @@ var run = function() {
                 if (name === 'cryochambers' && game.time.getVSU('usedCryochambers').val > 0) continue;
                 var prices = (data.stages) ? data.stages[data.stage].prices : data.prices;
                 var priceRatio = this.getPriceRatio(data, bonfire);
-                if (!this.singleBuildPossible) {continue;}
+                if (!this.singleBuildPossible(data, prices, priceRatio)) {continue;}
                 var require = !build.require ? false : this.craftManager.getResource(build.require);
                 if (!require || trigger <= require.value / require.maxValue) {
-                    if(typeof(build.stage) !== 'undefined' && build.stage !== data.stage) { 
+                    if (typeof(build.stage) !== 'undefined' && build.stage !== data.stage) { 
                         continue;
                     }
                     bList.push(new Object());
@@ -1489,7 +1698,7 @@ var run = function() {
             for (var res in tempPool) {tempPool[res] = this.craftManager.getValueAvailable(res, true);}
           
             var k = 0;
-            while(countList.length !== 0) {
+            while (countList.length !== 0) {
                 bulkLoop:
                 for (var j = 0; j < countList.length; j++) {
                     var build = countList[j];
@@ -1550,7 +1759,7 @@ var run = function() {
         },
         singleBuildPossible: function (data, prices, priceRatio) {
             for (var price in prices) {
-                if (this.craftManager.getValueAvailable(price, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
+                if (this.craftManager.getValueAvailable(prices[price].name, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
             }
             return true;
         }
@@ -1569,15 +1778,13 @@ var run = function() {
         manager: undefined,
         trade: function (name, amount) {
 
-            if (!name || 1 > amount) return;
+            if (!name || 1 > amount) {warning('KS trade checks are not functioning properly, please create an issue on the github page.');}
 
             var race = this.getRace(name);
 
-            if (!race.unlocked) return;
-
             var button = this.getTradeButton(race.name);
 
-            if (!button.model.enabled || !options.auto.trade.items[name].enabled) return;
+            if (!button.model.enabled || !options.auto.trade.items[name].enabled) {warning('KS trade checks are not functioning properly, please create an issue on the github page.');}
 
             game.diplomacy.tradeMultiple(race, amount);
             storeForSummary(race.title, amount, 'trade');
@@ -1617,8 +1824,7 @@ var run = function() {
                 if (!this.isValidTrade(item, race)) {continue;}
                 var resource = this.craftManager.getResource(item.name);
                 var mean = 0;
-                var tradeChance = (!race.embassyPrices) ? item.chance : item.chance * (1 + (0.01 * race.embassyLevel));
-
+                var tradeChance = (race.embassyPrices) ? item.chance * (1 + game.getHyperbolicEffect(0.01 * race.embassyLevel, 0.75)) : item.chance;
                 if (race.name == "zebras" && item.name == "titanium") {
                     var shipCount = game.resPool.get("ship").value;
                     var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
@@ -1635,8 +1841,7 @@ var run = function() {
             return output;
         },
         isValidTrade: function (item, race) {
-            if (!race.embassyPrices) {return game.resPool.get(item.name).unlocked;}
-            return (!(item.minLevel && race.embassyLevel < item.minLevel) && game.resPool.get(item.name).unlocked);
+            return (!(item.minLevel && race.embassyLevel < item.minLevel) && (game.resPool.get(item.name).unlocked || item.name === 'titanium' || item.name === 'uranium'));
         },
         getLowestTradeAmount: function (name, limited, trigConditions) {
             var amount = undefined;
@@ -1654,8 +1859,10 @@ var run = function() {
 
                 amount = (amount === undefined || total < amount) ? total : amount;
             }
+          
+            amount = Math.floor(amount);
 
-            if (race === null || options.auto.trade.items[name].allowcapped) return Math.floor(amount);
+            if (race === null || options.auto.trade.items[name].allowcapped) return amount;
 
             // Loop through the items obtained by the race, and determine
             // which good has the most space left. Once we've determined this,
@@ -1673,7 +1880,7 @@ var run = function() {
 
                 max = tradeOutput[item.name];
 
-                capacity = Math.max((resource.maxValue - resource.value) / max, 0);
+                var capacity = Math.max((resource.maxValue - resource.value) / max, 0);
 
                 highestCapacity = (capacity < highestCapacity) ? highestCapacity : capacity;
             }
@@ -1688,7 +1895,8 @@ var run = function() {
             // This helps us prevent trading for resources we can't store. Note that we
             // essentially ignore blueprints here. In addition, if highestCapacity was never set,
             // then we just
-            amount = (highestCapacity < amount) ? highestCapacity : amount;
+          
+            amount = (highestCapacity < amount) ? Math.max(highestCapacity - 1, 1) : amount;
             
             //Prevents limited trades from draining the input resources by considering how many "trades" the inputs and outputs are worth.
             var limAmount = Number.MAX_VALUE;
@@ -1698,7 +1906,7 @@ var run = function() {
                 var leastMat, leastMatVal, leastMatStored;
                 for (var mat in materials) {
                     var tradeIn = this.craftManager.getValueAvailable(mat, true)/materials[mat];
-                    if(tradeIn < inMin) {
+                    if (tradeIn < inMin) {
                     inMin = tradeIn;
                     leastMat = mat;
                     leastMatVal = materials[mat];
@@ -1748,8 +1956,6 @@ var run = function() {
 
                 if (panel.race.name === race) return panel.tradeBtn;
             }
-
-            warning('unable to find trade button for ' + race);
         },
         singleTradePossible: function (name) {
             var materials = this.getMaterials(name);
@@ -1896,25 +2102,18 @@ var run = function() {
             craft: options.auto.craft.enabled,
             upgrade: options.auto.upgrade.enabled,
             trade: options.auto.trade.enabled,
-            hunt: options.auto.hunt.enabled,
             faith: options.auto.faith.enabled,
             time: options.auto.time.enabled,
-            festival: options.auto.festival.enabled,
-            crypto: options.auto.crypto.enabled,
-            autofeed: options.auto.autofeed.enabled,
-            explore: options.auto.explore.enabled,
+            options: options.auto.options.enabled,
             filter: options.auto.filter.enabled
         };
         kittenStorage.resources = options.auto.resources;
         kittenStorage.triggers = {
             faith: options.auto.faith.trigger,
             time: options.auto.time.trigger,
-            hunt: options.auto.hunt.trigger,
             build: options.auto.build.trigger,
             space: options.auto.space.trigger,
             craft: options.auto.craft.trigger,
-            crypto: options.auto.crypto.trigger,
-            explore: options.auto.explore.trigger,
             trade: options.auto.trade.trigger
         };
         localStorage['cbc.kitten-scientists'] = JSON.stringify(kittenStorage);
@@ -1940,13 +2139,17 @@ var run = function() {
                 var el = $('#' + item);
                 var option = el.data('option');
                 var name = item.split('-');
-
+              
                 if (option === undefined) {
                     delete kittenStorage.items[item];
                     continue;
                 }
-              
-                el.prop('checked', value);
+                
+                if (name[0] == 'set') {
+                    el[0].title = value;
+                } else {
+                    el.prop('checked', value);
+                }
 
                 if (name.length == 2) {
                     option.enabled = value;
@@ -1977,22 +2180,17 @@ var run = function() {
             if (saved.triggers) {
                 options.auto.faith.trigger = saved.triggers.faith;
                 options.auto.time.trigger = saved.triggers.time;
-                options.auto.hunt.trigger = saved.triggers.hunt;
                 options.auto.build.trigger = saved.triggers.build;
                 options.auto.space.trigger = saved.triggers.space;
                 options.auto.craft.trigger = saved.triggers.craft;
                 options.auto.trade.trigger = saved.triggers.trade;
-                options.auto.crypto.trigger = saved.triggers.crypto;
-                options.auto.explore.trigger = saved.triggers.explore;
 
                 $('#trigger-faith')[0].title = options.auto.faith.trigger;
                 $('#trigger-time')[0].title = options.auto.time.trigger;
-                $('#trigger-hunt')[0].title = options.auto.hunt.trigger;
                 $('#trigger-build')[0].title = options.auto.build.trigger;
                 $('#trigger-space')[0].title = options.auto.space.trigger;
                 $('#trigger-craft')[0].title = options.auto.craft.trigger;
                 $('#trigger-trade')[0].title = options.auto.trade.trigger;
-                $('#trigger-crypto')[0].title = options.auto.crypto.trigger;
             }
 
         } else {
@@ -2193,7 +2391,7 @@ var run = function() {
             }
         });
 
-        allresources = $('<ul/>', {
+        var allresources = $('<ul/>', {
             id: 'available-resources-list',
             css: {display: 'none', paddingLeft: '20px'}
         });
@@ -2325,6 +2523,8 @@ var run = function() {
                     list.append(getTradeOption(itemName, auto.items[itemName]));
                 else if (toggleName === 'craft')
                     list.append(getCraftOption(itemName, auto.items[itemName]));
+                else if (toggleName === 'options')
+                    list.append(getOptionsOption(itemName, auto.items[itemName]));
                 else
                     list.append(getOption(itemName, auto.items[itemName]));
             }
@@ -2362,7 +2562,7 @@ var run = function() {
 
         }
       
-        if (auto.trigger) {
+        if (auto.trigger !== undefined) {
             var triggerButton = $('<div/>', {
                 id: 'trigger-' + toggleName,
                 text: 'trigger',
@@ -2376,8 +2576,7 @@ var run = function() {
 
             triggerButton.on('click', function () {
                 var value;
-                if (text == 'Crypto'){value = window.prompt('Enter a new trigger value for ' + text + '. Corresponds to the amount of Relics needed before the exchange is made.', auto.trigger);}
-                else{value = window.prompt('Enter a new trigger value for ' + text + '. Should be in the range of 0 to 1.', auto.trigger);}
+                value = window.prompt('Enter a new trigger value for ' + text + '. Should be in the range of 0 to 1.', auto.trigger);
 
                 if (value !== null) {
                     auto.trigger = parseFloat(value);
@@ -2518,6 +2717,8 @@ var run = function() {
                 option.enabled = true;
                 if (option.filter) {
                     message('Enabled ' + elementLabel + ' Filter');
+                } else if (option.misc) {
+                    message('Enabled ' + elementLabel);
                 } else {
                     message('Enabled Auto ' + elementLabel);
                 }
@@ -2525,6 +2726,8 @@ var run = function() {
                 option.enabled = false;
                 if (option.filter) {
                     message('Disabled ' + elementLabel + ' Filter');
+                } else if (option.misc) {
+                    message('Disabled ' + elementLabel);
                 } else {
                     message('Disabled Auto ' + elementLabel);
                 }
@@ -2568,6 +2771,40 @@ var run = function() {
         });
 
         element.append(input, label);
+
+        return element;
+    };
+  
+    var getOptionsOption = function (name, option) {
+        var element = getOption(name, option);
+      
+        if (option.subTrigger !== undefined) {
+            var triggerButton = $('<div/>', {
+                id: 'set-' + name +'-subTrigger',
+                text: 'trigger',
+                title: option.subTrigger,
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'}
+            }).data('option', option);
+                              
+            triggerButton.on('click', function () {
+                var value;
+                if (name == 'crypto'){value = window.prompt('Enter a new trigger value for ' + option.label + '. Corresponds to the amount of Relics needed before the exchange is made.', option.subTrigger);}
+                else{value = window.prompt('Enter a new trigger value for ' + option.label + '. Should be in the range of 0 to 1.', option.subTrigger);}
+
+                if (value !== null) {
+                    option.subTrigger = parseFloat(value);
+                    kittenStorage.items[triggerButton.attr('id')] = option.subTrigger;
+                    saveToKittenStorage();
+                    triggerButton[0].title = option.subTrigger;
+                }
+            });
+
+            element.append(triggerButton);
+        }
 
         return element;
     };
@@ -2630,21 +2867,17 @@ var run = function() {
     optionsListElement.append(getToggle('build',    'Bonfire'));
     optionsListElement.append(getToggle('space',    'Space'));
     optionsListElement.append(getToggle('craft',    'Crafting'));
-    optionsListElement.append(getToggle('upgrade',  'Upgrading'));
+    optionsListElement.append(getToggle('upgrade',  'Unlocking'));
     optionsListElement.append(getToggle('trade',    'Trading'));
-    optionsListElement.append(getToggle('hunt',     'Hunting'));
     optionsListElement.append(getToggle('faith',    'Religion'));
     optionsListElement.append(getToggle('time',     'Time'));
-    optionsListElement.append(getToggle('festival', 'Festival'));
-    optionsListElement.append(getToggle('crypto',   'Crypto'));
-    optionsListElement.append(getToggle('autofeed',   'Autofeed'));
-    optionsListElement.append(getToggle('explore',  'Explore'));
-    optionsListElement.append(getToggle('filter',  'Filters'));
+    optionsListElement.append(getToggle('options',  'Options'));
+    optionsListElement.append(getToggle('filter',   'Filters'));
 
     // add activity button
     // ===================
 
-    activitySummary = {};
+    var activitySummary = {};
     var resetActivitySummary = function () {
         activitySummary = {
             lastyear: game.calendar.year,
@@ -2689,6 +2922,11 @@ var run = function() {
         // Hunters
         if (activitySummary.other.hunt) {
             summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt) + ' adorable kitten hunter' + (activitySummary.other.hunt == 1 ? '' : 's'));
+        }
+      
+        // Necrocorns
+        if (activitySummary.other.feed) {
+            summary('Fed the elders ' + game.getDisplayValueExt(activitySummary.other.feed) + ' necrocorns');
         }
         
         // Techs
