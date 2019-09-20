@@ -4,6 +4,7 @@
 // @description Launch Kitten Scientists
 // @include     *bloodrizer.ru/games/kittens/*
 // @include     file:///*kitten-game*
+// @include     *kittensgame.com/web/*
 // @version     1.4.1
 // @grant       none
 // @copyright   2015, cameroncondry
@@ -39,9 +40,6 @@ var run = function() {
 
         // The default consume rate.
         consume: 0.6,
-
-        // How many messages to keep in the game log.
-        logMessages:   100,
 
         // The default settings for game automation.
         auto: {
@@ -333,7 +331,7 @@ var run = function() {
                     autofeed:           {enabled: true,                    misc: true, label: 'Feed Leviathans'},
                     hunt:               {enabled: true, subTrigger: 0.99,  misc: true, label: 'Hunt'},
                     crypto:             {enabled: true, subTrigger: 10000, misc: true, label: 'Trade Blackcoin'},
-                    buildEmbassies:     {enabled: true, subTrigger: 0.8,   misc: true, label: 'Build Embassies (Beta)'},
+                    buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: 'Build Embassies (Beta)'},
                     explore:            {enabled: false,                   misc: true, label: 'Explore (Deprecated)'}
                 }
             },
@@ -356,6 +354,10 @@ var run = function() {
             },
             resources: {
                 furs:   {stock: 1000}
+            },
+            cache: {
+                cache:    [],
+                cacheSum: {}
             }
         }
     };
@@ -427,6 +429,7 @@ var run = function() {
         this.timeManager = new TimeManager();
         this.explorationManager = new ExplorationManager();
         this.villageManager = new TabManager('Village');
+        this.cacheManager = new CacheManager();
     };
 
     Engine.prototype = {
@@ -440,6 +443,7 @@ var run = function() {
         timeManager: undefined,
         explorationManager: undefined,
         villageManager: undefined,
+        cacheManager: undefined,
         loop: undefined,
         start: function () {
             if (this.loop) return;
@@ -663,6 +667,7 @@ var run = function() {
                             game.resPool.get('manpower').value -= 1000;
                             game.diplomacy.unlockRandomRace();
                             manpower -= 1000;
+                            game.ui.render();
                         }
                     }
                     if (!game.diplomacy.get('sharks').unlocked) {
@@ -670,6 +675,7 @@ var run = function() {
                             game.resPool.get('manpower').value -= 1000;
                             game.diplomacy.unlockRandomRace();
                             manpower -= 1000;
+                            game.ui.render();
                         }
                     }
                     if (!game.diplomacy.get('griffins').unlocked) {
@@ -677,6 +683,7 @@ var run = function() {
                             game.resPool.get('manpower').value -= 1000;
                             game.diplomacy.unlockRandomRace();
                             manpower -= 1000;
+                            game.ui.render();
                         }
                     }
                     if (!game.diplomacy.get('nagas').unlocked && game.resPool.get("culture").value >= 1500) {
@@ -684,6 +691,7 @@ var run = function() {
                             game.resPool.get('manpower').value -= 1000;
                             game.diplomacy.unlockRandomRace();
                             manpower -= 1000;
+                            game.ui.render();
                         }
                     }
                     if (!game.diplomacy.get('zebras').unlocked && game.resPool.get("ship").value >= 1) {
@@ -691,6 +699,7 @@ var run = function() {
                             game.resPool.get('manpower').value -= 1000;
                             game.diplomacy.unlockRandomRace();
                             manpower -= 1000;
+                            game.ui.render();
                         }
                     }
                     if (!game.diplomacy.get('spiders').unlocked && game.resPool.get("ship").value >= 100 && game.resPool.get("science").maxValue > 125000) {
@@ -698,6 +707,7 @@ var run = function() {
                             game.resPool.get('manpower').value -= 1000;
                             game.diplomacy.unlockRandomRace();
                             manpower -= 1000;
+                            game.ui.render();
                         }
                     }
                     if (!game.diplomacy.get('dragons').unlocked && game.science.get("nuclearFission").researched) {
@@ -705,6 +715,7 @@ var run = function() {
                             game.resPool.get('manpower').value -= 1000;
                             game.diplomacy.unlockRandomRace();
                             manpower -= 1000;
+                            game.ui.render();
                         }
                     }
                 }
@@ -899,9 +910,9 @@ var run = function() {
             if (craftManager.getValueAvailable('manpower', true) < 1500 || craftManager.getValueAvailable('culture', true) < 5000 
                 || craftManager.getValueAvailable('parchment', true) < 2500) {return;}
           
-            var catpowProf = 4000 * craftManager.getTickVal(craftManager.getResource('manpower')) > 1500;
-            var cultureProf = 4000 * craftManager.getTickVal(craftManager.getResource('culture')) > 5000;
-            var parchProf = 4000 * craftManager.getTickVal(craftManager.getResource('parchment')) > 2500;
+            var catpowProf = 4000 * craftManager.getTickVal(craftManager.getResource('manpower'), true) > 1500;
+            var cultureProf = 4000 * craftManager.getTickVal(craftManager.getResource('culture'), true) > 5000;
+            var parchProf = 4000 * craftManager.getTickVal(craftManager.getResource('parchment'), true) > 2500;
           
             if (!(catpowProf && cultureProf && parchProf)) {return;}
           
@@ -934,12 +945,25 @@ var run = function() {
                 var hunters = game.village.getJob('hunter').value;
                 storeForSummary('hunt', hunters);
                 activity('Sent ' + game.getDisplayValueExt(hunters) + ' kitten' + (hunters == 1 ? '' : 's') + ' on the hunt', 'ks-hunt');
+
+                var huntCount = Math.floor(catpower.value/100);
+                var aveOutput = this.craftManager.getAverageHunt();
+                var trueOutput = {};
+              
+                for (var out in aveOutput) {
+                    var res = this.craftManager.getResource(out);
+                    trueOutput[out] = (res.maxValue > 0) ? Math.min(aveOutput[out] * huntCount, Math.max(res.maxValue - res.value, 0)) : aveOutput[out] * huntCount;
+                }
+
+                this.cacheManager.pushToCache({'materials': trueOutput, 'timeStamp': game.timer.ticksTotal});
+              
                 game.village.huntAll();
             }
         },
         trade: function () {
             var craftManager = this.craftManager;
             var tradeManager = this.tradeManager;
+            var cacheManager = this.cacheManager;
             var gold = craftManager.getResource('gold');
             var trades = [];
             var requireTrigger = options.auto.trade.trigger;
@@ -967,7 +991,7 @@ var run = function() {
 
                 // If we have enough to trigger the check, then attempt to trade
                 var prof = tradeManager.getProfitability(name);
-                if (trade.limited && (prof === 'All' || prof)) {
+                if (trade.limited && prof) {
                     trades.push(name);
                 } else if ((!require || requireTrigger <= require.value / require.maxValue) && requireTrigger <= gold.value / gold.maxValue) {
                     trades.push(name);
@@ -997,11 +1021,15 @@ var run = function() {
                 }
                 maxByRace[i] = tradePos;
             }
-            
+          
+            if (trades.length === 0) {return;}
+          
+            var tradesDone = {};
             while (trades.length > 0 && maxTrades >= 1) {
                 if (maxTrades < trades.length) {
                     var j = Math.floor(Math.random() * trades.length);
-                    tradeManager.trade(trades[j], 1);
+                    if (!tradesDone[trades[j]]) {tradesDone[trades[j]] = 0;}
+                    tradesDone[trades[j]] += 1;
                     maxTrades -= 1;
                     trades.splice(j, 1);
                     maxByRace.splice(j, 1);
@@ -1015,10 +1043,38 @@ var run = function() {
                         minTradePos = i;
                     }
                 }
-                tradeManager.trade(trades[minTradePos], minTrades);
+                if (!tradesDone[trades[minTradePos]]) {tradesDone[trades[minTradePos]] = 0;}
+                tradesDone[trades[minTradePos]] += minTrades;
                 maxTrades -= minTrades;
                 trades.splice(minTradePos, 1);
                 maxByRace.splice(minTradePos, 1);
+            }
+            if (tradesDone.length === 0) {return;}
+          
+            var tradeNet = {};
+            for (var name in tradesDone) {
+                var race = tradeManager.getRace(name);
+
+                var materials = tradeManager.getMaterials(name);
+                for (var mat in materials) {
+                    if (!tradeNet[mat]) {tradeNet[mat] = 0;}
+                    tradeNet[mat] -= materials[mat] * tradesDone[name];
+                }
+              
+                var meanOutput = tradeManager.getAverageTrade(race);
+                for (var out in meanOutput) {
+                    var res = craftManager.getResource(out);
+                    if (!tradeNet[out]) {tradeNet[out] = 0;}
+                    tradeNet[out] += (res.maxValue > 0) ? Math.min(meanOutput[out] * tradesDone[name], Math.max(res.maxValue - res.value, 0)) : meanOutput[out] * tradesDone[name];
+                }
+            }
+
+            cacheManager.pushToCache({'materials': tradeNet, 'timeStamp': game.timer.ticksTotal});
+          
+            for (var name in tradesDone) {
+                if (tradesDone[name] > 0) {
+                    tradeManager.trade(name, tradesDone[name]);
+                }
             }
         },
         miscOptions: function () {
@@ -1026,14 +1082,50 @@ var run = function() {
             var optionVals = options.auto.options.items;
             
             if (optionVals.buildEmbassies.enabled) {
-                var racePanels = game.diplomacyTab.racePanels;
-                for (var i = 0; i < racePanels.length; i++) {
-                    if (!racePanels[i].embassyButton) {continue;}
-                    var culture = craftManager.getResource('culture');
-                    if (optionVals.buildEmbassies.subTrigger > culture.value / culture.maxValue) {continue;}
-                    if (racePanels[i].embassyButton.model.prices[0].val <= craftManager.getValueAvailable('culture', true)) {
-                        racePanels[i].embassyButton.domNode.click();
+                var culture = craftManager.getResource('culture');
+                if (optionVals.buildEmbassies.subTrigger <= culture.value / culture.maxValue) {
+                    var racePanels = game.diplomacyTab.racePanels;
+                    var cultureVal = craftManager.getValueAvailable('culture', true);
+              
+                    var embassyBulk = {};
+                    var bulkTracker = [];
+              
+                    for (var i = 0; i < racePanels.length; i++) {
+                        if (!racePanels[i].embassyButton) {continue;}
+                        var name = racePanels[i].race.name;
+                        var race = game.diplomacy.get(name);
+                        embassyBulk[name] = {'val': 0, 'basePrice': race.embassyPrices[0].val, 'currentEm': race.embassyLevel, 'priceSum': 0, 'race': race};
+                        bulkTracker.push(name);
                     }
+              
+                    if (bulkTracker.length === 0) {return;}
+              
+                    var refreshRequired = false;
+
+                    for (var i=0; i<bulkTracker.length; i++) {
+                        var name = bulkTracker[i];
+                        var emBulk = embassyBulk[name];
+                        var nextPrice = emBulk.basePrice * Math.pow(1.15, emBulk.currentEm + emBulk.val);
+                        if (nextPrice <= cultureVal) {
+                            cultureVal -= nextPrice;
+                            emBulk.priceSum += nextPrice;
+                            emBulk.val += 1;
+                            refreshRequired = true;
+                        } else {
+                            bulkTracker.splice(i, 1);
+                            i--;
+                        }
+                    }
+
+                    for (var name in embassyBulk) {
+                        var emBulk = embassyBulk[name];
+                        var cultureVal = craftManager.getValueAvailable('culture', true);
+                        if (emBulk.priceSum > cultureVal) {warning('Something has gone horribly wrong.' + [emBulk.priceSum, cultureVal]);}
+                        game.resPool.resources[13].value -= emBulk.priceSum;
+                        emBulk.race.embassyLevel += emBulk.val;
+                    }
+
+                    if (refreshRequired) {game.ui.render();}
                 }
             }
           
@@ -1403,7 +1495,9 @@ var run = function() {
     // Crafting Manager
     // ================
 
-    var CraftManager = function () {};
+    var CraftManager = function () {
+        this.cacheManager = new CacheManager();
+    };
 
     CraftManager.prototype = {
         craft: function (name, amount) {
@@ -1525,19 +1619,42 @@ var run = function() {
 
             return materials;
         },
-        getTickVal: function (res) {
-            var prod = game.getResourcePerTick(res.name,true);
+        getTickVal: function (res, preTrade) {
+            var prod = game.getResourcePerTick(res.name, true);
             if (res.craftable) {
                 var minProd=Number.MAX_VALUE;
                 var materials = this.getMaterials(res.name);
                 for (var mat in materials) {
                     var rat = (1+game.getResCraftRatio(res.name))/materials[mat];
+                    //Currently preTrade is only true for the festival stuff, so including furs from hunting is ideal.
                     var addProd = this.getTickVal(this.getResource(mat));
                     minProd = Math.min(addProd * rat, minProd);
                 }
                 prod += (minProd!==Number.MAX_VALUE) ? minProd : 0;
             }
+            if (prod <= 0 && (res.name === 'spice' || res.name === 'blueprint')) {return 'ignore';}
+            if (!preTrade) {prod += this.cacheManager.getResValue(res.name)};
             return prod;
+        },
+        getAverageHunt: function() {
+            var output = {};
+            var hunterRatio = game.getEffect('hunterRatio') + game.village.getEffectLeader('manager', 0);
+
+            output['furs'] = 40 + 32.5 * hunterRatio;
+          
+            output['ivory'] = 50 * Math.min(0.225 + 0.01 * hunterRatio, 0.5) + 40 * hunterRatio * Math.min(0.225 + 0.01 * hunterRatio, 0.5);
+          
+            output['unicorns'] = 0.05;
+          
+            if (this.getValue('zebras') >= 10) {
+                output['bloodstone'] = (this.getValue('bloodstone') === 0) ? 0.05 : 0.0005;
+            }
+          
+            if (game.ironWill && game.workshop.get('goldOre').researched) {
+                output['gold'] = 0.625 + 0.625 * hunterRatio;
+            }
+          
+            return output;
         },
         getName: function (name) {
             // adjust for spelling discrepancies in core game logic
@@ -1806,7 +1923,8 @@ var run = function() {
             for (var prod in output) {
                 var res = this.craftManager.getResource(prod);
                 var tick = this.craftManager.getTickVal(res);
-                if (tick <= 0) {return 'All';}
+                if (tick === 'ignore') {continue;}
+                if (tick <= 0) {return true;}
                 profit += (res.maxValue > 0) ? Math.min(output[prod], Math.max(res.maxValue - res.value, 0))/tick : output[prod]/tick;
             }
             return (cost <= profit);
@@ -1838,10 +1956,17 @@ var run = function() {
                 }
                 output[item.name] = mean;
             }
+          
+            var spiceChance = (race.embassyPrices) ? 0.35 * (1 + 0.01 * race.embassyLevel) : 0.35;
+            var spiceTradeAmount = successRat * Math.min(spiceChance, 1);
+            output['spice'] = 25 * spiceTradeAmount + 50 * spiceTradeAmount * tRatio / 2;
+          
+            output['blueprint'] = 0.1 * successRat;
+          
             return output;
         },
         isValidTrade: function (item, race) {
-            return (!(item.minLevel && race.embassyLevel < item.minLevel) && (game.resPool.get(item.name).unlocked || item.name === 'titanium' || item.name === 'uranium'));
+            return (!(item.minLevel && race.embassyLevel < item.minLevel) && (game.resPool.get(item.name).unlocked || item.name === 'titanium' || item.name === 'uranium' || race.name === 'leviathans'));
         },
         getLowestTradeAmount: function (name, limited, trigConditions) {
             var amount = undefined;
@@ -1851,9 +1976,8 @@ var run = function() {
 
             for (var i in materials) {
                 if (i === "catpower") {
-                  var total = this.craftManager.getValueAvailable(i, true) / materials[i];
-                }
-                else {
+                    var total = this.craftManager.getValueAvailable(i, true) / materials[i];
+                } else {
                     var total = this.craftManager.getValueAvailable(i, limited, options.auto.trade.trigger) / materials[i];
                 }
 
@@ -1861,6 +1985,8 @@ var run = function() {
             }
           
             amount = Math.floor(amount);
+          
+            if (amount === 0) {return 0;}
 
             if (race === null || options.auto.trade.items[name].allowcapped) return amount;
 
@@ -1889,6 +2015,8 @@ var run = function() {
             // as there is any room, even if it doesn't have exact space. Otherwise
             // we seem to starve trading altogether.
             highestCapacity = Math.ceil(highestCapacity);
+          
+            if (highestCapacity === 0) {return 0;}
 
             // Now that we know the most we *should* trade for, check to ensure that
             // we trade for our max cost, or our max capacity, whichever is lower.
@@ -1898,34 +2026,6 @@ var run = function() {
           
             amount = (highestCapacity < amount) ? Math.max(highestCapacity - 1, 1) : amount;
             
-            //Prevents limited trades from draining the input resources by considering how many "trades" the inputs and outputs are worth.
-            var limAmount = Number.MAX_VALUE;
-            if (limited && !trigConditions && this.getProfitability(name)!=='All') {
-                var inMin = Number.MAX_VALUE;
-                var materials = this.getMaterials(name);
-                var leastMat, leastMatVal, leastMatStored;
-                for (var mat in materials) {
-                    var tradeIn = this.craftManager.getValueAvailable(mat, true)/materials[mat];
-                    if (tradeIn < inMin) {
-                    inMin = tradeIn;
-                    leastMat = mat;
-                    leastMatVal = materials[mat];
-                    leastMatStored = this.craftManager.getValueAvailable(mat, true);
-                    }
-                }
-              
-                var outMin = Number.MAX_VALUE;
-                var output = this.getAverageTrade(race);
-                for (var prod in output) {
-                    outMin = Math.min(this.craftManager.getValueAvailable(prod, true)/output[prod], outMin);
-                }
-              
-                var propTrades = (inMin + outMin)/2;
-              
-                limAmount = Math.max(Math.ceil((leastMatStored/leastMatVal)-propTrades), 0);
-            }
-          
-            amount = (limAmount < amount) ? limAmount : amount;
             return Math.floor(amount);
         },
         getMaterials: function (name) {
@@ -1963,6 +2063,51 @@ var run = function() {
                 if (this.craftManager.getValueAvailable(mat, true) < materials[mat]) {return false;}
             }
             return true;
+        }
+    };
+  
+    // Cache Manager
+    // ===============
+
+    var CacheManager = function () {};
+
+    CacheManager.prototype = {
+        pushToCache: function (data) {
+            var cache = options.auto.cache.cache;
+            var cacheSum = options.auto.cache.cacheSum;
+            var materials = data['materials'];
+            var currentTick = game.timer.ticksTotal;
+
+            cache.push(data);
+            for (var mat in materials) {
+                if (!cacheSum[mat]) {cacheSum[mat] = 0;}
+                cacheSum[mat] += materials[mat];
+            }
+          
+            for (var i = 0; i < cache.length; i++) {
+                var oldData = cache[i];
+                if (cache.length > 10000) {
+                    var oldMaterials = oldData['materials'];
+                    for (var mat in oldMaterials) {
+                        if (!cacheSum[mat]) {cacheSum[mat] = 0;}
+                        cacheSum[mat] -= oldMaterials[mat];
+                    }
+                    cache.shift;
+                    i--;
+                } else {
+                    return;
+                }
+            }
+        },
+        getResValue: function (res) {
+            var cache = options.auto.cache.cache;
+            if (cache.length === 0) {return 0;}
+            var cacheSum = options.auto.cache.cacheSum;
+            if (!cacheSum[res]) {return 0;}
+            var currentTick = game.timer.ticksTotal;
+            var startingTick = cache[0].timeStamp;
+
+            return (cacheSum[res] / (currentTick - startingTick));
         }
     };
 
