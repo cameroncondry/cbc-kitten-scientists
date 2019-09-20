@@ -329,7 +329,7 @@ var run = function() {
                     autoPraise:         {enabled: true,                    misc: true, label: 'Auto Praise'},
                     shipOverride:       {enabled: true,                    misc: true, label: 'Force Ships to 243'},
                     autofeed:           {enabled: true,                    misc: true, label: 'Feed Leviathans'},
-                    hunt:               {enabled: true, subTrigger: 0.99,  misc: true, label: 'Hunt'},
+                    hunt:               {enabled: true, subTrigger: 0.98,  misc: true, label: 'Hunt'},
                     crypto:             {enabled: true, subTrigger: 10000, misc: true, label: 'Trade Blackcoin'},
                     buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: 'Build Embassies (Beta)'},
                     explore:            {enabled: false,                   misc: true, label: 'Explore (Deprecated)'}
@@ -911,6 +911,7 @@ var run = function() {
         },
         holdFestival: function () {
             if (!(game.science.get('drama').researched && game.calendar.festivalDays < 400)) {return;}
+            if (!game.prestige.getPerk('carnivals').researched && game.calendar.festivalDays > 0) {return;}
           
             var craftManager = this.craftManager;
             if (craftManager.getValueAvailable('manpower', true) < 1500 || craftManager.getValueAvailable('culture', true) < 5000 
