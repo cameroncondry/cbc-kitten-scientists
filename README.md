@@ -27,6 +27,7 @@ Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc
     - Crafting
     - Upgrading
     - Trading
+    - Building Embassies
     - Hunting
     - Praising
     - Holding Festivals
@@ -49,28 +50,30 @@ Furthermore, each resource can be set to be *limited* crafted. Limited crafting 
 
 ### Upgrading
 
-Techs and workshop upgrades are automatically bought when affordable, prioritizing the workshop. Buildings can be set to be automatically upgraded to their second stage.
+Techs and workshop upgrades are automatically bought when affordable, prioritizing the workshop. Buildings can be set to be automatically upgraded to their second stage as soon as upgrading would not significantly impact income. Space missions can automatically be conducted, and trading partners automatically discovered.
 
 ### Trading
 
 Trades happen when the traded resource and gold is at 98% of the storage capacity. By default, the trades are optimized to only happen during seasons when the trade is most effective.
 
-Trading also has a *limited* trading mode. This mode determines how much production time is needed to make the trade's input resources versus the time to make the trade's average output resources to determine if a trade is profitable. It also checks how many trades each resource involved is worth, and prevents trading if the least input resource is less than the least output resource. This prevents limited trading from depleting the input resources.
+Trading also has a *limited* trading mode. This mode determines how much production time is needed to make the trade's input resources versus the time to make the trade's average output resources to determine if a trade is profitable. The resources gained and spent trading and hunting are also factored in, making this mode self-limiting.
 
 ### Hunting
 
-Hunts when catpower is at 95% capacity.
+Hunts when catpower is at 98% capacity.
 
 ### Praising
 
-Praises when faith is at 99% capacity.
+Praises when faith is at 98% capacity.
 
 ### Misc
 KS can be set to:
 
 Automatically buy cryptocurrency at low prices and sells near the peak.
 
-Automatically hold festivals when the resources are available.
+Automatically hold festivals when income is sufficiently high to support them.
+
+Automatically build embassies.
 
 Autofeed necrocorns to leviathans.
 
