@@ -1124,6 +1124,7 @@ var run = function() {
 
                     for (var name in embassyBulk) {
                         var emBulk = embassyBulk[name];
+                        if (emBulk.val === 0) {continue;}
                         var cultureVal = craftManager.getValueAvailable('culture', true);
                         if (emBulk.priceSum > cultureVal) {warning('Something has gone horribly wrong.' + [emBulk.priceSum, cultureVal]);}
                         game.resPool.resources[13].value -= emBulk.priceSum;
