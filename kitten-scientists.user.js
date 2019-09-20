@@ -1794,7 +1794,8 @@ var run = function() {
                 if (data.tHidden === true) {continue;}
                 if (data.rHidden === true) {continue;}
                 if ((data.rHidden === undefined) && !data.unlocked) {continue;}
-                if (name === 'cryochambers' && game.time.getVSU('usedCryochambers').val > 0) {continue;}
+                if (name === 'cryochambers' && (game.time.getVSU('usedCryochambers').val > 0 
+                    || game.bld.getBuildingExt('chronosphere').meta.val <= data.val)) {continue;}
                 if (name === 'ressourceRetrieval' && data.val >= 100) {continue;}
                 var prices = (data.stages) ? data.stages[data.stage].prices : data.prices;
                 var priceRatio = this.getPriceRatio(data, bonfire);
@@ -1839,7 +1840,8 @@ var run = function() {
                     var priceRatio = build.priceRatio;
                     for (var p = 0; p < prices.length; p++) {
                         var nextPriceCheck = (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k + data.val));
-                        if (nextPriceCheck || (data.noStackable && (k + data.val)>=1) || (build.id === 'ressourceRetrieval' && k + data.val >= 100)) {
+                        if (nextPriceCheck || (data.noStackable && (k + data.val)>=1) || (build.id === 'ressourceRetrieval' && k + data.val >= 100)
+                          || (build.id === 'cryochambers' && game.bld.getBuildingExt('chronosphere').meta.val <= k + data.val)) {
                             for (var p2 = 0; p2 < p; p2++) {
                                 tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k + data.val));
                             }
