@@ -340,7 +340,7 @@ var run = function() {
                 enabled: false,
                 items: {
                     buildFilter:     {enabled: false, filter: true, label: 'Building',            variant: "ks-activity type_ks-build"},
-                    craftFilter:     {enabled: true,  filter: true, label: 'Crafting',            variant: "ks-activity type_ks-craft"},
+                    craftFilter:     {enabled: false, filter: true, label: 'Crafting',            variant: "ks-activity type_ks-craft"},
                     upgradeFilter:   {enabled: false, filter: true, label: 'Upgrading',           variant: "ks-activity type_ks-upgrade"},
                     researchFilter:  {enabled: false, filter: true, label: 'Researching',         variant: "ks-activity type_ks-research"},
                     tradeFilter:     {enabled: false, filter: true, label: 'Trading',             variant: "ks-activity type_ks-trade"},
@@ -655,6 +655,11 @@ var run = function() {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue missionLoop;}
                     }
                     model.domNode.click();
+                    if (i !== 12) {
+                        activity('Kittens conducted a ' + missions[i].label, 'ks-upgrade');
+                    } else {
+                        activity('Kittens conducted a mission to the ' + missions[i].label, 'ks-upgrade');
+                    }
                 }
             }
           
@@ -665,7 +670,7 @@ var run = function() {
                     if (!game.diplomacy.get('lizards').unlocked) {
                         if (manpower >= 1000) {
                             game.resPool.get('manpower').value -= 1000;
-                            game.diplomacy.unlockRandomRace();
+                            activity('Kittens met the ' + game.diplomacy.unlockRandomRace(), 'ks-upgrade');
                             manpower -= 1000;
                             game.ui.render();
                         }
@@ -673,7 +678,7 @@ var run = function() {
                     if (!game.diplomacy.get('sharks').unlocked) {
                         if (manpower >= 1000) {
                             game.resPool.get('manpower').value -= 1000;
-                            game.diplomacy.unlockRandomRace();
+                            activity('Kittens met the ' + game.diplomacy.unlockRandomRace(), 'ks-upgrade');
                             manpower -= 1000;
                             game.ui.render();
                         }
@@ -681,7 +686,7 @@ var run = function() {
                     if (!game.diplomacy.get('griffins').unlocked) {
                         if (manpower >= 1000) {
                             game.resPool.get('manpower').value -= 1000;
-                            game.diplomacy.unlockRandomRace();
+                            activity('Kittens met the ' + game.diplomacy.unlockRandomRace(), 'ks-upgrade');
                             manpower -= 1000;
                             game.ui.render();
                         }
@@ -689,7 +694,7 @@ var run = function() {
                     if (!game.diplomacy.get('nagas').unlocked && game.resPool.get("culture").value >= 1500) {
                         if (manpower >= 1000) {
                             game.resPool.get('manpower').value -= 1000;
-                            game.diplomacy.unlockRandomRace();
+                            activity('Kittens met the ' + game.diplomacy.unlockRandomRace(), 'ks-upgrade');
                             manpower -= 1000;
                             game.ui.render();
                         }
@@ -697,7 +702,7 @@ var run = function() {
                     if (!game.diplomacy.get('zebras').unlocked && game.resPool.get("ship").value >= 1) {
                         if (manpower >= 1000) {
                             game.resPool.get('manpower').value -= 1000;
-                            game.diplomacy.unlockRandomRace();
+                            activity('Kittens met the ' + game.diplomacy.unlockRandomRace(), 'ks-upgrade');
                             manpower -= 1000;
                             game.ui.render();
                         }
@@ -705,7 +710,7 @@ var run = function() {
                     if (!game.diplomacy.get('spiders').unlocked && game.resPool.get("ship").value >= 100 && game.resPool.get("science").maxValue > 125000) {
                         if (manpower >= 1000) {
                             game.resPool.get('manpower').value -= 1000;
-                            game.diplomacy.unlockRandomRace();
+                            activity('Kittens met the ' + game.diplomacy.unlockRandomRace(), 'ks-upgrade');
                             manpower -= 1000;
                             game.ui.render();
                         }
@@ -713,7 +718,7 @@ var run = function() {
                     if (!game.diplomacy.get('dragons').unlocked && game.science.get("nuclearFission").researched) {
                         if (manpower >= 1000) {
                             game.resPool.get('manpower').value -= 1000;
-                            game.diplomacy.unlockRandomRace();
+                            activity('Kittens met the ' + game.diplomacy.unlockRandomRace(), 'ks-upgrade');
                             manpower -= 1000;
                             game.ui.render();
                         }
@@ -942,9 +947,9 @@ var run = function() {
 
             if (options.auto.options.items.hunt.subTrigger <= catpower.value / catpower.maxValue && catpower.value >= 100) {
                 // No way to send only some hunters. Thus, we hunt with everything
-                var hunters = game.village.getJob('hunter').value;
-                storeForSummary('hunt', hunters);
-                activity('Sent ' + game.getDisplayValueExt(hunters) + ' kitten' + (hunters == 1 ? '' : 's') + ' on the hunt', 'ks-hunt');
+                var huntCount = Math.floor(catpower.value/100);
+                storeForSummary('hunt', huntCount);
+                activity('Sent kittens on ' + huntCount + ' hunts', 'ks-hunt');
 
                 var huntCount = Math.floor(catpower.value/100);
                 var aveOutput = this.craftManager.getAverageHunt();
@@ -1123,6 +1128,12 @@ var run = function() {
                         if (emBulk.priceSum > cultureVal) {warning('Something has gone horribly wrong.' + [emBulk.priceSum, cultureVal]);}
                         game.resPool.resources[13].value -= emBulk.priceSum;
                         emBulk.race.embassyLevel += emBulk.val;
+                        storeForSummary('embassy', emBulk.val);
+                        if (emBulk.val !== 1) {
+                            activity('Built ' + emBulk.val + ' embassies for ' + name, 'ks-trade');
+                        } else {
+                            activity('Built ' + emBulk.val + ' embassy for ' + name, 'ks-trade');
+                        }
                     }
 
                     if (refreshRequired) {game.ui.render();}
@@ -3066,7 +3077,12 @@ var run = function() {
 
         // Hunters
         if (activitySummary.other.hunt) {
-            summary('Sent ' + game.getDisplayValueExt(activitySummary.other.hunt) + ' adorable kitten hunter' + (activitySummary.other.hunt == 1 ? '' : 's'));
+            summary('Sent adorable kitten hunters on ' + game.getDisplayValueExt(activitySummary.other.hunt) + ' hunts');
+        }
+        
+        // Embassies
+        if (activitySummary.other.embassy) {
+            summary('Built ' + game.getDisplayValueExt(activitySummary.other.embassy) + ' embassies');
         }
       
         // Necrocorns
