@@ -575,6 +575,7 @@ var run = function() {
             if (refreshRequired) {game.ui.render();}
         },
         chrono: function () {
+            if (!game.timeTab.visible) {return;}
             var builds = options.auto.time.items;
             var buildManager = this.timeManager;
             var craftManager = this.craftManager;
@@ -1843,14 +1844,16 @@ var run = function() {
                         if (nextPriceCheck || (data.noStackable && (k + data.val)>=1) || (build.id === 'ressourceRetrieval' && k + data.val >= 100)
                           || (build.id === 'cryochambers' && game.bld.getBuildingExt('chronosphere').meta.val <= k + data.val)) {
                             for (var p2 = 0; p2 < p; p2++) {
-                                tempPool[prices[p2].name] += (prices[p2].val * Math.pow(priceRatio, k + data.val));
+                                var refundVal = prices[p2].val * Math.pow(priceRatio, k + data.val);
+                                tempPool[prices[p2].name] += (prices[p2].name === 'void') ? Math.ceil(refundVal) : refundVal;
                             }
                             bList[countList[j].spot].count = countList[j].count;
                             countList.splice(j, 1);
                             j--;
                             continue bulkLoop;
                         }
-                        tempPool[prices[p].name] -= (prices[p].val * Math.pow(priceRatio, k + data.val));
+                        var pVal = prices[p].val * Math.pow(priceRatio, k + data.val);
+                        tempPool[prices[p].name] -= (prices[p].name === 'void') ? Math.ceil(pVal) : pVal;
                     }
                     countList[j].count++;
                 }
