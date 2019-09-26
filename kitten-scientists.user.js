@@ -466,8 +466,8 @@ var run = function() {
             if (options.auto.build.enabled)                              {this.build()};
             if (options.auto.space.enabled)                              {this.space()};
             if (options.auto.craft.enabled)                              {this.craft()};
-            if (options.auto.trade.enabled)                              {this.trade()};
             if (subOptions.enabled && subOptions.items.hunt.enabled)     {this.hunt()};
+            if (options.auto.trade.enabled)                              {this.trade()};
             if (options.auto.faith.enabled)                              {this.worship()};
             if (options.auto.time.enabled)                               {this.chrono()};
             if (subOptions.enabled && subOptions.items.crypto.enabled)   {this.crypto()};
