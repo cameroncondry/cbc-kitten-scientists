@@ -1,5 +1,25 @@
 ## History
 
+### 2019.09.2? - Version 1.4.2
+
+#### Changes by [Wymrite](https://github.com/Wymrite)
+- Created new options menu, moved several of the more miscellaneous features into there.
+- Added new caching system to keep track of resources gained and spent hunting and trading.
+- Modified limiting trading to use new caching system in order to make it self-limiting.
+- Added autobuilding embassies
+- Modified necrocorn autofeeding to dispose of fractional necrocorns because they hinder income.
+- Time tab autobuild fixes.
+- Automated space missions feature.
+- Automated race discovery feature.
+- Changed autoupgrading staged buildings so that pastures and aqueducts are only upgraded if catnip production is high enough, libraries are only upgraded if the power cost is affordable, and all four are only upgraded if at least one of the second stage is affordable.
+- Upgrading buildings now sells the current buildings to recover some resources.
+- Festivals are now only held if enough materials are being produced in a year to more than cover the festival costs.
+- Praising separated out from religion building.
+- Added option to override limited crafting for ships up to 243 ships, in order to max titanium chance.
+- Some activity summary and logging added.
+- Updated default options.
+- Some formatting fixes and removed redundancies.
+
 ### 2019.08.27 - Version 1.4.1
 
 #### Changes by [Wymrite](https://github.com/Wymrite)
