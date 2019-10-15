@@ -846,7 +846,7 @@ var run = function() {
                 metaData[name] = buildManager.getBuild(build.name || name).meta;
             }
             
-            var buildList = bulkManager.bulk(builds, metaData, trigger, true);
+            var buildList = bulkManager.bulk(builds, metaData, trigger, 'bonfire');
             
             var refreshRequired = false;
             for (var entry in buildList) {
@@ -873,7 +873,7 @@ var run = function() {
                 metaData[name] = buildManager.getBuild(name);
             }
             
-            var buildList = bulkManager.bulk(builds, metaData, trigger);
+            var buildList = bulkManager.bulk(builds, metaData, trigger, 'space');
             
             var refreshRequired = false;
             for (var entry in buildList) {
@@ -1785,7 +1785,7 @@ var run = function() {
     
     BulkManager.prototype = {
         craftManager: undefined,
-        bulk: function (builds, metaData, trigger, bonfire) {
+        bulk: function (builds, metaData, trigger, source) {
             var bList = [];
             var countList = [];
             var counter = 0;
@@ -1800,8 +1800,8 @@ var run = function() {
                     || game.bld.getBuildingExt('chronosphere').meta.val <= data.val)) {continue;}
                 if (name === 'ressourceRetrieval' && data.val >= 100) {continue;}
                 var prices = (data.stages) ? data.stages[data.stage].prices : data.prices;
-                var priceRatio = this.getPriceRatio(data, bonfire);
-                if (!this.singleBuildPossible(data, prices, priceRatio)) {continue;}
+                var priceRatio = this.getPriceRatio(data, source);
+                if (!this.singleBuildPossible(data, prices, priceRatio, source)) {continue;}
                 var require = !build.require ? false : this.craftManager.getResource(build.require);
                 if (!require || trigger <= require.value / require.maxValue) {
                     if (typeof(build.stage) !== 'undefined' && build.stage !== data.stage) { 
@@ -1820,6 +1820,7 @@ var run = function() {
                     countList[counter].spot = counter;
                     countList[counter].prices = prices;
                     countList[counter].priceRatio = priceRatio;
+                    countList[counter].source = source;
                     counter++;
                 }
             }
@@ -1840,21 +1841,39 @@ var run = function() {
                     var data = metaData[build.id];
                     var prices = build.prices;
                     var priceRatio = build.priceRatio;
+                    var source = build.source;
                     for (var p = 0; p < prices.length; p++) {
-                        var nextPriceCheck = (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k + data.val));
+                        if (source && source === 'space' && prices[p].name === 'oil') {
+                            var spaceOil = true;
+                            var oilPrice = prices[p].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
+                        }
+                        if (spaceOil) {
+                            var nextPriceCheck = (tempPool['oil'] < oilPrice * Math.pow(1.05, k + data.val));
+                        } else {
+                            var nextPriceCheck = (tempPool[prices[p].name] < prices[p].val * Math.pow(priceRatio, k + data.val));
+                        }
                         if (nextPriceCheck || (data.noStackable && (k + data.val)>=1) || (build.id === 'ressourceRetrieval' && k + data.val >= 100)
                           || (build.id === 'cryochambers' && game.bld.getBuildingExt('chronosphere').meta.val <= k + data.val)) {
                             for (var p2 = 0; p2 < p; p2++) {
-                                var refundVal = prices[p2].val * Math.pow(priceRatio, k + data.val);
-                                tempPool[prices[p2].name] += (prices[p2].name === 'void') ? Math.ceil(refundVal) : refundVal;
+                                if (source && source === 'space' && prices[p2].name === 'oil') {
+                                    var oilPriceRefund = prices[p2].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
+                                    tempPool['oil'] += oilPriceRefund * Math.pow(1.05, k + data.val);
+                                } else {
+                                    var refundVal = prices[p2].val * Math.pow(priceRatio, k + data.val);
+                                    tempPool[prices[p2].name] += (prices[p2].name === 'void') ? Math.ceil(refundVal) : refundVal;
+                                }
                             }
                             bList[countList[j].spot].count = countList[j].count;
                             countList.splice(j, 1);
                             j--;
                             continue bulkLoop;
                         }
-                        var pVal = prices[p].val * Math.pow(priceRatio, k + data.val);
-                        tempPool[prices[p].name] -= (prices[p].name === 'void') ? Math.ceil(pVal) : pVal;
+                        if (spaceOil) {
+                            tempPool['oil'] -= oilPrice * Math.pow(1.05, k + data.val);
+                        } else {
+                            var pVal = prices[p].val * Math.pow(priceRatio, k + data.val);
+                            tempPool[prices[p].name] -= (prices[p].name === 'void') ? Math.ceil(pVal) : pVal;
+                        }
                     }
                     countList[j].count++;
                 }
@@ -1882,11 +1901,11 @@ var run = function() {
             }
             return counter;
         },
-        getPriceRatio: function (data, bonfire) {
+        getPriceRatio: function (data, source) {
             var ratio = (!data.stages) ? data.priceRatio : (data.priceRatio || data.stages[data.stage].priceRatio);
 
             var ratioDiff = 0;
-            if (bonfire) {
+            if (source && source === 'bonfire') {
                 ratioDiff = game.getEffect(data.name + "PriceRatio") +
                     game.getEffect("priceRatio") +
                     game.getEffect("mapPriceReduction");
@@ -1895,9 +1914,14 @@ var run = function() {
             }
             return ratio + ratioDiff;
         },
-        singleBuildPossible: function (data, prices, priceRatio) {
+        singleBuildPossible: function (data, prices, priceRatio, source) {
             for (var price in prices) {
-                if (this.craftManager.getValueAvailable(prices[price].name, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
+                if (source && source === 'space' && prices[price].name === 'oil') {
+                    var oilPrice = prices[price].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
+                    if (this.craftManager.getValueAvailable('oil', true) < oilPrice * Math.pow(1.05, data.val)) {return false;}
+                } else {
+                    if (this.craftManager.getValueAvailable(prices[price].name, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
+                }
             }
             return true;
         }
