@@ -1088,6 +1088,7 @@ var run = function() {
             var craftManager = this.craftManager;
             var optionVals = options.auto.options.items;
             
+            AutoEmbassy:
             if (optionVals.buildEmbassies.enabled) {
                 var culture = craftManager.getResource('culture');
                 if (optionVals.buildEmbassies.subTrigger <= culture.value / culture.maxValue) {
@@ -1105,7 +1106,7 @@ var run = function() {
                         bulkTracker.push(name);
                     }
               
-                    if (bulkTracker.length === 0) {return;}
+                    if (bulkTracker.length === 0) {break AutoEmbassy;}
               
                     var refreshRequired = false;
 
