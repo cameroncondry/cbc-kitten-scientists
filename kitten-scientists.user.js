@@ -521,7 +521,7 @@ var run = function() {
 
                 game.diplomacy.sellEcoin();
 
-                currentRelic = game.resPool.get('blackcoin').value;
+                currentRelic = game.resPool.get('relic').value;
                 exchangedRelic = Math.round(currentRelic - previousRelic);
 
                 activity('Kittens sold your Blackcoins and bought '+ exchangedRelic +' Relics');
