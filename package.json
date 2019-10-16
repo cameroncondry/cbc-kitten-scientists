@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/cameroncondry/cbc-kitten-scientists",
   "devDependencies": {
-    "bluebird": "^2.10.2",
-    "lodash": "^3.10.1",
-    "superagent": "^1.4.0"
+    "bluebird": "3.7.1",
+    "lodash": "4.17.15",
+    "superagent": "5.1.0"
   }
 }

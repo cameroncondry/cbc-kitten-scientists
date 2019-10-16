@@ -106,17 +106,15 @@ Thanks to these past and present contributors!
 - [gnidan](https://github.com/gnidan)
 - [Hastebro](https://github.com/Hastebro)
 - [hypehuman](https://github.com/hypehuman)
-- Iris Ward
-- ironchefpython
+- [ironchefpython](https://github.com/ironchefpython)
 - [jacob-keller](https://github.com/jacob-keller)
-- Jason Carver
 - [jcranmer](https://github.com/jcranmer)
 - [KMChappell](https://github.com/KMChappell)
 - [Kobata](https://github.com/Kobata)
 - [magus424](https://github.com/magus424)
 - [mammothb](https://github.com/mammothb)
 - [markuskeunecke](https://github.com/markuskeunecke)
-- Meleneth
+- [Meleneth](https://github.com/meleneth)
 - [Mewnine](https://www.reddit.com/user/Mewnine)
 - [mjdillon](https://github.com/mjdillon)
 - [mmccubbing](https://github.com/mmccubbing)
@@ -131,8 +129,8 @@ Thanks to these past and present contributors!
 - [sjdrodge](https://github.com/sjdrodge)
 - [SphtMarathon](https://www.reddit.com/user/SphtMarathon)
 - [TeWeBu](https://github.com/TeWeBu)
-- Tom Rauchenwald
 - [toadjaune](https://github.com/toadjaune)
+- Tom Rauchenwald
 - [trini](https://github.com/trini)
 - [woutershep](https://github.com/woutershep)
 - [Wymrite](https://github.com/Wymrite)
