@@ -4,13 +4,15 @@
 
 Kitten Scientists (KS) is a simple automation script for the complex [Kittens Game](http://bloodrizer.ru/games/kittens/).
 
-## Basic Usage
+## Quick Start
 
 Create the following JavaScript bookmarklet (create a new bookmark and paste this as the URL):
 
-    javascript:(function(){var d=document,s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/cameroncondry/cbc-kitten-scientists@master/kitten-scientists.user.js';d.body.appendChild(s);})();
+```js
+javascript:(function(){var d=document,s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/cameroncondry/cbc-kitten-scientists@master/kitten-scientists.user.js';d.body.appendChild(s);})();
+```
 
-### Alternative Installation
+### Manual Installation
 
 You can also permanently install Kitten Scientists with a userscript manager.
 
@@ -19,69 +21,84 @@ You can also permanently install Kitten Scientists with a userscript manager.
 
 Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.user.js) and you should be prompted to install it. 
 
-## Functionality
+## UI Guide
 
-- Several UI adjustments (depending on selected theme).
-- Automates:
-    - Building (Bonfire, Space, Religion, and Time Buildings)
-    - Crafting
-    - Upgrading
-    - Trading
-    - Building Embassies
-    - Hunting
-    - Praising
-    - Holding Festivals
-    - Observing Astronomical Events
-    - Trading Cryptocurrency
-    - Autofeeding Necrocorns
-    - Exploring (Deprecated)
+To enable/disable the entire suite of automations of KS, click the **Enable Scientists** label at the top of the UI.
 
-### Building
+Individual automation sections can be enabled/disabled by clicking on the label of the automation section. By clicking the **items** label to the right of the label, you can expand/collapse the panel that holds the individual automation options of that section. Their specific behavior is documented below.
 
-By default, bonfire buildings are built if their required resources are at 75% of their storage capacity. For space and time structures, the default threshold is 95%. For religion structures, it is 99%.
+### Bonfire
+
+> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Bonfire** label to set your desired threshold. The default value is `0` (activate as soon as possible).
+
+By clicking the names of the individual buildings, you can select which buildings from the **Bonfire** page you want to have built automatically. 
+
+### Space
+
+> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Space** label to set your desired threshold. The default value is `0` (activate as soon as possible).
+
+As in the **Bonfire** section, here you can select which buildings from the **Space** page you want to have built automatically.
 
 ### Crafting
 
-Craftable resources are crafted when the resources required for the craft exceed the *trigger* value (95% by default) of their storage capacity, or always craft if the resource lacks a storage capacity.
+> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Crafting** label to set your desired threshold. The default value is `0.95`. This means that a resource will be crafted when it is at 95% of your storage limit.
 
-For each resource, you can set a *consumption rate* (60% by default) and a *stock* (0 by default). The consumption rate defines how much of the trigger value times the storage capacity that autocrafting is allowed to consume (meaning with the default consumption rate and a trigger value of 100%, autocrafting would leave 40% of the resource's storage capacity). The stock setting tells KS to ignore the specified amount of this resource.
+In this section, you can select which craftable resources you want to craft automatically.
 
-Furthermore, each resource can be set to be *limited* crafted. Limited crafting behaves normally when the resource exceeds the trigger value, but behaves differently when beneath the trigger value or for a resource that lacks a storage capacity. It crafts resources in an attempt to keep both the inputs and outputs in proportion. (Meaning if the player has 2000 minerals and 0 slabs, and each slab costs 50 minerals, it will craft 20 slabs for new totals of 1000 minerals and 20 slabs).
+When you enable the **Limited** option for a resource, then only a portion of the source materials is crafted into the desired resource. The portion is currently set to 50% (this is currently not configurable).
 
-### Upgrading
+This means that if you have 1000 beams, and you have crafting of scaffolds enabled, then only 500 beams would be crafted into scaffolds. This is especially useful for when you want to split up source materials between different craftable resources.
 
-Techs and workshop upgrades are automatically bought when affordable, prioritizing the workshop. Buildings can be set to be automatically upgraded to their second stage as soon as upgrading would not significantly impact income. Space missions can automatically be conducted, and trading partners automatically discovered.
+However, this is not entirely accurate, as the overall process is more complicated. Consider crafting steel and plates. Both require iron. If you would allow unlimited plate crafting, then you wouldn't have any iron left to craft steel. By having steel and plates set to **limited**, the iron resource is split between the two craftable resources.
+
+#### Resources
+
+By clicking the **Resources** label, you can access the fine-grained resource management.
+
+For each resource, you can set a *consumption rate* (60% by default) and a *stock* (0 by default). The consumption rate defines how much of the trigger value times the storage capacity that autocrafting is allowed to consume (meaning with the default consumption rate and a trigger value of 100%, autocrafting would leave 40% of the resource's storage capacity). The stock setting keeps a specific amount on hand, regardless of all other settings.
+
+### Unlocking
+
+- Workshop **upgrades** and **techs** are automatically bought when affordable, prioritizing the workshop if both are enabled.
+- **Races** for trading are automatically explored as they become available.
+- Space **missions** can automatically be conducted.
+- **Buildings** can be set to be automatically upgraded to their second stage as soon as upgrading would not significantly impact income. 
 
 ### Trading
 
-Trades happen when the traded resource and gold is at 98% of the storage capacity. By default, the trades are optimized to only happen during seasons when the trade is most effective.
+> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Trading** label to set your desired threshold. The default value is `0.98`. This means that a trade will be made, when you're at 98% of your storage limit. This only relates to resources that have a storage limit.
+
+By default, the trades are optimized to only happen during seasons when the trade is most effective. You can customize these seasons by clicking the **seasons** label to the right of the individual races.
 
 Trading also has a *limited* trading mode. This mode determines how much production time is needed to make the trade's input resources versus the time to make the trade's average output resources to determine if a trade is profitable. The resources gained and spent trading and hunting are also factored in, making this mode self-limiting.
 
-### Hunting
+### Religion
 
-Hunts when catpower is at 98% capacity.
+> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Religion** label to set your desired threshold. The default value is `0` (activate as soon as possible).
 
-### Praising
+In the **Religion** section, you can select which buildings and techs from the **Religion** page you want to have purchased automatically.
 
-Praises when faith is at 98% capacity.
+### Time
 
-### Misc
-KS can be set to:
+> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Time** label to set your desired threshold. The default value is `0` (activate as soon as possible).
 
-Automatically buy cryptocurrency at low prices and sells near the peak.
+The automations in this section behave exactly like in the **Bonfire** and **Space** sections, but here you select which buildings from the **Time** page you want to have built automatically.
 
-Automatically hold festivals when income is sufficiently high to support them.
+### Options
 
-Automatically build embassies.
+- **Observe Astro Events**: Automatically observe astronomical events as they happen.
+- **Hold Festivals**: Automatically hold festivals as soon as the previous one ends and enough resources are available and holding the festival won't drain your stockpile.
+- **Auto Praise**: Automatically praises the sun as your faith approaches the resource limit.
+- **Force Ships to 243**: Ensures that 243 ships are constructed as soon as possible, ignoring other resource constraints. This is useful because after 243 ships, trades for titanium with the zebras are guaranteed to be successful 100% of the time.
+- **Feed Leviathans**: Automatically feed the leviathans race necrocorns to ensure they stay longer for possible trading.
+- **Hunt**: Automatically send your kittens hunting as you approach the catpower limit. This automation has a configurable trigger. The default value is `0.98`, which means the kittens will hunt when your catpower is at 98% of your catpower limit.
+- **Trade Blackcoin**: Automatically trade blackcoin with the leviathans at low prices and sells near the peak.
+- **Build Embassies (Beta)**: Automatically builds embassies, just like other buildings.
+- **Explore (deprecated)**: _relates to a feature no longer present in current versions of Kittens Game_
 
-Autofeed necrocorns to leviathans.
+### Filters
 
-### Game Log
-
-Automatically observes astronomical events.
-
-All KS log output can be filtered.
+The filters allow you to set which types of messages you want to see in the game log.
 
 ## Contributors
 
