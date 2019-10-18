@@ -19,7 +19,13 @@ You can also permanently install Kitten Scientists with a userscript manager.
 - On **Firefox**, you'd want to use [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/).
 - On **Chrome** and **Opera**, you'd want to use [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
 
-Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.user.js) and you should be prompted to install it. 
+Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.user.js) and you should be prompted to install it.
+
+## Introduction
+
+Note that the default configuration of Kitten Scientists is designed to already give very good results for most stages of the game. When you're exploring the features of KS, try disabling all sections and then re-enabling them one-by-one.
+
+As you get more comfortable with the behavior of KS, feel free to fine-tune the settings to achieve your goals faster.
 
 ## UI Guide
 
@@ -99,6 +105,8 @@ The automations in this section behave exactly like in the **Bonfire** and **Spa
 ### Filters
 
 The filters allow you to set which types of messages you want to see in the game log.
+
+Note that _enabling_ a filter will cause the message to **not** be logged. This is in contrast to the **Log Filters** that are already present in Kittens Game, where the logic is reversed.
 
 ## Contributors
 
