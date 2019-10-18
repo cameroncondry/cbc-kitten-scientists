@@ -112,8 +112,8 @@ Note that _enabling_ a filter will cause the message to **not** be logged. This 
 
 If you would like to contribute to the Kitten Scientists, then you can do so in these ways:
 
-- Submit issues or bugs you find, or functionality that would improve the project.
-- Fork the repository, add some functionality, then submit a pull request.
+- [Submit issues or bugs](https://github.com/cameroncondry/cbc-kitten-scientists/issues/new) you find, or functionality that would improve the project.
+- Fork the repository, add some functionality, then [submit a pull request](https://github.com/cameroncondry/cbc-kitten-scientists/compare).
 
 Thanks to these past and present contributors!
 
