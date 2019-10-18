@@ -1844,15 +1844,17 @@ var run = function() {
                     var priceRatio = build.priceRatio;
                     var source = build.source;
                     for (var p = 0; p < prices.length; p++) {
+                      
                         var spaceOil = false;
                         var cryoKarma = false;
                         if (source && source === 'space' && prices[p].name === 'oil') {
                             spaceOil = true;
                             var oilPrice = prices[p].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
-                        } else if (build.id === 'cyrochambers' && prices[p].name === 'karma') {
+                        } else if (build.id === 'cryochambers' && prices[p].name === 'karma') {
                             cryoKarma = true;
                             var karmaPrice = prices[p].val * (1 - game.getHyperbolicEffect(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                         }
+                      
                         if (spaceOil) {
                             var nextPriceCheck = (tempPool['oil'] < oilPrice * Math.pow(1.05, k + data.val));
                         } else if (cryoKarma) {
@@ -1866,7 +1868,7 @@ var run = function() {
                                 if (source && source === 'space' && prices[p2].name === 'oil') {
                                     var oilPriceRefund = prices[p2].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
                                     tempPool['oil'] += oilPriceRefund * Math.pow(1.05, k + data.val);
-                                } else if (build.id === 'cyrochambers' && prices[p2].name === 'karma') {
+                                } else if (build.id === 'cryochambers' && prices[p2].name === 'karma') {
                                     var karmaPriceRefund = prices[p2].val * (1 - game.getHyperbolicEffect(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                                     tempPool['karma'] += karmaPriceRefund * Math.pow(priceRatio, k + data.val);
                                 } else {
@@ -1932,6 +1934,9 @@ var run = function() {
                 if (source && source === 'space' && prices[price].name === 'oil') {
                     var oilPrice = prices[price].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
                     if (this.craftManager.getValueAvailable('oil', true) < oilPrice * Math.pow(1.05, data.val)) {return false;}
+                } else if (data.name === 'cryochambers' && prices[price].name === 'karma') {
+                    var karmaPrice = prices[price].val * (1 - game.getHyperbolicEffect(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
+                    if (this.craftManager.getValueAvailable('karma', true) < karmaPrice * Math.pow(priceRatio, data.val)) {return false;}
                 } else {
                     if (this.craftManager.getValueAvailable(prices[price].name, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
                 }
