@@ -2155,7 +2155,7 @@ var run = function() {
                         if (!cacheSum[mat]) {cacheSum[mat] = 0;}
                         cacheSum[mat] -= oldMaterials[mat];
                     }
-                    cache.shift;
+                    cache.shift();
                     i--;
                 } else {
                     return;
