@@ -615,6 +615,7 @@ var run = function() {
             
             upgradeManager.workManager.render();
             upgradeManager.sciManager.render();
+            upgradeManager.spaManager.render();
             
             if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
                 var work = game.workshop.upgrades;
@@ -1378,6 +1379,7 @@ var run = function() {
     var UpgradeManager = function () {
         this.workManager = new TabManager('Workshop');
         this.sciManager = new TabManager('Science');
+        this.spaManager = new TabManager('Space');
         this.crafts = new CraftManager();
     };
     
