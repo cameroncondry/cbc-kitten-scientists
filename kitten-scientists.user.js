@@ -1150,7 +1150,7 @@ var run = function() {
             if (optionVals.autoPraise.enabled) {
                 var faith = craftManager.getResource('faith');
                 if (0.98 <= faith.value / faith.maxValue) {
-                    storeForSummary('faith', faith.value * (1 + game.religion.getFaithBonus()));
+                    storeForSummary('faith', faith.value * (1 + game.religion.getApocryphaBonus()));
                     activity('Praised the sun!', 'ks-praise');
                     game.religion.praise();
                 }
