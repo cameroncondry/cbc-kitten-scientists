@@ -1090,7 +1090,7 @@ var run = function() {
             var optionVals = options.auto.options.items;
             
             AutoEmbassy:
-            if (optionVals.buildEmbassies.enabled) {
+            if (optionVals.buildEmbassies.enabled && !!game.diplomacy.races[0].embassyPrices) {
                 var culture = craftManager.getResource('culture');
                 if (optionVals.buildEmbassies.subTrigger <= culture.value / culture.maxValue) {
                     var racePanels = game.diplomacyTab.racePanels;
@@ -1150,7 +1150,12 @@ var run = function() {
             if (optionVals.autoPraise.enabled) {
                 var faith = craftManager.getResource('faith');
                 if (0.98 <= faith.value / faith.maxValue) {
-                    storeForSummary('faith', faith.value * (1 + game.religion.getApocryphaBonus()));
+                    if (!game.religion.getFaithBonus) {
+                        var apocryphaBonus = game.religion.getApocryphaBonus();
+                    } else {
+                        var apocryphaBonus = game.religion.getFaithBonus();
+                    }
+                    storeForSummary('faith', faith.value * (1 + apocryphaBonus));
                     activity('Praised the sun!', 'ks-praise');
                     game.religion.praise();
                 }
