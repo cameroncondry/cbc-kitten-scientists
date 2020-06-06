@@ -508,7 +508,12 @@ var run = function() {
             if (waitForBestPrice == false && coinPrice < 950.0 && previousRelic > options.auto.options.items.crypto.subTrigger) {
                 var currentCoin;
 
-                game.diplomacy.buyEcoin();
+                // function name changed in v1.4.8.0
+                if (typeof game.diplomacy.buyEcoin === 'function') {
+                  game.diplomacy.buyEcoin();
+                } else {
+                  game.diplomacy.buyBcoin();
+                }
 
                 currentCoin = game.resPool.get('blackcoin').value;
                 exchangedCoin = Math.round(currentCoin - previousCoin);
@@ -519,7 +524,12 @@ var run = function() {
 
                 waitForBestPrice = true;
 
-                game.diplomacy.sellEcoin();
+                // function name changed in v1.4.8.0
+                if (typeof game.diplomacy.sellEcoin === 'function') { 
+                  game.diplomacy.sellEcoin();
+                } else {
+		  game.diplomacy.sellBcoin();
+                }
 
                 currentRelic = game.resPool.get('relic').value;
                 exchangedRelic = Math.round(currentRelic - previousRelic);
