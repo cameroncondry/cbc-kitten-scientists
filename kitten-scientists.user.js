@@ -222,7 +222,7 @@ var run = function() {
                     temporalAccelerator: {require: false,          enabled: false, variant: 'chrono'},
                     temporalImpedance:   {require: false,          enabled: false, variant: 'chrono'},
                     ressourceRetrieval:  {require: false,          enabled: false, variant: 'chrono'},
-                    
+
                     // Void Space has variant void.
                     cryochambers:        {require: false,          enabled: false, variant: 'void'},
                     voidHoover:          {require: 'antimatter',   enabled: false, variant: 'void'},
@@ -248,10 +248,10 @@ var run = function() {
                 // of 1125 beams-worth of scaffolds and 375 remaining beams.
                 // Currently, limRat is not modifiable through the UI, though if there is demand, perhaps this will be added in the future.
                 // Limited has a few other effects like balancing plates and steel while minimizing iron waste
-                
+
                 // TLDR: The purpose of the limited property is to proportionally distribute raw materials
                 // across all crafted resources without wasting raw materials.
-                
+
                 items: {
                     wood:       {require: 'catnip',      max: 0, limited: true,  limRat: 0.5, enabled: true},
                     beam:       {require: 'wood',        max: 0, limited: true,  limRat: 0.5, enabled: true},
@@ -525,7 +525,7 @@ var run = function() {
                 waitForBestPrice = true;
 
                 // function name changed in v1.4.8.0
-                if (typeof game.diplomacy.sellEcoin === 'function') { 
+                if (typeof game.diplomacy.sellEcoin === 'function') {
                   game.diplomacy.sellEcoin();
                 } else {
 		  game.diplomacy.sellBcoin();
@@ -558,7 +558,7 @@ var run = function() {
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-          
+
             var metaData = {};
             for (var name in builds) {
                 var build = builds[name]
@@ -571,9 +571,9 @@ var run = function() {
                     metaData[name].rHidden = !(model.visible && model.enabled && panel);
                 }
             }
-            
+
             var buildList = bulkManager.bulk(builds, metaData, trigger);
-            
+
             var refreshRequired = false;
             for (var entry in buildList) {
                 if (buildList[entry].count > 0) {
@@ -581,7 +581,7 @@ var run = function() {
                     refreshRequired = true;
                 }
             }
-          
+
             if (refreshRequired) {game.ui.render();}
         },
         chrono: function () {
@@ -591,10 +591,10 @@ var run = function() {
             var craftManager = this.craftManager;
             var bulkManager = this.bulkManager;
             var trigger = options.auto.time.trigger;
-            
+
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-            
+
             var metaData = {};
             for (var name in builds) {
                 var build = builds[name]
@@ -603,9 +603,9 @@ var run = function() {
                 var panel = (build.variant === 'chrono') ? game.tabs[7].cfPanel : game.tabs[7].vsPanel;
                 metaData[name].tHidden = (!model.visible || !model.enabled || !panel.visible);
             }
-            
+
             var buildList = bulkManager.bulk(builds, metaData, trigger);
-            
+
             var refreshRequired = false;
             for (var entry in buildList) {
                 if (buildList[entry].count > 0) {
@@ -613,7 +613,7 @@ var run = function() {
                     refreshRequired = true;
                 }
             }
-          
+
             if (refreshRequired) {game.ui.render();}
         },
         upgrade: function () {
@@ -622,17 +622,17 @@ var run = function() {
             var craftManager = this.craftManager;
             var bulkManager = this.bulkManager;
             var buildManager = this.buildManager;
-            
+
             upgradeManager.workManager.render();
             upgradeManager.sciManager.render();
             upgradeManager.spaManager.render();
-            
+
             if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
                 var work = game.workshop.upgrades;
                 workLoop:
                 for (var upg in work) {
                     if (work[upg].researched || !work[upg].unlocked) {continue;}
-                    
+
                     var prices = work[upg].prices;
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
@@ -640,13 +640,13 @@ var run = function() {
                     upgradeManager.build(work[upg], 'workshop');
                 }
             }
-            
+
             if (upgrades.techs.enabled && gamePage.tabs[2].visible) {
                 var tech = game.science.techs;
                 techLoop:
                 for (var upg in tech) {
                     if (tech[upg].researched || !tech[upg].unlocked) {continue;}
-                    
+
                     var prices = tech[upg].prices;
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue techLoop;}
@@ -654,13 +654,13 @@ var run = function() {
                     upgradeManager.build(tech[upg], 'science');
                 }
             }
-          
+
             if (upgrades.missions.enabled && gamePage.tabs[6].visible) {
                 var missions = game.space.meta[0].meta;
                 missionLoop:
                 for (var i = 0; i < missions.length; i++) {
                     if (!(missions[i].unlocked && missions[i].val < 1)) {continue;}
-                    
+
                     var model = game.tabs[6].GCPanel.children[i];
                     var prices = model.model.prices;
                     for (var resource in prices) {
@@ -674,7 +674,7 @@ var run = function() {
                     }
                 }
             }
-          
+
             if (upgrades.races.enabled && gamePage.tabs[4].visible) {
                 var maxRaces = (game.diplomacy.get('leviathans').unlocked) ? 8 : 7;
                 if (game.diplomacyTab.racePanels.length < maxRaces) {
@@ -737,11 +737,11 @@ var run = function() {
                     }
                 }
             }
-            
+
             if (upgrades.buildings.enabled) {
                 var pastures = (game.bld.getBuildingExt('pasture').meta.stage === 0) ? game.bld.getBuildingExt('pasture').meta.val: 0;
                 var aqueducts = (game.bld.getBuildingExt('aqueduct').meta.stage === 0) ? game.bld.getBuildingExt('aqueduct').meta.val: 0;
-              
+
                 var pastureMeta = game.bld.getBuildingExt('pasture').meta;
                 if (pastureMeta.stage === 0) {
                     if (pastureMeta.stages[1].stageUnlocked) {
@@ -763,7 +763,7 @@ var run = function() {
                         }
                     }
                 }
-                
+
                 var aqueductMeta = game.bld.getBuildingExt('aqueduct').meta;
                 if (aqueductMeta.stage === 0) {
                     if (aqueductMeta.stages[1].stageUnlocked) {
@@ -786,7 +786,7 @@ var run = function() {
                         }
                     }
                 }
-                
+
                 var libraryMeta = game.bld.getBuildingExt('library').meta;
                 if (libraryMeta.stage === 0) {
                     if (libraryMeta.stages[1].stageUnlocked) {
@@ -817,9 +817,9 @@ var run = function() {
                             }
                         }
                     }
-                    
+
                 }
-                
+
                 var amphitheatreMeta = game.bld.getBuildingExt('amphitheatre').meta;
                 if (amphitheatreMeta.stage === 0) {
                     if (amphitheatreMeta.stages[1].stageUnlocked) {
@@ -850,15 +850,15 @@ var run = function() {
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-            
+
             var metaData = {};
             for (var name in builds) {
                 var build = builds[name]
                 metaData[name] = buildManager.getBuild(build.name || name).meta;
             }
-            
+
             var buildList = bulkManager.bulk(builds, metaData, trigger, 'bonfire');
-            
+
             var refreshRequired = false;
             for (var entry in buildList) {
                 if (buildList[entry].count > 0) {
@@ -877,15 +877,15 @@ var run = function() {
 
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             buildManager.manager.render();
-          
+
             var metaData = {};
             for (var name in builds) {
                 var build = builds[name]
                 metaData[name] = buildManager.getBuild(name);
             }
-            
+
             var buildList = bulkManager.bulk(builds, metaData, trigger, 'space');
-            
+
             var refreshRequired = false;
             for (var entry in buildList) {
                 if (buildList[entry].count > 0) {
@@ -923,17 +923,17 @@ var run = function() {
         holdFestival: function () {
             if (!(game.science.get('drama').researched && game.calendar.festivalDays < 400)) {return;}
             if (!game.prestige.getPerk('carnivals').researched && game.calendar.festivalDays > 0) {return;}
-          
+
             var craftManager = this.craftManager;
-            if (craftManager.getValueAvailable('manpower', true) < 1500 || craftManager.getValueAvailable('culture', true) < 5000 
+            if (craftManager.getValueAvailable('manpower', true) < 1500 || craftManager.getValueAvailable('culture', true) < 5000
                 || craftManager.getValueAvailable('parchment', true) < 2500) {return;}
-          
+
             var catpowProf = 4000 * craftManager.getTickVal(craftManager.getResource('manpower'), true) > 1500;
             var cultureProf = 4000 * craftManager.getTickVal(craftManager.getResource('culture'), true) > 5000;
             var parchProf = 4000 * craftManager.getTickVal(craftManager.getResource('parchment'), true) > 2500;
-          
+
             if (!(catpowProf && cultureProf && parchProf)) {return;}
-          
+
             // Render the tab to make sure that the buttons actually exist in the DOM. Otherwise we can't click them.
             this.villageManager.render();
 
@@ -967,14 +967,14 @@ var run = function() {
                 var huntCount = Math.floor(catpower.value/100);
                 var aveOutput = this.craftManager.getAverageHunt();
                 var trueOutput = {};
-              
+
                 for (var out in aveOutput) {
                     var res = this.craftManager.getResource(out);
                     trueOutput[out] = (res.maxValue > 0) ? Math.min(aveOutput[out] * huntCount, Math.max(res.maxValue - res.value, 0)) : aveOutput[out] * huntCount;
                 }
 
                 this.cacheManager.pushToCache({'materials': trueOutput, 'timeStamp': game.timer.ticksTotal});
-              
+
                 game.village.huntAll();
             }
         },
@@ -985,11 +985,11 @@ var run = function() {
             var gold = craftManager.getResource('gold');
             var trades = [];
             var requireTrigger = options.auto.trade.trigger;
-          
+
             tradeManager.manager.render();
-          
+
             if (!tradeManager.singleTradePossible(undefined)) {return;}
-          
+
             var season = game.calendar.getCurSeason().name;
 
             // Determine how many races we will trade this cycle
@@ -1015,7 +1015,7 @@ var run = function() {
                     trades.push(name);
                 }
             }
-          
+
             if (trades.length === 0) {return;}
 
             // Figure out how much we can currently trade
@@ -1024,7 +1024,7 @@ var run = function() {
             // Distribute max trades without starving any race
 
             if (maxTrades < 1) {return;}
-          
+
             var maxByRace = [];
             for (var i = 0; i < trades.length; i++) {
                 var name = trades[i];
@@ -1039,9 +1039,9 @@ var run = function() {
                 }
                 maxByRace[i] = tradePos;
             }
-          
+
             if (trades.length === 0) {return;}
-          
+
             var tradesDone = {};
             while (trades.length > 0 && maxTrades >= 1) {
                 if (maxTrades < trades.length) {
@@ -1068,7 +1068,7 @@ var run = function() {
                 maxByRace.splice(minTradePos, 1);
             }
             if (tradesDone.length === 0) {return;}
-          
+
             var tradeNet = {};
             for (var name in tradesDone) {
                 var race = tradeManager.getRace(name);
@@ -1078,7 +1078,7 @@ var run = function() {
                     if (!tradeNet[mat]) {tradeNet[mat] = 0;}
                     tradeNet[mat] -= materials[mat] * tradesDone[name];
                 }
-              
+
                 var meanOutput = tradeManager.getAverageTrade(race);
                 for (var out in meanOutput) {
                     var res = craftManager.getResource(out);
@@ -1088,7 +1088,7 @@ var run = function() {
             }
 
             cacheManager.pushToCache({'materials': tradeNet, 'timeStamp': game.timer.ticksTotal});
-          
+
             for (var name in tradesDone) {
                 if (tradesDone[name] > 0) {
                     tradeManager.trade(name, tradesDone[name]);
@@ -1098,17 +1098,17 @@ var run = function() {
         miscOptions: function () {
             var craftManager = this.craftManager;
             var optionVals = options.auto.options.items;
-            
+
             AutoEmbassy:
             if (optionVals.buildEmbassies.enabled && !!game.diplomacy.races[0].embassyPrices) {
                 var culture = craftManager.getResource('culture');
                 if (optionVals.buildEmbassies.subTrigger <= culture.value / culture.maxValue) {
                     var racePanels = game.diplomacyTab.racePanels;
                     var cultureVal = craftManager.getValueAvailable('culture', true);
-              
+
                     var embassyBulk = {};
                     var bulkTracker = [];
-              
+
                     for (var i = 0; i < racePanels.length; i++) {
                         if (!racePanels[i].embassyButton) {continue;}
                         var name = racePanels[i].race.name;
@@ -1116,9 +1116,9 @@ var run = function() {
                         embassyBulk[name] = {'val': 0, 'basePrice': race.embassyPrices[0].val, 'currentEm': race.embassyLevel, 'priceSum': 0, 'race': race};
                         bulkTracker.push(name);
                     }
-              
+
                     if (bulkTracker.length === 0) {break AutoEmbassy;}
-              
+
                     var refreshRequired = false;
 
                     while (bulkTracker.length > 0) {
@@ -1156,7 +1156,7 @@ var run = function() {
                     if (refreshRequired) {game.ui.render();}
                 }
             }
-          
+
             if (optionVals.autoPraise.enabled) {
                 var faith = craftManager.getResource('faith');
                 if (0.98 <= faith.value / faith.maxValue) {
@@ -1280,12 +1280,12 @@ var run = function() {
             var button = this.getBuildButton(name, variant);
 
             if (!button || !button.model.enabled) return;
-          
+
             var amountTemp = amount;
             var label = build.label;
             amount=this.bulkManager.construct(button.model, button, amount);
             if (amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
-          
+
             if (variant === "s") {
                 storeForSummary(label, amount, 'faith');
                 if (amount === 1) {
@@ -1335,13 +1335,13 @@ var run = function() {
 
     // Time manager
     // ============
-    
+
     var TimeManager = function () {
         this.manager = new TabManager('Time');
         this.crafts = new CraftManager();
         this.bulkManager = new BulkManager();
     };
-    
+
     TimeManager.prototype = {
         manager: undefined,
         crafts: undefined,
@@ -1357,8 +1357,8 @@ var run = function() {
             amount=this.bulkManager.construct(button.model, button, amount);
             if (amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
             storeForSummary(label, amount, 'build');
-          
-          
+
+
             if (amount === 1) {
                 activity('Kittens have built a new ' + label, 'ks-build');
             } else {
@@ -1387,17 +1387,17 @@ var run = function() {
             }
         }
     };
-    
+
     // Upgrade manager
     // ============
-    
+
     var UpgradeManager = function () {
         this.workManager = new TabManager('Workshop');
         this.sciManager = new TabManager('Science');
         this.spaManager = new TabManager('Space');
         this.crafts = new CraftManager();
     };
-    
+
     UpgradeManager.prototype = {
         manager: undefined,
         crafts: undefined,
@@ -1409,7 +1409,7 @@ var run = function() {
             //need to simulate a click so the game updates everything properly
             button.domNode.click(upgrade);
             var label = upgrade.label;
-            
+
             if (variant === 'workshop') {
                 storeForSummary(label, 1, 'upgrade');
                 activity('Kittens have bought the upgrade ' + label, 'ks-upgrade');
@@ -1432,7 +1432,7 @@ var run = function() {
             }
         }
     };
-    
+
     // Building manager
     // ================
 
@@ -1449,14 +1449,14 @@ var run = function() {
         build: function (name, stage, amount) {
             var build = this.getBuild(name);
             var button = this.getBuildButton(name, stage);
-          
+
             if (!button || !button.model.enabled) return;
             var amountTemp = amount;
             var label = build.meta.label ? build.meta.label : build.meta.stages[stage].label;
             amount=this.bulkManager.construct(button.model, button, amount);
             if (amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
             storeForSummary(label, amount, 'build');
-          
+
             if (amount === 1) {
                 activity('Kittens have built a new ' + label, 'ks-build');
             } else {
@@ -1470,7 +1470,7 @@ var run = function() {
             var buttons = this.manager.tab.buttons;
             var build = this.getBuild(name);
             var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.meta.label;
-          
+
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
                 if (haystack.indexOf(label) !== -1){
@@ -1505,7 +1505,7 @@ var run = function() {
                 warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);
             }
             storeForSummary(label, amount, 'build');
-          
+
             if (amount === 1) {
                 activity('Kittens have built a new ' + label, 'ks-build');
             } else {
@@ -1585,15 +1585,15 @@ var run = function() {
             var amount = Number.MAX_VALUE;
             var plateMax = Number.MAX_VALUE;
             var materials = this.getMaterials(name);
-            
+
             var craft = this.getCraft(name);
             var ratio = game.getResCraftRatio(craft);
             var trigger = options.auto.craft.trigger;
             var optionVal = options.auto.options.enabled && options.auto.options.items.shipOverride.enabled;
-          
+
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
-            
+
             if (name==='steel' && limited) {
                 var plateRatio=game.getResCraftRatio(this.getCraft('plate'));
                 if (this.getValueAvailable('plate')/this.getValueAvailable('steel') < ((plateRatio+1)/125)/((ratio+1)/100)) {
@@ -1675,19 +1675,19 @@ var run = function() {
             var hunterRatio = game.getEffect('hunterRatio') + game.village.getEffectLeader('manager', 0);
 
             output['furs'] = 40 + 32.5 * hunterRatio;
-          
+
             output['ivory'] = 50 * Math.min(0.225 + 0.01 * hunterRatio, 0.5) + 40 * hunterRatio * Math.min(0.225 + 0.01 * hunterRatio, 0.5);
-          
+
             output['unicorns'] = 0.05;
-          
+
             if (this.getValue('zebras') >= 10) {
                 output['bloodstone'] = (this.getValue('bloodstone') === 0) ? 0.05 : 0.0005;
             }
-          
+
             if (game.ironWill && game.workshop.get('goldOre').researched) {
                 output['gold'] = 0.625 + 0.625 * hunterRatio;
             }
-          
+
             return output;
         },
         getName: function (name) {
@@ -1719,14 +1719,14 @@ var run = function() {
         getValueAvailable: function (name, all, typeTrigger) {
             var value = this.getValue(name);
             var stock = this.getStock(name);
-          
+
             if (!typeTrigger && typeTrigger !== 0) {
                 var trigger = options.auto.craft.trigger;
             }
             else {
               var trigger = typeTrigger;
             }
-            
+
             if ('catnip' === name) {
                 var pastures = (game.bld.getBuildingExt('pasture').meta.stage === 0) ? game.bld.getBuildingExt('pasture').meta.val: 0;
                 var aqueducts = (game.bld.getBuildingExt('aqueduct').meta.stage === 0) ? game.bld.getBuildingExt('aqueduct').meta.val: 0;
@@ -1757,23 +1757,23 @@ var run = function() {
             }
             var vilProd = (game.village.getResProduction().catnip) ? game.village.getResProduction().catnip * (1 + game.getEffect('catnipJobRatio')) : 0;
             var baseProd = fieldProd + vilProd;
-            
+
             var hydroponics = game.space.getBuilding('hydroponics').val;
             if (game.prestige.meta[0].meta[21].researched) {
                 if (game.calendar.cycle === 2) {hydroponics *= 2;}
                 if (game.calendar.cycle === 7) {hydroponics *= 0.5;}
             }
             baseProd *= 1 + 0.03 * aqueducts + 0.025 * hydroponics;
-          
+
             var paragonBonus = (game.challenges.currentChallenge == "winterIsComing") ? 0 : game.prestige.getParagonProductionRatio();
             baseProd *= 1 + paragonBonus;
-          
-            baseProd *= 1 + game.religion.getProductionBonus()/100;
-          
+
+            baseProd *= 1 + game.religion.getSolarRevolutionRatio();
+
             if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
-          
+
             baseProd = game.calendar.cycleEffectsFestival({catnip: baseProd})['catnip'];
-          
+
             var baseDemand = game.village.getResConsumption()['catnip'];
             var uniPastures = game.bld.getBuildingExt('unicornPasture').meta.val;
             baseDemand *= 1 + (game.getHyperbolicEffect(pastures * -0.005 + uniPastures * -0.0015, 1.0));
@@ -1786,21 +1786,21 @@ var run = function() {
                 }
             }
             baseProd += baseDemand;
-            
+
             baseProd += game.getResourcePerTickConvertion('catnip');
-          
+
             //Might need to eventually factor in time acceleration using game.timeAccelerationRatio().
             return baseProd;
         }
     };
-  
+
     // Bulk Manager
     // ============
-    
+
     var BulkManager = function () {
         this.craftManager = new CraftManager();
     };
-    
+
     BulkManager.prototype = {
         craftManager: undefined,
         bulk: function (builds, metaData, trigger, source) {
@@ -1814,7 +1814,7 @@ var run = function() {
                 if (data.tHidden === true) {continue;}
                 if (data.rHidden === true) {continue;}
                 if ((data.rHidden === undefined) && !data.unlocked) {continue;}
-                if (name === 'cryochambers' && (game.time.getVSU('usedCryochambers').val > 0 
+                if (name === 'cryochambers' && (game.time.getVSU('usedCryochambers').val > 0
                     || game.bld.getBuildingExt('chronosphere').meta.val <= data.val)) {continue;}
                 if (name === 'ressourceRetrieval' && data.val >= 100) {continue;}
                 var prices = (data.stages) ? data.stages[data.stage].prices : data.prices;
@@ -1822,7 +1822,7 @@ var run = function() {
                 if (!this.singleBuildPossible(data, prices, priceRatio, source)) {continue;}
                 var require = !build.require ? false : this.craftManager.getResource(build.require);
                 if (!require || trigger <= require.value / require.maxValue) {
-                    if (typeof(build.stage) !== 'undefined' && build.stage !== data.stage) { 
+                    if (typeof(build.stage) !== 'undefined' && build.stage !== data.stage) {
                         continue;
                     }
                     bList.push(new Object());
@@ -1842,15 +1842,15 @@ var run = function() {
                     counter++;
                 }
             }
-          
+
             if (countList.length === 0) {return;}
-          
+
             var tempPool = new Object();
             for (var res in game.resPool.resources) {
                 tempPool[game.resPool.resources[res].name]=game.resPool.resources[res].value;
             }
             for (var res in tempPool) {tempPool[res] = this.craftManager.getValueAvailable(res, true);}
-          
+
             var k = 0;
             while (countList.length !== 0) {
                 bulkLoop:
@@ -1861,7 +1861,7 @@ var run = function() {
                     var priceRatio = build.priceRatio;
                     var source = build.source;
                     for (var p = 0; p < prices.length; p++) {
-                      
+
                         var spaceOil = false;
                         var cryoKarma = false;
                         if (source && source === 'space' && prices[p].name === 'oil') {
@@ -1871,7 +1871,7 @@ var run = function() {
                             cryoKarma = true;
                             var karmaPrice = prices[p].val * (1 - game.getHyperbolicEffect(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                         }
-                      
+
                         if (spaceOil) {
                             var nextPriceCheck = (tempPool['oil'] < oilPrice * Math.pow(1.05, k + data.val));
                         } else if (cryoKarma) {
@@ -1989,7 +1989,7 @@ var run = function() {
         },
         getProfitability: function (name) {
             var race = this.getRace(name);
-          
+
             var materials = this.getMaterials(name);
             var cost = 0;
             for (var mat in materials) {
@@ -1997,7 +1997,7 @@ var run = function() {
                 if (tick <= 0) {return false;}
                 cost += materials[mat]/tick;
             }
-          
+
             var output = this.getAverageTrade(race);
             var profit = 0;
             for (var prod in output) {
@@ -2027,7 +2027,7 @@ var run = function() {
                     var shipCount = game.resPool.get("ship").value;
                     var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
                     var titanRat = 1 + shipCount / 50;
-                    mean = 1.5 * titanRat * (successRat * titanProb); 
+                    mean = 1.5 * titanRat * (successRat * titanProb);
                 } else {
                     var sRatio = (!item.seasons) ? 1 : item.seasons[game.calendar.getCurSeason().name];
                     var normBought = (successRat - bonusRat) * Math.min(tradeChance/100, 1);
@@ -2036,13 +2036,13 @@ var run = function() {
                 }
                 output[item.name] = mean;
             }
-          
+
             var spiceChance = (race.embassyPrices) ? 0.35 * (1 + 0.01 * race.embassyLevel) : 0.35;
             var spiceTradeAmount = successRat * Math.min(spiceChance, 1);
             output['spice'] = 25 * spiceTradeAmount + 50 * spiceTradeAmount * tRatio / 2;
-          
+
             output['blueprint'] = 0.1 * successRat;
-          
+
             return output;
         },
         isValidTrade: function (item, race) {
@@ -2063,9 +2063,9 @@ var run = function() {
 
                 amount = (amount === undefined || total < amount) ? total : amount;
             }
-          
+
             amount = Math.floor(amount);
-          
+
             if (amount === 0) {return 0;}
 
             if (race === null || options.auto.trade.items[name].allowcapped) return amount;
@@ -2074,7 +2074,7 @@ var run = function() {
             // which good has the most space left. Once we've determined this,
             // reduce the amount by this capacity. This ensures that we continue to trade
             // as long as at least one resource has capacity, and we never over-trade.
-            
+
             var tradeOutput = this.getAverageTrade(race);
             for (var s in race.sells) {
                 var item = race.sells[s];
@@ -2095,7 +2095,7 @@ var run = function() {
             // as there is any room, even if it doesn't have exact space. Otherwise
             // we seem to starve trading altogether.
             highestCapacity = Math.ceil(highestCapacity);
-          
+
             if (highestCapacity === 0) {return 0;}
 
             // Now that we know the most we *should* trade for, check to ensure that
@@ -2103,9 +2103,9 @@ var run = function() {
             // This helps us prevent trading for resources we can't store. Note that we
             // essentially ignore blueprints here. In addition, if highestCapacity was never set,
             // then we just
-          
+
             amount = (highestCapacity < amount) ? Math.max(highestCapacity - 1, 1) : amount;
-            
+
             return Math.floor(amount);
         },
         getMaterials: function (name) {
@@ -2145,7 +2145,7 @@ var run = function() {
             return true;
         }
     };
-  
+
     // Cache Manager
     // ===============
 
@@ -2163,7 +2163,7 @@ var run = function() {
                 if (!cacheSum[mat]) {cacheSum[mat] = 0;}
                 cacheSum[mat] += materials[mat];
             }
-          
+
             for (var i = 0; i < cache.length; i++) {
                 var oldData = cache[i];
                 if (cache.length > 10000) {
@@ -2364,12 +2364,12 @@ var run = function() {
                 var el = $('#' + item);
                 var option = el.data('option');
                 var name = item.split('-');
-              
+
                 if (option === undefined) {
                     delete kittenStorage.items[item];
                     continue;
                 }
-                
+
                 if (name[0] == 'set') {
                     el[0].title = value;
                 } else {
@@ -2697,7 +2697,7 @@ var run = function() {
                     paddingRight: '5px',
                     textShadow: '3px 3px 4px gray'}
             });
-          
+
             element.append(button);
 
             var list = $('<ul/>', {
@@ -2786,7 +2786,7 @@ var run = function() {
             }
 
         }
-      
+
         if (auto.trigger !== undefined) {
             var triggerButton = $('<div/>', {
                 id: 'trigger-' + toggleName,
@@ -2812,9 +2812,9 @@ var run = function() {
 
             element.append(triggerButton);
         }
-      
+
         if (toggleName === 'craft') {element.append(resourcesList);}
-      
+
         if (auto.items) {element.append(toggle, list);}
 
         return element;
@@ -2853,7 +2853,7 @@ var run = function() {
 
         element.append(input, label);
         //Limited Trading End
-        
+
         var button = $('<div/>', {
             id: 'toggle-seasons-' + name,
             text: 'seasons',
@@ -2999,10 +2999,10 @@ var run = function() {
 
         return element;
     };
-  
+
     var getOptionsOption = function (name, option) {
         var element = getOption(name, option);
-      
+
         if (option.subTrigger !== undefined) {
             var triggerButton = $('<div/>', {
                 id: 'set-' + name +'-subTrigger',
@@ -3014,7 +3014,7 @@ var run = function() {
                     paddingRight: '5px',
                     textShadow: '3px 3px 4px gray'}
             }).data('option', option);
-                              
+
             triggerButton.on('click', function () {
                 var value;
                 if (name == 'crypto'){value = window.prompt('Enter a new trigger value for ' + option.label + '. Corresponds to the amount of Relics needed before the exchange is made.', option.subTrigger);}
@@ -3148,32 +3148,32 @@ var run = function() {
         if (activitySummary.other.hunt) {
             summary('Sent adorable kitten hunters on ' + game.getDisplayValueExt(activitySummary.other.hunt) + ' hunts');
         }
-        
+
         // Embassies
         if (activitySummary.other.embassy) {
             summary('Built ' + game.getDisplayValueExt(activitySummary.other.embassy) + ' embassies');
         }
-      
+
         // Necrocorns
         if (activitySummary.other.feed) {
             summary('Fed the elders ' + game.getDisplayValueExt(activitySummary.other.feed) + ' necrocorns');
         }
-        
+
         // Techs
         for (var name in activitySummary.research) {
             summary('Researched: ' + ucfirst(name));
         }
-        
+
         // Upgrades
         for (var name in activitySummary.upgrade) {
             summary('Upgraded: ' + ucfirst(name));
         }
-        
+
         // Buildings
         for (var name in activitySummary.build) {
             summary('Built: +' + game.getDisplayValueExt(activitySummary.build[name]) + ' ' + ucfirst(name));
         }
-        
+
         // Order of the Sun
         for (var name in activitySummary.faith) {
             summary('Discovered: +' + game.getDisplayValueExt(activitySummary.faith[name]) + ' ' + ucfirst(name));
