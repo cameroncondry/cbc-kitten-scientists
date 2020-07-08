@@ -1776,7 +1776,7 @@ var run = function() {
 
             var baseDemand = game.village.getResConsumption()['catnip'];
             var uniPastures = game.bld.getBuildingExt('unicornPasture').meta.val;
-            baseDemand *= 1 + (game.getHyperbolicEffect(pastures * -0.005 + uniPastures * -0.0015, 1.0));
+            baseDemand *= 1 + (game.getLimitedDR(pastures * -0.005 + uniPastures * -0.0015, 1.0));
             if (game.village.sim.kittens.length > 0 && game.village.happiness > 1) {
                 var happyCon = game.village.happiness - 1;
                 if (game.challenges.currentChallenge == "anarchy") {
@@ -1866,10 +1866,10 @@ var run = function() {
                         var cryoKarma = false;
                         if (source && source === 'space' && prices[p].name === 'oil') {
                             spaceOil = true;
-                            var oilPrice = prices[p].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
+                            var oilPrice = prices[p].val * (1 - game.getLimitedDR(game.getEffect('oilReductionRatio'), 0.75));
                         } else if (build.id === 'cryochambers' && prices[p].name === 'karma') {
                             cryoKarma = true;
-                            var karmaPrice = prices[p].val * (1 - game.getHyperbolicEffect(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
+                            var karmaPrice = prices[p].val * (1 - game.getLimitedDR(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                         }
 
                         if (spaceOil) {
@@ -1883,10 +1883,10 @@ var run = function() {
                           || (build.id === 'cryochambers' && game.bld.getBuildingExt('chronosphere').meta.val <= k + data.val)) {
                             for (var p2 = 0; p2 < p; p2++) {
                                 if (source && source === 'space' && prices[p2].name === 'oil') {
-                                    var oilPriceRefund = prices[p2].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
+                                    var oilPriceRefund = prices[p2].val * (1 - game.getLimitedDR(game.getEffect('oilReductionRatio'), 0.75));
                                     tempPool['oil'] += oilPriceRefund * Math.pow(1.05, k + data.val);
                                 } else if (build.id === 'cryochambers' && prices[p2].name === 'karma') {
-                                    var karmaPriceRefund = prices[p2].val * (1 - game.getHyperbolicEffect(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
+                                    var karmaPriceRefund = prices[p2].val * (1 - game.getLimitedDR(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                                     tempPool['karma'] += karmaPriceRefund * Math.pow(priceRatio, k + data.val);
                                 } else {
                                     var refundVal = prices[p2].val * Math.pow(priceRatio, k + data.val);
@@ -1942,17 +1942,17 @@ var run = function() {
                     game.getEffect("priceRatio") +
                     game.getEffect("mapPriceReduction");
 
-                ratioDiff = game.getHyperbolicEffect(ratioDiff, ratio - 1);
+                ratioDiff = game.getLimitedDR(ratioDiff, ratio - 1);
             }
             return ratio + ratioDiff;
         },
         singleBuildPossible: function (data, prices, priceRatio, source) {
             for (var price in prices) {
                 if (source && source === 'space' && prices[price].name === 'oil') {
-                    var oilPrice = prices[price].val * (1 - game.getHyperbolicEffect(game.getEffect('oilReductionRatio'), 0.75));
+                    var oilPrice = prices[price].val * (1 - game.getLimitedDR(game.getEffect('oilReductionRatio'), 0.75));
                     if (this.craftManager.getValueAvailable('oil', true) < oilPrice * Math.pow(1.05, data.val)) {return false;}
                 } else if (data.name === 'cryochambers' && prices[price].name === 'karma') {
-                    var karmaPrice = prices[price].val * (1 - game.getHyperbolicEffect(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
+                    var karmaPrice = prices[price].val * (1 - game.getLimitedDR(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                     if (this.craftManager.getValueAvailable('karma', true) < karmaPrice * Math.pow(priceRatio, data.val)) {return false;}
                 } else {
                     if (this.craftManager.getValueAvailable(prices[price].name, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
@@ -2022,7 +2022,7 @@ var run = function() {
                 if (!this.isValidTrade(item, race)) {continue;}
                 var resource = this.craftManager.getResource(item.name);
                 var mean = 0;
-                var tradeChance = (race.embassyPrices) ? item.chance * (1 + game.getHyperbolicEffect(0.01 * race.embassyLevel, 0.75)) : item.chance;
+                var tradeChance = (race.embassyPrices) ? item.chance * (1 + game.getLimitedDR(0.01 * race.embassyLevel, 0.75)) : item.chance;
                 if (race.name == "zebras" && item.name == "titanium") {
                     var shipCount = game.resPool.get("ship").value;
                     var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
