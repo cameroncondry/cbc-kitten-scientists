@@ -1768,7 +1768,7 @@ var run = function() {
             var paragonBonus = (game.challenges.currentChallenge == "winterIsComing") ? 0 : game.prestige.getParagonProductionRatio();
             baseProd *= 1 + paragonBonus;
           
-            baseProd *= 1 + game.religion.getProductionBonus()/100;
+            baseProd *= 1 + game.religion.getSolarRevolutionRatio();
           
             if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
           
