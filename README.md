@@ -2,7 +2,7 @@
 
 <p align="center"><img src="https://i.imgur.com/AWHGIGH.jpg" /></p>
 
-Kitten Scientists (KS) is a simple automation script for the complex [Kittens Game](http://bloodrizer.ru/games/kittens/).
+Kitten Scientists (KS) is a simple automation script for the complex [Kittens Game](http://kittensgame.com/web/).
 
 ## Quick Start
 
