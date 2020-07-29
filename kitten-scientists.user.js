@@ -250,7 +250,7 @@ var run = function() {
             'status.auto.disable': '禁用自动化 {0}',
             
             'trade.limited': '与 {0} 的交易限制为比产量更优时才会触发',
-            'trade.unlimited': '取消与 {1} 交易的限制',
+            'trade.unlimited': '取消与 {0} 交易的限制',
             'trade.seasons': '季节',
             'trade.season.enable': '启用在 {1} 与 {0} 的交易',
             'trade.season.disable': '停止在 {1} 与 {0} 的交易',
