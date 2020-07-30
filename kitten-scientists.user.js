@@ -288,6 +288,8 @@ var run = function() {
     }
 
     var i18n = function(key, args) {
+        if (key[0] == "$")
+            return this.i18ng(key.slice(1));
         value = i18nData[lang][key];
         if (!value) {
             value = i18nData['en'][key];
@@ -1833,7 +1835,7 @@ var run = function() {
 
             game.craft(craft.name, amount);
 
-            var iname = ucfirst(i18ng('resources.' + name + '.title'));
+            var iname = ucfirst(i18n('$resources.' + name + '.title'));
 
             // determine actual amount after crafting upgrades
             amount = (amount * (1 + ratio)).toFixed(2);
@@ -2767,7 +2769,7 @@ var run = function() {
     };
 
     var addNewResourceOption = function (name, title) {
-        title = title || i18ng('resources.' + name + '.title') || ucfirst(name);
+        title = title || i18n('$resources.' + name + '.title') || ucfirst(name);
         var res = options.auto.resources[name];
         var stock = res && (res.stock != undefined) ? res.stock : 0;
         var consume = res && (res.consume != undefined) ? res.consume : options.consume;
@@ -3117,7 +3119,7 @@ var run = function() {
     };
 
     var getTradeOption = function (name, option) {
-        var iname = ucfirst(i18ng('trade.race.' + name));
+        var iname = ucfirst(i18n('$trade.race.' + name));
 
         var element = getOption(name, option, iname);
         element.css('borderBottom', '1px solid rgba(185, 185, 185, 0.7)');
@@ -3183,8 +3185,8 @@ var run = function() {
     };
 
     var getSeason = function (name, season, option) {
-        var iname = ucfirst(i18ng('trade.race.' + name));
-        var iseason = ucfirst(i18ng('calendar.season.' + season));
+        var iname = ucfirst(i18n('$trade.race.' + name));
+        var iseason = ucfirst(i18n('$calendar.season.' + season));
 
         var element = $('<li/>');
 
@@ -3268,7 +3270,7 @@ var run = function() {
     };
 
     var getCraftOption = function (name, option) {
-        var iname = ucfirst(i18ng('resources.' + name + '.title'));
+        var iname = ucfirst(i18n('$resources.' + name + '.title'));
 
         var element = getOption(name, option, iname);
 
