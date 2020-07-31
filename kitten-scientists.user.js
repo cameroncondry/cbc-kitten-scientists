@@ -142,6 +142,11 @@ var run = function() {
             'summary.distribute': 'Help {0} kittens to find job',
             'filter.distribute': 'Distribute',
 
+            'ui.promote': 'Promote Leader',
+            'act.promote': 'Kittens\' leader has been promoted to rank {0}',
+            'filter.promote': 'Promote leader',
+            'summary.promote': 'Promoted leader {0} times',
+
             'summary.festival': 'Held {0} festivals',
             'summary.observe': 'Observed {0} stars',
             'summary.praise': 'Accumulated {0} worship by praising the sun',
@@ -278,6 +283,11 @@ var run = function() {
             'ui.max.set': '设置 {0} 的最大值',
             'summary.distribute': '帮助 {0} 只猫猫找到工作',
             'filter.distribute': '猫口分配',
+
+            'option.promote': '提拔领袖',
+            'act.promote': '领袖被提拔到 {0} 级',
+            'filter.promote': '提拔领袖',
+            'summary.promote': '提拔领袖 {0} 次',
 
             'summary.festival': '举办了 {0} 次节日',
             'summary.observe': '观测了 {0} 颗流星',
@@ -631,6 +641,7 @@ var run = function() {
                     shipOverride:       {enabled: true,                    misc: true, label: i18n('option.shipOverride')},
                     autofeed:           {enabled: true,                    misc: true, label: i18n('option.autofeed')},
                     hunt:               {enabled: true, subTrigger: 0.98,  misc: true, label: i18n('option.hunt')},
+                    promote:            {enabled: true,                    misc: true, label: i18n('option.promote')},
                     crypto:             {enabled: true, subTrigger: 10000, misc: true, label: i18n('option.crypto')},
                     buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: i18n('option.embassies')},
                     explore:            {enabled: false,                   misc: true, label: i18n('option.explore')}
@@ -668,6 +679,7 @@ var run = function() {
                     festivalFilter:  {enabled: false, filter: true, label: i18n('filter.festival'),   variant: "ks-activity type_ks-festival"},
                     starFilter:      {enabled: false, filter: true, label: i18n('filter.star'),       variant: "ks-activity type_ks-star"},
                     distributeFilter:{enabled: false, filter: true, label: i18n('filter.distribute'), variant: "ks-activity type_ks-distribute"},
+                    promoteFilter:   {enabled: false, filter: true, label: i18n('filter.promote'),    variant: "ks-activity type_ks-promote"},
                     miscFilter:      {enabled: false, filter: true, label: i18n('filter.misc'),       variant: "ks-activity"}
                 }
             },
@@ -798,8 +810,26 @@ var run = function() {
             if (subOptions.enabled && subOptions.items.crypto.enabled)   {this.crypto()};
             if (subOptions.enabled && subOptions.items.explore.enabled)  {this.explore()};
             if (subOptions.enabled && subOptions.items.autofeed.enabled) {this.autofeed()};
+            if (subOptions.enabled && subOptions.items.promote.enabled)  {this.promote()};
             if (options.auto.distribute.enabled)                         {this.distribute();}
             if (subOptions.enabled)                                      {this.miscOptions()};
+        },
+        promote: function () {
+            if (game.science.get('civil').researched && game.village.leader != null) {
+                var leader = game.village.leader;
+                var rank = leader.rank;
+                var gold = this.craftManager.getResource('gold');
+                var goldStock = this.craftManager.getStock('gold');
+
+                // game.village.sim.goldToPromote will check gold
+                // game.village.sim.promote check both gold and exp
+                if (game.village.sim.goldToPromote(rank, rank+1, gold-goldStock)[0] && game.village.sim.promote(leader, rank+1) == 1) {
+                    iactivity('act.promote', [rank+1], 'ks-promote');
+                    gamePage.tabs[1].censusPanel.census.renderGovernment(gamePage.tabs[1].censusPanel.census);
+                    gamePage.tabs[1].censusPanel.census.update();
+                    storeForSummary('promote', 1);
+                }
+            }
         },
         distribute: function () {
             var freeKittens = game.village.getFreeKittens();
