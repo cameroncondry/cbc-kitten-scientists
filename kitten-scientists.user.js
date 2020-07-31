@@ -137,7 +137,7 @@ var run = function() {
 
             'distribute.limited': 'Distribute to {0}: stop when reach max',
             'distribute.unlimited': 'Distribute to {0}: unlimited',
-            'act.distribute': 'Dsitribute a kitten to {0}',
+            'act.distribute': 'Distribute a kitten to {0}',
             'ui.max.set': 'Maximum for {0}',
             'summary.distribute': 'Help {0} kittens to find job',
             'filter.distribute': 'Distribute',
