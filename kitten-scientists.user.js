@@ -98,6 +98,8 @@ var run = function() {
             'ui.time': 'Time',
             'ui.options': 'Options',
             'ui.filter': 'Filters',
+            'ui.distribute': 'Kitten Resources',
+            'ui.max': 'Max: {0}',
 
             'ui.upgrade.upgrades': 'Upgrades',
             'ui.upgrade.techs': 'Techs',
@@ -132,6 +134,13 @@ var run = function() {
 
             'craft.limited': 'Crafting {0}: limited to be proportional to cost ratio',
             'craft.unlimited': 'Crafting {0}: unlimited',
+
+            'distribute.limited': 'Distribute to {0}: stop when reach max',
+            'distribute.unlimited': 'Distribute to {0}: unlimited',
+            'act.distribute': 'Dsitribute a kitten to {0}',
+            'ui.max.set': 'Maximum for {0}',
+            'summary.distribute': 'Help {0} kittens to find job',
+            'filter.distribute': 'Distribute',
 
             'summary.festival': 'Held {0} festivals',
             'summary.observe': 'Observed {0} stars',
@@ -226,6 +235,8 @@ var run = function() {
             'ui.time': '时间',
             'ui.options': '选项',
             'ui.filter': '日志过滤',
+            'ui.distribute': '猫力资源',
+            'ui.max': 'Max: {0}',
 
             'ui.upgrade.upgrades': '升级',
             'ui.upgrade.techs': '科技',
@@ -260,6 +271,13 @@ var run = function() {
 
             'craft.limited': '制作 {0} 受库存消耗比率的限制',
             'craft.unlimited': '制作 {0} 不受限制',
+
+            'distribute.limited': '分配 {0} 受限于最大值',
+            'distribute.unlimited': '分配 {0} 不受限',
+            'act.distribute': '分配一只猫猫成为 {0}',
+            'ui.max.set': '设置 {0} 的最大值',
+            'summary.distribute': '帮助 {0} 只猫猫找到工作',
+            'filter.distribute': '猫口分配',
 
             'summary.festival': '举办了 {0} 次节日',
             'summary.observe': '观测了 {0} 颗流星',
@@ -618,6 +636,23 @@ var run = function() {
                     explore:            {enabled: false,                   misc: true, label: i18n('option.explore')}
                 }
             },
+            distribute: {
+                // Should KS automatically distribute free kittens
+                enabled: false,
+                items: {
+                    // dynamic priority. distribute to the job which have lowest (job.val / job.max) value.
+                    // if all jobs reach the max, then distribute kittens to unlimited job.
+                    woodcutter: {enabled: true, max: 0, limited: false},
+                    farmer:     {enabled: true, max: 0, limited: false},
+                    scholar:    {enabled: true, max: 0, limited: false},
+                    hunter:     {enabled: true, max: 0, limited: false},
+                    miner:      {enabled: true, max: 0, limited: false},
+                    priest:     {enabled: true, max: 0, limited: false},
+                    geologist:  {enabled: true, max: 0, limited: false},
+                    engineer:   {enabled: true, max: 0, limited: false},
+                }
+
+            },
             filter: {
                 //What log messages should be filtered?
                 enabled: false,
@@ -631,8 +666,9 @@ var run = function() {
                     praiseFilter:    {enabled: false, filter: true, label: i18n('filter.praise'),     variant: "ks-activity type_ks-praise"},
                     faithFilter:     {enabled: false, filter: true, label: i18n('filter.faith'),      variant: "ks-activity type_ks-faith"},
                     festivalFilter:  {enabled: false, filter: true, label: i18n('filter.festival'),   variant: "ks-activity type_ks-festival"},
-                    starFilter:      {enabled: false, filter: true, label: i18n('filter.star'),      variant: "ks-activity type_ks-star"},
-                    miscFilter:      {enabled: false, filter: true, label: i18n('filter.misc'),        variant: "ks-activity"}
+                    starFilter:      {enabled: false, filter: true, label: i18n('filter.star'),       variant: "ks-activity type_ks-star"},
+                    distributeFilter:{enabled: false, filter: true, label: i18n('filter.distribute'), variant: "ks-activity type_ks-distribute"},
+                    miscFilter:      {enabled: false, filter: true, label: i18n('filter.misc'),       variant: "ks-activity"}
                 }
             },
             resources: {
@@ -762,7 +798,39 @@ var run = function() {
             if (subOptions.enabled && subOptions.items.crypto.enabled)   {this.crypto()};
             if (subOptions.enabled && subOptions.items.explore.enabled)  {this.explore()};
             if (subOptions.enabled && subOptions.items.autofeed.enabled) {this.autofeed()};
+            if (options.auto.distribute.enabled)                         {this.distribute();}
             if (subOptions.enabled)                                      {this.miscOptions()};
+        },
+        distribute: function () {
+            var freeKittens = game.village.getFreeKittens();
+            if (!freeKittens)
+                return;
+
+            var jobName = '';
+            var minRatio = Infinity;
+            var currentRatio = 0;
+            for (var i in game.village.jobs) {
+                var name = game.village.jobs[i].name;
+                var unlocked = game.village.jobs[i].unlocked;
+                var enabled = options.auto.distribute.items[name].enabled;
+                var maxGame = game.village.getJobLimit(name);
+                var maxKS = options.auto.distribute.items[name].max;
+                var val = game.village.jobs[i].value
+                var limited = options.auto.distribute.items[name].limited;
+                if (unlocked && enabled && val < maxGame && (!limited || val < maxKS)) {
+                    currentRatio = val/maxKS;
+                    if (currentRatio < minRatio) {
+                        minRatio = currentRatio;
+                        jobName = name;
+                    }
+                }
+            }
+            if (jobName) {
+                game.village.assignJob(game.village.getJob(jobName), 1);
+                this.villageManager.render();
+                iactivity('act.distribute', [i18n('$village.job.' + jobName)], 'ks-distribute');
+                storeForSummary('distribute', 1);
+            }
         },
         autofeed: function () {
             var levi = game.diplomacy.get("leviathans");
@@ -2622,6 +2690,7 @@ var run = function() {
             trade: options.auto.trade.enabled,
             faith: options.auto.faith.enabled,
             time: options.auto.time.enabled,
+            distribute: options.auto.distribute.enabled,
             options: options.auto.options.enabled,
             filter: options.auto.filter.enabled
         };
@@ -2665,6 +2734,8 @@ var run = function() {
 
                 if (name[0] == 'set') {
                     el[0].title = value;
+                    if (name[2] == 'max')
+                        el[0].innerText = i18n('ui.max', [value]);
                 } else {
                     el.prop('checked', value);
                 }
@@ -3040,16 +3111,27 @@ var run = function() {
 
             // fill out list with toggle items
             for (var itemName in auto.items) {
-                if (toggleName === 'trade')
-                    list.append(getTradeOption(itemName, auto.items[itemName]));
-                else if (toggleName === 'craft')
-                    list.append(getCraftOption(itemName, auto.items[itemName]));
-                else if (toggleName === 'options')
-                    list.append(getOptionsOption(itemName, auto.items[itemName]));
-                else if (toggleName === 'upgrade')
-                    list.append(getOption(itemName, auto.items[itemName], i18n('ui.upgrade.' + itemName)));
-                else
-                    list.append(getOption(itemName, auto.items[itemName]));
+                switch (toggleName) {
+                    case 'trade':
+                        list.append(getTradeOption(itemName, auto.items[itemName]));
+                        break;
+                    case 'craft':
+                        list.append(getCraftOption(itemName, auto.items[itemName]));
+                        break;
+                    case 'options':
+                        list.append(getOptionsOption(itemName, auto.items[itemName]));
+                        break;
+                    case 'upgrade':
+                        list.append(getOption(itemName, auto.items[itemName], i18n('ui.upgrade.' + itemName)));
+                        break;
+                    case 'distribute':
+                        list.append(getDistributeOption(itemName, auto.items[itemName]));
+                        break;
+                    default:
+                        list.append(getOption(itemName, auto.items[itemName]));
+                        break;
+
+                }
             }
 
             button.on('click', function () {
@@ -3339,6 +3421,70 @@ var run = function() {
         return element;
     };
 
+    var getDistributeOption = function (name, option) {
+        var iname = ucfirst(i18n('$village.job.' + name));
+
+        var element = getOption(name, option, iname);
+        element.css('borderBottom', '1px solid rgba(185, 185, 185, 0.7)');
+
+        //Limited Distribution
+        var label = $('<label/>', {
+            'for': 'toggle-limited-' + name,
+            text: i18n('ui.limit')
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-limited-' + name,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option.limited) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option.limited == false) {
+                option.limited = true;
+                imessage('distribute.limited', [iname]);
+            } else if ((!input.is(':checked')) && option.limited == true) {
+                option.limited = false;
+                imessage('distribute.unlimited', [iname]);
+            }
+            kittenStorage.items[input.attr('id')] = option.limited;
+            saveToKittenStorage();
+        });
+
+        element.append(input, label);
+
+        var maxButton = $('<div/>', {
+            id: 'set-' + name +'-max',
+            text: i18n('ui.max', [option.max]),
+            title: option.max,
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                float: 'right',
+                paddingRight: '5px',
+                textShadow: '3px 3px 4px gray'}
+        }).data('option', option);
+
+        maxButton.on('click', function () {
+            var value;
+            value = window.prompt(i18n('ui.max.set', [option.label]), option.max);
+
+            if (value !== null) {
+                option.max = parseInt(value);
+                kittenStorage.items[maxButton.attr('id')] = option.max;
+                saveToKittenStorage();
+                maxButton[0].title = option.max;
+                maxButton[0].innerText = i18n('ui.max', [option.max]);
+            }
+        });
+
+        element.append(maxButton);
+
+        return element;
+    };
+
     // Grab button labels for religion options
     var religionManager = new ReligionManager();
     for (var buildOption in options.auto.faith.items) {
@@ -3401,6 +3547,7 @@ var run = function() {
     optionsListElement.append(getToggle('trade'));
     optionsListElement.append(getToggle('faith'));
     optionsListElement.append(getToggle('time'));
+    optionsListElement.append(getToggle('distribute'));
     optionsListElement.append(getToggle('options'));
     optionsListElement.append(getToggle('filter'));
 
@@ -3434,34 +3581,10 @@ var run = function() {
     };
 
     var displayActivitySummary = function () {
-        // Festivals
-        if (activitySummary.other.festival) {
-            isummary('summary.festival', [game.getDisplayValueExt(activitySummary.other.festival)]);
-        }
 
-        // Observe stars
-        if (activitySummary.other.stars) {
-            isummary('summary.observe', [game.getDisplayValueExt(activitySummary.other.stars)]);
-        }
-
-        // Praise the Sun
-        if (activitySummary.other.faith) {
-            isummary('summary.praise', [game.getDisplayValueExt(activitySummary.other.faith)]);
-        }
-
-        // Hunters
-        if (activitySummary.other.hunt) {
-            isummary('summary.hunt', [game.getDisplayValueExt(activitySummary.other.hunt)]);
-        }
-
-        // Embassies
-        if (activitySummary.other.embassy) {
-            isummary('summary.embassy', [game.getDisplayValueExt(activitySummary.other.embassy)]);
-        }
-
-        // Necrocorns
-        if (activitySummary.other.feed) {
-            isummary('summary.necrocorn', [game.getDisplayValueExt(activitySummary.other.feed)]);
+        for (var i in activitySummary.other) {
+            if (activitySummary.other[i])
+                isummary('summary.' + i , [game.getDisplayValueExt(activitySummary.other[i])]);
         }
 
         // Techs
