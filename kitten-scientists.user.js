@@ -2684,7 +2684,7 @@ var run = function() {
         + 'width: 100%;'
         + '}');
 
-    addRule('#ks-options #toggle-list-resources .stockWarn {'
+    addRule('#ks-options #toggle-list-resources .stockWarn * {'
         + 'color: ' + options.stockwarncolor + ';'
         + '}');
 
