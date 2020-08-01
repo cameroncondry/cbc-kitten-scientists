@@ -142,7 +142,7 @@ var run = function() {
             'summary.distribute': 'Help {0} kittens to find job',
             'filter.distribute': 'Distribute',
 
-            'ui.promote': 'Promote Leader',
+            'option.promote': 'Promote Leader',
             'act.promote': 'Kittens\' leader has been promoted to rank {0}',
             'filter.promote': 'Promote leader',
             'summary.promote': 'Promoted leader {0} times',
