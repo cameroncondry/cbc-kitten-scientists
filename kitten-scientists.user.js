@@ -106,6 +106,10 @@ var run = function() {
             'ui.upgrade.races': 'Races',
             'ui.upgrade.missions': 'Missions',
             'ui.upgrade.buildings': 'Buildings',
+            
+            'ui.faith.addtion': 'Addition',
+            'option.faith.best.unicorn': 'Build Best Unicorn Building First',
+            'option.faith.best.unicorn.desc': 'Include auto Sacrifice Unicorns if tears are not enough to build the best unicorn building',
 
             'resources.add': 'add resources',
             'resources.clear.unused': 'clear unused',
@@ -249,6 +253,10 @@ var run = function() {
             'ui.upgrade.missions': '探索星球',
             'ui.upgrade.buildings': '建筑',
 
+            'ui.faith.addtion': '附加',
+            'option.faith.best.unicorn': '优先最佳独角兽建筑',
+            'option.faith.best.unicorn.desc': '当眼泪不够建造最佳独角兽建筑时也会自动献祭独角兽',
+
             'resources.add': '添加资源',
             'resources.clear.unused': '清除未使用',
             'resources.stock': '库存: {0}',
@@ -359,21 +367,43 @@ var run = function() {
                 // Should any automation run at all?
                 enabled: false
             },
+            // split form faith to make "Best Unicorn Building" easily
+            unicorn: {
+                items: {
+                    unicornPasture:     {require: false,         enabled: true,  variant: 'zp', label: i18n('$buildings.unicornPasture.label')},
+                    unicornTomb:        {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.unicornTomb.label')},
+                    ivoryTower:         {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.ivoryTower.label')},
+                    ivoryCitadel:       {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.ivoryCitadel.label')},
+                    skyPalace:          {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.skyPalace.label')},
+                    unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z',  label: i18n('$religion.zu.unicornUtopia.label')},
+                    sunspire:           {require: 'gold',        enabled: false, variant: 'z',  label: i18n('$religion.zu.sunspire.label')},
+                }
+            },
             faith: {
                 // Should religion building be automated?
                 enabled: true,
                 // At what percentage of the storage capacity should KS build faith buildings?
                 trigger: 0,
+                // Additional options
+                addition: {
+                    bestUnicornBuilding:    {enabled: true, misc: true, label: i18n('option.faith.best.unicorn')},
+                    // Former [Faith Reset]
+                    // adore:              {enabled: true, misc: true, label: i18n('option.faith.adore')}, // how to judge?
+                    // transcendence:      {enabled: true, misc: true, label: i18n('option.faith.transcendence')},
+                },
                 // Which religious upgrades should be researched?
                 items: {
                     // Variant denotes which category the building or upgrade falls within in the Religion tab.
                     // Ziggurats are variant z.
-                    unicornTomb:        {require: false,         enabled: false, variant: 'z'},
-                    ivoryTower:         {require: false,         enabled: false, variant: 'z'},
-                    ivoryCitadel:       {require: false,         enabled: false, variant: 'z'},
-                    skyPalace:          {require: false,         enabled: false, variant: 'z'},
-                    unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z'},
-                    sunspire:           {require: 'gold',        enabled: false, variant: 'z'},
+                    // UNICORN BUILDING START
+                    // unicornPasture:     {require: false,         enabled: true,  variant: 'zp', label: i18n('$buildings.unicornPasture.label')},
+                    // unicornTomb:        {require: false,         enabled: false, variant: 'z'},
+                    // ivoryTower:         {require: false,         enabled: false, variant: 'z'},
+                    // ivoryCitadel:       {require: false,         enabled: false, variant: 'z'},
+                    // skyPalace:          {require: false,         enabled: false, variant: 'z'},
+                    // unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z'},
+                    // sunspire:           {require: 'gold',        enabled: false, variant: 'z'},
+                    // UNICORN BUILDING END
                     marker:             {require: 'unobtainium', enabled: false, variant: 'z'},
                     unicornGraveyard:   {require: false,         enabled: false, variant: 'z'},
                     unicornNecropolis:  {require: false,         enabled: false, variant: 'z'},
@@ -458,7 +488,7 @@ var run = function() {
                     chapel:         {require: 'minerals',    enabled: true},
                     temple:         {require: 'gold',        enabled: true},
                     mint:           {require: false,         enabled: false},
-                    unicornPasture: {require: false,         enabled: true},
+                    // unicornPasture: {require: false,         enabled: true},
                     ziggurat:       {require: false,         enabled: true},
                     chronosphere:   {require: 'unobtainium', enabled: true},
                     aiCore:         {require: false,         enabled: false},
@@ -938,6 +968,38 @@ var run = function() {
         },
         worship: function () {
             var builds = options.auto.faith.items;
+            if (options.auto.faith.addition.bestUnicornBuilding) {
+                var bestUnicornBuilding = this.getBestUnicornBuilding();
+                if (bestUnicornBuilding) {
+                    if (bestUnicornBuilding == 'unicornPasture')
+                        this.buildManager.build(bestUnicornBuilding, undefined, 1);
+                    else
+                    {
+                        var btn = this.religionManager.getBuildButton(bestUnicornBuilding, 'z');                        
+                        for (var i in btn.model.prices)
+                            if (btn.model.prices[i].name=='tears')
+                                var tearNeed = btn.model.prices[i].val;
+                        var tearHave = this.craftManager.getValue('tears') - this.craftManager.getStock('tears');
+                        if (tearNeed > tearHave)
+                        {
+                            // if no ziggurat, getBestUnicornBuilding will return unicornPasture
+                            var maxSacrifice = Math.floor((this.craftManager.getValue('unicorns') - this.craftManager.getStock('unicorns')) / 2500);
+                            var needSacrifice = Math.ceil((tearNeed-tearHave) / game.bld.getBuildingExt('ziggurat').meta.on);
+                            if (needSacrifice < maxSacrifice)
+                            gamePage.religionTab.sacrificeBtn.controller._transform(gamePage.religionTab.sacrificeBtn.model, needSacrifice);
+                            // iactivity?
+                        }
+                        this.religionManager.build(bestUnicornBuilding, 'z', 1);
+                    }
+                }
+            } else {
+                builds = Object.assign({}, builds, Object.fromEntries(Object.entries(options.auto.unicorn.items).filter(([k,v]) => v.variant!='zp')));
+                build(Object.fromEntries(Object.entries(options.auto.unicorn.items).filter(([k,v]) => v.variant=='zp')));
+            }
+            this._worship(builds);
+        },
+        _worship: function (builds) {
+            var builds = builds || options.auto.faith.items;
             var buildManager = this.religionManager;
             var craftManager = this.craftManager;
             var bulkManager = this.bulkManager;
@@ -954,7 +1016,7 @@ var run = function() {
                     metaData[name].rHidden = true;
                 } else {
                     var model = buildManager.getBuildButton(name, build.variant).model;
-                    var panel = (build.variant === 'c') ? game.science.techs[58].researched : true;
+                    var panel = (build.variant === 'c') ? game.science.get('cryptotheology').researched : true;
                     metaData[name].rHidden = !(model.visible && model.enabled && panel);
                 }
             }
@@ -1228,8 +1290,8 @@ var run = function() {
                 }
             }
         },
-        build: function () {
-            var builds = options.auto.build.items;
+        build: function (builds) {
+            var builds = builds || options.auto.build.items;
             var buildManager = this.buildManager;
             var craftManager = this.craftManager;
             var bulkManager = this.bulkManager;
@@ -1558,6 +1620,75 @@ var run = function() {
                     game.religion.praise();
                 }
             }
+        },
+        // ref: https://github.com/Bioniclegenius/NummonCalc/blob/112f716e2fde9956dfe520021b0400cba7b7113e/NummonCalc.js#L490
+        getBestUnicornBuilding: function () {
+            var unicornPasture = 'unicornPasture';
+            var pastureButton = buildManager.getBuildButton('unicornPasture');
+            if(typeof pastureButton === 'undefined')
+                return;
+            var validBuildings = ['unicornTomb','ivoryTower','ivoryCitadel','skyPalace','unicornUtopia','sunspire'];
+            var unicornsPerSecond = game.getEffect('unicornsPerTickBase') * game.getTicksPerSecondUI();
+            var globalRatio = game.getEffect('unicornsGlobalRatio') + 1;
+            var religionRatio = game.getEffect('unicornsRatioReligion') + 1;
+            var paragonRatio = game.prestige.getParagonProductionRatio() + 1;
+            var faithBonus = game.religion.getSolarRevolutionRatio() + 1;
+            var cycle = 1;
+            if(game.calendar.cycles[game.calendar.cycle].festivalEffects['unicorns'] != undefined)
+                if(game.prestige.getPerk('numeromancy').researched && game.calendar.festivalDays)
+                    cycle = game.calendar.cycles[game.calendar.cycle].festivalEffects['unicorns'];
+            var onZig = Math.max(game.bld.getBuildingExt('ziggurat').meta.on, 1);
+            var total = unicornsPerSecond * globalRatio * religionRatio * paragonRatio * faithBonus * cycle;
+            var baseUnicornsPerRift = 500 * (1 + game.getEffect('unicornsRatioReligion') * 0.1);
+            var riftChanceRatio = 1;
+            if(game.prestige.getPerk('unicornmancy').researched)
+                riftChanceRatio *= 1.1;
+            var baseRift = game.getEffect('riftChance') * riftChanceRatio / (10000 * 2) * baseUnicornsPerRift;
+            var bestAmoritization = Infinity;
+            var bestBuilding = '';
+            var pastureAmor = game.bld.getBuildingExt('unicornPasture').meta.effects['unicornsPerTickBase'] * game.getTicksPerSecondUI();
+            pastureAmor = pastureAmor * globalRatio * religionRatio * paragonRatio * faithBonus * cycle;
+            pastureAmor = pastureButton.model.prices[0].val / pastureAmor;
+            if(pastureAmor < bestAmoritization){
+                bestAmoritization = pastureAmor;
+                bestBuilding = unicornPasture;
+            }
+            for(var i in this.religionManager.manager.tab.zgUpgradeButtons){
+                var btn = this.religionManager.manager.tab.zgUpgradeButtons[i];
+                if(validBuildings.indexOf(btn.id)!=-1){
+                    if(btn.model.visible){
+                        unicornPrice = 0;
+                        for(var j in btn.model.prices){
+                            if(btn.model.prices[j].name=='unicorns')
+                                unicornPrice += btn.model.prices[j].val;
+                            if(btn.model.prices[j].name=='tears')
+                                unicornPrice += btn.model.prices[j].val * 2500 / onZig;
+                        }
+                        var bld = game.religion.getZU(btn.id);
+                        var relBonus = religionRatio;
+                        var riftChance = game.getEffect('riftChance');
+                        for(var j in bld.effects){
+                            if(j == 'unicornsRatioReligion')
+                                relBonus += bld.effects[j]
+                            if(j == 'riftChance')
+                                riftChance += bld.effects[j];
+                        }
+                        var unicornsPerRift = 500 * ((relBonus -1) * 0.1 +1);
+                        var riftBonus = riftChance * riftChanceRatio / (10000 * 2) * unicornsPerRift;
+                        riftBonus -= baseRift;
+                        var amor = unicornsPerSecond * globalRatio * relBonus * paragonRatio * faithBonus * cycle;
+                        amor -= total;
+                        amor = amor + riftBonus;
+                        amor = unicornPrice / amor;
+                        if(amor < bestAmoritization)
+                            if(riftBonus > 0 || relBonus > religionRatio && unicornPrice > 0){
+                                bestAmoritization = amor;
+                                bestBuilding = btn.id;
+                            }
+                    }
+                }
+            }
+            return bestBuilding;
         }
     };
 
@@ -2091,10 +2222,12 @@ var run = function() {
         // },
         getResource: function (name) {
             if (name === 'slabs') {name = 'slab';} //KG BETA BUGFIX
-            for (var i in game.resPool.resources) {
-                var res = game.resPool.resources[i];
-                if (res.name === name) return res;
-            }
+            // for (var i in game.resPool.resources) {
+            //     var res = game.resPool.resources[i];
+            //     if (res.name === name) return res;
+            // }
+            var res = game.resPool.get(name);
+            if (res) return res
             warning('unable to find resource ' + name);
             return null;
         },
@@ -3032,6 +3165,88 @@ var run = function() {
         return list;
     };
 
+    var getAdditionOptions = function () {
+        var toggleName = 'faith-addition';
+        var list = $('<ul/>', {
+            id: 'items-list-' + toggleName,
+            css: {display: 'none', paddingLeft: '20px'}
+        });
+
+        var disableall = $('<div/>', {
+            id: 'toggle-all-items-' + toggleName,
+            text: i18n('ui.disable.all'),
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                textShadow: '3px 3px 4px gray',
+                marginRight: '8px'}
+        });
+
+        disableall.on('click', function () {
+            // can't use find as we only want one layer of checkboxes
+            var items = list.children().children(':checkbox');
+            items.prop('checked', false);
+            items.change();
+            list.children().children(':checkbox').change();
+        });
+
+        list.append(disableall);
+
+        var enableall = $('<div/>', {
+            id: 'toggle-all-items-' + toggleName,
+            text: i18n('ui.enable.all'),
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                textShadow: '3px 3px 4px gray'}
+        });
+
+        enableall.on('click', function () {
+            // can't use find as we only want one layer of checkboxes
+            var items = list.children().children(':checkbox');
+            items.prop('checked', true);
+            items.change();
+            list.children().children(':checkbox').change();
+        });
+
+        list.append(enableall);
+
+        var addi = options.auto.faith.addition;
+        for (var itemName in addi) {
+            node = getOption(itemName, addi[itemName]);
+
+            if (itemName == 'bestUnicornBuilding') {
+                node.children('label').prop('title', i18n('option.faith.best.unicorn.desc'));
+                input = node.children('input');
+                input.unbind('change')
+                var bub = addi.bestUnicornBuilding;
+                input.on('change', function () {
+                    if (input.is(':checked') && !bub.enabled) {
+
+                        bub.enabled = true;
+                        // enable all unicorn buildings
+                        for (var unicornName in options.auto.unicorn.items) {
+                            var building = $('#toggle-' + unicornName);
+                            building.prop('checked', true);
+                            building.trigger('change');
+                        }
+                        imessage('status.sub.enable', [i18n('option.faith.best.unicorn')]);
+
+                    } else if ((!input.is(':checked')) && bub.enabled) {
+
+                        bub.enabled = false;
+                        imessage('status.sub.disable', [i18n('option.faith.best.unicorn')]);
+
+                    }
+                    kittenStorage.items[input.attr('id')] = bub.enabled;
+                    saveToKittenStorage();
+                });
+            }
+
+            list.append(node);
+        }
+        
+        return list;
+    }
+
     var getToggle = function (toggleName) {
         var itext = ucfirst(i18n('ui.' + toggleName));
 
@@ -3139,6 +3354,11 @@ var run = function() {
 
             list.append(enableall);
 
+            // merge unicorn to faith
+            if (toggleName == 'faith')
+                for (var itemName in options.auto.unicorn.items)
+                    list.append(getOption(itemName, options.auto.unicorn.items[itemName]));
+
             // fill out list with toggle items
             for (var itemName in auto.items) {
                 switch (toggleName) {
@@ -3195,6 +3415,44 @@ var run = function() {
                 element.append(resources);
             }
 
+            // Add additional controls for faith, sort of a hack again
+            if (toggleName === 'faith') {
+                var addition = $('<div/>', {
+                    id: 'toggle-addition-controls',
+                    text: i18n('ui.faith.addtion'),
+                    css: {cursor: 'pointer',
+                        display: 'inline-block',
+                        float: 'right',
+                        paddingRight: '5px',
+                        textShadow: '3px 3px 4px gray'},
+                });
+
+                var additionList = getAdditionOptions();
+
+                button.on('click', function () {
+                    additionList.toggle(false);
+                });
+
+                addition.on('click', function () {
+                    list.toggle(false);
+                    additionList.toggle();
+                });
+
+                element.append(addition);
+
+                // disable auto best unicorn building when unicorn building was disable
+                for (var unicornName in options.auto.unicorn.items) {
+                    var ub = list.children().children('#toggle-' + unicornName);
+                    ub.on('change', function() {
+                        if (!$(event.target).is(':checked')) {
+                            var b = $('#toggle-bestUnicornBuilding');
+                            b.prop('checked', false);
+                            b.trigger('change');
+                        }
+                    });
+                };
+            }
+
         }
 
         if (auto.trigger !== undefined) {
@@ -3224,6 +3482,7 @@ var run = function() {
         }
 
         if (toggleName === 'craft') {element.append(resourcesList);}
+        else if (toggleName === 'faith') {element.append(additionList);}
 
         if (auto.items) {element.append(toggle, list);}
 
@@ -3403,10 +3662,10 @@ var run = function() {
         input.on('change', function () {
             if (input.is(':checked') && option.limited == false) {
                 option.limited = true;
-                imessage('craft.limited', [name]);
+                imessage('craft.limited', [iname]);
             } else if ((!input.is(':checked')) && option.limited == true) {
                 option.limited = false;
-                imessage('craft.unlimited', [name]);
+                imessage('craft.unlimited', [iname]);
             }
             kittenStorage.items[input.attr('id')] = option.limited;
             saveToKittenStorage();
