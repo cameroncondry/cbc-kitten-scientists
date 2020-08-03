@@ -110,6 +110,10 @@ var run = function() {
             'ui.faith.addtion': 'Addition',
             'option.faith.best.unicorn': 'Build Best Unicorn Building First',
             'option.faith.best.unicorn.desc': 'Include auto Sacrifice Unicorns if tears are not enough to build the best unicorn building',
+            'option.faith.transcend': 'Auto Transcend',
+            'act.transcend': 'Transcend to T-level: {0}',
+            'summary.transcend': 'Transcend {0} times',
+            'filter.transcend': 'Transcend',
 
             'resources.add': 'add resources',
             'resources.clear.unused': 'clear unused',
@@ -386,10 +390,11 @@ var run = function() {
                 trigger: 0,
                 // Additional options
                 addition: {
-                    bestUnicornBuilding:    {enabled: true, misc: true, label: i18n('option.faith.best.unicorn')},
+                    bestUnicornBuilding:    {enabled: true,  misc: true, label: i18n('option.faith.best.unicorn')},
+                    autoPraise:             {enabled: true,  misc: true, label: i18n('option.praise')},
                     // Former [Faith Reset]
                     // adore:              {enabled: true, misc: true, label: i18n('option.faith.adore')}, // how to judge?
-                    // transcendence:      {enabled: true, misc: true, label: i18n('option.faith.transcendence')},
+                    transcend:              {enabled: false, misc: true, label: i18n('option.faith.transcend')},
                 },
                 // Which religious upgrades should be researched?
                 items: {
@@ -667,7 +672,6 @@ var run = function() {
                 items: {
                     observe:            {enabled: true,                    misc: true, label: i18n('option.observe')},
                     festival:           {enabled: true,                    misc: true, label: i18n('option.festival')},
-                    autoPraise:         {enabled: true,                    misc: true, label: i18n('option.praise')},
                     shipOverride:       {enabled: true,                    misc: true, label: i18n('option.shipOverride')},
                     autofeed:           {enabled: true,                    misc: true, label: i18n('option.autofeed')},
                     hunt:               {enabled: true, subTrigger: 0.98,  misc: true, label: i18n('option.hunt')},
@@ -710,6 +714,7 @@ var run = function() {
                     starFilter:      {enabled: false, filter: true, label: i18n('filter.star'),       variant: "ks-activity type_ks-star"},
                     distributeFilter:{enabled: false, filter: true, label: i18n('filter.distribute'), variant: "ks-activity type_ks-distribute"},
                     promoteFilter:   {enabled: false, filter: true, label: i18n('filter.promote'),    variant: "ks-activity type_ks-promote"},
+                    transcendFilter: {enabled: false, filter: true, label: i18n('filter.transcend'),  variant: "ks-activity type_ks-transcend"},
                     miscFilter:      {enabled: false, filter: true, label: i18n('filter.misc'),       variant: "ks-activity"}
                 }
             },
@@ -968,35 +973,92 @@ var run = function() {
         },
         worship: function () {
             var builds = options.auto.faith.items;
-            if (options.auto.faith.addition.bestUnicornBuilding) {
+            var manager = this.religionManager;
+            var buildManager = this.buildManager;
+            var craftManager = this.craftManager;
+            var option = options.auto.faith.addition;
+            
+            if (option.bestUnicornBuilding.enabled) {
                 var bestUnicornBuilding = this.getBestUnicornBuilding();
                 if (bestUnicornBuilding) {
                     if (bestUnicornBuilding == 'unicornPasture')
-                        this.buildManager.build(bestUnicornBuilding, undefined, 1);
+                        buildManager.build(bestUnicornBuilding, undefined, 1);
                     else
                     {
-                        var btn = this.religionManager.getBuildButton(bestUnicornBuilding, 'z');                        
+                        var btn = manager.getBuildButton(bestUnicornBuilding, 'z');                        
                         for (var i in btn.model.prices)
                             if (btn.model.prices[i].name=='tears')
                                 var tearNeed = btn.model.prices[i].val;
-                        var tearHave = this.craftManager.getValue('tears') - this.craftManager.getStock('tears');
+                        var tearHave = craftManager.getValue('tears') - craftManager.getStock('tears');
                         if (tearNeed > tearHave)
                         {
                             // if no ziggurat, getBestUnicornBuilding will return unicornPasture
-                            var maxSacrifice = Math.floor((this.craftManager.getValue('unicorns') - this.craftManager.getStock('unicorns')) / 2500);
+                            var maxSacrifice = Math.floor((craftManager.getValue('unicorns') - craftManager.getStock('unicorns')) / 2500);
                             var needSacrifice = Math.ceil((tearNeed-tearHave) / game.bld.getBuildingExt('ziggurat').meta.on);
                             if (needSacrifice < maxSacrifice)
-                            gamePage.religionTab.sacrificeBtn.controller._transform(gamePage.religionTab.sacrificeBtn.model, needSacrifice);
+                            game.religionTab.sacrificeBtn.controller._transform(game.religionTab.sacrificeBtn.model, needSacrifice);
                             // iactivity?
                         }
-                        this.religionManager.build(bestUnicornBuilding, 'z', 1);
+                        religionManager.build(bestUnicornBuilding, 'z', 1);
                     }
                 }
             } else {
                 builds = Object.assign({}, builds, Object.fromEntries(Object.entries(options.auto.unicorn.items).filter(([k,v]) => v.variant!='zp')));
-                build(Object.fromEntries(Object.entries(options.auto.unicorn.items).filter(([k,v]) => v.variant=='zp')));
+                if (options.auto.unicorn.items.unicornPasture.enabled)
+                    this.build({unicornPasture: {require: false, enabled: true}});
             }
             this._worship(builds);
+
+            if (option.transcend.enabled && game.religion.getRU("transcendence").on) 
+            {
+                var epiphany = game.religion.faithRatio;
+                var tt = game.religion.transcendenceTier;
+                var adoreIncreaceRatio = Math.pow((tt + 2) / (tt + 1), 2);
+                var needNextLevel = game.religion._getTranscendTotalPrice(tt + 1) - game.religion._getTranscendTotalPrice(tt);
+
+                var x = needNextLevel;
+                var k = adoreIncreaceRatio;
+                var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
+
+                if(epiphany >= epiphanyRecommend) {
+
+                    // code copy from kittens game's religion.js: game.religion.transcend()
+                    // game.religion.transcend() need confirm by player
+
+                    // ========================================================================================================
+                    // DO TRANSCEND START
+                    // ========================================================================================================
+                    game.religion.faithRatio -= needNextLevel;
+                    game.religion.tcratio += needNextLevel;
+                    game.religion.transcendenceTier += 1;
+                    var atheism = game.challenges.getChallenge("atheism");
+                    atheism.calculateEffects(atheism, game);
+                    var blackObelisk = game.religion.getTU("blackObelisk");
+                    blackObelisk.calculateEffects(blackObelisk, game);
+                    // ========================================================================================================
+                    // DO TRANSCEND END
+                    // ========================================================================================================
+
+                    iactivity('act.transcend', [tt+1], 'ks-transcend');
+                    storeForSummary('transcend', 1);
+                }
+            }
+
+            // Praise
+            if (option.autoPraise.enabled) {
+                var faith = craftManager.getResource('faith');
+                if (0.98 <= faith.value / faith.maxValue) {
+                    if (!game.religion.getFaithBonus) {
+                        var apocryphaBonus = game.religion.getApocryphaBonus();
+                    } else {
+                        var apocryphaBonus = game.religion.getFaithBonus();
+                    }
+                    var worship = faith.value * (1 + apocryphaBonus)
+                    storeForSummary('faith', worship);
+                    iactivity('sun.prasie', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worship)], 'ks-praise');
+                    game.religion.praise();
+                }
+            };
         },
         _worship: function (builds) {
             var builds = builds || options.auto.faith.items;
@@ -1606,20 +1668,6 @@ var run = function() {
                 }
             }
 
-            if (optionVals.autoPraise.enabled) {
-                var faith = craftManager.getResource('faith');
-                if (0.98 <= faith.value / faith.maxValue) {
-                    if (!game.religion.getFaithBonus) {
-                        var apocryphaBonus = game.religion.getApocryphaBonus();
-                    } else {
-                        var apocryphaBonus = game.religion.getFaithBonus();
-                    }
-                    var worship = faith.value * (1 + apocryphaBonus)
-                    storeForSummary('faith', worship);
-                    iactivity('sun.prasie', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worship)], 'ks-praise');
-                    game.religion.praise();
-                }
-            }
         },
         // ref: https://github.com/Bioniclegenius/NummonCalc/blob/112f716e2fde9956dfe520021b0400cba7b7113e/NummonCalc.js#L490
         getBestUnicornBuilding: function () {
