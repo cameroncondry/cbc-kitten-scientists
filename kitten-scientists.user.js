@@ -152,7 +152,7 @@ var run = function() {
             'summary.promote': 'Promoted leader {0} times',
 
             'summary.festival': 'Held {0} festivals',
-            'summary.observe': 'Observed {0} stars',
+            'summary.stars': 'Observed {0} stars',
             'summary.praise': 'Accumulated {0} worship by praising the sun',
             'summary.hunt': 'Sent adorable kitten hunters on {0} hunts',
             'summary.embassy': 'Built {0} embassies',
@@ -298,7 +298,7 @@ var run = function() {
             'summary.promote': '提拔领袖 {0} 次',
 
             'summary.festival': '举办了 {0} 次节日',
-            'summary.observe': '观测了 {0} 颗流星',
+            'summary.stars': '观测了 {0} 颗流星',
             'summary.praise': '通过赞美太阳累计了 {0} 信仰总量',
             'summary.hunt': '派出了 {0} 批可爱的小猫猎人',
             'summary.embassy': '设立了 {0} 个大使馆',
