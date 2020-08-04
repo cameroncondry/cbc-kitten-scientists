@@ -76,9 +76,9 @@ var run = function() {
             'build.embassy': 'Built {0} embassy for {1}',
             'build.embassies': 'Built {0} embassies for {1}',
 
-            'sun.prasie': 'Praised the sun! Accumulated {0} faith to {1} worship',
-            'sun.discover': 'Kittens have discovered {0}',
-            'sun.discovers': 'Kittens have discovered {0} {1} times.',
+            'act.praise': 'Praised the sun! Accumulated {0} faith to {1} worship',
+            'act.sun.discover': 'Kittens have discovered {0}',
+            'act.sun.discovers': 'Kittens have discovered {0} {1} times.',
 
             'ui.items': 'items',
             'ui.disable.all': 'disable all',
@@ -111,9 +111,14 @@ var run = function() {
             'option.faith.best.unicorn': 'Build Best Unicorn Building First',
             'option.faith.best.unicorn.desc': 'Include auto Sacrifice Unicorns if tears are not enough to build the best unicorn building',
             'option.faith.transcend': 'Auto Transcend',
-            'act.transcend': 'Transcend to T-level: {0}',
+            'act.transcend': 'Spend {0} epiphany, Transcend to T-level: {1}',
             'summary.transcend': 'Transcend {0} times',
             'filter.transcend': 'Transcend',
+            'option.faith.adore': 'Auto Adore the Galaxy',
+            'act.adore': 'Adore the galaxy! Accumulated {0} worship to {1} epiphany',
+            'summary.adore': 'Accumulated {0} epiphany by adore the galaxy',
+            'filter.adore': 'Adoring',
+            'adore.trigger.set': 'Enter a new trigger value for AutoAdore. Should be in the range of 0 to 1.\nKS will AutoAdore if the Solor Revolutuin Bonus brought by praising the sun once after adore can reach the trigger of maximum.\n\nNote: The solar revolution bonus will diminish after reaching 75% of the maximum.',
 
             'resources.add': 'add resources',
             'resources.clear.unused': 'clear unused',
@@ -226,9 +231,9 @@ var run = function() {
             'build.embassy': '在 {1} 设立了 {0} 个大使馆',
             'build.embassies': '在 {1} 设立了 {0} 个大使馆',
 
-            'sun.prasie': '赞美太阳! 转化 {0} 信仰为 {1} 虔诚',
-            'sun.discover': '小猫在 {0} 方面获得顿悟',
-            'sun.discovers': '小猫在 {0} 方面获得 {1} 次顿悟',
+            'act.praise': '赞美太阳! 转化 {0} 信仰为 {1} 虔诚',
+            'act.sun.discover': '小猫在 {0} 方面获得顿悟',
+            'act.sun.discovers': '小猫在 {0} 方面获得 {1} 次顿悟',
 
             'ui.items': '项目',
             'ui.disable.all': '全部禁用',
@@ -260,6 +265,14 @@ var run = function() {
             'ui.faith.addtion': '附加',
             'option.faith.best.unicorn': '优先最佳独角兽建筑',
             'option.faith.best.unicorn.desc': '当眼泪不够建造最佳独角兽建筑时也会自动献祭独角兽',
+            'option.faith.transcend': '自动超越',
+            'act.transcend': '消耗 {0} 顿悟，达到超越 {1}',
+            'summary.transcend': '超越了 {0} 次',
+            'filter.transcend': '超越',
+            'option.faith.adore': '赞美群星',
+            'act.adore': '赞美群星! 转化 {0} 虔诚为 {1} 顿悟',
+            'summary.adore': '通过赞美群星积累了 {0} 顿悟',
+            'filter.adore': '赞美群星',
 
             'resources.add': '添加资源',
             'resources.clear.unused': '清除未使用',
@@ -393,7 +406,7 @@ var run = function() {
                     bestUnicornBuilding:    {enabled: true,  misc: true, label: i18n('option.faith.best.unicorn')},
                     autoPraise:             {enabled: true,  misc: true, label: i18n('option.praise')},
                     // Former [Faith Reset]
-                    // adore:              {enabled: true, misc: true, label: i18n('option.faith.adore')}, // how to judge?
+                    adore:                  {enabled: false, misc: true, label: i18n('option.faith.adore'), subTrigger: 0.75},
                     transcend:              {enabled: false, misc: true, label: i18n('option.faith.transcend')},
                 },
                 // Which religious upgrades should be researched?
@@ -612,7 +625,7 @@ var run = function() {
                     tanker:     {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
                     parchment:  {require: false,         max: 0, limited: false, limRat: 0.5, enabled: true},
                     manuscript: {require: 'culture',     max: 0, limited: true,  limRat: 0.5, enabled: true},
-                    compedium: {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    compedium: {require: 'science',      max: 0, limited: true,  limRat: 0.5, enabled: true},
                     blueprint:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
                     kerosene:   {require: 'oil',         max: 0, limited: true,  limRat: 0.5, enabled: true},
                     megalith:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
@@ -709,12 +722,13 @@ var run = function() {
                     tradeFilter:     {enabled: false, filter: true, label: i18n('filter.trade'),      variant: "ks-activity type_ks-trade"},
                     huntFilter:      {enabled: false, filter: true, label: i18n('filter.hunt'),       variant: "ks-activity type_ks-hunt"},
                     praiseFilter:    {enabled: false, filter: true, label: i18n('filter.praise'),     variant: "ks-activity type_ks-praise"},
+                    adoreFilter:     {enabled: false, filter: true, label: i18n('filter.adore'),      variant: "ks-activity type_ks-adore"},
+                    transcendFilter: {enabled: false, filter: true, label: i18n('filter.transcend'),  variant: "ks-activity type_ks-transcend"},
                     faithFilter:     {enabled: false, filter: true, label: i18n('filter.faith'),      variant: "ks-activity type_ks-faith"},
                     festivalFilter:  {enabled: false, filter: true, label: i18n('filter.festival'),   variant: "ks-activity type_ks-festival"},
                     starFilter:      {enabled: false, filter: true, label: i18n('filter.star'),       variant: "ks-activity type_ks-star"},
                     distributeFilter:{enabled: false, filter: true, label: i18n('filter.distribute'), variant: "ks-activity type_ks-distribute"},
                     promoteFilter:   {enabled: false, filter: true, label: i18n('filter.promote'),    variant: "ks-activity type_ks-promote"},
-                    transcendFilter: {enabled: false, filter: true, label: i18n('filter.transcend'),  variant: "ks-activity type_ks-transcend"},
                     miscFilter:      {enabled: false, filter: true, label: i18n('filter.misc'),       variant: "ks-activity"}
                 }
             },
@@ -1007,58 +1021,87 @@ var run = function() {
                 if (options.auto.unicorn.items.unicornPasture.enabled)
                     this.build({unicornPasture: {require: false, enabled: true}});
             }
+            // religion build
             this._worship(builds);
 
-            if (option.transcend.enabled && game.religion.getRU("transcendence").on) 
-            {
+            var faith = craftManager.getResource('faith');
+            // enough faith, and then TAP
+            if (0.98 <= faith.value / faith.maxValue) {
+                var worship = game.religion.faith;
                 var epiphany = game.religion.faithRatio;
-                var tt = game.religion.transcendenceTier;
-                var adoreIncreaceRatio = Math.pow((tt + 2) / (tt + 1), 2);
-                var needNextLevel = game.religion._getTranscendTotalPrice(tt + 1) - game.religion._getTranscendTotalPrice(tt);
+                var transcendenceReached = game.religion.getRU("transcendence").on;
+                var tt = transcendenceReached ? game.religion.transcendenceTier : 0;
 
-                var x = needNextLevel;
-                var k = adoreIncreaceRatio;
-                var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
+                // Transcend
+                if (option.transcend.enabled && transcendenceReached) 
+                {
+                    var adoreIncreaceRatio = Math.pow((tt + 2) / (tt + 1), 2);
+                    var needNextLevel = game.religion._getTranscendTotalPrice(tt + 1) - game.religion._getTranscendTotalPrice(tt);
 
-                if(epiphany >= epiphanyRecommend) {
+                    var x = needNextLevel;
+                    var k = adoreIncreaceRatio;
+                    var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
 
-                    // code copy from kittens game's religion.js: game.religion.transcend()
-                    // game.religion.transcend() need confirm by player
+                    if(epiphany >= epiphanyRecommend) {
 
-                    // ========================================================================================================
-                    // DO TRANSCEND START
-                    // ========================================================================================================
-                    game.religion.faithRatio -= needNextLevel;
-                    game.religion.tcratio += needNextLevel;
-                    game.religion.transcendenceTier += 1;
-                    var atheism = game.challenges.getChallenge("atheism");
-                    atheism.calculateEffects(atheism, game);
-                    var blackObelisk = game.religion.getTU("blackObelisk");
-                    blackObelisk.calculateEffects(blackObelisk, game);
-                    // ========================================================================================================
-                    // DO TRANSCEND END
-                    // ========================================================================================================
+                        // code copy from kittens game's religion.js: game.religion.transcend()
+                        // game.religion.transcend() need confirm by player
+                        // game version: 1.4.8.1
+                        // ========================================================================================================
+                        // DO TRANSCEND START
+                        // ========================================================================================================
+                        game.religion.faithRatio -= needNextLevel;
+                        game.religion.tcratio += needNextLevel;
+                        game.religion.transcendenceTier += 1;
+                        var atheism = game.challenges.getChallenge("atheism");
+                        atheism.calculateEffects(atheism, game);
+                        var blackObelisk = game.religion.getTU("blackObelisk");
+                        blackObelisk.calculateEffects(blackObelisk, game);
+                        game.msg($I("religion.transcend.msg.success", [game.religion.transcendenceTier]));
+                        // ========================================================================================================
+                        // DO TRANSCEND END
+                        // ========================================================================================================
 
-                    iactivity('act.transcend', [tt+1], 'ks-transcend');
-                    storeForSummary('transcend', 1);
+                        epiphany = game.religion.faithRatio;
+                        tt = game.religion.transcendenceTier;
+                        iactivity('act.transcend', [game.getDisplayValueExt(needNextLevel), tt], 'ks-transcend');
+                        storeForSummary('transcend', 1);
+                    }
                 }
-            }
 
-            // Praise
-            if (option.autoPraise.enabled) {
-                var faith = craftManager.getResource('faith');
-                if (0.98 <= faith.value / faith.maxValue) {
+                // Adore
+                if (option.adore.enabled && game.religion.getRU('apocripha').on) {
+                    // game version: 1.4.8.1
+                    var maxSolarRevolution = 10 + game.getEffect("solarRevolutionLimit")
+                    var triggerSolarRevolution = maxSolarRevolution*option.adore.subTrigger;
+                    var epiphanyInc = worship / 1000000 * tt * tt * 1.01;
+                    var epiphanyAfterAdore = epiphany + epiphanyInc;
+                    var worshipAfterAdore = 0.01 + faith.value*(1 + game.getUnlimitedDR(epiphanyAfterAdore, 0.1)*0.1);
+                    var solarRevolutionAdterAdore = game.getLimitedDR(game.getUnlimitedDR(worshipAfterAdore, 1000)/100, maxSolarRevolution);
+                    if (solarRevolutionAdterAdore >= triggerSolarRevolution) {
+
+                        game.religion._resetFaithInternal(1.01);
+
+                        iactivity('act.adore', [game.getDisplayValueExt(worship), game.getDisplayValueExt(epiphanyInc)], 'ks-adore');
+                        storeForSummary('adore', 1);
+                        epiphany = game.religion.faithRatio;
+                        worship = game.religion.faith;
+                    }
+                }
+
+                // Praise
+                if (option.autoPraise.enabled) {
                     if (!game.religion.getFaithBonus) {
                         var apocryphaBonus = game.religion.getApocryphaBonus();
                     } else {
                         var apocryphaBonus = game.religion.getFaithBonus();
                     }
-                    var worship = faith.value * (1 + apocryphaBonus)
-                    storeForSummary('faith', worship);
-                    iactivity('sun.prasie', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worship)], 'ks-praise');
+                    var worshipInc = faith.value * (1 + apocryphaBonus)
+                    storeForSummary('faith', worshipInc);
+                    iactivity('act.praise', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worshipInc)], 'ks-praise');
                     game.religion.praise();
                 }
-            };
+            }
         },
         _worship: function (builds) {
             var builds = builds || options.auto.faith.items;
@@ -1856,9 +1899,9 @@ var run = function() {
             if (variant === "s") {
                 storeForSummary(label, amount, 'faith');
                 if (amount === 1) {
-                    iactivity('sun.discover', [label], 'ks-faith');
+                    iactivity('act.sun.discover', [label], 'ks-faith');
                 } else {
-                    iactivity('sun.discovers', [label, amount], 'ks-faith');
+                    iactivity('act.sun.discovers', [label, amount], 'ks-faith');
                 }
             } else {
                 storeForSummary(label, amount, 'build');
@@ -3287,6 +3330,33 @@ var run = function() {
                     kittenStorage.items[input.attr('id')] = bub.enabled;
                     saveToKittenStorage();
                 });
+            }
+            // if (addi[itemName].subTrigger !== undefined) { // only adore now
+            if (itemName == 'adore') {
+                var triggerButton = $('<div/>', {
+                    id: 'set-' + itemName + '-subTrigger',
+                    text: i18n('ui.trigger'),
+                    title: addi[itemName].subTrigger,
+                    css: {cursor: 'pointer',
+                        display: 'inline-block',
+                        float: 'right',
+                        paddingRight: '5px',
+                        textShadow: '3px 3px 4px gray'}
+                }).data('option', addi[itemName]);
+    
+                triggerButton.on('click', function () {
+                    var value;
+                    value = window.prompt(i18n('adore.trigger.set'), addi[itemName].subTrigger);
+    
+                    if (value !== null) {
+                        addi[itemName].subTrigger = parseFloat(value);
+                        kittenStorage.items[triggerButton[0].id] = addi[itemName].subTrigger;
+                        saveToKittenStorage();
+                        triggerButton[0].title = addi[itemName].subTrigger;
+                    }
+                });
+    
+                node.append(triggerButton);
             }
 
             list.append(node);
