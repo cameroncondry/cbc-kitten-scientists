@@ -3018,7 +3018,11 @@ var run = function() {
         + '}');
 
     addRule('#ks-options #toggle-list-resources .stockWarn * {'
-        + 'color: ' + options.stockwarncolor + ';'
+    + 'color: ' + options.stockwarncolor + ';'
+    + '}');
+    
+    addRule('.right-tab {'
+        + 'height: unset !important;'
         + '}');
 
     document.body.setAttribute("data-ks-style", "");
