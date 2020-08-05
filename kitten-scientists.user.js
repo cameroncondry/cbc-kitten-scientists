@@ -2273,15 +2273,16 @@ var run = function() {
         },
         canCraft: function (name, amount) {
             var craft = this.getCraft(name);
+            var materials = this.getMaterials(craft);
             var enabled = options.auto.craft.items[name].enabled;
             var result = false;
 
             if (craft.unlocked && enabled) {
                 result = true;
 
-                for (var i in craft.prices) {
-                    var price = craft.prices[i];
-                    var value = this.getValueAvailable(price.name);
+                for (var i in materials) {
+                    var price = materials[i];
+                    var value = this.getValueAvailable(i);
 
                     if (value < price.val * amount) {
                         result = false;
