@@ -160,6 +160,22 @@ var run = function() {
             'filter.promote': 'Promote leader',
             'summary.promote': 'Promoted leader {0} times',
 
+            'ui.timeCtrl': 'Time Control',
+            'option.accelerate': 'Tempus Fugit',
+            'act.accelerate': 'Accelerate time!',
+            'filter.accelerate': 'Tempus Fugit',
+            'summary.accelerate': 'Accelerate time {0} times',
+            'option.time.skip': 'Time Skip',
+            'act.time.skip': 'Kittens combuste Time crystal, {0} years skiped!',
+            'ui.cycles': 'Cycles',
+            'time.skip.cycle.enable': 'Enable time skip in cycle {0} and allow skip over this cycle',
+            'time.skip.cycle.disable': 'Disable time skip in cycle {0} and disallow skip over this cycle',
+            'time.skip.season.enable': 'Enable time skip in the {0}',
+            'time.skip.season.disable': 'Disable time skip in the {0}',
+            'time.skip.trigger.set': 'Enter a new trigger value for Time Skip (Combust time crystal). Should be a positive integer.',
+            'summary.time.skip': 'Skip {0} years',
+            'filter.time.skip': 'Time Skip',
+
             'summary.festival': 'Held {0} festivals',
             'summary.stars': 'Observed {0} stars',
             'summary.praise': 'Accumulated {0} worship by praising the sun',
@@ -315,9 +331,25 @@ var run = function() {
             'filter.promote': '提拔领袖',
             'summary.promote': '提拔领袖 {0} 次',
 
+            'ui.timeCtrl': '时间操纵',
+            'option.accelerate': '时间加速',
+            'act.accelerate': '固有时制御，二倍速!',
+            'filter.accelerate': '时间加速',
+            'summary.accelerate': '加速时间 {0} 次',
+            'option.time.skip': '时间跳转',
+            'act.time.skip': '燃烧时间水晶, 跳过接下来的 {0} 年!',
+            'ui.cycles': '周期',
+            'time.skip.cycle.enable': '启用在 {0} 跳转时间并允许跳过该周期',
+            'time.skip.cycle.disable': '停止在 {0} 跳转时间并禁止跳过该周期',
+            'time.skip.season.enable': '启用在 {0} 跳转时间',
+            'time.skip.season.disable': '停止在 {0} 跳转时间',
+            'time.skip.trigger.set': '为跳转时间(燃烧时间水晶)设定一个新触发值，取值范围为正整数',
+            'summary.time.skip': '跳过 {0} 年',
+            'filter.time.skip': '时间跳转',
+
             'summary.festival': '举办了 {0} 次节日',
             'summary.stars': '观测了 {0} 颗流星',
-            'summary.praise': '通过赞美太阳累计了 {0} 信仰总量',
+            'summary.praise': '通过赞美太阳积累了 {0} 虔诚',
             'summary.hunt': '派出了 {0} 批可爱的小猫猎人',
             'summary.embassy': '设立了 {0} 个大使馆',
             'summary.necrocorn': '向上古神献祭 {0} 只死灵兽',
@@ -329,7 +361,7 @@ var run = function() {
             'summary.trade': '与 {1} 贸易了 {0} 次',
             'summary.year': '年',
             'summary.years': '年',
-            'summary.separator': '',
+            'summary.separator': ' ',
             'summary.day': '天',
             'summary.days': '天',
             'summary.head': '过去 {0} 的总结',
@@ -345,7 +377,7 @@ var run = function() {
         if (key[0] == "$")
             return this.i18ng(key.slice(1));
         value = i18nData[lang][key];
-        if (!value) {
+        if (typeof value === 'undefined') {
             value = i18nData['en'][key];
             if (!value) {
                 console.error('key "' + key + '" not found')
@@ -591,6 +623,15 @@ var run = function() {
                     voidResonator:       {require: false,          enabled: false, variant: 'void'}
                 }
             },
+            timeCtrl: {
+                enabled: true,
+                items: {
+                    accelerateTime:     {enabled: true,  subTrigger: 1,     misc: true, label: i18n('option.accelerate')},
+                    timeSkip:           {enabled: false, subTrigger: 5,     misc: true, label: i18n('option.time.skip'),
+                        0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false,
+                        spring: true, summer: false, autumn: false, winter: false}
+                }
+            },
             craft: {
                 // Should resources be crafted automatically?
                 enabled: true,
@@ -726,6 +767,8 @@ var run = function() {
                     adoreFilter:     {enabled: false, filter: true, label: i18n('filter.adore'),      variant: "ks-activity type_ks-adore"},
                     transcendFilter: {enabled: false, filter: true, label: i18n('filter.transcend'),  variant: "ks-activity type_ks-transcend"},
                     faithFilter:     {enabled: false, filter: true, label: i18n('filter.faith'),      variant: "ks-activity type_ks-faith"},
+                    accelerateFilter:{enabled: false, filter: true, label: i18n('filter.accelerate'), variant: "ks-activity type_ks-accelerate"},
+                    timeSkipFilter:  {enabled: false, filter: true, label: i18n('filter.time.skip'),  variant: "ks-activity type_ks-timeSkip"},
                     festivalFilter:  {enabled: false, filter: true, label: i18n('filter.festival'),   variant: "ks-activity type_ks-festival"},
                     starFilter:      {enabled: false, filter: true, label: i18n('filter.star'),       variant: "ks-activity type_ks-star"},
                     distributeFilter:{enabled: false, filter: true, label: i18n('filter.distribute'), variant: "ks-activity type_ks-distribute"},
@@ -861,8 +904,72 @@ var run = function() {
             if (subOptions.enabled && subOptions.items.explore.enabled)  {this.explore()};
             if (subOptions.enabled && subOptions.items.autofeed.enabled) {this.autofeed()};
             if (subOptions.enabled && subOptions.items.promote.enabled)  {this.promote()};
-            if (options.auto.distribute.enabled)                         {this.distribute();}
+            if (options.auto.distribute.enabled)                         {this.distribute()};
+            if (options.auto.timeCtrl.enabled)                           {this.timeCtrl()};
             if (subOptions.enabled)                                      {this.miscOptions()};
+        },
+        timeCtrl: function () {
+            var optionVals = options.auto.timeCtrl.items;
+
+            // Tempus Fugit
+            if (optionVals.accelerateTime.enabled && !game.time.isAccelerated) {
+                var tf = game.resPool.get('temporalFlux')
+                if (tf.value >= tf.maxValue * optionVals.accelerateTime.subTrigger) {
+                    game.time.isAccelerated = true;
+                    iactivity('act.accelerate', [], 'ks-accelerate');
+                    storeForSummary('accelerate', 1);
+                }
+            }
+
+            // Combust time crystal
+            TimeSkip:
+            if (optionVals.timeSkip.enabled && game.workshop.get('chronoforge').researched) {
+                if (game.calendar.day < 0)
+                    break TimeSkip;
+
+                var timeCrystal = game.resPool.get('timeCrystal');
+                if (timeCrystal.value < optionVals.timeSkip.subTrigger)
+                    break TimeSkip;
+
+                var season = game.calendar.season;
+                if (!optionVals.timeSkip[game.calendar.seasons[season].name])
+                    break TimeSkip;
+                
+                var currentCycle = game.calendar.cycle;
+                if (!optionVals.timeSkip[currentCycle])
+                    break TimeSkip;
+
+                var heatMax = game.getEffect('heatMax');
+                var heatNow = game.time.heat;
+                if (heatNow >= heatMax)
+                    break TimeSkip;
+                
+                var cycleLastYear = game.calendar.yearsPerCycle - game.calendar.cycleYear;
+                var cyclesPerEra = game.calendar.cyclesPerEra;
+                var factor = game.challenges.getChallenge("1000Years").researched ? 5 : 10;
+                var canSkip = Math.floor((heatMax - heatNow) / factor);
+                var willSkip = 0;
+                if (canSkip < cycleLastYear){
+                    willSkip = canSkip;
+                } else {
+                    willSkip += cycleLastYear;
+                    canSkip -= cycleLastYear;
+                    var skipCycles = 1;
+                    while (canSkip > cycleLastYear && optionVals.timeSkip[(currentCycle + skipCycles) % cyclesPerEra]) {
+                        willSkip += cycleLastYear;
+                        canSkip -= cycleLastYear;
+                        skipCycles += 1;
+                    }
+                    if (optionVals.timeSkip[(currentCycle + skipCycles) % cyclesPerEra] && canSkip > 0)
+                        willSkip += canSkip;
+                }
+                if (willSkip > 0) {
+                    var shatter = game.timeTab.cfPanel.children[0].children[0]; // check?
+                    iactivity('act.time.skip', [willSkip], 'ks-timeSkip');
+                    shatter.controller.doShatterAmt(shatter.model, willSkip);
+                    storeForSummary('time.skip', willSkip);
+                }
+            }
         },
         promote: function () {
             if (game.science.get('civil').researched && game.village.leader != null) {
@@ -1084,7 +1191,7 @@ var run = function() {
                         game.religion._resetFaithInternal(1.01);
 
                         iactivity('act.adore', [game.getDisplayValueExt(worship), game.getDisplayValueExt(epiphanyInc)], 'ks-adore');
-                        storeForSummary('adore', 1);
+                        storeForSummary('adore', epiphanyInc);
                         epiphany = game.religion.faithRatio;
                         worship = game.religion.faith;
                     }
@@ -1098,7 +1205,7 @@ var run = function() {
                         var apocryphaBonus = game.religion.getFaithBonus();
                     }
                     var worshipInc = faith.value * (1 + apocryphaBonus)
-                    storeForSummary('faith', worshipInc);
+                    storeForSummary('praise', worshipInc);
                     iactivity('act.praise', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worshipInc)], 'ks-praise');
                     game.religion.praise();
                 }
@@ -2945,6 +3052,7 @@ var run = function() {
             trade: options.auto.trade.enabled,
             faith: options.auto.faith.enabled,
             time: options.auto.time.enabled,
+            timeCtrl: options.auto.timeCtrl.enabled,
             distribute: options.auto.distribute.enabled,
             options: options.auto.options.enabled,
             filter: options.auto.filter.enabled
@@ -3487,6 +3595,9 @@ var run = function() {
                     case 'craft':
                         list.append(getCraftOption(itemName, auto.items[itemName]));
                         break;
+                    case 'timeCtrl':
+                        list.append(getTimeCtrlOption(itemName, auto.items[itemName]));
+                        break;
                     case 'options':
                         list.append(getOptionsOption(itemName, auto.items[itemName]));
                         break;
@@ -3711,6 +3822,42 @@ var run = function() {
         return element;
     };
 
+    var getSeasonForTimeSkip = function (season, option) {
+        var iseason = ucfirst(i18n('$calendar.season.' + season));
+
+        var element = $('<li/>');
+
+        var label = $('<label/>', {
+            'for': 'toggle-timeSkip-' + season,
+            text: ucfirst(iseason)
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-timeSkip-' + season,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option[season]) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option[season] == false) {
+                option[season] = true;
+                imessage('time.skip.season.enable', [iseason]);
+            } else if ((!input.is(':checked')) && option[season] == true) {
+                option[season] = false;
+                imessage('time.skip.season.disable', [iseason]);
+            }
+            kittenStorage.items[input.attr('id')] = option[season];
+            saveToKittenStorage();
+        });
+
+        element.append(input, label);
+
+        return element;
+    };
+
     var getOption = function (name, option, iname) {
         var element = $('<li/>');
         var elementLabel = iname || option.label || ucfirst(name);
@@ -3791,6 +3938,145 @@ var run = function() {
         });
 
         element.append(input, label);
+
+        return element;
+    };
+
+    var getCycle = function (index, option) {
+        var cycle = game.calendar.cycles[index];
+
+
+        var element = $('<li/>');
+
+        var label = $('<label/>', {
+            'for': 'toggle-timeSkip-' + index,
+            text: cycle.title
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-timeSkip-' + index,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option[index]) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option[index] == false) {
+                option[index] = true;
+                imessage('time.skip.cycle.enable', [cycle.title]);
+            } else if ((!input.is(':checked')) && option[index] == true) {
+                option[index] = false;
+                imessage('time.skip.cycle.disable', [cycle.title]);
+            }
+            kittenStorage.items[input.attr('id')] = option[index];
+            saveToKittenStorage();
+        });
+
+        element.append(input, label);
+
+        return element;
+    }
+
+    var getTimeCtrlOption = function (name, option) {
+        var element = getOption(name, option);
+
+        if (option.subTrigger !== undefined) {
+            var triggerButton = $('<div/>', {
+                id: 'set-' + name +'-subTrigger',
+                text: i18n('ui.trigger'),
+                title: option.subTrigger,
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'}
+            }).data('option', option);
+
+            triggerButton.on('click', function () {
+                var value;
+                value = window.prompt(i18n('ui.trigger.set', [option.label]), option.subTrigger);
+
+                if (value !== null) {
+                    option.subTrigger = parseFloat(value);
+                    kittenStorage.items[triggerButton.attr('id')] = option.subTrigger;
+                    saveToKittenStorage();
+                    triggerButton[0].title = option.subTrigger;
+                }
+            });
+
+            if (name == 'timeSkip') {
+                var cyclesButton = $('<div/>', {
+                    id: 'toggle-cycle-' + name,
+                    text: i18n('ui.cycles'),
+                    css: {cursor: 'pointer',
+                        display: 'inline-block',
+                        float: 'right',
+                        paddingRight: '5px',
+                        textShadow: '3px 3px 4px gray'},
+                });
+    
+                var cyclesList = $('<ul/>', {
+                    id: 'cycles-list-' + name,
+                    css: {display: 'none', paddingLeft: '20px'}
+                });
+    
+                for (var i in game.calendar.cycles)
+                    cyclesList.append(getCycle(i, option));
+    
+                
+                triggerButton.unbind('click');
+                triggerButton.on('click', function () {
+                    var value;
+                    value = window.prompt(i18n('time.skip.trigger.set', []), option.subTrigger);
+    
+                    if (value !== null) {
+                        option.subTrigger = parseFloat(value);
+                        kittenStorage.items[triggerButton.attr('id')] = option.subTrigger;
+                        saveToKittenStorage();
+                        triggerButton[0].title = option.subTrigger;
+                    }
+                });
+
+                var seasonsButton = $('<div/>', {
+                    id: 'toggle-seasons-' + name,
+                    text: i18n('trade.seasons'),
+                    css: {cursor: 'pointer',
+                        display: 'inline-block',
+                        float: 'right',
+                        paddingRight: '5px',
+                        textShadow: '3px 3px 4px gray'},
+                });
+        
+
+                var seasonsList = $('<ul/>', {
+                    id: 'seasons-list-' + name,
+                    css: {display: 'none', paddingLeft: '20px'}
+                });
+        
+                // fill out the list with seasons
+                seasonsList.append(getSeasonForTimeSkip('spring', option));
+                seasonsList.append(getSeasonForTimeSkip('summer', option));
+                seasonsList.append(getSeasonForTimeSkip('autumn', option));
+                seasonsList.append(getSeasonForTimeSkip('winter', option));
+        
+                cyclesButton.on('click', function () {
+                    cyclesList.toggle();
+                    seasonsList.toggle(false);
+                });
+
+                seasonsButton.on('click', function () {
+                    cyclesList.toggle(false);
+                    seasonsList.toggle();
+                });
+        
+
+                element.append( cyclesButton, seasonsButton,triggerButton, cyclesList, seasonsList);
+            } else {
+                element.append(triggerButton);
+            }
+        }
 
         return element;
     };
@@ -3955,6 +4241,7 @@ var run = function() {
     optionsListElement.append(getToggle('trade'));
     optionsListElement.append(getToggle('faith'));
     optionsListElement.append(getToggle('time'));
+    optionsListElement.append(getToggle('timeCtrl'));
     optionsListElement.append(getToggle('distribute'));
     optionsListElement.append(getToggle('options'));
     optionsListElement.append(getToggle('filter'));
