@@ -35,6 +35,7 @@ var run = function() {
             'option.crypto': 'Trade Blackcoin',
             'option.embassies': 'Build Embassies (Beta)',
             'option.explore': 'Explore (Deprecated)',
+            'option.style': 'View Full Width',
 
             'filter.build': 'Building',
             'filter.craft': 'Crafting',
@@ -644,6 +645,7 @@ var run = function() {
                     promote:            {enabled: true,                    misc: true, label: i18n('option.promote')},
                     crypto:             {enabled: true, subTrigger: 10000, misc: true, label: i18n('option.crypto')},
                     buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: i18n('option.embassies')},
+                    style:              {enabled: true,                    misc: true, label: i18n('option.style')},
                     explore:            {enabled: false,                   misc: true, label: i18n('option.explore')}
                 }
             },
@@ -1556,6 +1558,13 @@ var run = function() {
                     storeForSummary('faith', worship);
                     iactivity('sun.prasie', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worship)], 'ks-praise');
                     game.religion.praise();
+                }
+            }
+            if ((optionVals.style.enabled || document.body.hasAttribute('data-ks-style')) && !(optionVals.style.enabled && document.body.hasAttribute('data-ks-style'))) {
+                if (optionVals.style.enabled) {
+                    document.body.setAttribute('data-ks-style', '');
+                } else {
+                    document.body.removeAttribute('data-ks-style');
                 }
             }
         }
@@ -2687,8 +2696,6 @@ var run = function() {
     addRule('#ks-options #toggle-list-resources .stockWarn * {'
         + 'color: ' + options.stockwarncolor + ';'
         + '}');
-
-    document.body.setAttribute("data-ks-style", "");
 
     // Local Storage
     // =============
