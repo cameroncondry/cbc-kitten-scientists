@@ -1235,20 +1235,21 @@ var run = function() {
                 if (heatNow >= heatMax)
                     break TimeSkip;
                 
-                var cycleLastYear = game.calendar.yearsPerCycle - game.calendar.cycleYear;
+                var yearsPerCycle = game.calendar.yearsPerCycle;
+                var remainingYearsCurrentCycle = yearsPerCycle - game.calendar.cycleYear;
                 var cyclesPerEra = game.calendar.cyclesPerEra;
                 var factor = game.challenges.getChallenge("1000Years").researched ? 5 : 10;
                 var canSkip = Math.floor((heatMax - heatNow) / factor);
                 var willSkip = 0;
-                if (canSkip < cycleLastYear){
+                if (canSkip < remainingYearsCurrentCycle){
                     willSkip = canSkip;
                 } else {
-                    willSkip += cycleLastYear;
-                    canSkip -= cycleLastYear;
+                    willSkip += remainingYearsCurrentCycle;
+                    canSkip -= remainingYearsCurrentCycle;
                     var skipCycles = 1;
-                    while (canSkip > cycleLastYear && optionVals.timeSkip[(currentCycle + skipCycles) % cyclesPerEra]) {
-                        willSkip += cycleLastYear;
-                        canSkip -= cycleLastYear;
+                    while (canSkip > yearsPerCycle && optionVals.timeSkip[(currentCycle + skipCycles) % cyclesPerEra]) {
+                        willSkip += yearsPerCycle;
+                        canSkip -= yearsPerCycle;
                         skipCycles += 1;
                     }
                     if (optionVals.timeSkip[(currentCycle + skipCycles) % cyclesPerEra] && canSkip > 0)
