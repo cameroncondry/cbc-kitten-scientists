@@ -3416,6 +3416,19 @@ var run = function() {
 
     var loadFromKittenStorage = function () {
         var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
+        if (saved.version == 1) {
+            saved.version = 2;
+            saved.resetToggles = {};
+            saved.resetTriggers = {};
+            saved.reset = {
+                reset: false,
+                times: 0,
+                paragonLastTime: 0,
+                pargonTotal: 0,
+                karmaLastTime: 0,
+                karmaTotal: 0
+            };
+        }
         if (saved && saved.version == kittenStorageVersion) {
             kittenStorage = saved;
 
