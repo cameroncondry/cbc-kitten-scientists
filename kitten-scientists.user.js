@@ -168,6 +168,7 @@ var run = function() {
             'option.time.skip': 'Time Skip',
             'act.time.skip': 'Kittens combuste Time crystal, {0} years skiped!',
             'ui.cycles': 'cycles',
+            'ui.maximum': 'Maximum',
             'time.skip.cycle.enable': 'Enable time skip in cycle {0} and allow skip over this cycle',
             'time.skip.cycle.disable': 'Disable time skip in cycle {0} and disallow skip over this cycle',
             'time.skip.season.enable': 'Enable time skip in the {0}',
@@ -369,6 +370,7 @@ var run = function() {
             'option.time.skip': '时间跳转',
             'act.time.skip': '燃烧时间水晶, 跳过接下来的 {0} 年!',
             'ui.cycles': '周期',
+            'ui.maximum': '上限',
             'time.skip.cycle.enable': '启用在 {0} 跳转时间并允许跳过该周期',
             'time.skip.cycle.disable': '停止在 {0} 跳转时间并禁止跳过该周期',
             'time.skip.season.enable': '启用在 {0} 跳转时间',
@@ -687,7 +689,7 @@ var run = function() {
                 enabled: true,
                 items: {
                     accelerateTime:     {enabled: true,  subTrigger: 1,     misc: true, label: i18n('option.accelerate')},
-                    timeSkip:           {enabled: false, subTrigger: 5,     misc: true, label: i18n('option.time.skip'),
+                    timeSkip:           {enabled: false, subTrigger: 5,     misc: true, label: i18n('option.time.skip'), maximum: 50,
                         0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false,
                         spring: true, summer: false, autumn: false, winter: false},
                     reset:              {enabled: false, subTrigger: 99999, misc: true, label: i18n('option.time.reset')}
@@ -1239,7 +1241,7 @@ var run = function() {
                 var remainingYearsCurrentCycle = yearsPerCycle - game.calendar.cycleYear;
                 var cyclesPerEra = game.calendar.cyclesPerEra;
                 var factor = game.challenges.getChallenge("1000Years").researched ? 5 : 10;
-                var canSkip = Math.floor((heatMax - heatNow) / factor);
+                var canSkip = Math.min(Math.floor((heatMax - heatNow) / factor), optionVals.timeSkip.maximum);
                 var willSkip = 0;
                 if (canSkip < remainingYearsCurrentCycle){
                     willSkip = canSkip;
@@ -2716,15 +2718,6 @@ var run = function() {
 
             return output;
         },
-        // now spelling discrepancies can be fixed by i18n
-        // getName: function (name) {
-        //     // adjust for spelling discrepancies in core game logic
-        //     if ('catpower' === name) name = 'manpower';
-        //     if ('compendium' === name) name = 'compedium';
-        //     if ('concrete' === name) name = 'concrate';
-
-        //     return name;
-        // },
         getResource: function (name) {
             if (name === 'slabs') {name = 'slab';} //KG BETA BUGFIX
             // for (var i in game.resPool.resources) {
@@ -3344,8 +3337,6 @@ var run = function() {
         items: {},
         resources: {},
         triggers: {},
-        resetToggles: {},
-        resetTriggers: {},
         reset: {
             reset: false,
             times: 0,
@@ -3387,30 +3378,7 @@ var run = function() {
             craft: options.auto.craft.trigger,
             trade: options.auto.trade.trigger
         };
-        for (var i in options.auto.build.items) {
-            kittenStorage.resetToggles['toggle-reset-'+i] = options.auto.build.items[i].checkForReset;
-            kittenStorage.resetTriggers['set-reset-'+i+'-min'] = options.auto.build.items[i].triggerForReset;
-        }
-        for (var i in options.auto.space.items) {
-            kittenStorage.resetToggles['toggle-reset-'+i] = options.auto.space.items[i].checkForReset;
-            kittenStorage.resetTriggers['set-reset-'+i+'-min'] = options.auto.space.items[i].triggerForReset;
-        }
-        for (var i in options.auto.resources.items) {
-            kittenStorage.resetToggles['toggle-reset-'+i] = options.auto.resources.items[i].checkForReset;
-            kittenStorage.resetTriggers['set-reset-'+i+'-min'] = options.auto.resources.items[i].triggerForReset;
-        }
-        for (var i in options.auto.unicorn.items) {
-            kittenStorage.resetToggles['toggle-reset-'+i] = options.auto.unicorn.items[i].checkForReset;
-            kittenStorage.resetTriggers['set-reset-'+i+'-min'] = options.auto.unicorn.items[i].triggerForReset;
-        }
-        for (var i in options.auto.faith.items) {
-            kittenStorage.resetToggles['toggle-reset-'+i] = options.auto.faith.items[i].checkForReset;
-            kittenStorage.resetTriggers['set-reset-'+i+'-min'] = options.auto.faith.items[i].triggerForReset;
-        }
-        for (var i in options.auto.time.items) {
-            kittenStorage.resetToggles['toggle-reset-'+i] = options.auto.time.items[i].checkForReset;
-            kittenStorage.resetTriggers['set-reset-'+i+'-min'] = options.auto.time.items[i].triggerForReset;
-        }
+
         localStorage['cbc.kitten-scientists'] = JSON.stringify(kittenStorage);
     };
 
@@ -3418,8 +3386,6 @@ var run = function() {
         var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
         if (saved.version == 1) {
             saved.version = 2;
-            saved.resetToggles = {};
-            saved.resetTriggers = {};
             saved.reset = {
                 reset: false,
                 times: 0,
@@ -3455,9 +3421,9 @@ var run = function() {
 
                 if (name[0] == 'set') {
                     el[0].title = value;
-                    if (name[2] == 'max') {
+                    if (name[name.length -1] == 'max') {
                         el.text(i18n('ui.max', [value]));
-                    } else if (name[2] == 'min') {
+                    } else if (name[name.length -1] == 'min') {
                         el.text(i18n('ui.min', [value]));
                     }
                 } else {
@@ -3466,6 +3432,17 @@ var run = function() {
 
                 if (name.length == 2) {
                     option.enabled = value;
+                } else if (name[1] == 'reset' && name.length >= 4) {
+                    var type = name[2];
+                    var itemName = name[3];
+                    switch (name[0]) {
+                        case 'toggle':
+                            options.auto[type].items[itemName].checkForReset = value;
+                            break;
+                        case 'set':
+                            options.auto[type].items[itemName].triggerForReset = value;
+                            break;
+                    }
                 } else {
                     if (name[1] == 'limited') {
                         option.limited = value;
@@ -3473,34 +3450,6 @@ var run = function() {
                         option[name[2]] = value;
                     }
                 }
-            }
-
-            for (var item in kittenStorage.resetToggles) {
-                var value = kittenStorage.resetToggles[item];
-                var el = $('#' + item);
-                var option = el.data('option');
-                var name = item.split('-');
-                if (option === undefined) {
-                    delete kittenStorage.resetToggles[item];
-                    continue;
-                }
-                el.prop('checked', value);
-                option.checkForReset = value;
-            }
-
-            for (var item in kittenStorage.resetTriggers) {
-                var value = kittenStorage.resetTriggers[item];
-                var el = $('#' + item);
-                var option = el.data('option');
-                var name = item.split('-');
-
-                if (option === undefined) {
-                    delete kittenStorage.items[item];
-                    continue;
-                }
-                el.text(i18n('ui.min', [value]));
-                el.prop('checked', value);
-                option.triggerForReset = value;
             }
 
             var resourcesList = $("#toggle-list-resources");
@@ -3517,7 +3466,7 @@ var run = function() {
                 if (res.checkForReset) {
                     if ($('#resource-reset-' + resource).length === 0)
                         resetList.append(addNewResourceOption(resource, undefined, true));
-                    if ('stockForReset' in res) setStockValue(resource, res.stockForReset, true);
+                    if ('stockForReset' in res) setStockValue(resource, res.stockForReset ? res.stockForReset : Infinity, true);
                 }
             }
             
@@ -4382,18 +4331,18 @@ var run = function() {
         return element;
     }
 
-    var getResetOption = function (name, option) {
+    var getResetOption = function (name, type, option) {
         var element = $('<li/>');
         var elementLabel = option.label;
 
         var label = $('<label/>', {
-            'for': 'toggle-reset-' + name,
+            'for': 'toggle-reset-' + type + '-' + name,
             text: elementLabel,
             css: {display: 'inline-block', minWidth: '80px'}
         });
 
         var input = $('<input/>', {
-            id: 'toggle-reset-' + name,
+            id: 'toggle-reset-' + type + '-' + name,
             type: 'checkbox'
         }).data('option', option);
 
@@ -4409,12 +4358,12 @@ var run = function() {
                 option.checkForReset = false;
                 imessage('status.reset.check.disable', [elementLabel]);
             }
-            kittenStorage.resetToggles[input.attr('id')] = option.checkForReset;
+            kittenStorage.items[input.attr('id')] = option.checkForReset;
             saveToKittenStorage();
         });
         
         var minButton = $('<div/>', {
-            id: 'set-reset-' + name +'-min',
+            id: 'set-reset-' + type + '-' + name +'-min',
             text: i18n('ui.min', [option.triggerForReset]),
             title: option.triggerForReset,
             css: {cursor: 'pointer',
@@ -4430,7 +4379,7 @@ var run = function() {
 
             if (value !== null) {
                 option.triggerForReset = parseInt(value);
-                kittenStorage.resetTriggers[minButton.attr('id')] = option.triggerForReset;
+                kittenStorage.items[minButton.attr('id')] = option.triggerForReset;
                 saveToKittenStorage();
                 minButton[0].title = option.triggerForReset;
                 minButton[0].innerText = i18n('ui.min', [option.triggerForReset]);
@@ -4448,7 +4397,7 @@ var run = function() {
 
         if (name == 'timeSkip') {
             var triggerButton = $('<div/>', {
-                id: 'set-' + name +'-subTrigger',
+                id: 'set-timeSkip-subTrigger',
                 text: i18n('ui.trigger'),
                 title: option.subTrigger,
                 css: {cursor: 'pointer',
@@ -4466,6 +4415,28 @@ var run = function() {
                     kittenStorage.items[triggerButton.attr('id')] = option.subTrigger;
                     saveToKittenStorage();
                     triggerButton[0].title = option.subTrigger;
+                }
+            });
+
+            var maximunButton = $('<div/>', {
+                id: 'set-timeSkip-maximum',
+                text: i18n('ui.maximum'),
+                title: option.max,
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'}
+            }).data('option', option);
+            maximunButton.on('click', function () {
+                var value;
+                value = window.prompt(i18n('ui.max.set', [i18n('option.time.skip')]), option.maximum);
+
+                if (value !== null) {
+                    option.maximum = parseFloat(value);
+                    kittenStorage.items[maximunButton.attr('id')] = option.maximum;
+                    saveToKittenStorage();
+                    maximunButton[0].title = option.maximum;
                 }
             });
 
@@ -4520,32 +4491,9 @@ var run = function() {
                 seasonsList.toggle();
             });    
 
-            element.append(cyclesButton, seasonsButton, triggerButton, cyclesList, seasonsList);
+            element.append(cyclesButton, seasonsButton, maximunButton, triggerButton, cyclesList, seasonsList);
 
         } else if (name == 'reset') {
-
-            // var resetTriggerButton = $('<div/>', {
-            //     id: 'set-reset-subTrigger',
-            //     text: i18n('ui.trigger'),
-            //     title: option.subTrigger,
-            //     css: {cursor: 'pointer',
-            //         display: 'inline-block',
-            //         float: 'right',
-            //         paddingRight: '5px',
-            //         textShadow: '3px 3px 4px gray'}
-            // }).data('option', option);
-
-            // resetTriggerButton.on('click', function () {
-            //     var value;
-            //     value = window.prompt(i18n('reset.trigger.set', [option.label]), option.subTrigger);
-
-            //     if (value !== null) {
-            //         option.subTrigger = parseFloat(value);
-            //         kittenStorage.items[resetTriggerButton.attr('id')] = option.subTrigger;
-            //         saveToKittenStorage();
-            //         resetTriggerButton[0].title = option.subTrigger;
-            //     }
-            // });
 
             var resetBuildList     = getOptionHead('reset-build')
             var resetSpaceList     = getOptionHead('reset-space')
@@ -4553,11 +4501,11 @@ var run = function() {
             var resetReligionList  = getOptionHead('reset-religion')
             var resetTimeList      = getOptionHead('reset-time')
             
-            for (var item in options.auto.build.items)              resetBuildList.append(getResetOption(item, options.auto.build.items[item]));
-            for (var item in options.auto.space.items)              resetSpaceList.append(getResetOption(item, options.auto.space.items[item]));
-            for (var item in options.auto.unicorn.items)            resetReligionList.append(getResetOption(item, options.auto.unicorn.items[item]));
-            for (var item in options.auto.faith.items)              resetReligionList.append(getResetOption(item, options.auto.faith.items[item]));
-            for (var item in options.auto.time.items)               resetTimeList.append(getResetOption(item, options.auto.time.items[item]));
+            for (var item in options.auto.build.items)              resetBuildList.append(getResetOption(item, 'build', options.auto.build.items[item]));
+            for (var item in options.auto.space.items)              resetSpaceList.append(getResetOption(item, 'space', options.auto.space.items[item]));
+            for (var item in options.auto.unicorn.items)            resetReligionList.append(getResetOption(item, 'unicorn', options.auto.unicorn.items[item]));
+            for (var item in options.auto.faith.items)              resetReligionList.append(getResetOption(item, 'faith', options.auto.faith.items[item]));
+            for (var item in options.auto.time.items)               resetTimeList.append(getResetOption(item, 'time', options.auto.time.items[item]));
 
             var buildButton = $('<div/>', {id: 'toggle-reset-build', text: i18n('ui.build'),
                 css: {cursor:'pointer',display:'inline-block',float:'right',paddingRight:'5px',textShadow:'3px 3px 4px gray'},});
