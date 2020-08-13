@@ -317,7 +317,7 @@ var run = function() {
 
     var i18n = function(key, args) {
         if (key[0] == "$")
-            return this.i18ng(key.slice(1));
+            return i18ng(key.slice(1));
         value = i18nData[lang][key];
         if (!value) {
             value = i18nData['en'][key];
