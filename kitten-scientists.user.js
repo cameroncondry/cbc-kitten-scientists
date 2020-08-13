@@ -122,13 +122,13 @@ var run = function() {
             'status.auto.enable': 'Enable Auto {0}',
             'status.sub.disable': 'Disabled {0}',
             'status.auto.disable': 'Disable Auto {0}',
-            
+
             'trade.limited': 'Trading with {0}: limited to only occur when profitable based off relative production time',
             'trade.unlimited': 'Trading with {0}: unlimited',
             'trade.seasons': 'seasons',
             'trade.season.enable': 'Enabled trading with {0} in the {1}',
             'trade.season.disable': 'Disabled trading with {0} in the {1}',
-            
+
             'filter.enable': 'Enable {0} Filter',
             'filter.disable': 'Disabled {0} Filter',
 
@@ -264,13 +264,13 @@ var run = function() {
             'status.auto.enable': '启用自动化 {0}',
             'status.sub.disable': '禁用 {0}',
             'status.auto.disable': '禁用自动化 {0}',
-            
+
             'trade.limited': '与 {0} 的交易限制为比产量更优时才会触发',
             'trade.unlimited': '取消与 {0} 交易的限制',
             'trade.seasons': '季节',
             'trade.season.enable': '启用在 {1} 与 {0} 的交易',
             'trade.season.disable': '停止在 {1} 与 {0} 的交易',
-            
+
             'filter.enable': '过滤 {0}',
             'filter.disable': '取消过滤 {0}',
 
@@ -462,6 +462,7 @@ var run = function() {
                     ziggurat:       {require: false,         enabled: true},
                     chronosphere:   {require: 'unobtainium', enabled: true},
                     aiCore:         {require: false,         enabled: false},
+                    brewery:        {require: false,         enabled: false},
 
                     // storage
                     barn:           {require: 'wood',        enabled: true},
