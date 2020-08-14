@@ -238,6 +238,7 @@ var run = function() {
             'option.crypto': '黑币交易',
             'option.embassies': '建造大使馆 (Beta)',
             'option.explore': '探索 (废弃)',
+            'option.style': '占满屏幕',
 
             'filter.build': '建筑',
             'filter.craft': '工艺',
