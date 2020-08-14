@@ -1959,8 +1959,9 @@ var run = function() {
             if (craft.unlocked && enabled) {
                 result = true;
 
-                for (var i in craft.prices) {
-                    var price = craft.prices[i];
+                var prices = game.workshop.getCraftPrice(craft); 
+                for (var i in prices) { 
+                    var price = prices[i]; 
                     var value = this.getValueAvailable(price.name);
 
                     if (value < price.val * amount) {
