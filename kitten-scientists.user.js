@@ -35,6 +35,7 @@ var run = function() {
             'option.crypto': 'Trade Blackcoin',
             'option.embassies': 'Build Embassies (Beta)',
             'option.explore': 'Explore (Deprecated)',
+            'option.style': 'View Full Width',
 
             'filter.build': 'Building',
             'filter.craft': 'Crafting',
@@ -135,13 +136,13 @@ var run = function() {
             'status.auto.enable': 'Enable Auto {0}',
             'status.sub.disable': 'Disabled {0}',
             'status.auto.disable': 'Disable Auto {0}',
-            
+
             'trade.limited': 'Trading with {0}: limited to only occur when profitable based off relative production time',
             'trade.unlimited': 'Trading with {0}: unlimited',
             'trade.seasons': 'seasons',
             'trade.season.enable': 'Enabled trading with {0} in the {1}',
             'trade.season.disable': 'Disabled trading with {0} in the {1}',
-            
+
             'filter.enable': 'Enable {0} Filter',
             'filter.disable': 'Disabled {0} Filter',
 
@@ -337,13 +338,13 @@ var run = function() {
             'status.auto.enable': '启用自动化 {0}',
             'status.sub.disable': '禁用 {0}',
             'status.auto.disable': '禁用自动化 {0}',
-            
+
             'trade.limited': '与 {0} 的交易限制为比产量更优时才会触发',
             'trade.unlimited': '取消与 {0} 交易的限制',
             'trade.seasons': '季节',
             'trade.season.enable': '启用在 {1} 与 {0} 的交易',
             'trade.season.disable': '停止在 {1} 与 {0} 的交易',
-            
+
             'filter.enable': '过滤 {0}',
             'filter.disable': '取消过滤 {0}',
 
@@ -437,7 +438,7 @@ var run = function() {
 
     var i18n = function(key, args) {
         if (key[0] == "$")
-            return this.i18ng(key.slice(1));
+            return i18ng(key.slice(1));
         value = i18nData[lang][key];
         if (typeof value === 'undefined') {
             value = i18nData['en'][key];
@@ -605,6 +606,7 @@ var run = function() {
                     ziggurat:       {require: false,         enabled: true, checkForReset: true, triggerForReset: -1},
                     chronosphere:   {require: 'unobtainium', enabled: true, checkForReset: true, triggerForReset: -1},
                     aiCore:         {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
+                    brewery:        {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
 
                     // storage
                     barn:           {require: 'wood',        enabled: true, checkForReset: true, triggerForReset: -1},
@@ -797,6 +799,7 @@ var run = function() {
                     crypto:             {enabled: true, subTrigger: 10000, misc: true, label: i18n('option.crypto')},
                     fixCry:             {enabled: false,                   misc: true, label: i18n('option.fix.cry')},
                     buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: i18n('option.embassies')},
+                    style:              {enabled: true,                    misc: true, label: i18n('option.style')},
                     explore:            {enabled: false,                   misc: true, label: i18n('option.explore')}
                 }
             },
@@ -2125,6 +2128,13 @@ var run = function() {
                     storeForSummary('fix.cry', fixed);
                 }
             }
+            if ((optionVals.style.enabled || document.body.hasAttribute('data-ks-style')) && !(optionVals.style.enabled && document.body.hasAttribute('data-ks-style'))) {
+                if (optionVals.style.enabled) {
+                    document.body.setAttribute('data-ks-style', '');
+                } else {
+                    document.body.removeAttribute('data-ks-style');
+                }
+            }
 
         },
         // ref: https://github.com/Bioniclegenius/NummonCalc/blob/112f716e2fde9956dfe520021b0400cba7b7113e/NummonCalc.js#L490
@@ -3323,8 +3333,6 @@ var run = function() {
     addRule('.right-tab {'
         + 'height: unset !important;'
         + '}');
-
-    document.body.setAttribute("data-ks-style", "");
 
     // Local Storage
     // =============
