@@ -53,7 +53,11 @@ var staticContributors = [
   },
   {
     login: 'Tom Rauchenwald'
-  }
+  },
+  {
+    login: '古明地板 (Cirn09)',
+    html_url: 'https://github.com/Cirn09'
+  },
 ];
 
 

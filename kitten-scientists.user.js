@@ -5,7 +5,7 @@
 // @include     *bloodrizer.ru/games/kittens/*
 // @include     file:///*kitten-game*
 // @include     *kittensgame.com/web/*
-// @version     1.4.2
+// @version     1.5.0
 // @grant       none
 // @copyright   2015, cameroncondry
 // ==/UserScript==
@@ -14,7 +14,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.4.2';
+var version = 'Kitten Scientists version 1.5.0';
 var address = '1MC7Vj5ovpq3mzn9JhyhYMPEBRFoRZgDwa';
 
 // Game will be referenced in loadTest function
@@ -77,9 +77,9 @@ var run = function() {
             'build.embassy': 'Built {0} embassy for {1}',
             'build.embassies': 'Built {0} embassies for {1}',
 
-            'sun.prasie': 'Praised the sun! Accumulated {0} faith to {1} worship',
-            'sun.discover': 'Kittens have discovered {0}',
-            'sun.discovers': 'Kittens have discovered {0} {1} times.',
+            'act.praise': 'Praised the sun! Accumulated {0} faith to {1} worship',
+            'act.sun.discover': 'Kittens have discovered {0}',
+            'act.sun.discovers': 'Kittens have discovered {0} {1} times.',
 
             'ui.items': 'items',
             'ui.disable.all': 'disable all',
@@ -107,6 +107,19 @@ var run = function() {
             'ui.upgrade.races': 'Races',
             'ui.upgrade.missions': 'Missions',
             'ui.upgrade.buildings': 'Buildings',
+            
+            'ui.faith.addtion': 'addition',
+            'option.faith.best.unicorn': 'Build Best Unicorn Building First',
+            'option.faith.best.unicorn.desc': 'Include auto Sacrifice Unicorns if tears are not enough to build the best unicorn building',
+            'option.faith.transcend': 'Auto Transcend',
+            'act.transcend': 'Spend {0} epiphany, Transcend to T-level: {1}',
+            'summary.transcend': 'Transcend {0} times',
+            'filter.transcend': 'Transcend',
+            'option.faith.adore': 'Auto Adore the Galaxy',
+            'act.adore': 'Adore the galaxy! Accumulated {0} worship to {1} epiphany',
+            'summary.adore': 'Accumulated {0} epiphany by adore the galaxy',
+            'filter.adore': 'Adoring',
+            'adore.trigger.set': 'Enter a new trigger value for AutoAdore. Should be in the range of 0 to 1.\nKS will AutoAdore if the Solor Revolutuin Bonus brought by praising the sun once after adore can reach the trigger of maximum.\n\nNote: The solar revolution bonus will diminish after reaching 75% of the maximum.',
 
             'resources.add': 'add resources',
             'resources.clear.unused': 'clear unused',
@@ -148,8 +161,55 @@ var run = function() {
             'filter.promote': 'Promote leader',
             'summary.promote': 'Promoted leader {0} times',
 
+            'ui.timeCtrl': 'Time Control',
+            'option.accelerate': 'Tempus Fugit',
+            'act.accelerate': 'Accelerate time!',
+            'filter.accelerate': 'Tempus Fugit',
+            'summary.accelerate': 'Accelerate time {0} times',
+            'option.time.skip': 'Time Skip',
+            'act.time.skip': 'Kittens combuste Time crystal, {0} years skiped!',
+            'ui.cycles': 'cycles',
+            'ui.maximum': 'Maximum',
+            'time.skip.cycle.enable': 'Enable time skip in cycle {0} and allow skip over this cycle',
+            'time.skip.cycle.disable': 'Disable time skip in cycle {0} and disallow skip over this cycle',
+            'time.skip.season.enable': 'Enable time skip in the {0}',
+            'time.skip.season.disable': 'Disable time skip in the {0}',
+            'time.skip.trigger.set': 'Enter a new trigger value for Time Skip (Combust time crystal). Should be a positive integer.',
+            'summary.time.skip': 'Skip {0} years',
+            'filter.time.skip': 'Time Skip',
+            'option.time.reset': 'Reset Timeline (Danger!)',
+            'status.reset.check.enable': 'Enable check {0} before Reset Timeline',
+            'status.reset.check.disable': 'Disable check {0} before Reset Timeline',
+            'ui.min': 'Min: {0}',
+            'reset.check.trigger.set': 'Enter a new trigger value for {0}.\n-1 meaning must build this building until exceeding resource limit.',
+            'reset.check': 'Trigger for {0} : {1}, you have {2}',
+            'reset.checked': 'All conditions are met, the timeline will restart in next few seconds!',
+            'reset.tip': 'You can cancel this reset by disable "Kitten Scientists" or "Time Control" or "Reset Timeline"',
+            'reset.countdown.10': '10 - Harvesting catnip',
+            'reset.countdown.9': '&nbsp;9 - Sacrificing Unicorns',
+            'reset.countdown.8': '&nbsp;8 - Releasing lizards',
+            'reset.countdown.7': '&nbsp;7 - Disassembling railguns',
+            'reset.countdown.6': '&nbsp;6 - Starting time engines',
+            'reset.countdown.5': '&nbsp;5 - Melting blackcoins',
+            'reset.countdown.4': '&nbsp;4 - Turning off satellite',
+            'reset.countdown.3': '&nbsp;3 - Opening temporal rifts',
+            'reset.countdown.2': '&nbsp;2 - Boosting the chronoforge',
+            'reset.countdown.1': '&nbsp;1 - Time engine start',
+            'reset.countdown.0': '&nbsp;0 - Temporal rifts opened!',
+            'reset.last.message': 'See you next poincaré recurrence',
+            'reset.after': 'Nice to meet you, the cute Kittens Scientists will serve you',
+            'reset.cancel.message': 'Timeline Reset canceled.',
+            'reset.cancel.activity': 'Meoston, We Have a Problem.',
+            'summary.time.reset.title': 'Summary of the last {0} timelines',
+            'summary.time.reset.content': 'Gain {0} Karma.<br>Gain {1} Paragon.',
+            'ui.close': 'close',
+
+            'option.fix.cry': 'Fix Cryochamber',
+            'act.fix.cry': 'Kittens fix {0} Cryochambers',
+            'summary.fix.cry': 'Fix {0} Cryochambers',
+
             'summary.festival': 'Held {0} festivals',
-            'summary.observe': 'Observed {0} stars',
+            'summary.stars': 'Observed {0} stars',
             'summary.praise': 'Accumulated {0} worship by praising the sun',
             'summary.hunt': 'Sent adorable kitten hunters on {0} hunts',
             'summary.embassy': 'Built {0} embassies',
@@ -178,6 +238,7 @@ var run = function() {
             'option.crypto': '黑币交易',
             'option.embassies': '建造大使馆 (Beta)',
             'option.explore': '探索 (废弃)',
+            'option.style': '占满屏幕',
 
             'filter.build': '建筑',
             'filter.craft': '工艺',
@@ -219,14 +280,14 @@ var run = function() {
             'build.embassy': '在 {1} 设立了 {0} 个大使馆',
             'build.embassies': '在 {1} 设立了 {0} 个大使馆',
 
-            'sun.prasie': '赞美太阳! 转化 {0} 信仰为 {1} 虔诚',
-            'sun.discover': '小猫在 {0} 方面获得顿悟',
-            'sun.discovers': '小猫在 {0} 方面获得 {1} 次顿悟',
+            'act.praise': '赞美太阳! 转化 {0} 信仰为 {1} 虔诚',
+            'act.sun.discover': '小猫在 {0} 方面获得顿悟',
+            'act.sun.discovers': '小猫在 {0} 方面获得 {1} 次顿悟',
 
             'ui.items': '项目',
             'ui.disable.all': '全部禁用',
             'ui.enable.all': '全部启用',
-            'ui.craft.resources': '库存',
+            'ui.craft.resources': '资源',
             'ui.trigger': '触发条件',
             'ui.trigger.set': '输入新的 {0} 触发值，取值范围为 0 到 1 的小数。',
             'ui.limit': '限制',
@@ -249,6 +310,19 @@ var run = function() {
             'ui.upgrade.races': '探险队出发!',
             'ui.upgrade.missions': '探索星球',
             'ui.upgrade.buildings': '建筑',
+
+            'ui.faith.addtion': '附加',
+            'option.faith.best.unicorn': '优先最佳独角兽建筑',
+            'option.faith.best.unicorn.desc': '当眼泪不够建造最佳独角兽建筑时也会自动献祭独角兽',
+            'option.faith.transcend': '自动超越',
+            'act.transcend': '消耗 {0} 顿悟，达到超越 {1}',
+            'summary.transcend': '超越了 {0} 次',
+            'filter.transcend': '超越',
+            'option.faith.adore': '赞美群星',
+            'act.adore': '赞美群星! 转化 {0} 虔诚为 {1} 顿悟',
+            'summary.adore': '通过赞美群星积累了 {0} 顿悟',
+            'filter.adore': '赞美群星',
+            'adore.trigger.set': '为自动赞美群星设定一个新触发值，取值范围为 0 到 1 的小数。\n如果赞美群星后第一次赞美太阳可将太阳革命加成恢复到(触发值*太阳革命太阳革命极限加成)，那么珂学家将自动赞美群星。\n\n注意：太阳革命加成在到达上限的75%后便会收益递减。',
 
             'resources.add': '添加资源',
             'resources.clear.unused': '清除未使用',
@@ -290,9 +364,56 @@ var run = function() {
             'filter.promote': '提拔领袖',
             'summary.promote': '提拔领袖 {0} 次',
 
+            'ui.timeCtrl': '时间操纵',
+            'option.accelerate': '时间加速',
+            'act.accelerate': '固有时制御，二倍速!',
+            'filter.accelerate': '时间加速',
+            'summary.accelerate': '加速时间 {0} 次',
+            'option.time.skip': '时间跳转',
+            'act.time.skip': '燃烧时间水晶, 跳过接下来的 {0} 年!',
+            'ui.cycles': '周期',
+            'ui.maximum': '上限',
+            'time.skip.cycle.enable': '启用在 {0} 跳转时间并允许跳过该周期',
+            'time.skip.cycle.disable': '停止在 {0} 跳转时间并禁止跳过该周期',
+            'time.skip.season.enable': '启用在 {0} 跳转时间',
+            'time.skip.season.disable': '停止在 {0} 跳转时间',
+            'time.skip.trigger.set': '为跳转时间(燃烧时间水晶)设定一个新触发值，取值范围为正整数',
+            'summary.time.skip': '跳过 {0} 年',
+            'filter.time.skip': '时间跳转',
+            'option.time.reset': '重启时间线 (危险!)',
+            'status.reset.check.enable': '在重启时间线前检查 {0}',
+            'status.reset.check.disable': '在重启时间线前不检查 {0}',
+            'ui.min': 'Min: {0}',
+            'reset.check.trigger.set': '为 {0} 设置新的触发值.\n-1 表示必须将此建筑建造至超过资源上限为止',
+            'reset.check': '{0} 的触发值: {1}, 现在共有 {2}',
+            'reset.checked': '所有条件都已满足，时间线将在几秒后重启!',
+            'reset.tip': '你可以通过取消 "启用小猫珂学家" 或 "时间操控" 或 "重启时间线" 以取消此次重启',
+            'reset.countdown.10': '10 - 正在收获猫薄荷',
+            'reset.countdown.9': '&nbsp;9 - 正在献祭独角兽',
+            'reset.countdown.8': '&nbsp;8 - 正在放生蜥蜴',
+            'reset.countdown.7': '&nbsp;7 - 正在拆解电磁炮',
+            'reset.countdown.6': '&nbsp;6 - 正在启动时间引擎',
+            'reset.countdown.5': '&nbsp;5 - 正在融化黑币',
+            'reset.countdown.4': '&nbsp;4 - 正在关闭卫星',
+            'reset.countdown.3': '&nbsp;3 - 正在打开时空裂隙',
+            'reset.countdown.2': '&nbsp;2 - 正在启动时间锻造',
+            'reset.countdown.1': '&nbsp;1 - 时间引擎已启动!',
+            'reset.countdown.0': '&nbsp;0 - 时空裂缝已打开!',
+            'reset.last.message': '我们下个庞加莱回归再见',
+            'reset.after': '初次见面，可爱的猫猫科学家为您服务',
+            'reset.cancel.message': '重启时间线计划取消.',
+            'reset.cancel.activity': '喵斯顿，我们有麻烦了.',
+            'summary.time.reset.title': '过去 {0} 个时间线的总结',
+            'summary.time.reset.content': '获得 {0} 业.<br>获得 {1} 领导力.',
+            'ui.close': '关闭',
+
+            'option.fix.cry': '修复冷冻仓',
+            'act.fix.cry': '小猫修复了 {0} 个冷冻仓',
+            'summary.fix.cry': '修复了 {0} 个冷冻仓',
+
             'summary.festival': '举办了 {0} 次节日',
-            'summary.observe': '观测了 {0} 颗流星',
-            'summary.praise': '通过赞美太阳累计了 {0} 信仰总量',
+            'summary.stars': '观测了 {0} 颗流星',
+            'summary.praise': '通过赞美太阳积累了 {0} 虔诚',
             'summary.hunt': '派出了 {0} 批可爱的小猫猎人',
             'summary.embassy': '设立了 {0} 个大使馆',
             'summary.necrocorn': '向上古神献祭 {0} 只死灵兽',
@@ -304,7 +425,7 @@ var run = function() {
             'summary.trade': '与 {1} 贸易了 {0} 次',
             'summary.year': '年',
             'summary.years': '年',
-            'summary.separator': '',
+            'summary.separator': ' ',
             'summary.day': '天',
             'summary.days': '天',
             'summary.head': '过去 {0} 的总结',
@@ -320,7 +441,7 @@ var run = function() {
         if (key[0] == "$")
             return i18ng(key.slice(1));
         value = i18nData[lang][key];
-        if (!value) {
+        if (typeof value === 'undefined') {
             value = i18nData['en'][key];
             if (!value) {
                 console.error('key "' + key + '" not found')
@@ -360,46 +481,69 @@ var run = function() {
                 // Should any automation run at all?
                 enabled: false
             },
+            // split form faith to make "Best Unicorn Building" easily
+            unicorn: {
+                items: {
+                    unicornPasture:     {require: false,         enabled: true,  variant: 'zp', label: i18n('$buildings.unicornPasture.label'), checkForReset: true, triggerForReset: -1},
+                    unicornTomb:        {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.unicornTomb.label'), checkForReset: true, triggerForReset: -1},
+                    ivoryTower:         {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.ivoryTower.label'), checkForReset: true, triggerForReset: -1},
+                    ivoryCitadel:       {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.ivoryCitadel.label'), checkForReset: true, triggerForReset: -1},
+                    skyPalace:          {require: false,         enabled: false, variant: 'z',  label: i18n('$religion.zu.skyPalace.label'), checkForReset: true, triggerForReset: -1},
+                    unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z',  label: i18n('$religion.zu.unicornUtopia.label'), checkForReset: true, triggerForReset: -1},
+                    sunspire:           {require: 'gold',        enabled: false, variant: 'z',  label: i18n('$religion.zu.sunspire.label'), checkForReset: true, triggerForReset: -1},
+                }
+            },
             faith: {
                 // Should religion building be automated?
                 enabled: true,
                 // At what percentage of the storage capacity should KS build faith buildings?
                 trigger: 0,
+                // Additional options
+                addition: {
+                    bestUnicornBuilding:    {enabled: true,  misc: true, label: i18n('option.faith.best.unicorn')},
+                    autoPraise:             {enabled: true,  misc: true, label: i18n('option.praise')},
+                    // Former [Faith Reset]
+                    adore:                  {enabled: false, misc: true, label: i18n('option.faith.adore'), subTrigger: 0.75},
+                    transcend:              {enabled: false, misc: true, label: i18n('option.faith.transcend')},
+                },
                 // Which religious upgrades should be researched?
                 items: {
                     // Variant denotes which category the building or upgrade falls within in the Religion tab.
                     // Ziggurats are variant z.
-                    unicornTomb:        {require: false,         enabled: false, variant: 'z'},
-                    ivoryTower:         {require: false,         enabled: false, variant: 'z'},
-                    ivoryCitadel:       {require: false,         enabled: false, variant: 'z'},
-                    skyPalace:          {require: false,         enabled: false, variant: 'z'},
-                    unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z'},
-                    sunspire:           {require: 'gold',        enabled: false, variant: 'z'},
-                    marker:             {require: 'unobtainium', enabled: false, variant: 'z'},
-                    unicornGraveyard:   {require: false,         enabled: false, variant: 'z'},
-                    unicornNecropolis:  {require: false,         enabled: false, variant: 'z'},
-                    blackPyramid:       {require: 'unobtainium', enabled: false, variant: 'z'},
+                    // UNICORN BUILDING START
+                    // unicornPasture:     {require: false,         enabled: true,  variant: 'zp', label: i18n('$buildings.unicornPasture.label')},
+                    // unicornTomb:        {require: false,         enabled: false, variant: 'z'},
+                    // ivoryTower:         {require: false,         enabled: false, variant: 'z'},
+                    // ivoryCitadel:       {require: false,         enabled: false, variant: 'z'},
+                    // skyPalace:          {require: false,         enabled: false, variant: 'z'},
+                    // unicornUtopia:      {require: 'gold',        enabled: false, variant: 'z'},
+                    // sunspire:           {require: 'gold',        enabled: false, variant: 'z'},
+                    // UNICORN BUILDING END
+                    marker:             {require: 'unobtainium', enabled: false, variant: 'z', checkForReset: true, triggerForReset: -1},
+                    unicornGraveyard:   {require: false,         enabled: false, variant: 'z', checkForReset: true, triggerForReset: -1},
+                    unicornNecropolis:  {require: false,         enabled: false, variant: 'z', checkForReset: true, triggerForReset: -1},
+                    blackPyramid:       {require: 'unobtainium', enabled: false, variant: 'z', checkForReset: true, triggerForReset: -1},
                     // Order of the Sun is variant s.
-                    solarchant:         {require: 'faith',       enabled: true,  variant: 's'},
-                    scholasticism:      {require: 'faith',       enabled: true,  variant: 's'},
-                    goldenSpire:        {require: 'faith',       enabled: true,  variant: 's'},
-                    sunAltar:           {require: 'faith',       enabled: true,  variant: 's'},
-                    stainedGlass:       {require: 'faith',       enabled: true,  variant: 's'},
-                    solarRevolution:    {require: 'faith',       enabled: true,  variant: 's'},
-                    basilica:           {require: 'faith',       enabled: true,  variant: 's'},
-                    templars:           {require: 'faith',       enabled: true,  variant: 's'},
-                    apocripha:          {require: 'faith',       enabled: false, variant: 's'},
-                    transcendence:      {require: 'faith',       enabled: true,  variant: 's'},
+                    solarchant:         {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    scholasticism:      {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    goldenSpire:        {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    sunAltar:           {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    stainedGlass:       {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    solarRevolution:    {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    basilica:           {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    templars:           {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
+                    apocripha:          {require: 'faith',       enabled: false, variant: 's', checkForReset: true, triggerForReset: -1},
+                    transcendence:      {require: 'faith',       enabled: true,  variant: 's', checkForReset: true, triggerForReset: -1},
                     // Cryptotheology is variant c.
-                    blackObelisk:       {require: false,         enabled: false, variant: 'c'},
-                    blackNexus:         {require: false,         enabled: false, variant: 'c'},
-                    blackCore:          {require: false,         enabled: false, variant: 'c'},
-                    singularity:        {require: false,         enabled: false, variant: 'c'},
-                    blackLibrary:       {require: false,         enabled: false, variant: 'c'},
-                    blackRadiance:      {require: false,         enabled: false, variant: 'c'},
-                    blazar:             {require: false,         enabled: false, variant: 'c'},
-                    darkNova:           {require: false,         enabled: false, variant: 'c'},
-                    holyGenocide:       {require: false,         enabled: false, variant: 'c'},
+                    blackObelisk:       {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    blackNexus:         {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    blackCore:          {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    singularity:        {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    blackLibrary:       {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    blackRadiance:      {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    blazar:             {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    darkNova:           {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
+                    holyGenocide:       {require: false,         enabled: false, variant: 'c', checkForReset: true, triggerForReset: -1},
                 }
             },
             build: {
@@ -418,57 +562,57 @@ var run = function() {
                 // property. For other buildings, the key of the item itself is used.
                 items: {
                     // housing
-                    hut:            {require: 'wood',        enabled: false},
-                    logHouse:       {require: 'minerals',    enabled: false},
-                    mansion:        {require: 'titanium',    enabled: false},
+                    hut:            {require: 'wood',        enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    logHouse:       {require: 'minerals',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    mansion:        {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // craft bonuses
-                    workshop:       {require: 'minerals',    enabled: true},
-                    factory:        {require: 'titanium',    enabled: true},
+                    workshop:       {require: 'minerals',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    factory:        {require: 'titanium',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // production
-                    field:          {require: 'catnip',      enabled: true},
-                    pasture:        {require: 'catnip',      enabled: true, stage: 0},
-                    solarFarm:      {require: 'titanium',    enabled: true, stage: 1, name: 'pasture'},
-                    mine:           {require: 'wood',        enabled: true},
-                    lumberMill:     {require: 'minerals',    enabled: true},
-                    aqueduct:       {require: 'minerals',    enabled: true, stage: 0},
-                    hydroPlant:     {require: 'titanium',    enabled: true, stage: 1, name: 'aqueduct'},
-                    oilWell:        {require: 'coal',        enabled: true},
-                    quarry:         {require: 'coal',        enabled: true},
+                    field:          {require: 'catnip',      enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    pasture:        {require: 'catnip',      enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    solarFarm:      {require: 'titanium',    enabled: true, max:-1, stage: 1, name: 'pasture', checkForReset: true, triggerForReset: -1},
+                    mine:           {require: 'wood',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    lumberMill:     {require: 'minerals',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    aqueduct:       {require: 'minerals',    enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    hydroPlant:     {require: 'titanium',    enabled: true, max:-1, stage: 1, name: 'aqueduct', checkForReset: true, triggerForReset: -1},
+                    oilWell:        {require: 'coal',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    quarry:         {require: 'coal',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // conversion
-                    smelter:        {require: 'minerals',    enabled: true},
-                    biolab:         {require: 'science',     enabled: false},
-                    calciner:       {require: 'titanium',    enabled: false},
-                    reactor:        {require: 'titanium',    enabled: false},
-                    accelerator:    {require: 'titanium',    enabled: false},
-                    steamworks:     {require: false,         enabled: false},
-                    magneto:        {require: false,         enabled: false},
+                    smelter:        {require: 'minerals',    enabled: true,  max:-1, checkForReset: true, triggerForReset: -1},
+                    biolab:         {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    calciner:       {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    reactor:        {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    accelerator:    {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    steamworks:     {require: false,         enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    magneto:        {require: false,         enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // science
-                    library:        {require: 'wood',        enabled: true, stage: 0},
-                    dataCenter:     {require: false,         enabled: true, stage: 1, name: 'library'},
-                    academy:        {require: 'wood',        enabled: true},
-                    observatory:    {require: 'iron',        enabled: true},
+                    library:        {require: 'wood',        enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    dataCenter:     {require: false,         enabled: true, max:-1, stage: 1, name: 'library', checkForReset: true, triggerForReset: -1},
+                    academy:        {require: 'wood',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    observatory:    {require: 'iron',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // other
-                    amphitheatre:   {require: 'minerals',    enabled: true, stage: 0},
-                    broadcastTower: {require: 'titanium',    enabled: true, stage: 1, name: 'amphitheatre'},
-                    tradepost:      {require: 'gold',        enabled: true},
-                    chapel:         {require: 'minerals',    enabled: true},
-                    temple:         {require: 'gold',        enabled: true},
-                    mint:           {require: false,         enabled: false},
-                    unicornPasture: {require: false,         enabled: true},
-                    ziggurat:       {require: false,         enabled: true},
-                    chronosphere:   {require: 'unobtainium', enabled: true},
-                    aiCore:         {require: false,         enabled: false},
-                    brewery:        {require: false,         enabled: false},
+                    amphitheatre:   {require: 'minerals',    enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    broadcastTower: {require: 'titanium',    enabled: true, max:-1, stage: 1, name: 'amphitheatre', checkForReset: true, triggerForReset: -1},
+                    tradepost:      {require: 'gold',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    chapel:         {require: 'minerals',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    temple:         {require: 'gold',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    mint:           {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
+                    // unicornPasture: {require: false,         enabled: true},
+                    ziggurat:       {require: false,         enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    chronosphere:   {require: 'unobtainium', enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    aiCore:         {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
+                    brewery:        {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
 
                     // storage
-                    barn:           {require: 'wood',        enabled: true},
-                    harbor:         {require: false,         enabled: false},
-                    warehouse:      {require: false,         enabled: false}
+                    barn:           {require: 'wood',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    harbor:         {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
+                    warehouse:      {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1}
                 }
             },
             space: {
@@ -479,48 +623,48 @@ var run = function() {
                 trigger: 0,
                 items: {
                     // Cath
-                    spaceElevator:  {require: 'unobtainium', enabled: false},
-                    sattelite:      {require: 'titanium',    enabled: false},
-                    spaceStation:   {require: 'oil',         enabled: false},
+                    spaceElevator:  {require: 'unobtainium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    sattelite:      {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    spaceStation:   {require: 'oil',         enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Moon
-                    moonOutpost:    {require: 'uranium',     enabled: false},
-                    moonBase:       {require: 'unobtainium', enabled: false},
+                    moonOutpost:    {require: 'uranium',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    moonBase:       {require: 'unobtainium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Dune
-                    planetCracker:  {require: 'science',     enabled: false},
-                    hydrofracturer: {require: 'science',     enabled: false},
-                    spiceRefinery:  {require: 'science',     enabled: false},
+                    planetCracker:  {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    hydrofracturer: {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    spiceRefinery:  {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Piscine
-                    researchVessel: {require: 'titanium',    enabled: false},
-                    orbitalArray:   {require: 'eludium',     enabled: false},
+                    researchVessel: {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    orbitalArray:   {require: 'eludium',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Helios
-                    sunlifter:          {require: 'eludium', enabled: false},
-                    containmentChamber: {require: 'science', enabled: false},
-                    heatsink:           {require: 'thorium', enabled: false},
-                    sunforge:           {require: false,     enabled: false},
+                    sunlifter:          {require: 'eludium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    containmentChamber: {require: 'science', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    heatsink:           {require: 'thorium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    sunforge:           {require: false,     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // T-Minus
-                    cryostation:    {require: 'eludium',     enabled: false},
+                    cryostation:    {require: 'eludium',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Kairo
-                    spaceBeacon:    {require: 'antimatter',  enabled: false},
+                    spaceBeacon:    {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Yarn
-                    terraformingStation: {require: 'antimatter',  enabled: false},
-                    hydroponics:         {require: 'kerosene',    enabled: false},
+                    terraformingStation: {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    hydroponics:         {require: 'kerosene',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Umbra
-                    hrHarvester:    {require: 'antimatter',  enabled: false},
+                    hrHarvester:    {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Charon
-                    entangler:    {require: 'antimatter',  enabled: false},
+                    entangler:    {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Centaurus
-                    tectonic:   {require: 'antimatter', enabled: false},
-                    moltenCore: {require: 'uranium',    enabled: false}
+                    tectonic:   {require: 'antimatter', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    moltenCore: {require: 'uranium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1}
                 }
             },
             time: {
@@ -530,18 +674,28 @@ var run = function() {
                 items: {
                     // Variants denote whether these buildings fall within the Chronoforge or Void categories.
                     // Chronoforge has variant chrono.
-                    temporalBattery:     {require: false,          enabled: false, variant: 'chrono'},
-                    blastFurnace:        {require: false,          enabled: false, variant: 'chrono'},
-                    temporalAccelerator: {require: false,          enabled: false, variant: 'chrono'},
-                    temporalImpedance:   {require: false,          enabled: false, variant: 'chrono'},
-                    ressourceRetrieval:  {require: false,          enabled: false, variant: 'chrono'},
+                    temporalBattery:     {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
+                    blastFurnace:        {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
+                    temporalAccelerator: {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
+                    temporalImpedance:   {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
+                    ressourceRetrieval:  {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
 
                     // Void Space has variant void.
-                    cryochambers:        {require: false,          enabled: false, variant: 'void'},
-                    voidHoover:          {require: 'antimatter',   enabled: false, variant: 'void'},
-                    voidRift:            {require: false,          enabled: false, variant: 'void'},
-                    chronocontrol:       {require: 'temporalFlux', enabled: false, variant: 'void'},
-                    voidResonator:       {require: false,          enabled: false, variant: 'void'}
+                    cryochambers:        {require: false,          enabled: false, variant: 'void', checkForReset: true, triggerForReset: -1},
+                    voidHoover:          {require: 'antimatter',   enabled: false, variant: 'void', checkForReset: true, triggerForReset: -1},
+                    voidRift:            {require: false,          enabled: false, variant: 'void', checkForReset: true, triggerForReset: -1},
+                    chronocontrol:       {require: 'temporalFlux', enabled: false, variant: 'void', checkForReset: true, triggerForReset: -1},
+                    voidResonator:       {require: false,          enabled: false, variant: 'void', checkForReset: true, triggerForReset: -1}
+                }
+            },
+            timeCtrl: {
+                enabled: true,
+                items: {
+                    accelerateTime:     {enabled: true,  subTrigger: 1,     misc: true, label: i18n('option.accelerate')},
+                    timeSkip:           {enabled: false, subTrigger: 5,     misc: true, label: i18n('option.time.skip'), maximum: 50,
+                        0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false,
+                        spring: true, summer: false, autumn: false, winter: false},
+                    reset:              {enabled: false, subTrigger: 99999, misc: true, label: i18n('option.time.reset')}
                 }
             },
             craft: {
@@ -579,7 +733,7 @@ var run = function() {
                     tanker:     {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
                     parchment:  {require: false,         max: 0, limited: false, limRat: 0.5, enabled: true},
                     manuscript: {require: 'culture',     max: 0, limited: true,  limRat: 0.5, enabled: true},
-                    compedium: {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    compedium: {require: 'science',      max: 0, limited: true,  limRat: 0.5, enabled: true},
                     blueprint:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
                     kerosene:   {require: 'oil',         max: 0, limited: true,  limRat: 0.5, enabled: true},
                     megalith:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
@@ -639,12 +793,12 @@ var run = function() {
                 items: {
                     observe:            {enabled: true,                    misc: true, label: i18n('option.observe')},
                     festival:           {enabled: true,                    misc: true, label: i18n('option.festival')},
-                    autoPraise:         {enabled: true,                    misc: true, label: i18n('option.praise')},
                     shipOverride:       {enabled: true,                    misc: true, label: i18n('option.shipOverride')},
                     autofeed:           {enabled: true,                    misc: true, label: i18n('option.autofeed')},
                     hunt:               {enabled: true, subTrigger: 0.98,  misc: true, label: i18n('option.hunt')},
                     promote:            {enabled: true,                    misc: true, label: i18n('option.promote')},
                     crypto:             {enabled: true, subTrigger: 10000, misc: true, label: i18n('option.crypto')},
+                    fixCry:             {enabled: false,                   misc: true, label: i18n('option.fix.cry')},
                     buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: i18n('option.embassies')},
                     style:              {enabled: true,                    misc: true, label: i18n('option.style')},
                     explore:            {enabled: false,                   misc: true, label: i18n('option.explore')}
@@ -656,14 +810,14 @@ var run = function() {
                 items: {
                     // dynamic priority. distribute to the job which have lowest (job.val / job.max) value.
                     // if all jobs reach the max, then distribute kittens to unlimited job.
-                    woodcutter: {enabled: true, max: 0, limited: false},
-                    farmer:     {enabled: true, max: 0, limited: false},
-                    scholar:    {enabled: true, max: 0, limited: false},
-                    hunter:     {enabled: true, max: 0, limited: false},
-                    miner:      {enabled: true, max: 0, limited: false},
-                    priest:     {enabled: true, max: 0, limited: false},
-                    geologist:  {enabled: true, max: 0, limited: false},
-                    engineer:   {enabled: true, max: 0, limited: false},
+                    woodcutter: {enabled: true, max: 1, limited: false},
+                    farmer:     {enabled: true, max: 1, limited: false},
+                    scholar:    {enabled: true, max: 1, limited: false},
+                    hunter:     {enabled: true, max: 1, limited: false},
+                    miner:      {enabled: true, max: 1, limited: false},
+                    priest:     {enabled: true, max: 1, limited: false},
+                    geologist:  {enabled: true, max: 1, limited: false},
+                    engineer:   {enabled: true, max: 1, limited: false},
                 }
 
             },
@@ -678,7 +832,11 @@ var run = function() {
                     tradeFilter:     {enabled: false, filter: true, label: i18n('filter.trade'),      variant: "ks-activity type_ks-trade"},
                     huntFilter:      {enabled: false, filter: true, label: i18n('filter.hunt'),       variant: "ks-activity type_ks-hunt"},
                     praiseFilter:    {enabled: false, filter: true, label: i18n('filter.praise'),     variant: "ks-activity type_ks-praise"},
+                    adoreFilter:     {enabled: false, filter: true, label: i18n('filter.adore'),      variant: "ks-activity type_ks-adore"},
+                    transcendFilter: {enabled: false, filter: true, label: i18n('filter.transcend'),  variant: "ks-activity type_ks-transcend"},
                     faithFilter:     {enabled: false, filter: true, label: i18n('filter.faith'),      variant: "ks-activity type_ks-faith"},
+                    accelerateFilter:{enabled: false, filter: true, label: i18n('filter.accelerate'), variant: "ks-activity type_ks-accelerate"},
+                    timeSkipFilter:  {enabled: false, filter: true, label: i18n('filter.time.skip'),  variant: "ks-activity type_ks-timeSkip"},
                     festivalFilter:  {enabled: false, filter: true, label: i18n('filter.festival'),   variant: "ks-activity type_ks-festival"},
                     starFilter:      {enabled: false, filter: true, label: i18n('filter.star'),       variant: "ks-activity type_ks-star"},
                     distributeFilter:{enabled: false, filter: true, label: i18n('filter.distribute'), variant: "ks-activity type_ks-distribute"},
@@ -687,7 +845,8 @@ var run = function() {
                 }
             },
             resources: {
-                furs:   {stock: 1000}
+                furs:        {enabled: true,  stock: 1000, checkForReset: false, stockForReset: Infinity},
+                timeCrystal: {enabled: false, stock: 0,    checkForReset: true,  stockForReset: 500000}
             },
             cache: {
                 cache:    [],
@@ -785,37 +944,330 @@ var run = function() {
         villageManager: undefined,
         cacheManager: undefined,
         loop: undefined,
-        start: function () {
+        start: function (msg=true) {
             if (this.loop) return;
 
             this.loop = setInterval(this.iterate.bind(this), options.interval);
-            imessage('status.ks.enable');
+            if(msg) imessage('status.ks.enable');
         },
-        stop: function () {
+        stop: function (msg=true) {
             if (!this.loop) return;
 
             clearInterval(this.loop);
             this.loop = undefined;
-            imessage('status.ks.disable');
+            if (msg) imessage('status.ks.disable');
         },
-        iterate: function () {
+        iterate: async function () {
             var subOptions = options.auto.options;
-            if (subOptions.enabled && subOptions.items.observe.enabled)  {this.observeStars()};
-            if (options.auto.upgrade.enabled)                            {this.upgrade()};
-            if (subOptions.enabled && subOptions.items.festival.enabled) {this.holdFestival()};
-            if (options.auto.build.enabled)                              {this.build()};
-            if (options.auto.space.enabled)                              {this.space()};
-            if (options.auto.craft.enabled)                              {this.craft()};
-            if (subOptions.enabled && subOptions.items.hunt.enabled)     {this.hunt()};
-            if (options.auto.trade.enabled)                              {this.trade()};
-            if (options.auto.faith.enabled)                              {this.worship()};
-            if (options.auto.time.enabled)                               {this.chrono()};
-            if (subOptions.enabled && subOptions.items.crypto.enabled)   {this.crypto()};
-            if (subOptions.enabled && subOptions.items.explore.enabled)  {this.explore()};
-            if (subOptions.enabled && subOptions.items.autofeed.enabled) {this.autofeed()};
-            if (subOptions.enabled && subOptions.items.promote.enabled)  {this.promote()};
-            if (options.auto.distribute.enabled)                         {this.distribute();}
-            if (subOptions.enabled)                                      {this.miscOptions()};
+            if (subOptions.enabled && subOptions.items.observe.enabled)                     {this.observeStars()};
+            if (options.auto.upgrade.enabled)                                               {this.upgrade()};
+            if (subOptions.enabled && subOptions.items.festival.enabled)                    {this.holdFestival()};
+            if (options.auto.build.enabled)                                                 {this.build()};
+            if (options.auto.space.enabled)                                                 {this.space()};
+            if (options.auto.craft.enabled)                                                 {this.craft()};
+            if (subOptions.enabled && subOptions.items.hunt.enabled)                        {this.hunt()};
+            if (options.auto.trade.enabled)                                                 {this.trade()};
+            if (options.auto.faith.enabled)                                                 {this.worship()};
+            if (options.auto.time.enabled)                                                  {this.chrono()};
+            if (subOptions.enabled && subOptions.items.crypto.enabled)                      {this.crypto()};
+            if (subOptions.enabled && subOptions.items.explore.enabled)                     {this.explore()};
+            if (subOptions.enabled && subOptions.items.autofeed.enabled)                    {this.autofeed()};
+            if (subOptions.enabled && subOptions.items.promote.enabled)                     {this.promote()};
+            if (options.auto.distribute.enabled)                                            {this.distribute()};
+            if (options.auto.timeCtrl.enabled)                                              {this.timeCtrl()};
+            if (subOptions.enabled)                                                         {this.miscOptions()};
+            if (options.auto.timeCtrl.enabled && options.auto.timeCtrl.items.reset.enabled) {await this.reset()};
+        },
+        reset: async function () {
+
+            // check challenge
+            if (game.challenges.currentChallenge)
+                return;
+
+            var checkedList = [];
+            var checkList = [];
+            var check = function (buttons) {
+                if (checkList.length != 0) {
+                    for (var i in buttons) {
+                        if (!buttons[i].model.metadata)
+                            continue;
+                        var name = buttons[i].model.metadata.name;
+                        var index = checkList.indexOf(name)
+                        if (index != -1) {
+                            checkList.splice(index, 1)
+                            if (game.resPool.hasRes(buttons[i].model.prices))
+                                return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            
+            // check building
+            var opt = options.auto.build.items;
+            for (var name in opt)
+                if (opt[name].checkForReset) {
+                    var bld = game.bld.get(name);
+                    checkedList.push({name: bld.label, trigger: opt[name].triggerForReset, val: bld.val})
+                    if (opt[name].triggerForReset > 0) {
+                        if (opt[name].triggerForReset > bld.val)
+                            return;
+                    } else {
+                        checkList.push(name);
+                    }
+                }
+            // unicornPasture
+            opt = options.auto.unicorn.items.unicornPasture
+            if (opt.checkForReset) {
+                var bld = game.bld.get('unicornPasture');
+                checkedList.push({name: bld.label, trigger: opt.triggerForReset, val: bld.val})
+                if (opt.triggerForReset > 0) {
+                    if (opt.triggerForReset > bld.val)
+                        return;
+                } else {
+                    checkList.push('unicornPasture');
+                }
+            }
+            if (check(this.buildManager.manager.tab.buttons) || checkList.length)
+                return;
+            
+            // check space
+            opt = options.auto.space.items;
+            for (var name in opt)
+                if (opt[name].checkForReset) {
+                    var bld = game.space.getBuilding(name)
+                    checkedList.push({name: bld.label, trigger: opt[name].triggerForReset, val: bld.val})
+                    if (opt[name].triggerForReset > 0) {
+                        if (opt[name].triggerForReset > bld.val)
+                            return;
+                    } else {
+                        checkList.push(name);
+                    }
+                }
+            if (checkList.length != 0) {
+                var panels = this.spaceManager.manager.tab.planetPanels;
+                for (var i in panels) {
+                    for (var j in panels[i].children) {
+                        var model = panels[i].children[j].model;
+                        var name = model.metadata.name;
+                        var index = checkList.indexOf(name)
+                        if (index != -1) {
+                            checkList.splice(index, 1)
+                            if (game.resPool.hasRes(model.prices))
+                                this.return;
+                        }
+                    }
+                }
+            }
+            if (checkList.length)
+                return;
+            
+            // check religion
+            opt = options.auto.faith.items;
+            for (var name in opt)
+                if (opt[name].checkForReset) {
+                    var bld = this.religionManager.getBuild(name, opt[name].variant);
+                    checkedList.push({name: bld.label, trigger: opt[name].triggerForReset, val: bld.val})
+                    if (opt[name].triggerForReset > 0) {
+                        if (opt[name].triggerForReset > bld.val)
+                            return;
+                    } else {
+                        checkList.push(name);
+                    }
+                }
+            opt = options.auto.unicorn.items
+            for (var name in opt)
+                if (opt[name].checkForReset && opt[name].variant == 'z') {
+                    var bld = this.religionManager.getBuild(name, 'z')
+                    checkedList.push({name: bld.label, trigger: opt[name].triggerForReset, val: bld.val})
+                    if (opt[name].triggerForReset > 0) {
+                        if (opt[name].triggerForReset > bld.val)
+                            return;
+                    } else {
+                        checkList.push(name);
+                    }
+                }
+            if (check(this.religionManager.manager.tab.zgUpgradeButtons) || 
+                check(this.religionManager.manager.tab.rUpgradeButtons) ||
+                check(this.religionManager.manager.tab.children[0].children[0].children) ||
+                checkList.length)
+                return;
+            
+            // check time
+            opt = options.auto.time.items;
+            for (var name in opt)
+                if (opt[name].checkForReset) {
+                    var bld = this.timeManager.getBuild(name, opt[name].variant);
+                    checkedList.push({name: bld.label, trigger: opt[name].triggerForReset, val: bld.val})
+                    if (opt[name].triggerForReset > 0) {
+                        if (opt[name].triggerForReset > bld.val)
+                            return;
+                    } else {
+                        checkList.push(name);
+                    }
+                }
+
+            if (check(this.timeManager.manager.tab.children[2].children[0].children) ||
+                check(this.timeManager.manager.tab.children[3].children[0].children) ||
+                checkList.length)
+                return;
+                
+            // check resources
+            opt = options.auto.resources;
+            for (var name in opt)
+                if (opt[name].checkForReset) {
+                    var res = game.resPool.get(name);
+                    checkedList.push({name: res.title, trigger: opt[name].stockForReset, val: res.value})
+                    if (opt[name].stockForReset > res.value)
+                        return;
+                }
+
+            // stop!
+            this.stop(false);
+            
+            var sleep = function (time=1500) {
+                return new Promise(resolve => {
+                    if (!(options.auto.engine.enabled && options.auto.timeCtrl.enabled && options.auto.timeCtrl.items.reset.enabled))
+                        throw 'canceled by player'
+                    setTimeout(resolve, time)
+                })
+            }
+
+            try {
+                for (var i in checkedList) {
+                    await sleep(500);
+                    var checked = checkedList[i];
+                    imessage('reset.check', [checked.name, game.getDisplayValueExt(checked.trigger), game.getDisplayValueExt(checked.val)]);
+                }
+                
+                await sleep(0).then(() => {
+                    imessage('reset.checked');
+                    return sleep();
+                }).then(() => {
+                    iactivity('reset.tip');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.10');
+                    return sleep(2000);
+                }).then(() => {
+                    imessage('reset.countdown.9');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.8');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.7');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.6');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.5');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.4');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.3');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.2');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.1');
+                    return sleep();
+                }).then(() => {
+                    imessage('reset.countdown.0');
+                    return sleep();
+                }).then(() => {
+                    iactivity('reset.last.message');
+                    return sleep();
+                });
+            } catch (error) {
+                imessage('reset.cancel.message');
+                iactivity('reset.cancel.activity');
+                return;
+            }
+
+            if (typeof kittenStorage.reset === 'undefined')
+                kittenStorage.reset = {};
+            
+            kittenStorage.reset.karmaLastTime = game.resPool.get('karma').value;
+            kittenStorage.reset.paragonLastTime = game.resPool.get('paragon').value;
+            kittenStorage.reset.times += 1;
+            kittenStorage.reset.reset = true;
+            saveToKittenStorage();
+
+            //=============================================================
+            game.resetAutomatic();
+            //=============================================================
+
+            // message('全部条件已经满足 TODO');
+            // 
+        },
+        timeCtrl: function () {
+            var optionVals = options.auto.timeCtrl.items;
+
+            // Tempus Fugit
+            if (optionVals.accelerateTime.enabled && !game.time.isAccelerated) {
+                var tf = game.resPool.get('temporalFlux')
+                if (tf.value >= tf.maxValue * optionVals.accelerateTime.subTrigger) {
+                    game.time.isAccelerated = true;
+                    iactivity('act.accelerate', [], 'ks-accelerate');
+                    storeForSummary('accelerate', 1);
+                }
+            }
+
+            // Combust time crystal
+            TimeSkip:
+            if (optionVals.timeSkip.enabled && game.workshop.get('chronoforge').researched) {
+                if (game.calendar.day < 0)
+                    break TimeSkip;
+
+                var timeCrystal = game.resPool.get('timeCrystal');
+                if (timeCrystal.value < optionVals.timeSkip.subTrigger)
+                    break TimeSkip;
+
+                var season = game.calendar.season;
+                if (!optionVals.timeSkip[game.calendar.seasons[season].name])
+                    break TimeSkip;
+                
+                var currentCycle = game.calendar.cycle;
+                if (!optionVals.timeSkip[currentCycle])
+                    break TimeSkip;
+
+                var heatMax = game.getEffect('heatMax');
+                var heatNow = game.time.heat;
+                if (heatNow >= heatMax)
+                    break TimeSkip;
+                
+                var yearsPerCycle = game.calendar.yearsPerCycle;
+                var remainingYearsCurrentCycle = yearsPerCycle - game.calendar.cycleYear;
+                var cyclesPerEra = game.calendar.cyclesPerEra;
+                var factor = game.challenges.getChallenge("1000Years").researched ? 5 : 10;
+                var canSkip = Math.min(Math.floor((heatMax - heatNow) / factor), optionVals.timeSkip.maximum);
+                var willSkip = 0;
+                if (canSkip < remainingYearsCurrentCycle){
+                    willSkip = canSkip;
+                } else {
+                    willSkip += remainingYearsCurrentCycle;
+                    canSkip -= remainingYearsCurrentCycle;
+                    var skipCycles = 1;
+                    while (canSkip > yearsPerCycle && optionVals.timeSkip[(currentCycle + skipCycles) % cyclesPerEra]) {
+                        willSkip += yearsPerCycle;
+                        canSkip -= yearsPerCycle;
+                        skipCycles += 1;
+                    }
+                    if (optionVals.timeSkip[(currentCycle + skipCycles) % cyclesPerEra] && canSkip > 0)
+                        willSkip += canSkip;
+                }
+                if (willSkip > 0) {
+                    var shatter = game.timeTab.cfPanel.children[0].children[0]; // check?
+                    iactivity('act.time.skip', [willSkip], 'ks-timeSkip');
+                    shatter.controller.doShatterAmt(shatter.model, willSkip);
+                    storeForSummary('time.skip', willSkip);
+                }
+            }
         },
         promote: function () {
             if (game.science.get('civil').researched && game.village.leader != null) {
@@ -941,6 +1393,124 @@ var run = function() {
         },
         worship: function () {
             var builds = options.auto.faith.items;
+            var manager = this.religionManager;
+            var buildManager = this.buildManager;
+            var craftManager = this.craftManager;
+            var option = options.auto.faith.addition;
+            
+            if (option.bestUnicornBuilding.enabled) {
+                var bestUnicornBuilding = this.getBestUnicornBuilding();
+                if (bestUnicornBuilding) {
+                    if (bestUnicornBuilding == 'unicornPasture')
+                        buildManager.build(bestUnicornBuilding, undefined, 1);
+                    else
+                    {
+                        var btn = manager.getBuildButton(bestUnicornBuilding, 'z');                        
+                        for (var i in btn.model.prices)
+                            if (btn.model.prices[i].name=='tears')
+                                var tearNeed = btn.model.prices[i].val;
+                        var tearHave = craftManager.getValue('tears') - craftManager.getStock('tears');
+                        if (tearNeed > tearHave)
+                        {
+                            // if no ziggurat, getBestUnicornBuilding will return unicornPasture
+                            var maxSacrifice = Math.floor((craftManager.getValue('unicorns') - craftManager.getStock('unicorns')) / 2500);
+                            var needSacrifice = Math.ceil((tearNeed-tearHave) / game.bld.getBuildingExt('ziggurat').meta.on);
+                            if (needSacrifice < maxSacrifice)
+                            game.religionTab.sacrificeBtn.controller._transform(game.religionTab.sacrificeBtn.model, needSacrifice);
+                            // iactivity?
+                        }
+                        religionManager.build(bestUnicornBuilding, 'z', 1);
+                    }
+                }
+            } else {
+                builds = Object.assign({}, builds, Object.fromEntries(Object.entries(options.auto.unicorn.items).filter(([k,v]) => v.variant!='zp')));
+                if (options.auto.unicorn.items.unicornPasture.enabled)
+                    this.build({unicornPasture: {require: false, enabled: true}});
+            }
+            // religion build
+            this._worship(builds);
+
+            var faith = craftManager.getResource('faith');
+            // enough faith, and then TAP
+            if (0.98 <= faith.value / faith.maxValue) {
+                var worship = game.religion.faith;
+                var epiphany = game.religion.faithRatio;
+                var transcendenceReached = game.religion.getRU("transcendence").on;
+                var tt = transcendenceReached ? game.religion.transcendenceTier : 0;
+
+                // Transcend
+                if (option.transcend.enabled && transcendenceReached) 
+                {
+                    var adoreIncreaceRatio = Math.pow((tt + 2) / (tt + 1), 2);
+                    var needNextLevel = game.religion._getTranscendTotalPrice(tt + 1) - game.religion._getTranscendTotalPrice(tt);
+
+                    var x = needNextLevel;
+                    var k = adoreIncreaceRatio;
+                    var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
+
+                    if(epiphany >= epiphanyRecommend) {
+
+                        // code copy from kittens game's religion.js: game.religion.transcend()
+                        // game.religion.transcend() need confirm by player
+                        // game version: 1.4.8.1
+                        // ========================================================================================================
+                        // DO TRANSCEND START
+                        // ========================================================================================================
+                        game.religion.faithRatio -= needNextLevel;
+                        game.religion.tcratio += needNextLevel;
+                        game.religion.transcendenceTier += 1;
+                        var atheism = game.challenges.getChallenge("atheism");
+                        atheism.calculateEffects(atheism, game);
+                        var blackObelisk = game.religion.getTU("blackObelisk");
+                        blackObelisk.calculateEffects(blackObelisk, game);
+                        game.msg($I("religion.transcend.msg.success", [game.religion.transcendenceTier]));
+                        // ========================================================================================================
+                        // DO TRANSCEND END
+                        // ========================================================================================================
+
+                        epiphany = game.religion.faithRatio;
+                        tt = game.religion.transcendenceTier;
+                        iactivity('act.transcend', [game.getDisplayValueExt(needNextLevel), tt], 'ks-transcend');
+                        storeForSummary('transcend', 1);
+                    }
+                }
+
+                // Adore
+                if (option.adore.enabled && game.religion.getRU('apocripha').on) {
+                    // game version: 1.4.8.1
+                    var maxSolarRevolution = 10 + game.getEffect("solarRevolutionLimit")
+                    var triggerSolarRevolution = maxSolarRevolution*option.adore.subTrigger;
+                    var epiphanyInc = worship / 1000000 * tt * tt * 1.01;
+                    var epiphanyAfterAdore = epiphany + epiphanyInc;
+                    var worshipAfterAdore = 0.01 + faith.value*(1 + game.getUnlimitedDR(epiphanyAfterAdore, 0.1)*0.1);
+                    var solarRevolutionAdterAdore = game.getLimitedDR(game.getUnlimitedDR(worshipAfterAdore, 1000)/100, maxSolarRevolution);
+                    if (solarRevolutionAdterAdore >= triggerSolarRevolution) {
+
+                        game.religion._resetFaithInternal(1.01);
+
+                        iactivity('act.adore', [game.getDisplayValueExt(worship), game.getDisplayValueExt(epiphanyInc)], 'ks-adore');
+                        storeForSummary('adore', epiphanyInc);
+                        epiphany = game.religion.faithRatio;
+                        worship = game.religion.faith;
+                    }
+                }
+
+                // Praise
+                if (option.autoPraise.enabled) {
+                    if (!game.religion.getFaithBonus) {
+                        var apocryphaBonus = game.religion.getApocryphaBonus();
+                    } else {
+                        var apocryphaBonus = game.religion.getFaithBonus();
+                    }
+                    var worshipInc = faith.value * (1 + apocryphaBonus)
+                    storeForSummary('praise', worshipInc);
+                    iactivity('act.praise', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worshipInc)], 'ks-praise');
+                    game.religion.praise();
+                }
+            }
+        },
+        _worship: function (builds) {
+            var builds = builds || options.auto.faith.items;
             var buildManager = this.religionManager;
             var craftManager = this.craftManager;
             var bulkManager = this.bulkManager;
@@ -957,7 +1527,7 @@ var run = function() {
                     metaData[name].rHidden = true;
                 } else {
                     var model = buildManager.getBuildButton(name, build.variant).model;
-                    var panel = (build.variant === 'c') ? game.science.techs[58].researched : true;
+                    var panel = (build.variant === 'c') ? game.science.get('cryptotheology').researched : true;
                     metaData[name].rHidden = !(model.visible && model.enabled && panel);
                 }
             }
@@ -990,7 +1560,7 @@ var run = function() {
                 var build = builds[name]
                 metaData[name] = buildManager.getBuild(name, build.variant);
                 var model = buildManager.getBuildButton(name, build.variant).model;
-                var panel = (build.variant === 'chrono') ? game.tabs[7].cfPanel : game.tabs[7].vsPanel;
+                var panel = (build.variant === 'chrono') ? buildManager.manager.tab.cfPanel : buildManager.manager.tab.vsPanel;
                 metaData[name].tHidden = (!model.visible || !model.enabled || !panel.visible);
             }
 
@@ -1051,7 +1621,7 @@ var run = function() {
                 for (var i = 0; i < missions.length; i++) {
                     if (!(missions[i].unlocked && missions[i].val < 1)) {continue;}
 
-                    var model = game.tabs[6].GCPanel.children[i];
+                    var model = this.spaceManager.manager.tab.GCPanel.children[i];
                     var prices = model.model.prices;
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue missionLoop;}
@@ -1144,7 +1714,7 @@ var run = function() {
                                 pastureMeta.on = 0;
                                 pastureMeta.val = 0;
                                 pastureMeta.stage = 1;
-                                iactivity('upgrade.build.pasture', [], 'ks-upgrade');
+                                iactivity('upgrade.building.pasture', [], 'ks-upgrade');
                                 game.ui.render();
                                 buildManager.build('pasture', 1, 1);
                                 game.ui.render();
@@ -1167,7 +1737,7 @@ var run = function() {
                                 aqueductMeta.val = 0
                                 aqueductMeta.stage = 1
                                 aqueductMeta.calculateEffects(aqueductMeta, game)
-                                iactivity('upgrade.build.aqueduct', [], 'ks-upgrade');
+                                iactivity('upgrade.building.aqueduct', [], 'ks-upgrade');
                                 game.ui.render();
                                 buildManager.build('aqueduct', 1, 1);
                                 game.ui.render();
@@ -1231,8 +1801,8 @@ var run = function() {
                 }
             }
         },
-        build: function () {
-            var builds = options.auto.build.items;
+        build: function (builds) {
+            var builds = builds || options.auto.build.items;
             var buildManager = this.buildManager;
             var craftManager = this.craftManager;
             var bulkManager = this.bulkManager;
@@ -1547,27 +2117,87 @@ var run = function() {
                 }
             }
 
-            if (optionVals.autoPraise.enabled) {
-                var faith = craftManager.getResource('faith');
-                if (0.98 <= faith.value / faith.maxValue) {
-                    if (!game.religion.getFaithBonus) {
-                        var apocryphaBonus = game.religion.getApocryphaBonus();
-                    } else {
-                        var apocryphaBonus = game.religion.getFaithBonus();
+            // fix Cryochamber
+            if (optionVals.fixCry.enabled && game.time.getVSU("usedCryochambers").val > 0) {
+                var fixed = 0;
+                var btn = this.timeManager.manager.tab.vsPanel.children[0].children[0]; //check?
+                // doFixCryochamber will check resources
+                while (btn.controller.doFixCryochamber(btn.model)) 
+                    fixed += 1;
+                if (fixed > 0) {
+                    iactivity('act.fix.cry', [fixed], 'ks-fixCry');
+                    storeForSummary('fix.cry', fixed);
+                }
+            }
+        },
+        // ref: https://github.com/Bioniclegenius/NummonCalc/blob/112f716e2fde9956dfe520021b0400cba7b7113e/NummonCalc.js#L490
+        getBestUnicornBuilding: function () {
+            var unicornPasture = 'unicornPasture';
+            var pastureButton = buildManager.getBuildButton('unicornPasture');
+            if(typeof pastureButton === 'undefined')
+                return;
+            var validBuildings = ['unicornTomb','ivoryTower','ivoryCitadel','skyPalace','unicornUtopia','sunspire'];
+            var unicornsPerSecond = game.getEffect('unicornsPerTickBase') * game.getTicksPerSecondUI();
+            var globalRatio = game.getEffect('unicornsGlobalRatio') + 1;
+            var religionRatio = game.getEffect('unicornsRatioReligion') + 1;
+            var paragonRatio = game.prestige.getParagonProductionRatio() + 1;
+            var faithBonus = game.religion.getSolarRevolutionRatio() + 1;
+            var cycle = 1;
+            if(game.calendar.cycles[game.calendar.cycle].festivalEffects['unicorns'] != undefined)
+                if(game.prestige.getPerk('numeromancy').researched && game.calendar.festivalDays)
+                    cycle = game.calendar.cycles[game.calendar.cycle].festivalEffects['unicorns'];
+            var onZig = Math.max(game.bld.getBuildingExt('ziggurat').meta.on, 1);
+            var total = unicornsPerSecond * globalRatio * religionRatio * paragonRatio * faithBonus * cycle;
+            var baseUnicornsPerRift = 500 * (1 + game.getEffect('unicornsRatioReligion') * 0.1);
+            var riftChanceRatio = 1;
+            if(game.prestige.getPerk('unicornmancy').researched)
+                riftChanceRatio *= 1.1;
+            var baseRift = game.getEffect('riftChance') * riftChanceRatio / (10000 * 2) * baseUnicornsPerRift;
+            var bestAmoritization = Infinity;
+            var bestBuilding = '';
+            var pastureAmor = game.bld.getBuildingExt('unicornPasture').meta.effects['unicornsPerTickBase'] * game.getTicksPerSecondUI();
+            pastureAmor = pastureAmor * globalRatio * religionRatio * paragonRatio * faithBonus * cycle;
+            pastureAmor = pastureButton.model.prices[0].val / pastureAmor;
+            if(pastureAmor < bestAmoritization){
+                bestAmoritization = pastureAmor;
+                bestBuilding = unicornPasture;
+            }
+            for(var i in this.religionManager.manager.tab.zgUpgradeButtons){
+                var btn = this.religionManager.manager.tab.zgUpgradeButtons[i];
+                if(validBuildings.indexOf(btn.id)!=-1){
+                    if(btn.model.visible){
+                        unicornPrice = 0;
+                        for(var j in btn.model.prices){
+                            if(btn.model.prices[j].name=='unicorns')
+                                unicornPrice += btn.model.prices[j].val;
+                            if(btn.model.prices[j].name=='tears')
+                                unicornPrice += btn.model.prices[j].val * 2500 / onZig;
+                        }
+                        var bld = game.religion.getZU(btn.id);
+                        var relBonus = religionRatio;
+                        var riftChance = game.getEffect('riftChance');
+                        for(var j in bld.effects){
+                            if(j == 'unicornsRatioReligion')
+                                relBonus += bld.effects[j]
+                            if(j == 'riftChance')
+                                riftChance += bld.effects[j];
+                        }
+                        var unicornsPerRift = 500 * ((relBonus -1) * 0.1 +1);
+                        var riftBonus = riftChance * riftChanceRatio / (10000 * 2) * unicornsPerRift;
+                        riftBonus -= baseRift;
+                        var amor = unicornsPerSecond * globalRatio * relBonus * paragonRatio * faithBonus * cycle;
+                        amor -= total;
+                        amor = amor + riftBonus;
+                        amor = unicornPrice / amor;
+                        if(amor < bestAmoritization)
+                            if(riftBonus > 0 || relBonus > religionRatio && unicornPrice > 0){
+                                bestAmoritization = amor;
+                                bestBuilding = btn.id;
+                            }
                     }
-                    var worship = faith.value * (1 + apocryphaBonus)
-                    storeForSummary('faith', worship);
-                    iactivity('sun.prasie', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worship)], 'ks-praise');
-                    game.religion.praise();
                 }
             }
-            if ((optionVals.style.enabled || document.body.hasAttribute('data-ks-style')) && !(optionVals.style.enabled && document.body.hasAttribute('data-ks-style'))) {
-                if (optionVals.style.enabled) {
-                    document.body.setAttribute('data-ks-style', '');
-                } else {
-                    document.body.removeAttribute('data-ks-style');
-                }
-            }
+            return bestBuilding;
         }
     };
 
@@ -1687,9 +2317,9 @@ var run = function() {
             if (variant === "s") {
                 storeForSummary(label, amount, 'faith');
                 if (amount === 1) {
-                    iactivity('sun.discover', [label], 'ks-faith');
+                    iactivity('act.sun.discover', [label], 'ks-faith');
                 } else {
-                    iactivity('sun.discovers', [label, amount], 'ks-faith');
+                    iactivity('act.sun.discovers', [label, amount], 'ks-faith');
                 }
             } else {
                 storeForSummary(label, amount, 'build');
@@ -1943,7 +2573,7 @@ var run = function() {
 
             game.craft(craft.name, amount);
 
-            var iname = ucfirst(i18n('$resources.' + name + '.title'));
+            var iname = game.resPool.get(name).title;
 
             // determine actual amount after crafting upgrades
             amount = (amount * (1 + ratio)).toFixed(2);
@@ -2091,21 +2721,14 @@ var run = function() {
 
             return output;
         },
-        // now spelling discrepancies can be fixed by i18n
-        // getName: function (name) {
-        //     // adjust for spelling discrepancies in core game logic
-        //     if ('catpower' === name) name = 'manpower';
-        //     if ('compendium' === name) name = 'compedium';
-        //     if ('concrete' === name) name = 'concrate';
-
-        //     return name;
-        // },
         getResource: function (name) {
             if (name === 'slabs') {name = 'slab';} //KG BETA BUGFIX
-            for (var i in game.resPool.resources) {
-                var res = game.resPool.resources[i];
-                if (res.name === name) return res;
-            }
+            // for (var i in game.resPool.resources) {
+            //     var res = game.resPool.resources[i];
+            //     if (res.name === name) return res;
+            // }
+            var res = game.resPool.get(name);
+            if (res) return res
             warning('unable to find resource ' + name);
             return null;
         },
@@ -2114,7 +2737,7 @@ var run = function() {
         },
         getStock: function (name) {
             var res = options.auto.resources[name];
-            var stock = res ? res.stock : 0;
+            var stock = (res && res.enabled) ? res.stock : 0;
 
             return !stock ? 0 : stock;
         },
@@ -2143,7 +2766,7 @@ var run = function() {
             // consumption rate
             if (!all && this.getResource(name).maxValue > 0) {
                 var res = options.auto.resources[name];
-                var consume = res && (res.consume != undefined) ? res.consume : options.consume;
+                var consume = res && res.enabled && (res.consume != undefined) ? res.consume : options.consume;
 
                 value -= Math.min(this.getResource(name).maxValue * trigger, value) * (1 - consume);
             }
@@ -2241,6 +2864,8 @@ var run = function() {
                     countList[counter].prices = prices;
                     countList[counter].priceRatio = priceRatio;
                     countList[counter].source = source;
+                    countList[counter].limit = build.max || 0;
+                    countList[counter].val = data.val;
                     counter++;
                 }
             }
@@ -2294,6 +2919,9 @@ var run = function() {
                                     var refundVal = prices[p2].val * Math.pow(priceRatio, k + data.val);
                                     tempPool[prices[p2].name] += (prices[p2].name === 'void') ? Math.ceil(refundVal) : refundVal;
                                 }
+                            }
+                            if (build.limit && build.limit != -1) {
+                                build.count = Math.max(0, Math.min(build.count, (build.limit - build.val)));
                             }
                             bList[countList[j].spot].count = countList[j].count;
                             countList.splice(j, 1);
@@ -2695,21 +3323,34 @@ var run = function() {
         + 'width: 100%;'
         + '}');
 
-    addRule('#ks-options #toggle-list-resources .stockWarn * {'
+    addRule('#ks-options #toggle-list-resources .stockWarn *,'
+        + '#ks-options #toggle-reset-list-resources .stockWarn * {'
         + 'color: ' + options.stockwarncolor + ';'
+        + '}');
+    
+    addRule('.right-tab {'
+        + 'height: unset !important;'
         + '}');
 
     // Local Storage
     // =============
 
-    var kittenStorageVersion = 1;
+    var kittenStorageVersion = 2;
 
     var kittenStorage = {
         version: kittenStorageVersion,
         toggles: {},
         items: {},
         resources: {},
-        triggers: {}
+        triggers: {},
+        reset: {
+            reset: false,
+            times: 0,
+            paragonLastTime: 0,
+            pargonTotal: 0,
+            karmaLastTime: 0,
+            karmaTotal: 0
+        }
     };
 
     var initializeKittenStorage = function () {
@@ -2729,6 +3370,7 @@ var run = function() {
             trade: options.auto.trade.enabled,
             faith: options.auto.faith.enabled,
             time: options.auto.time.enabled,
+            timeCtrl: options.auto.timeCtrl.enabled,
             distribute: options.auto.distribute.enabled,
             options: options.auto.options.enabled,
             filter: options.auto.filter.enabled
@@ -2742,11 +3384,23 @@ var run = function() {
             craft: options.auto.craft.trigger,
             trade: options.auto.trade.trigger
         };
+
         localStorage['cbc.kitten-scientists'] = JSON.stringify(kittenStorage);
     };
 
     var loadFromKittenStorage = function () {
         var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
+        if (saved.version == 1) {
+            saved.version = 2;
+            saved.reset = {
+                reset: false,
+                times: 0,
+                paragonLastTime: 0,
+                pargonTotal: 0,
+                karmaLastTime: 0,
+                karmaTotal: 0
+            };
+        }
         if (saved && saved.version == kittenStorageVersion) {
             kittenStorage = saved;
 
@@ -2773,14 +3427,28 @@ var run = function() {
 
                 if (name[0] == 'set') {
                     el[0].title = value;
-                    if (name[2] == 'max')
-                        el[0].innerText = i18n('ui.max', [value]);
+                    if (name[name.length -1] == 'max') {
+                        el.text(i18n('ui.max', [value]));
+                    } else if (name[name.length -1] == 'min') {
+                        el.text(i18n('ui.min', [value]));
+                    }
                 } else {
                     el.prop('checked', value);
                 }
 
                 if (name.length == 2) {
                     option.enabled = value;
+                } else if (name[1] == 'reset' && name.length >= 4) {
+                    var type = name[2];
+                    var itemName = name[3];
+                    switch (name[0]) {
+                        case 'toggle':
+                            options.auto[type].items[itemName].checkForReset = value;
+                            break;
+                        case 'set':
+                            options.auto[type].items[itemName].triggerForReset = value;
+                            break;
+                    }
                 } else {
                     if (name[1] == 'limited') {
                         option.limited = value;
@@ -2790,21 +3458,24 @@ var run = function() {
                 }
             }
 
-            var list = $("#toggle-list-resources");
+            var resourcesList = $("#toggle-list-resources");
+            var resetList = $("#toggle-reset-list-resources");
             for (var resource in kittenStorage.resources) {
                 var res = kittenStorage.resources[resource];
 
-                if ($('#resource-' + resource).length === 0) {
-                    list.append(addNewResourceOption(resource));
+                if (res.enabled) {
+                    if ($('#resource-' + resource).length === 0)
+                        resourcesList.append(addNewResourceOption(resource));
+                    if ('stock' in res) setStockValue(resource, res.stock);
+                    if ('consume' in res) setConsumeRate(resource, res.consume);
                 }
-                if ('stock' in res) {
-                    setStockValue(resource, res.stock);
-                }
-                if ('consume' in res) {
-                    setConsumeRate(resource, res.consume);
+                if (res.checkForReset) {
+                    if ($('#resource-reset-' + resource).length === 0)
+                        resetList.append(addNewResourceOption(resource, undefined, true));
+                    if ('stockForReset' in res) setStockValue(resource, res.stockForReset ? res.stockForReset : Infinity, true);
                 }
             }
-
+            
             if (saved.triggers) {
                 options.auto.faith.trigger = saved.triggers.faith;
                 options.auto.time.trigger = saved.triggers.time;
@@ -2837,16 +3508,17 @@ var run = function() {
         return +(Math.round(n + "e+2") + "e-2")
     };
 
-    var setStockWarning = function(name, value) {
+    var setStockWarning = function(name, value, forReset=false) {
         // simplest way to ensure it doesn't stick around too often; always do
         // a remove first then re-add only if needed
-        $("#resource-" + name).removeClass("stockWarn");
+        var path = forReset ? '#resource-reset-'+name : '#resource-'+name;
+        $(path).removeClass("stockWarn");
 
         var maxValue = game.resPool.resources.filter(i => i.name == name)[0].maxValue;
-        if (value > maxValue && !(maxValue === 0)) $("#resource-" + name).addClass("stockWarn");
+        if ((value > maxValue && !(maxValue === 0)) || value === Infinity) $(path).addClass("stockWarn");
     }
 
-    var setStockValue = function (name, value) {
+    var setStockValue = function (name, value, forReset=false) {
         var n = Number(value);
 
         if (isNaN(n) || n < 0) {
@@ -2855,10 +3527,19 @@ var run = function() {
         }
 
         if (!options.auto.resources[name]) options.auto.resources[name] = {};
-        options.auto.resources[name].stock = n;
-        $('#stock-value-' + name).text(i18n('resources.stock', [game.getDisplayValueExt(n)]));
+        if (forReset) {
+            var path = '#resource-reset-' + name + ' #stock-value-' + name;
+            n = n<0 ? Infinity : n;
+            options.auto.resources[name].checkForReset = true;
+            options.auto.resources[name].stockForReset = n;
+        } else {
+            var path = '#resource-' + name + ' #stock-value-' + name;
+            options.auto.resources[name].enabled = true;
+            options.auto.resources[name].stock = n;
+        }
+        $(path).text(i18n('resources.stock', [n === Infinity ? '∞' : game.getDisplayValueExt(n)]));
 
-        setStockWarning(name, n);
+        setStockWarning(name, n, forReset);
     };
 
     var setConsumeRate = function (name, value) {
@@ -2874,18 +3555,30 @@ var run = function() {
         $('#consume-rate-' + name).text(i18n('resources.consume', [n.toFixed(2)]));
     };
 
-    var removeResourceControl = function (name) {
-        delete options.auto.resources[name];
+    var removeResourceControl = function (name, forReset=false) {
+        var opt = options.auto.resources[name];
+        if (forReset)
+            opt.checkForReset = false;
+        else
+            opt.enabled = false;
+
+        if (!opt.enabled && !opt.checkForReset)
+            delete options.auto.resources[name];
     };
 
-    var addNewResourceOption = function (name, title) {
-        title = title || i18n('$resources.' + name + '.title') || ucfirst(name);
+    var addNewResourceOption = function (name, title, forReset=false) {
+        title = title || game.resPool.get(name).title || ucfirst(name);
         var res = options.auto.resources[name];
-        var stock = res && (res.stock != undefined) ? res.stock : 0;
+        if (forReset && res && res.stockForReset)
+            var stock = res.stockForReset;
+        else if (!forReset && res && res.stock)
+            var stock = res.stock;
+        else
+            var stock = 0;
         var consume = res && (res.consume != undefined) ? res.consume : options.consume;
 
         var container = $('<div/>', {
-            id: 'resource-' + name,
+            id: (forReset ? 'resource-reset-' : 'resource-') + name,
             css: {display: 'inline-block', width: '100%'},
         });
 
@@ -2897,7 +3590,7 @@ var run = function() {
 
         var stock = $('<div/>', {
             id: 'stock-value-' + name,
-            text: i18n('resources.stock', [game.getDisplayValueExt(stock)]),
+            text: i18n('resources.stock', [stock === Infinity ? '∞' : game.getDisplayValueExt(stock)]),
             css: {cursor: 'pointer', display: 'inline-block', width: '80px'},
         });
 
@@ -2917,18 +3610,23 @@ var run = function() {
                 textShadow: '3px 3px 4px gray'},
         });
 
-        container.append(label, stock, consume, del);
+        if (forReset)
+            container.append(label, stock, del);
+        else
+            container.append(label, stock, consume, del);
 
         // once created, set color if relevant
         if (res != undefined && res.stock != undefined) setStockWarning(name, res.stock);
 
-        stock.on('click', function () {
-            var value = window.prompt(i18n('resources.stock.set', [title]));
-            if (value !== null) {
-                setStockValue(name, value);
-                saveToKittenStorage();
-            }
-        });
+        (function (stock, forReset) {
+            stock.on('click', function () {
+                var value = window.prompt(i18n('resources.stock.set', [title]));
+                if (value !== null) {
+                    setStockValue(name, value, forReset);
+                    saveToKittenStorage();
+                }
+            })
+        })(stock, forReset);
 
         consume.on('click', function () {
             var value = window.prompt(i18n('resources.consume.set', [title]));
@@ -2938,26 +3636,29 @@ var run = function() {
             }
         });
 
-        del.on('click', function () {
-            if (window.confirm(i18n('resources.del.confirm', [title]))) {
-                container.remove();
-                removeResourceControl(name);
-                saveToKittenStorage();
-            }
-        });
+        (function (del, forReset) {
+            del.on('click', function () {
+                if (window.confirm(i18n('resources.del.confirm', [title]))) {
+                    container.remove();
+                    removeResourceControl(name, forReset);
+                    saveToKittenStorage();
+                }
+            })
+        })(del, forReset);
 
         return container;
     };
 
-    var getAvailableResourceOptions = function () {
+    var getAvailableResourceOptions = function (forReset) {
         var items = [];
+        var idPrefix = forReset ? '#resource-reset-' : '#resource-';
 
         for (var i in game.resPool.resources) {
             var res = game.resPool.resources[i];
 
             // Show only new resources that we don't have in the list and that are
             // visible. This helps cut down on total size.
-            if (res.name && $('#resource-' + res.name).length === 0) {
+            if (res.name && $(idPrefix + res.name).length === 0) {
                 var item = $('<div/>', {
                     id: 'resource-add-' + res.name,
                     text: ucfirst(res.title ? res.title : res.name),
@@ -2966,15 +3667,24 @@ var run = function() {
                 });
 
                 // Wrapper function needed to make closure work
-                (function (res, item) {
+                (function (res, item, forReset) {
                     item.on('click', function () {
                         item.remove();
                         if (!options.auto.resources[res.name]) options.auto.resources[res.name] = {};
-                        options.auto.resources[res.name].stock = 0;
-                        options.auto.resources[res.name].consume = options.consume;
-                        $('#toggle-list-resources').append(addNewResourceOption(res.name, res.title));
+                        if (forReset) {
+                            options.auto.resources[res.name].checkForReset = true;
+                            options.auto.resources[res.name].stockForReset = Infinity;
+                            $('#toggle-reset-list-resources').append(addNewResourceOption(res.name, res.title, forReset));
+
+                        } else {
+                            options.auto.resources[res.name].enabled = true;
+                            options.auto.resources[res.name].stock = 0;
+                            options.auto.resources[res.name].consume = options.consume;
+                            $('#toggle-list-resources').append(addNewResourceOption(res.name, res.title, forReset));
+                        }
+                        saveToKittenStorage();
                     });
-                })(res, item);
+                })(res, item, forReset);
 
                 items.push(item);
             }
@@ -2983,9 +3693,9 @@ var run = function() {
         return items;
     };
 
-    var getResourceOptions = function () {
+    var getResourceOptions = function (forReset=false) {
         var list = $('<ul/>', {
-            id: 'toggle-list-resources',
+            id: forReset ? 'toggle-reset-list-resources' : 'toggle-list-resources',
             css: {display: 'none', paddingLeft: '20px'}
         });
 
@@ -3025,21 +3735,142 @@ var run = function() {
             css: {display: 'none', paddingLeft: '20px'}
         });
 
-        add.on('click', function () {
-            allresources.toggle();
-            allresources.empty();
-            allresources.append(getAvailableResourceOptions());
-        });
+        (function (add, forReset) {
+            add.on('click', function () {
+                allresources.toggle();
+                allresources.empty();
+                allresources.append(getAvailableResourceOptions(forReset));
+            });
+        })(add, forReset);
 
-        list.append(add, clearunused, allresources);
+        if (forReset)
+            list.append(add, allresources);
+        else
+            list.append(add, clearunused, allresources);
 
         // Add all the current resources
         for (var name in options.auto.resources) {
-            list.append(addNewResourceOption(name));
+            var res = options.auto.resources[name];
+            if ((forReset && res.checkForReset) || (!forReset && res.enabled))
+                list.append(addNewResourceOption(name, undefined, forReset));
         }
 
         return list;
     };
+
+    var getOptionHead = function (toggleName) {
+        var list = $('<ul/>', {
+            id: 'items-list-' + toggleName,
+            css: {display: 'none', paddingLeft: '20px'}
+        });
+
+        var disableall = $('<div/>', {
+            id: 'toggle-all-items-' + toggleName,
+            text: i18n('ui.disable.all'),
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                textShadow: '3px 3px 4px gray',
+                marginRight: '8px'}
+        });
+
+        disableall.on('click', function () {
+            // can't use find as we only want one layer of checkboxes
+            var items = list.children().children(':checkbox');
+            items.prop('checked', false);
+            items.change();
+            list.children().children(':checkbox').change();
+        });
+
+        list.append(disableall);
+
+        var enableall = $('<div/>', {
+            id: 'toggle-all-items-' + toggleName,
+            text: i18n('ui.enable.all'),
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                textShadow: '3px 3px 4px gray'}
+        });
+
+        enableall.on('click', function () {
+            // can't use find as we only want one layer of checkboxes
+            var items = list.children().children(':checkbox');
+            items.prop('checked', true);
+            items.change();
+            list.children().children(':checkbox').change();
+        });
+
+        list.append(enableall);
+        return list
+    }
+
+    var getAdditionOptions = function () {
+        var toggleName = 'faith-addition';
+        var list = getOptionHead(toggleName);
+
+        var addi = options.auto.faith.addition;
+        for (var itemName in addi) {
+            node = getOption(itemName, addi[itemName]);
+
+            if (itemName == 'bestUnicornBuilding') {
+                node.children('label').prop('title', i18n('option.faith.best.unicorn.desc'));
+                input = node.children('input');
+                input.unbind('change')
+                var bub = addi.bestUnicornBuilding;
+                input.on('change', function () {
+                    if (input.is(':checked') && !bub.enabled) {
+
+                        bub.enabled = true;
+                        // enable all unicorn buildings
+                        for (var unicornName in options.auto.unicorn.items) {
+                            var building = $('#toggle-' + unicornName);
+                            building.prop('checked', true);
+                            building.trigger('change');
+                        }
+                        imessage('status.sub.enable', [i18n('option.faith.best.unicorn')]);
+
+                    } else if ((!input.is(':checked')) && bub.enabled) {
+
+                        bub.enabled = false;
+                        imessage('status.sub.disable', [i18n('option.faith.best.unicorn')]);
+
+                    }
+                    kittenStorage.items[input.attr('id')] = bub.enabled;
+                    saveToKittenStorage();
+                });
+            }
+            // if (addi[itemName].subTrigger !== undefined) { // only adore now
+            if (itemName == 'adore') {
+                var triggerButton = $('<div/>', {
+                    id: 'set-' + itemName + '-subTrigger',
+                    text: i18n('ui.trigger'),
+                    title: addi[itemName].subTrigger,
+                    css: {cursor: 'pointer',
+                        display: 'inline-block',
+                        float: 'right',
+                        paddingRight: '5px',
+                        textShadow: '3px 3px 4px gray'}
+                }).data('option', addi[itemName]);
+    
+                triggerButton.on('click', function () {
+                    var value;
+                    value = window.prompt(i18n('adore.trigger.set'), addi[itemName].subTrigger);
+    
+                    if (value !== null) {
+                        addi[itemName].subTrigger = parseFloat(value);
+                        kittenStorage.items[triggerButton[0].id] = addi[itemName].subTrigger;
+                        saveToKittenStorage();
+                        triggerButton[0].title = addi[itemName].subTrigger;
+                    }
+                });
+    
+                node.append(triggerButton);
+            }
+
+            list.append(node);
+        }
+        
+        return list;
+    }
 
     var getToggle = function (toggleName) {
         var itext = ucfirst(i18n('ui.' + toggleName));
@@ -3106,47 +3937,12 @@ var run = function() {
 
             element.append(button);
 
-            var list = $('<ul/>', {
-                id: 'items-list-' + toggleName,
-                css: {display: 'none', paddingLeft: '20px'}
-            });
+            var list = getOptionHead(toggleName);
 
-            var disableall = $('<div/>', {
-                id: 'toggle-all-items-' + toggleName,
-                text: i18n('ui.disable.all'),
-                css: {cursor: 'pointer',
-                    display: 'inline-block',
-                    textShadow: '3px 3px 4px gray',
-                    marginRight: '8px'}
-            });
-
-            disableall.on('click', function () {
-                // can't use find as we only want one layer of checkboxes
-                var items = list.children().children(':checkbox');
-                items.prop('checked', false);
-                items.change();
-                list.children().children(':checkbox').change();
-            });
-
-            list.append(disableall);
-
-            var enableall = $('<div/>', {
-                id: 'toggle-all-items-' + toggleName,
-                text: i18n('ui.enable.all'),
-                css: {cursor: 'pointer',
-                    display: 'inline-block',
-                    textShadow: '3px 3px 4px gray'}
-            });
-
-            enableall.on('click', function () {
-                // can't use find as we only want one layer of checkboxes
-                var items = list.children().children(':checkbox');
-                items.prop('checked', true);
-                items.change();
-                list.children().children(':checkbox').change();
-            });
-
-            list.append(enableall);
+            // merge unicorn to faith
+            if (toggleName == 'faith')
+                for (var itemName in options.auto.unicorn.items)
+                    list.append(getOption(itemName, options.auto.unicorn.items[itemName]));
 
             // fill out list with toggle items
             for (var itemName in auto.items) {
@@ -3157,6 +3953,9 @@ var run = function() {
                     case 'craft':
                         list.append(getCraftOption(itemName, auto.items[itemName]));
                         break;
+                    case 'timeCtrl':
+                        list.append(getTimeCtrlOption(itemName, auto.items[itemName]));
+                        break;
                     case 'options':
                         list.append(getOptionsOption(itemName, auto.items[itemName]));
                         break;
@@ -3165,6 +3964,10 @@ var run = function() {
                         break;
                     case 'distribute':
                         list.append(getDistributeOption(itemName, auto.items[itemName]));
+                        break;
+                    case 'build':
+                    case 'space':
+                        list.append(getLimitedOption(itemName, auto.items[itemName]));
                         break;
                     default:
                         list.append(getOption(itemName, auto.items[itemName]));
@@ -3204,6 +4007,44 @@ var run = function() {
                 element.append(resources);
             }
 
+            // Add additional controls for faith, sort of a hack again
+            if (toggleName === 'faith') {
+                var addition = $('<div/>', {
+                    id: 'toggle-addition-controls',
+                    text: i18n('ui.faith.addtion'),
+                    css: {cursor: 'pointer',
+                        display: 'inline-block',
+                        float: 'right',
+                        paddingRight: '5px',
+                        textShadow: '3px 3px 4px gray'},
+                });
+
+                var additionList = getAdditionOptions();
+
+                button.on('click', function () {
+                    additionList.toggle(false);
+                });
+
+                addition.on('click', function () {
+                    list.toggle(false);
+                    additionList.toggle();
+                });
+
+                element.append(addition);
+
+                // disable auto best unicorn building when unicorn building was disable
+                for (var unicornName in options.auto.unicorn.items) {
+                    var ub = list.children().children('#toggle-' + unicornName);
+                    ub.on('change', function() {
+                        if (!$(event.target).is(':checked')) {
+                            var b = $('#toggle-bestUnicornBuilding');
+                            b.prop('checked', false);
+                            b.trigger('change');
+                        }
+                    });
+                };
+            }
+
         }
 
         if (auto.trigger !== undefined) {
@@ -3233,6 +4074,7 @@ var run = function() {
         }
 
         if (toggleName === 'craft') {element.append(resourcesList);}
+        else if (toggleName === 'faith') {element.append(additionList);}
 
         if (auto.items) {element.append(toggle, list);}
 
@@ -3342,6 +4184,42 @@ var run = function() {
         return element;
     };
 
+    var getSeasonForTimeSkip = function (season, option) {
+        var iseason = ucfirst(i18n('$calendar.season.' + season));
+
+        var element = $('<li/>');
+
+        var label = $('<label/>', {
+            'for': 'toggle-timeSkip-' + season,
+            text: ucfirst(iseason)
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-timeSkip-' + season,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option[season]) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option[season] == false) {
+                option[season] = true;
+                imessage('time.skip.season.enable', [iseason]);
+            } else if ((!input.is(':checked')) && option[season] == true) {
+                option[season] = false;
+                imessage('time.skip.season.disable', [iseason]);
+            }
+            kittenStorage.items[input.attr('id')] = option[season];
+            saveToKittenStorage();
+        });
+
+        element.append(input, label);
+
+        return element;
+    };
+
     var getOption = function (name, option, iname) {
         var element = $('<li/>');
         var elementLabel = iname || option.label || ucfirst(name);
@@ -3390,6 +4268,78 @@ var run = function() {
         return element;
     };
 
+    var getLimitedOption = function (name, option, iname) {
+        var element = $('<li/>');
+        var elementLabel = iname || option.label || ucfirst(name);
+
+        var label = $('<label/>', {
+            'for': 'toggle-' + name,
+            text: elementLabel,
+            css: {display: 'inline-block', minWidth: '80px'}
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-' + name,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option.enabled) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option.enabled == false) {
+                option.enabled = true;
+                if (option.filter) {
+                    imessage('filter.enable', [elementLabel]);
+                } else if (option.misc) {
+                    imessage('status.sub.enable', [elementLabel]);
+                } else {
+                    imessage('status.auto.enable', [elementLabel]);
+                }
+            } else if ((!input.is(':checked')) && option.enabled == true) {
+                option.enabled = false;
+                if (option.filter) {
+                    imessage('filter.disable', [elementLabel]);
+                } else if (option.misc) {
+                    imessage('status.sub.disable', [elementLabel]);
+                } else {
+                    imessage('status.auto.disable', [elementLabel]);
+                }
+            }
+            kittenStorage.items[input.attr('id')] = option.enabled;
+            saveToKittenStorage();
+        });
+
+        var maxButton = $('<div/>', {
+            id: 'set-' + name + '-max',
+            text: i18n('ui.max', [option.max]),
+            title: option.max,
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                float: 'right',
+                paddingRight: '5px',
+                textShadow: '3px 3px 4px gray'}
+        }).data('option', option);
+
+        maxButton.on('click', function () {
+            var value;
+            value = window.prompt(i18n('ui.max.set', [option.label]), option.max);
+
+            if (value !== null) {
+                option.max = parseInt(value);
+                kittenStorage.items[maxButton.attr('id')] = option.max;
+                saveToKittenStorage();
+                maxButton[0].title = option.max;
+                maxButton[0].innerText = i18n('ui.max', [option.max]);
+            }
+        });
+
+        element.append(input, label, maxButton);
+
+        return element;
+    };
+
     var getCraftOption = function (name, option) {
         var iname = ucfirst(i18n('$resources.' + name + '.title'));
 
@@ -3412,10 +4362,10 @@ var run = function() {
         input.on('change', function () {
             if (input.is(':checked') && option.limited == false) {
                 option.limited = true;
-                imessage('craft.limited', [name]);
+                imessage('craft.limited', [iname]);
             } else if ((!input.is(':checked')) && option.limited == true) {
                 option.limited = false;
-                imessage('craft.unlimited', [name]);
+                imessage('craft.unlimited', [iname]);
             }
             kittenStorage.items[input.attr('id')] = option.limited;
             saveToKittenStorage();
@@ -3426,8 +4376,287 @@ var run = function() {
         return element;
     };
 
+    var getCycle = function (index, option) {
+        var cycle = game.calendar.cycles[index];
+
+
+        var element = $('<li/>');
+
+        var label = $('<label/>', {
+            'for': 'toggle-timeSkip-' + index,
+            text: cycle.title
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-timeSkip-' + index,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option[index]) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option[index] == false) {
+                option[index] = true;
+                imessage('time.skip.cycle.enable', [cycle.title]);
+            } else if ((!input.is(':checked')) && option[index] == true) {
+                option[index] = false;
+                imessage('time.skip.cycle.disable', [cycle.title]);
+            }
+            kittenStorage.items[input.attr('id')] = option[index];
+            saveToKittenStorage();
+        });
+
+        element.append(input, label);
+
+        return element;
+    }
+
+    var getResetOption = function (name, type, option) {
+        var element = $('<li/>');
+        var elementLabel = option.label;
+
+        var label = $('<label/>', {
+            'for': 'toggle-reset-' + type + '-' + name,
+            text: elementLabel,
+            css: {display: 'inline-block', minWidth: '80px'}
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-reset-' + type + '-' + name,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option.checkForReset) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option.checkForReset == false) {
+                option.checkForReset = true;
+                imessage('status.reset.check.enable', [elementLabel]);
+            } else if ((!input.is(':checked')) && option.checkForReset == true) {
+                option.checkForReset = false;
+                imessage('status.reset.check.disable', [elementLabel]);
+            }
+            kittenStorage.items[input.attr('id')] = option.checkForReset;
+            saveToKittenStorage();
+        });
+        
+        var minButton = $('<div/>', {
+            id: 'set-reset-' + type + '-' + name +'-min',
+            text: i18n('ui.min', [option.triggerForReset]),
+            title: option.triggerForReset,
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                float: 'right',
+                paddingRight: '5px',
+                textShadow: '3px 3px 4px gray'}
+        }).data('option', option);
+
+        minButton.on('click', function () {
+            var value;
+            value = window.prompt(i18n('reset.check.trigger.set', [option.label]), option.triggerForReset);
+
+            if (value !== null) {
+                option.triggerForReset = parseInt(value);
+                kittenStorage.items[minButton.attr('id')] = option.triggerForReset;
+                saveToKittenStorage();
+                minButton[0].title = option.triggerForReset;
+                minButton[0].innerText = i18n('ui.min', [option.triggerForReset]);
+            }
+        });
+
+
+        element.append(input, label, minButton);
+
+        return element;
+    }
+
+    var getTimeCtrlOption = function (name, option) {
+        var element = getOption(name, option);
+
+        if (name == 'timeSkip') {
+            var triggerButton = $('<div/>', {
+                id: 'set-timeSkip-subTrigger',
+                text: i18n('ui.trigger'),
+                title: option.subTrigger,
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'}
+            }).data('option', option);
+            triggerButton.on('click', function () {
+                var value;
+                value = window.prompt(i18n('time.skip.trigger.set', []), option.subTrigger);
+
+                if (value !== null) {
+                    option.subTrigger = parseFloat(value);
+                    kittenStorage.items[triggerButton.attr('id')] = option.subTrigger;
+                    saveToKittenStorage();
+                    triggerButton[0].title = option.subTrigger;
+                }
+            });
+
+            var maximunButton = $('<div/>', {
+                id: 'set-timeSkip-maximum',
+                text: i18n('ui.maximum'),
+                title: option.max,
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'}
+            }).data('option', option);
+            maximunButton.on('click', function () {
+                var value;
+                value = window.prompt(i18n('ui.max.set', [i18n('option.time.skip')]), option.maximum);
+
+                if (value !== null) {
+                    option.maximum = parseFloat(value);
+                    kittenStorage.items[maximunButton.attr('id')] = option.maximum;
+                    saveToKittenStorage();
+                    maximunButton[0].title = option.maximum;
+                }
+            });
+
+            var cyclesButton = $('<div/>', {
+                id: 'toggle-cycle-' + name,
+                text: i18n('ui.cycles'),
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'},
+            });
+
+            var cyclesList = $('<ul/>', {
+                id: 'cycles-list-' + name,
+                css: {display: 'none', paddingLeft: '20px'}
+            });
+
+            for (var i in game.calendar.cycles)
+                cyclesList.append(getCycle(i, option));
+
+
+            var seasonsButton = $('<div/>', {
+                id: 'toggle-seasons-' + name,
+                text: i18n('trade.seasons'),
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'},
+            });
+    
+
+            var seasonsList = $('<ul/>', {
+                id: 'seasons-list-' + name,
+                css: {display: 'none', paddingLeft: '20px'}
+            });
+    
+            // fill out the list with seasons
+            seasonsList.append(getSeasonForTimeSkip('spring', option));
+            seasonsList.append(getSeasonForTimeSkip('summer', option));
+            seasonsList.append(getSeasonForTimeSkip('autumn', option));
+            seasonsList.append(getSeasonForTimeSkip('winter', option));
+    
+            cyclesButton.on('click', function () {
+                cyclesList.toggle();
+                seasonsList.toggle(false);
+            });
+
+            seasonsButton.on('click', function () {
+                cyclesList.toggle(false);
+                seasonsList.toggle();
+            });    
+
+            element.append(cyclesButton, seasonsButton, maximunButton, triggerButton, cyclesList, seasonsList);
+
+        } else if (name == 'reset') {
+
+            var resetBuildList     = getOptionHead('reset-build')
+            var resetSpaceList     = getOptionHead('reset-space')
+            var resetResourcesList = getResourceOptions(true);
+            var resetReligionList  = getOptionHead('reset-religion')
+            var resetTimeList      = getOptionHead('reset-time')
+            
+            for (var item in options.auto.build.items)              resetBuildList.append(getResetOption(item, 'build', options.auto.build.items[item]));
+            for (var item in options.auto.space.items)              resetSpaceList.append(getResetOption(item, 'space', options.auto.space.items[item]));
+            for (var item in options.auto.unicorn.items)            resetReligionList.append(getResetOption(item, 'unicorn', options.auto.unicorn.items[item]));
+            for (var item in options.auto.faith.items)              resetReligionList.append(getResetOption(item, 'faith', options.auto.faith.items[item]));
+            for (var item in options.auto.time.items)               resetTimeList.append(getResetOption(item, 'time', options.auto.time.items[item]));
+
+            var buildButton = $('<div/>', {id: 'toggle-reset-build', text: i18n('ui.build'),
+                css: {cursor:'pointer',display:'inline-block',float:'right',paddingRight:'5px',textShadow:'3px 3px 4px gray'},});
+            var spaceButton = $('<div/>', {id: 'toggle-reset-space', text: i18n('ui.space'),
+                css: {cursor:'pointer',display:'inline-block',float:'right',paddingRight:'5px',textShadow:'3px 3px 4px gray'},});
+            var resourcesButton = $('<div/>', {id: 'toggle-reset-resources', text: i18n('ui.craft.resources'),
+                css: {cursor:'pointer',display:'inline-block',float:'right',paddingRight:'5px',textShadow:'3px 3px 4px gray'},});
+            var religionButton = $('<div/>', {id: 'toggle-reset-religion', text: i18n('ui.faith'),
+                css: {cursor:'pointer',display:'inline-block',float:'right',paddingRight:'5px',textShadow:'3px 3px 4px gray'},});
+            var timeButton = $('<div/>', {id: 'toggle-reset-time', text: i18n('ui.time'),
+                css: {cursor:'pointer',display:'inline-block',float:'right',paddingRight:'5px',textShadow:'3px 3px 4px gray'},});
+
+            buildButton.on('click', function(){resetBuildList.toggle(); resetSpaceList.toggle(false); resetResourcesList.toggle(false); resetReligionList.toggle(false); resetTimeList.toggle(false);})
+            spaceButton.on('click', function(){resetBuildList.toggle(false); resetSpaceList.toggle(); resetResourcesList.toggle(false); resetReligionList.toggle(false); resetTimeList.toggle(false);})
+            resourcesButton.on('click', function(){resetBuildList.toggle(false); resetSpaceList.toggle(false); resetResourcesList.toggle(); resetReligionList.toggle(false); resetTimeList.toggle(false);})
+            religionButton.on('click', function(){resetBuildList.toggle(false); resetSpaceList.toggle(false); resetResourcesList.toggle(false); resetReligionList.toggle(); resetTimeList.toggle(false);})
+            timeButton.on('click', function(){resetBuildList.toggle(false); resetSpaceList.toggle(false); resetResourcesList.toggle(false); resetReligionList.toggle(false); resetTimeList.toggle();})
+
+            element.append(buildButton, spaceButton, resourcesButton, religionButton, timeButton,
+                resetBuildList, resetSpaceList, resetResourcesList, resetReligionList, resetTimeList);
+        } else {
+            var triggerButton = $('<div/>', {
+                id: 'set-' + name +'-subTrigger',
+                text: i18n('ui.trigger'),
+                title: option.subTrigger,
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'}
+            }).data('option', option);
+    
+            triggerButton.on('click', function () {
+                var value;
+                value = window.prompt(i18n('ui.trigger.set', [option.label]), option.subTrigger);
+    
+                if (value !== null) {
+                    option.subTrigger = parseFloat(value);
+                    kittenStorage.items[triggerButton.attr('id')] = option.subTrigger;
+                    saveToKittenStorage();
+                    triggerButton[0].title = option.subTrigger;
+                }
+            });
+            element.append(triggerButton);
+        }
+
+        return element;
+    };
+
     var getOptionsOption = function (name, option) {
         var element = getOption(name, option);
+
+        // hack for style. 
+        // If there are more UI options, split it to "getUIOption"
+        if (name == 'style') {
+            var input = element.children('input');
+            input.unbind('change');
+            input.on('change', function () {
+                option.enabled = input.prop('checked');
+                kittenStorage.items[input.attr('id')] = option.enabled;
+                saveToKittenStorage();
+                if (option.enabled) {
+                    document.body.setAttribute('data-ks-style', '');
+                } else {
+                    document.body.removeAttribute('data-ks-style');
+                }
+            });
+        }
+
 
         if (option.subTrigger !== undefined) {
             var triggerButton = $('<div/>', {
@@ -3586,6 +4815,7 @@ var run = function() {
     optionsListElement.append(getToggle('trade'));
     optionsListElement.append(getToggle('faith'));
     optionsListElement.append(getToggle('time'));
+    optionsListElement.append(getToggle('timeCtrl'));
     optionsListElement.append(getToggle('distribute'));
     optionsListElement.append(getToggle('options'));
     optionsListElement.append(getToggle('filter'));
@@ -3710,6 +4940,28 @@ var run = function() {
 
     $('#clearLog').append(activityBox);
 
+    var messageBox = $('<div/>', {
+        id: 'important-msg-box',
+        class: 'dialog help',
+        css: {
+            display: 'none',
+            width: 'auto',
+            height: 'auto'
+        }
+    });
+    var mbClose = $('<a/>', {text: i18n('ui.close'), href: '#', css: {position: 'absolute', top: '10px', right: '15px'}});
+    mbClose.on('click', function () {messageBox.toggle(); });
+    var mbTitle = $('<h1/>', {id: 'mb-title', text: 'test text'});
+    var mbContent = $('<h1/>', {id: 'mb-content', text: 'test text'});
+    messageBox.append(mbClose, mbTitle, mbContent);
+    $('#gamePageContainer').append(messageBox);
+
+    var showMessageBox = (title, content) => {
+        mbTitle.html(title);
+        mbContent.html(content);
+        messageBox.toggle();
+    }
+
     // Donation Button
     // ===============
 
@@ -3743,16 +4995,49 @@ var run = function() {
 
     toggleEngine.on('change', function () {
         if (toggleEngine.is(':checked')) {
+            options.auto.engine.enabled = true;
             engine.start();
         } else {
+            options.auto.engine.enabled = false;
             engine.stop();
         }
     });
 
     loadFromKittenStorage();
 
+    // hack for style. 
+    // If there are more UI options, split it to "updateUI"
+    $('#toggle-style').trigger('change');
+
     if (console && console.log) console.log(version + " loaded");
     game._publish("kitten_scientists/ready", version);
+    
+    if (kittenStorage.reset && kittenStorage.reset.reset) {
+        // calc paragon and karma
+        kittenStorage.reset.karmaTotal += game.resPool.get('karma').value - Number(kittenStorage.reset.karmaLastTime);
+        kittenStorage.reset.pargonTotal += game.resPool.get('paragon').value - Number(kittenStorage.reset.paragonLastTime);
+        kittenStorage.reset.reset = false;
+
+        // show messagebox
+        showMessageBox(
+            i18n('summary.time.reset.title', [kittenStorage.reset.times]),
+            i18n('summary.time.reset.content', [kittenStorage.reset.karmaTotal, kittenStorage.reset.pargonTotal])
+        );
+        // auto start
+        toggleEngine.prop('checked', true);
+        toggleEngine.trigger('change');
+        imessage('reset.after');
+    } else {
+        kittenStorage.reset = {
+            reset: false,
+            times: 0,
+            paragonLastTime: 0,
+            pargonTotal: 0,
+            karmaLastTime: 0,
+            karmaTotal: 0
+        }
+    }
+    saveToKittenStorage();
 
 }
 
