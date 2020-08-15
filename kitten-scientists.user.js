@@ -2129,14 +2129,6 @@ var run = function() {
                     storeForSummary('fix.cry', fixed);
                 }
             }
-            if ((optionVals.style.enabled || document.body.hasAttribute('data-ks-style')) && !(optionVals.style.enabled && document.body.hasAttribute('data-ks-style'))) {
-                if (optionVals.style.enabled) {
-                    document.body.setAttribute('data-ks-style', '');
-                } else {
-                    document.body.removeAttribute('data-ks-style');
-                }
-            }
-
         },
         // ref: https://github.com/Bioniclegenius/NummonCalc/blob/112f716e2fde9956dfe520021b0400cba7b7113e/NummonCalc.js#L490
         getBestUnicornBuilding: function () {
@@ -4648,6 +4640,24 @@ var run = function() {
     var getOptionsOption = function (name, option) {
         var element = getOption(name, option);
 
+        // hack for style. 
+        // If there are more UI options, split it to "getUIOption"
+        if (name == 'style') {
+            var input = element.children('input');
+            input.unbind('change');
+            input.on('change', function () {
+                option.enabled = input.prop('checked');
+                kittenStorage.items[input.attr('id')] = option.enabled;
+                saveToKittenStorage();
+                if (option.enabled) {
+                    document.body.setAttribute('data-ks-style', '');
+                } else {
+                    document.body.removeAttribute('data-ks-style');
+                }
+            });
+        }
+
+
         if (option.subTrigger !== undefined) {
             var triggerButton = $('<div/>', {
                 id: 'set-' + name +'-subTrigger',
@@ -4994,6 +5004,10 @@ var run = function() {
     });
 
     loadFromKittenStorage();
+
+    // hack for style. 
+    // If there are more UI options, split it to "updateUI"
+    $('#toggle-style').trigger('change');
 
     if (console && console.log) console.log(version + " loaded");
     game._publish("kitten_scientists/ready", version);
