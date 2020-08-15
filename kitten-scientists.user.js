@@ -562,57 +562,57 @@ var run = function() {
                 // property. For other buildings, the key of the item itself is used.
                 items: {
                     // housing
-                    hut:            {require: 'wood',        enabled: false, checkForReset: true, triggerForReset: -1},
-                    logHouse:       {require: 'minerals',    enabled: false, checkForReset: true, triggerForReset: -1},
-                    mansion:        {require: 'titanium',    enabled: false, checkForReset: true, triggerForReset: -1},
+                    hut:            {require: 'wood',        enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    logHouse:       {require: 'minerals',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    mansion:        {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // craft bonuses
-                    workshop:       {require: 'minerals',    enabled: true, checkForReset: true, triggerForReset: -1},
-                    factory:        {require: 'titanium',    enabled: true, checkForReset: true, triggerForReset: -1},
+                    workshop:       {require: 'minerals',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    factory:        {require: 'titanium',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // production
-                    field:          {require: 'catnip',      enabled: true, checkForReset: true, triggerForReset: -1},
-                    pasture:        {require: 'catnip',      enabled: true, stage: 0, checkForReset: true, triggerForReset: -1},
-                    solarFarm:      {require: 'titanium',    enabled: true, stage: 1, name: 'pasture', checkForReset: true, triggerForReset: -1},
-                    mine:           {require: 'wood',        enabled: true, checkForReset: true, triggerForReset: -1},
-                    lumberMill:     {require: 'minerals',    enabled: true, checkForReset: true, triggerForReset: -1},
-                    aqueduct:       {require: 'minerals',    enabled: true, stage: 0, checkForReset: true, triggerForReset: -1},
-                    hydroPlant:     {require: 'titanium',    enabled: true, stage: 1, name: 'aqueduct', checkForReset: true, triggerForReset: -1},
-                    oilWell:        {require: 'coal',        enabled: true, checkForReset: true, triggerForReset: -1},
-                    quarry:         {require: 'coal',        enabled: true, checkForReset: true, triggerForReset: -1},
+                    field:          {require: 'catnip',      enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    pasture:        {require: 'catnip',      enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    solarFarm:      {require: 'titanium',    enabled: true, max:-1, stage: 1, name: 'pasture', checkForReset: true, triggerForReset: -1},
+                    mine:           {require: 'wood',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    lumberMill:     {require: 'minerals',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    aqueduct:       {require: 'minerals',    enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    hydroPlant:     {require: 'titanium',    enabled: true, max:-1, stage: 1, name: 'aqueduct', checkForReset: true, triggerForReset: -1},
+                    oilWell:        {require: 'coal',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    quarry:         {require: 'coal',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // conversion
-                    smelter:        {require: 'minerals',    enabled: true, checkForReset: true, triggerForReset: -1},
-                    biolab:         {require: 'science',     enabled: false, checkForReset: true, triggerForReset: -1},
-                    calciner:       {require: 'titanium',    enabled: false, checkForReset: true, triggerForReset: -1},
-                    reactor:        {require: 'titanium',    enabled: false, checkForReset: true, triggerForReset: -1},
-                    accelerator:    {require: 'titanium',    enabled: false, checkForReset: true, triggerForReset: -1},
-                    steamworks:     {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
-                    magneto:        {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
+                    smelter:        {require: 'minerals',    enabled: true,  max:-1, checkForReset: true, triggerForReset: -1},
+                    biolab:         {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    calciner:       {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    reactor:        {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    accelerator:    {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    steamworks:     {require: false,         enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    magneto:        {require: false,         enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // science
-                    library:        {require: 'wood',        enabled: true, stage: 0, checkForReset: true, triggerForReset: -1},
-                    dataCenter:     {require: false,         enabled: true, stage: 1, name: 'library', checkForReset: true, triggerForReset: -1},
-                    academy:        {require: 'wood',        enabled: true, checkForReset: true, triggerForReset: -1},
-                    observatory:    {require: 'iron',        enabled: true, checkForReset: true, triggerForReset: -1},
+                    library:        {require: 'wood',        enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    dataCenter:     {require: false,         enabled: true, max:-1, stage: 1, name: 'library', checkForReset: true, triggerForReset: -1},
+                    academy:        {require: 'wood',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    observatory:    {require: 'iron',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // other
-                    amphitheatre:   {require: 'minerals',    enabled: true, stage: 0, checkForReset: true, triggerForReset: -1},
-                    broadcastTower: {require: 'titanium',    enabled: true, stage: 1, name: 'amphitheatre', checkForReset: true, triggerForReset: -1},
-                    tradepost:      {require: 'gold',        enabled: true, checkForReset: true, triggerForReset: -1},
-                    chapel:         {require: 'minerals',    enabled: true, checkForReset: true, triggerForReset: -1},
-                    temple:         {require: 'gold',        enabled: true, checkForReset: true, triggerForReset: -1},
-                    mint:           {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
+                    amphitheatre:   {require: 'minerals',    enabled: true, max:-1, stage: 0, checkForReset: true, triggerForReset: -1},
+                    broadcastTower: {require: 'titanium',    enabled: true, max:-1, stage: 1, name: 'amphitheatre', checkForReset: true, triggerForReset: -1},
+                    tradepost:      {require: 'gold',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    chapel:         {require: 'minerals',    enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    temple:         {require: 'gold',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    mint:           {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
                     // unicornPasture: {require: false,         enabled: true},
-                    ziggurat:       {require: false,         enabled: true, checkForReset: true, triggerForReset: -1},
-                    chronosphere:   {require: 'unobtainium', enabled: true, checkForReset: true, triggerForReset: -1},
-                    aiCore:         {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
-                    brewery:        {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
+                    ziggurat:       {require: false,         enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    chronosphere:   {require: 'unobtainium', enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    aiCore:         {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
+                    brewery:        {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
 
                     // storage
-                    barn:           {require: 'wood',        enabled: true, checkForReset: true, triggerForReset: -1},
-                    harbor:         {require: false,         enabled: false, checkForReset: true, triggerForReset: -1},
-                    warehouse:      {require: false,         enabled: false, checkForReset: true, triggerForReset: -1}
+                    barn:           {require: 'wood',        enabled: true, max:-1, checkForReset: true, triggerForReset: -1},
+                    harbor:         {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1},
+                    warehouse:      {require: false,         enabled: false,max:-1,  checkForReset: true, triggerForReset: -1}
                 }
             },
             space: {
@@ -623,48 +623,48 @@ var run = function() {
                 trigger: 0,
                 items: {
                     // Cath
-                    spaceElevator:  {require: 'unobtainium', enabled: false, checkForReset: true, triggerForReset: -1},
-                    sattelite:      {require: 'titanium',    enabled: false, checkForReset: true, triggerForReset: -1},
-                    spaceStation:   {require: 'oil',         enabled: false, checkForReset: true, triggerForReset: -1},
+                    spaceElevator:  {require: 'unobtainium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    sattelite:      {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    spaceStation:   {require: 'oil',         enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Moon
-                    moonOutpost:    {require: 'uranium',     enabled: false, checkForReset: true, triggerForReset: -1},
-                    moonBase:       {require: 'unobtainium', enabled: false, checkForReset: true, triggerForReset: -1},
+                    moonOutpost:    {require: 'uranium',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    moonBase:       {require: 'unobtainium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Dune
-                    planetCracker:  {require: 'science',     enabled: false, checkForReset: true, triggerForReset: -1},
-                    hydrofracturer: {require: 'science',     enabled: false, checkForReset: true, triggerForReset: -1},
-                    spiceRefinery:  {require: 'science',     enabled: false, checkForReset: true, triggerForReset: -1},
+                    planetCracker:  {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    hydrofracturer: {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    spiceRefinery:  {require: 'science',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Piscine
-                    researchVessel: {require: 'titanium',    enabled: false, checkForReset: true, triggerForReset: -1},
-                    orbitalArray:   {require: 'eludium',     enabled: false, checkForReset: true, triggerForReset: -1},
+                    researchVessel: {require: 'titanium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    orbitalArray:   {require: 'eludium',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Helios
-                    sunlifter:          {require: 'eludium', enabled: false, checkForReset: true, triggerForReset: -1},
-                    containmentChamber: {require: 'science', enabled: false, checkForReset: true, triggerForReset: -1},
-                    heatsink:           {require: 'thorium', enabled: false, checkForReset: true, triggerForReset: -1},
-                    sunforge:           {require: false,     enabled: false, checkForReset: true, triggerForReset: -1},
+                    sunlifter:          {require: 'eludium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    containmentChamber: {require: 'science', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    heatsink:           {require: 'thorium', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    sunforge:           {require: false,     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // T-Minus
-                    cryostation:    {require: 'eludium',     enabled: false, checkForReset: true, triggerForReset: -1},
+                    cryostation:    {require: 'eludium',     enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Kairo
-                    spaceBeacon:    {require: 'antimatter',  enabled: false, checkForReset: true, triggerForReset: -1},
+                    spaceBeacon:    {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Yarn
-                    terraformingStation: {require: 'antimatter',  enabled: false, checkForReset: true, triggerForReset: -1},
-                    hydroponics:         {require: 'kerosene',    enabled: false, checkForReset: true, triggerForReset: -1},
+                    terraformingStation: {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    hydroponics:         {require: 'kerosene',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Umbra
-                    hrHarvester:    {require: 'antimatter',  enabled: false, checkForReset: true, triggerForReset: -1},
+                    hrHarvester:    {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Charon
-                    entangler:    {require: 'antimatter',  enabled: false, checkForReset: true, triggerForReset: -1},
+                    entangler:    {require: 'antimatter',  enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
 
                     // Centaurus
-                    tectonic:   {require: 'antimatter', enabled: false, checkForReset: true, triggerForReset: -1},
-                    moltenCore: {require: 'uranium',    enabled: false, checkForReset: true, triggerForReset: -1}
+                    tectonic:   {require: 'antimatter', enabled: false, max:-1, checkForReset: true, triggerForReset: -1},
+                    moltenCore: {require: 'uranium',    enabled: false, max:-1, checkForReset: true, triggerForReset: -1}
                 }
             },
             time: {
@@ -810,14 +810,14 @@ var run = function() {
                 items: {
                     // dynamic priority. distribute to the job which have lowest (job.val / job.max) value.
                     // if all jobs reach the max, then distribute kittens to unlimited job.
-                    woodcutter: {enabled: true, max: 0, limited: false},
-                    farmer:     {enabled: true, max: 0, limited: false},
-                    scholar:    {enabled: true, max: 0, limited: false},
-                    hunter:     {enabled: true, max: 0, limited: false},
-                    miner:      {enabled: true, max: 0, limited: false},
-                    priest:     {enabled: true, max: 0, limited: false},
-                    geologist:  {enabled: true, max: 0, limited: false},
-                    engineer:   {enabled: true, max: 0, limited: false},
+                    woodcutter: {enabled: true, max: 1, limited: false},
+                    farmer:     {enabled: true, max: 1, limited: false},
+                    scholar:    {enabled: true, max: 1, limited: false},
+                    hunter:     {enabled: true, max: 1, limited: false},
+                    miner:      {enabled: true, max: 1, limited: false},
+                    priest:     {enabled: true, max: 1, limited: false},
+                    geologist:  {enabled: true, max: 1, limited: false},
+                    engineer:   {enabled: true, max: 1, limited: false},
                 }
 
             },
@@ -2872,6 +2872,8 @@ var run = function() {
                     countList[counter].prices = prices;
                     countList[counter].priceRatio = priceRatio;
                     countList[counter].source = source;
+                    countList[counter].limit = build.max || 0;
+                    countList[counter].val = data.val;
                     counter++;
                 }
             }
@@ -2925,6 +2927,9 @@ var run = function() {
                                     var refundVal = prices[p2].val * Math.pow(priceRatio, k + data.val);
                                     tempPool[prices[p2].name] += (prices[p2].name === 'void') ? Math.ceil(refundVal) : refundVal;
                                 }
+                            }
+                            if (build.limit && build.limit != -1) {
+                                build.count = Math.max(0, Math.min(build.count, (build.limit - build.val)));
                             }
                             bList[countList[j].spot].count = countList[j].count;
                             countList.splice(j, 1);
@@ -3968,6 +3973,10 @@ var run = function() {
                     case 'distribute':
                         list.append(getDistributeOption(itemName, auto.items[itemName]));
                         break;
+                    case 'build':
+                    case 'space':
+                        list.append(getLimitedOption(itemName, auto.items[itemName]));
+                        break;
                     default:
                         list.append(getOption(itemName, auto.items[itemName]));
                         break;
@@ -4263,6 +4272,78 @@ var run = function() {
         });
 
         element.append(input, label);
+
+        return element;
+    };
+
+    var getLimitedOption = function (name, option, iname) {
+        var element = $('<li/>');
+        var elementLabel = iname || option.label || ucfirst(name);
+
+        var label = $('<label/>', {
+            'for': 'toggle-' + name,
+            text: elementLabel,
+            css: {display: 'inline-block', minWidth: '80px'}
+        });
+
+        var input = $('<input/>', {
+            id: 'toggle-' + name,
+            type: 'checkbox'
+        }).data('option', option);
+
+        if (option.enabled) {
+            input.prop('checked', true);
+        }
+
+        input.on('change', function () {
+            if (input.is(':checked') && option.enabled == false) {
+                option.enabled = true;
+                if (option.filter) {
+                    imessage('filter.enable', [elementLabel]);
+                } else if (option.misc) {
+                    imessage('status.sub.enable', [elementLabel]);
+                } else {
+                    imessage('status.auto.enable', [elementLabel]);
+                }
+            } else if ((!input.is(':checked')) && option.enabled == true) {
+                option.enabled = false;
+                if (option.filter) {
+                    imessage('filter.disable', [elementLabel]);
+                } else if (option.misc) {
+                    imessage('status.sub.disable', [elementLabel]);
+                } else {
+                    imessage('status.auto.disable', [elementLabel]);
+                }
+            }
+            kittenStorage.items[input.attr('id')] = option.enabled;
+            saveToKittenStorage();
+        });
+
+        var maxButton = $('<div/>', {
+            id: 'set-' + name + '-max',
+            text: i18n('ui.max', [option.max]),
+            title: option.max,
+            css: {cursor: 'pointer',
+                display: 'inline-block',
+                float: 'right',
+                paddingRight: '5px',
+                textShadow: '3px 3px 4px gray'}
+        }).data('option', option);
+
+        maxButton.on('click', function () {
+            var value;
+            value = window.prompt(i18n('ui.max.set', [option.label]), option.max);
+
+            if (value !== null) {
+                option.max = parseInt(value);
+                kittenStorage.items[maxButton.attr('id')] = option.max;
+                saveToKittenStorage();
+                maxButton[0].title = option.max;
+                maxButton[0].innerText = i18n('ui.max', [option.max]);
+            }
+        });
+
+        element.append(input, label, maxButton);
 
         return element;
     };
