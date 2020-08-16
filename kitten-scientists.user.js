@@ -15,7 +15,7 @@
 // ==========================================
 
 var version = 'Kitten Scientists version 1.5.0';
-var address = '1MC7Vj5ovpq3mzn9JhyhYMPEBRFoRZgDwa';
+var address = '1HDV6VEnXH9m8PJuT4eQD7v8jRnucbneaq';
 
 // Game will be referenced in loadTest function
 var game = null;
