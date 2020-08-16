@@ -1,1 +1,1 @@
-prompt('Your bookmarklet is outdated. Please replace it with the value below.', "javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.user.js';d.body.appendChild(s);})();");
+prompt('Your bookmarklet is outdated. Please replace it with the value below.', "javascript:(function(){var d=document,s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/cameroncondry/cbc-kitten-scientists@master/kitten-scientists.user.js';d.body.appendChild(s);})();");
