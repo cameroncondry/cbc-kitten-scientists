@@ -21,6 +21,10 @@ You can also permanently install Kitten Scientists with a userscript manager.
 
 Now simply [open the script](https://raw.githubusercontent.com/cameroncondry/cbc-kitten-scientists/master/kitten-scientists.user.js) and you should be prompted to install it.
 
+### Troubleshooting
+
+In the event the script is not up to date, try purging the cache at: https://purge.jsdelivr.net/gh/cameroncondry/cbc-kitten-scientists@master
+
 ## Introduction
 
 Note that the default configuration of Kitten Scientists is designed to already give very good results for most stages of the game. When you're exploring the features of KS, try disabling all sections and then re-enabling them one-by-one.
