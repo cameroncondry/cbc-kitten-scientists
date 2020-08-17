@@ -3139,7 +3139,10 @@ var run = function() {
             return Math.floor(amount);
         },
         getMaterials: function (name) {
-            var materials = {manpower: 50, gold: 15};
+            var materials = {
+                manpower: 50 - game.getEffect("tradeCatpowerDiscount"),
+                gold: 15 - game.getEffect("tradeGoldDiscount")
+            };
 
             if (name === undefined)
                 return materials;
