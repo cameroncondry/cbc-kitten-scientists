@@ -2589,9 +2589,9 @@ var run = function() {
             if (craft.unlocked && enabled) {
                 result = true;
 
-                var prices = game.workshop.getCraftPrice(craft); 
-                for (var i in prices) { 
-                    var price = prices[i]; 
+                var prices = game.workshop.getCraftPrice(craft);
+                for (var i in prices) {
+                    var price = prices[i];
                     var value = this.getValueAvailable(price.name);
 
                     if (value < price.val * amount) {
@@ -2864,7 +2864,7 @@ var run = function() {
 
                     // countList[counter].prices = prices;
                     countList[counter].prices = [];
-                    var pricesDiscount = game.getLimitedDR((game.getEffect(build.name + "CostReduction")), 1);
+                    var pricesDiscount = game.getLimitedDR((game.getEffect(name + "CostReduction")), 1);
                     var priceModifier = 1 - pricesDiscount;
                     for (var i in prices) {
                         var resPriceDiscount = game.getLimitedDR(game.getEffect(prices[i].name+"CostReduction"), 1);
