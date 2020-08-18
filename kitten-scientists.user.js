@@ -501,7 +501,7 @@ var run = function() {
                 // Additional options
                 addition: {
                     bestUnicornBuilding:    {enabled: true,  misc: true, label: i18n('option.faith.best.unicorn')},
-                    autoPraise:             {enabled: true,  misc: true, label: i18n('option.praise')},
+                    autoPraise:             {enabled: true,  misc: true, label: i18n('option.praise'), subTrigger: 0.98},
                     // Former [Faith Reset]
                     adore:                  {enabled: false, misc: true, label: i18n('option.faith.adore'), subTrigger: 0.75},
                     transcend:              {enabled: false, misc: true, label: i18n('option.faith.transcend')},
@@ -1431,8 +1431,9 @@ var run = function() {
             this._worship(builds);
 
             var faith = craftManager.getResource('faith');
+            var rate = faith.value / faith.maxValue;
             // enough faith, and then TAP
-            if (0.98 <= faith.value / faith.maxValue) {
+            if (0.98 <= rate) {
                 var worship = game.religion.faith;
                 var epiphany = game.religion.faithRatio;
                 var transcendenceReached = game.religion.getRU("transcendence").on;
@@ -1494,19 +1495,18 @@ var run = function() {
                         worship = game.religion.faith;
                     }
                 }
-
-                // Praise
-                if (option.autoPraise.enabled) {
-                    if (!game.religion.getFaithBonus) {
-                        var apocryphaBonus = game.religion.getApocryphaBonus();
-                    } else {
-                        var apocryphaBonus = game.religion.getFaithBonus();
-                    }
-                    var worshipInc = faith.value * (1 + apocryphaBonus)
-                    storeForSummary('praise', worshipInc);
-                    iactivity('act.praise', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worshipInc)], 'ks-praise');
-                    game.religion.praise();
+            }
+            // Praise
+            if (option.autoPraise.enabled && rate >= option.autoPraise.subTrigger) {
+                if (!game.religion.getFaithBonus) {
+                    var apocryphaBonus = game.religion.getApocryphaBonus();
+                } else {
+                    var apocryphaBonus = game.religion.getFaithBonus();
                 }
+                var worshipInc = faith.value * (1 + apocryphaBonus)
+                storeForSummary('praise', worshipInc);
+                iactivity('act.praise', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worshipInc)], 'ks-praise');
+                game.religion.praise();
             }
         },
         _worship: function (builds) {
@@ -3854,8 +3854,9 @@ var run = function() {
                     saveToKittenStorage();
                 });
             }
-            // if (addi[itemName].subTrigger !== undefined) { // only adore now
-            if (itemName == 'adore') {
+
+            if (addi[itemName].subTrigger !== undefined) {
+
                 var triggerButton = $('<div/>', {
                     id: 'set-' + itemName + '-subTrigger',
                     text: i18n('ui.trigger'),
@@ -3866,19 +3867,35 @@ var run = function() {
                         paddingRight: '5px',
                         textShadow: '3px 3px 4px gray'}
                 }).data('option', addi[itemName]);
-    
-                triggerButton.on('click', function () {
-                    var value;
-                    value = window.prompt(i18n('adore.trigger.set'), addi[itemName].subTrigger);
-    
-                    if (value !== null) {
-                        addi[itemName].subTrigger = parseFloat(value);
-                        kittenStorage.items[triggerButton[0].id] = addi[itemName].subTrigger;
-                        saveToKittenStorage();
-                        triggerButton[0].title = addi[itemName].subTrigger;
+            
+                (function (itemName, triggerButton) {
+                    if (itemName == 'adore') {
+                        triggerButton.on('click', function () {
+                            var value;
+                            value = window.prompt(i18n('adore.trigger.set'), addi[itemName].subTrigger);
+            
+                            if (value !== null) {
+                                addi[itemName].subTrigger = parseFloat(value);
+                                kittenStorage.items[triggerButton[0].id] = addi[itemName].subTrigger;
+                                saveToKittenStorage();
+                                triggerButton[0].title = addi[itemName].subTrigger;
+                            }
+                        })
+        
+                    } else if (itemName == 'autoPraise') {
+                        triggerButton.on('click', function () {
+                            var value;
+                            value = window.prompt(i18n('ui.trigger.set', [i18n('option.praise')]), addi[itemName].subTrigger);
+            
+                            if (value !== null) {
+                                addi[itemName].subTrigger = parseFloat(value);
+                                kittenStorage.items[triggerButton[0].id] = addi[itemName].subTrigger;
+                                saveToKittenStorage();
+                                triggerButton[0].title = addi[itemName].subTrigger;
+                            }
+                        });
                     }
-                });
-    
+                })(itemName, triggerButton);
                 node.append(triggerButton);
             }
 
