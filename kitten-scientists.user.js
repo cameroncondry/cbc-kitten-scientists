@@ -2864,7 +2864,7 @@ var run = function() {
 
                     // countList[counter].prices = prices;
                     countList[counter].prices = [];
-                    var pricesDiscount = game.getLimitedDR((game.getEffect(name + "CostReduction")), 1);
+                    var pricesDiscount = game.getLimitedDR(game.getEffect(name + "CostReduction"), 1);
                     var priceModifier = 1 - pricesDiscount;
                     for (var i in prices) {
                         var resPriceDiscount = game.getLimitedDR(game.getEffect(prices[i].name+"CostReduction"), 1);
