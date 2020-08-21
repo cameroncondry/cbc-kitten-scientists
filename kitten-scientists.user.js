@@ -1594,8 +1594,9 @@ var run = function() {
                     if (work[upg].researched || !work[upg].unlocked) {continue;}
 
                     var prices = work[upg].prices;
-                    for (var resource in prices) {
-                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
+                    var rightPrices = game.village.getEffectLeader("scientist", prices);
+                    for (var resource in rightPrices) {
+                        if (craftManager.getValueAvailable(rightPrices[resource].name, true) < rightPrices[resource].val) {continue workLoop;}
                     }
                     upgradeManager.build(work[upg], 'workshop');
                 }
@@ -1607,9 +1608,10 @@ var run = function() {
                 for (var upg in tech) {
                     if (tech[upg].researched || !tech[upg].unlocked) {continue;}
 
-                    var prices = tech[upg].prices;
-                    for (var resource in prices) {
-                        if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue techLoop;}
+                    var prices = work[upg].prices;
+                    var rightPrices = game.village.getEffectLeader("scientist", prices);
+                    for (var resource in rightPrices) {
+                        if (craftManager.getValueAvailable(rightPrices[resource].name, true) < rightPrices[resource].val) {continue techLoop;}
                     }
                     upgradeManager.build(tech[upg], 'science');
                 }
