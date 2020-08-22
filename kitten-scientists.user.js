@@ -1608,7 +1608,7 @@ var run = function() {
                 for (var upg in tech) {
                     if (tech[upg].researched || !tech[upg].unlocked) {continue;}
 
-                    var prices = work[upg].prices;
+                    var prices = tech[upg].prices;
                     var rightPrices = game.village.getEffectLeader("scientist", prices);
                     for (var resource in rightPrices) {
                         if (craftManager.getValueAvailable(rightPrices[resource].name, true) < rightPrices[resource].val) {continue techLoop;}
@@ -2992,15 +2992,20 @@ var run = function() {
             return ratio + ratioDiff;
         },
         singleBuildPossible: function (data, prices, priceRatio, source) {
+            var pricesDiscount = game.getLimitedDR(game.getEffect(data.name + "CostReduction"), 1);
+            var priceModifier = 1 - pricesDiscount;
             for (var price in prices) {
+                var resPriceDiscount = game.getLimitedDR(game.getEffect(prices[price].name+"CostReduction"), 1);
+                var resPriceModifier = 1 - resPriceDiscount;
+                var rightPrice = prices[price].val * priceModifier * resPriceModifier;
                 if (source && source === 'space' && prices[price].name === 'oil') {
-                    var oilPrice = prices[price].val * (1 - game.getLimitedDR(game.getEffect('oilReductionRatio'), 0.75));
+                    var oilPrice = rightPrice * (1 - game.getLimitedDR(game.getEffect('oilReductionRatio'), 0.75));
                     if (this.craftManager.getValueAvailable('oil', true) < oilPrice * Math.pow(1.05, data.val)) {return false;}
                 } else if (data.name === 'cryochambers' && prices[price].name === 'karma') {
-                    var karmaPrice = prices[price].val * (1 - game.getLimitedDR(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
+                    var karmaPrice = rightPrice * (1 - game.getLimitedDR(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                     if (this.craftManager.getValueAvailable('karma', true) < karmaPrice * Math.pow(priceRatio, data.val)) {return false;}
                 } else {
-                    if (this.craftManager.getValueAvailable(prices[price].name, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
+                    if (this.craftManager.getValueAvailable(prices[price].name, true) < rightPrice * Math.pow(priceRatio, data.val)) {return false;}
                 }
             }
             return true;
@@ -3055,12 +3060,20 @@ var run = function() {
             return (cost <= profit);
         },
         getAverageTrade: function (race) {
-            var standRat = game.getEffect("standingRatio");
-            standRat += (game.prestige.getPerk("diplomacy").researched) ? 10 : 0;
-            var rRatio = (race.name === "leviathans") ? (1 + 0.02 * race.energy) : 1;
-            var tRatio = 1 + game.diplomacy.getTradeRatio();
-            var successRat = (race.attitude === "hostile") ? Math.min(race.standing + standRat/100, 1) : 1;
-            var bonusRat = (race.attitude === "friendly") ? Math.min(race.standing + standRat/200, 1) : 0;
+            // standingRatio
+            // var standRat = game.getEffect("standingRatio");
+            var standRat = game.getEffect("standingRatio") + game.diplomacy.calculateStandingFromPolicies(race.name, game);
+            // standRat += (game.prestige.getPerk("diplomacy").researched) ? 10 : 0;
+            // raceRatio
+            var rRatio = 1 + race.energy * 0.02;
+            // tradeRatio
+            // var tRatio = 1 + game.diplomacy.getTradeRatio();
+		    var tRatio = 1 + game.diplomacy.getTradeRatio() + game.diplomacy.calculateTradeBonusFromPolicies(race.name, game);
+            // var successRat = (race.attitude === "hostile") ? Math.min(race.standing + standRat/100, 1) : 1;
+            // var bonusRat = (race.attitude === "friendly") ? Math.min(race.standing + standRat/200, 1) : 0;
+            var successRat = (race.standing < 0) ? Math.min(race.standing + standRat, 1) : 1;
+            var bonusRat = (race.standing > 0) ? Math.min(race.standing + standRat / 2, 1) : 0;
+            
             var output = {};
             for (var s in race.sells) {
                 var item = race.sells[s];
@@ -3074,7 +3087,7 @@ var run = function() {
                     var titanRat = 1 + shipCount / 50;
                     mean = 1.5 * titanRat * (successRat * titanProb);
                 } else {
-                    var sRatio = (!item.seasons) ? 1 : item.seasons[game.calendar.getCurSeason().name];
+                    var sRatio = (!item.seasons) ? 1 : 1 + item.seasons[game.calendar.getCurSeason().name];
                     var normBought = (successRat - bonusRat) * Math.min(tradeChance/100, 1);
                     var normBonus = bonusRat * Math.min(tradeChance/100, 1);
                     mean = (normBought + 1.25 * normBonus) * item.value * rRatio * sRatio * tRatio;
