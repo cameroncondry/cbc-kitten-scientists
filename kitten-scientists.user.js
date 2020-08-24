@@ -213,7 +213,7 @@ var run = function() {
             'summary.praise': 'Accumulated {0} worship by praising the sun',
             'summary.hunt': 'Sent adorable kitten hunters on {0} hunts',
             'summary.embassy': 'Built {0} embassies',
-            'summary.necrocorn': 'Fed the elders {0} necrocorns',
+            'summary.feed': 'Fed the elders {0} necrocorns',
             'summary.tech': 'Researched: {0}',
             'summary.upgrade': 'Upgraded: {0}',
             'summary.building': 'Built: +{0} {1}',
@@ -416,7 +416,7 @@ var run = function() {
             'summary.praise': '通过赞美太阳积累了 {0} 虔诚',
             'summary.hunt': '派出了 {0} 批可爱的小猫猎人',
             'summary.embassy': '设立了 {0} 个大使馆',
-            'summary.necrocorn': '向上古神献祭 {0} 只死灵兽',
+            'summary.feed': '向上古神献祭 {0} 只死灵兽',
             'summary.tech': '掌握了 {0}',
             'summary.upgrade': '发明了 {0}',
             'summary.building': '建造了 {0} 个 {1}',
@@ -3071,7 +3071,10 @@ var run = function() {
 		    var tRatio = 1 + game.diplomacy.getTradeRatio() + game.diplomacy.calculateTradeBonusFromPolicies(race.name, game);
             // var successRat = (race.attitude === "hostile") ? Math.min(race.standing + standRat/100, 1) : 1;
             // var bonusRat = (race.attitude === "friendly") ? Math.min(race.standing + standRat/200, 1) : 0;
-            var successRat = (race.standing < 0) ? Math.min(race.standing + standRat, 1) : 1;
+            // ref: var failedTradeAmount = race.standing < 0 ? this.game.math.binominalRandomInteger(totalTradeAmount, -(race.standing + standingRatio)) : 0;
+		    // ref: var successfullTradeAmount = totalTradeAmount - failedTradeAmount;
+            var failedRat = (race.standing < 0) ? (race.standing + standRat) : 0;
+            var successRat = (failedRat < 0) ? (1 + failedRat) : 1;
             var bonusRat = (race.standing > 0) ? Math.min(race.standing + standRat / 2, 1) : 0;
             
             var output = {};
