@@ -43,6 +43,8 @@ Individual automation sections can be enabled/disabled by clicking on the label 
 
 By clicking the names of the individual buildings, you can select which buildings from the **Bonfire** page you want to have built automatically. The **Max** setting tells KS not to build any more than the designated number (the default value of `-1` allowing unlimited production).
 
+Please note that the **Unic. Pasture** is in the **Religion** section.
+
 ### Space
 
 > This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Space** label to set your desired threshold. The default value is `0` (activate as soon as possible).
@@ -90,9 +92,9 @@ In the **Religion** section, you can select which buildings and techs from the *
 
 Click **addition** to customize these additional options:
 
-- **Build Best Unicorn Building First**: Figures out which unicorn building (including the **Unic. Pasture** in the Bonfire tab) gives the best return on investment ([source](https://github.com/Bioniclegenius/NummonCalc/blob/master/NummonCalc.js#L490)) and builds that one first. Overrides the individual settings for those buildings.
+- **Build Best Unicorn Building First**: Figures out which unicorn building gives the best return on investment ([source](https://github.com/Bioniclegenius/NummonCalc/blob/master/NummonCalc.js#L490)) and builds that one first. Overrides the individual settings for those buildings.
 - **Auto Praise**: Automatically praises the sun as your faith approaches the resource limit. Set the **trigger** value as normal.
-- **Auto Adore the Galaxy**: Automatically adores the galaxy and converts worship to epiphany based on the **triggger** value. (Worship is uncapped, so based in what way?)
+- **Auto Adore the Galaxy**: Automatically adores the galaxy and converts worship to epiphany based on the **trigger** value. (Worship is uncapped, so based in what way?)
 - **Auto Transcend**: Automatically transcends, converting epiphany into transcendence tiers. (What's the threshold?)
 
 
