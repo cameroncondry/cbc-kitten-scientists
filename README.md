@@ -41,7 +41,7 @@ Individual automation sections can be enabled/disabled by clicking on the label 
 
 > This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Bonfire** label to set your desired threshold. The default value is `0` (activate as soon as possible).
 
-By clicking the names of the individual buildings, you can select which buildings from the **Bonfire** page you want to have built automatically. 
+By clicking the names of the individual buildings, you can select which buildings from the **Bonfire** page you want to have built automatically. The **Max** setting tells KS not to build any more than the designated number (the default value of `-1` allowing unlimited production).
 
 ### Space
 
@@ -51,7 +51,7 @@ As in the **Bonfire** section, here you can select which buildings from the **Sp
 
 ### Crafting
 
-> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Crafting** label to set your desired threshold. The default value is `0.95`. This means that a resource will be crafted when it is at 95% of your storage limit.
+> This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Crafting** label to set your desired threshold. The default value is `0.95`. This means that a resource will be crafted when it is at 95% of your storage limit. (What about unlimited resources?)
 
 In this section, you can select which craftable resources you want to craft automatically.
 
@@ -59,7 +59,7 @@ When you enable the **Limited** option for a resource, then only a portion of th
 
 This means that if you have 1000 beams, and you have crafting of scaffolds enabled, then only 500 beams would be crafted into scaffolds. This is especially useful for when you want to split up source materials between different craftable resources.
 
-However, this is not entirely accurate, as the overall process is more complicated. Consider crafting steel and plates. Both require iron. If you would allow unlimited plate crafting, then you wouldn't have any iron left to craft steel. By having steel and plates set to **limited**, the iron resource is split between the two craftable resources.
+Consider crafting steel and plates. Both require iron. If you would allow unlimited plate crafting, then you wouldn't have any iron left to craft steel. By having steel and plates set to **limited**, the iron resource is split between the two craftable resources.
 
 #### Resources
 
@@ -86,7 +86,15 @@ Trading also has a *limited* trading mode. This mode determines how much product
 
 > This section has a configurable threshold for when the automation should be activated. Click the **trigger** label to the right of the **Religion** label to set your desired threshold. The default value is `0` (activate as soon as possible).
 
-In the **Religion** section, you can select which buildings and techs from the **Religion** page you want to have purchased automatically.
+In the **Religion** section, you can select which buildings and techs from the **Religion** page you want to have purchased automatically. If necessary and possible, unicorns will be sacrificed to produce tears.
+
+Click **addition** to customize these additional options:
+
+- **Build Best Unicorn Building First**: Figures out which unicorn building (including the **Unic. Pasture** in the Bonfire tab) gives the best return on investment ([source](https://github.com/Bioniclegenius/NummonCalc/blob/master/NummonCalc.js#L490)) and builds that one first. Overrides the individual settings for those buildings.
+- **Auto Praise**: Automatically praises the sun as your faith approaches the resource limit. Set the **trigger** value as normal.
+- **Auto Adore the Galaxy**: Automatically adores the galaxy and converts worship to epiphany based on the **triggger** value. (Worship is uncapped, so based in what way?)
+- **Auto Transcend**: Automatically transcends, converting epiphany into transcendence tiers. (What's the threshold?)
+
 
 ### Time
 
@@ -94,16 +102,28 @@ In the **Religion** section, you can select which buildings and techs from the *
 
 The automations in this section behave exactly like in the **Bonfire** and **Space** sections, but here you select which buildings from the **Time** page you want to have built automatically.
 
+### Time Control
+
+- **Tempus Fugit**: Automatically enables the time-acceleration ability when temporal flux approaches cap, customizable with a **trigger** value as normal.
+- **Time Skip**: As long as you have a minimum number of time crystals (set by the **trigger** value), will automatically shatter time crystals (up to the number specified in the **Maximum** value) to skip over the selected **Cycles**. Will only activate during designated **seasons**.
+- **Reset Timeline (Danger!)**: TBA
+
+### Kitten Resources
+
+Automatically assigns kittens to selected jobs. If a job is marked **Limited**, kittens will be distributed up to the designated **Max** amount.
+
 ### Options
 
 - **Observe Astro Events**: Automatically observe astronomical events as they happen.
 - **Hold Festivals**: Automatically hold festivals as soon as the previous one ends and enough resources are available and holding the festival won't drain your stockpile.
-- **Auto Praise**: Automatically praises the sun as your faith approaches the resource limit.
 - **Force Ships to 243**: Ensures that 243 ships are constructed as soon as possible, ignoring other resource constraints. This is useful because after 243 ships, trades for titanium with the zebras are guaranteed to be successful 100% of the time.
 - **Feed Leviathans**: Automatically feed the leviathans race necrocorns to ensure they stay longer for possible trading.
 - **Hunt**: Automatically send your kittens hunting as you approach the catpower limit. This automation has a configurable trigger. The default value is `0.98`, which means the kittens will hunt when your catpower is at 98% of your catpower limit.
-- **Trade Blackcoin**: Automatically trade blackcoin with the leviathans at low prices and sells near the peak.
+- **Promote Leader**: Automatically promotes leader when they have enough experience and you have enough gold.
+- **Trade Blackcoin**: Automatically trade blackcoin with the leviathans at low prices and sells near the peak. (Has a **trigger** value, what does it do)
+- **Fix Cryochamber**: Automatically fixes used cryochambers if possible.
 - **Build Embassies (Beta)**: Automatically builds embassies, just like other buildings.
+- **View Full Width**: Uncheck to make the game look like it normally does when Kitten Scientists isn't active.
 - **Explore (deprecated)**: _relates to a feature no longer present in current versions of Kittens Game_
 
 ### Filters
