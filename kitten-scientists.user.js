@@ -4795,18 +4795,20 @@ var run = function() {
                 textShadow: '3px 3px 4px gray'}
         }).data('option', option);
 
-        maxButton.on('click', function () {
-            var value;
-            value = window.prompt(i18n('ui.max.set', [option.label]), option.max);
+        (function (iname){
+            maxButton.on('click', function () {
+                var value;
+                value = window.prompt(i18n('ui.max.set', [iname]), option.max);
 
-            if (value !== null) {
-                option.max = parseInt(value);
-                kittenStorage.items[maxButton.attr('id')] = option.max;
-                saveToKittenStorage();
-                maxButton[0].title = option.max;
-                maxButton[0].innerText = i18n('ui.max', [option.max]);
-            }
-        });
+                if (value !== null) {
+                    option.max = parseInt(value);
+                    kittenStorage.items[maxButton.attr('id')] = option.max;
+                    saveToKittenStorage();
+                    maxButton[0].title = option.max;
+                    maxButton[0].innerText = i18n('ui.max', [option.max]);
+                }
+            })
+        })(iname);
 
         element.append(maxButton);
 
