@@ -5,6 +5,8 @@
 // @include     *bloodrizer.ru/games/kittens/*
 // @include     file:///*kitten-game*
 // @include     *kittensgame.com/web/*
+// @include     *kittensgame.com/beta/*
+// @include     *kittensgame.com/alpha/*
 // @version     1.5.0
 // @grant       none
 // @copyright   2015, cameroncondry
