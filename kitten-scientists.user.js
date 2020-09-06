@@ -213,7 +213,7 @@ var run = function() {
             'summary.praise': 'Accumulated {0} worship by praising the sun',
             'summary.hunt': 'Sent adorable kitten hunters on {0} hunts',
             'summary.embassy': 'Built {0} embassies',
-            'summary.necrocorn': 'Fed the elders {0} necrocorns',
+            'summary.feed': 'Fed the elders {0} necrocorns',
             'summary.tech': 'Researched: {0}',
             'summary.upgrade': 'Upgraded: {0}',
             'summary.building': 'Built: +{0} {1}',
@@ -416,7 +416,7 @@ var run = function() {
             'summary.praise': '通过赞美太阳积累了 {0} 虔诚',
             'summary.hunt': '派出了 {0} 批可爱的小猫猎人',
             'summary.embassy': '设立了 {0} 个大使馆',
-            'summary.necrocorn': '向上古神献祭 {0} 只死灵兽',
+            'summary.feed': '向上古神献祭 {0} 只死灵兽',
             'summary.tech': '掌握了 {0}',
             'summary.upgrade': '发明了 {0}',
             'summary.building': '建造了 {0} 个 {1}',
@@ -1593,7 +1593,8 @@ var run = function() {
                 for (var upg in work) {
                     if (work[upg].researched || !work[upg].unlocked) {continue;}
 
-                    var prices = work[upg].prices;
+                    var prices = dojo.clone(work[upg].prices); // game.village.getEffectLeader will override its argument
+                    prices = game.village.getEffectLeader("scientist", prices);
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
                     }
@@ -1607,7 +1608,8 @@ var run = function() {
                 for (var upg in tech) {
                     if (tech[upg].researched || !tech[upg].unlocked) {continue;}
 
-                    var prices = tech[upg].prices;
+                    var prices = dojo.clone(tech[upg].prices);
+                    prices = game.village.getEffectLeader("scientist", prices);
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue techLoop;}
                     }
@@ -2864,7 +2866,7 @@ var run = function() {
 
                     // countList[counter].prices = prices;
                     countList[counter].prices = [];
-                    var pricesDiscount = game.getLimitedDR((game.getEffect(name + "CostReduction")), 1);
+                    var pricesDiscount = game.getLimitedDR(game.getEffect(name + "CostReduction"), 1);
                     var priceModifier = 1 - pricesDiscount;
                     for (var i in prices) {
                         var resPriceDiscount = game.getLimitedDR(game.getEffect(prices[i].name+"CostReduction"), 1);
@@ -2990,15 +2992,20 @@ var run = function() {
             return ratio + ratioDiff;
         },
         singleBuildPossible: function (data, prices, priceRatio, source) {
+            var pricesDiscount = game.getLimitedDR(game.getEffect(data.name + "CostReduction"), 1);
+            var priceModifier = 1 - pricesDiscount;
             for (var price in prices) {
+                var resPriceDiscount = game.getLimitedDR(game.getEffect(prices[price].name+"CostReduction"), 1);
+                var resPriceModifier = 1 - resPriceDiscount;
+                var rightPrice = prices[price].val * priceModifier * resPriceModifier;
                 if (source && source === 'space' && prices[price].name === 'oil') {
-                    var oilPrice = prices[price].val * (1 - game.getLimitedDR(game.getEffect('oilReductionRatio'), 0.75));
+                    var oilPrice = rightPrice * (1 - game.getLimitedDR(game.getEffect('oilReductionRatio'), 0.75));
                     if (this.craftManager.getValueAvailable('oil', true) < oilPrice * Math.pow(1.05, data.val)) {return false;}
                 } else if (data.name === 'cryochambers' && prices[price].name === 'karma') {
-                    var karmaPrice = prices[price].val * (1 - game.getLimitedDR(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
+                    var karmaPrice = rightPrice * (1 - game.getLimitedDR(0.01 * game.prestige.getBurnedParagonRatio(), 1.0));
                     if (this.craftManager.getValueAvailable('karma', true) < karmaPrice * Math.pow(priceRatio, data.val)) {return false;}
                 } else {
-                    if (this.craftManager.getValueAvailable(prices[price].name, true) < prices[price].val * Math.pow(priceRatio, data.val)) {return false;}
+                    if (this.craftManager.getValueAvailable(prices[price].name, true) < rightPrice * Math.pow(priceRatio, data.val)) {return false;}
                 }
             }
             return true;
@@ -3053,12 +3060,23 @@ var run = function() {
             return (cost <= profit);
         },
         getAverageTrade: function (race) {
-            var standRat = game.getEffect("standingRatio");
-            standRat += (game.prestige.getPerk("diplomacy").researched) ? 10 : 0;
-            var rRatio = (race.name === "leviathans") ? (1 + 0.02 * race.energy) : 1;
-            var tRatio = 1 + game.diplomacy.getTradeRatio();
-            var successRat = (race.attitude === "hostile") ? Math.min(race.standing + standRat/100, 1) : 1;
-            var bonusRat = (race.attitude === "friendly") ? Math.min(race.standing + standRat/200, 1) : 0;
+            // standingRatio
+            // var standRat = game.getEffect("standingRatio");
+            var standRat = game.getEffect("standingRatio") + game.diplomacy.calculateStandingFromPolicies(race.name, game);
+            // standRat += (game.prestige.getPerk("diplomacy").researched) ? 10 : 0;
+            // raceRatio
+            var rRatio = 1 + race.energy * 0.02;
+            // tradeRatio
+            // var tRatio = 1 + game.diplomacy.getTradeRatio();
+		    var tRatio = 1 + game.diplomacy.getTradeRatio() + game.diplomacy.calculateTradeBonusFromPolicies(race.name, game);
+            // var successRat = (race.attitude === "hostile") ? Math.min(race.standing + standRat/100, 1) : 1;
+            // var bonusRat = (race.attitude === "friendly") ? Math.min(race.standing + standRat/200, 1) : 0;
+            // ref: var failedTradeAmount = race.standing < 0 ? this.game.math.binominalRandomInteger(totalTradeAmount, -(race.standing + standingRatio)) : 0;
+		    // ref: var successfullTradeAmount = totalTradeAmount - failedTradeAmount;
+            var failedRat = (race.standing < 0) ? (race.standing + standRat) : 0;
+            var successRat = (failedRat < 0) ? (1 + failedRat) : 1;
+            var bonusRat = (race.standing > 0) ? Math.min(race.standing + standRat / 2, 1) : 0;
+            
             var output = {};
             for (var s in race.sells) {
                 var item = race.sells[s];
@@ -3072,7 +3090,7 @@ var run = function() {
                     var titanRat = 1 + shipCount / 50;
                     mean = 1.5 * titanRat * (successRat * titanProb);
                 } else {
-                    var sRatio = (!item.seasons) ? 1 : item.seasons[game.calendar.getCurSeason().name];
+                    var sRatio = (!item.seasons) ? 1 : 1 + item.seasons[game.calendar.getCurSeason().name];
                     var normBought = (successRat - bonusRat) * Math.min(tradeChance/100, 1);
                     var normBonus = bonusRat * Math.min(tradeChance/100, 1);
                     mean = (normBought + 1.25 * normBonus) * item.value * rRatio * sRatio * tRatio;
@@ -3250,17 +3268,22 @@ var run = function() {
 
     var defaultSelector = 'body[data-ks-style]:not(.scheme_sleek)';
 
-    addRule(defaultSelector + ' #game {'
+    addRule('body {' // low priority. make sure it can be covered by the theme
         + 'font-family: monospace;'
         + 'font-size: 12px;'
+        + '}');
+        
+    addRule(defaultSelector + ' #game {'
+        // + 'font-family: monospace;'
+        // + 'font-size: 12px;'
         + 'min-width: 1300px;'
         + 'top: 32px;'
         + '}');
 
-    addRule(defaultSelector + ' {'
-        + 'font-family: monospace;'
-        + 'font-size: 12px;'
-        + '}');
+    // addRule(defaultSelector + ' {'
+    //     + 'font-family: monospace;'
+    //     + 'font-size: 12px;'
+    //     + '}');
 
     addRule(defaultSelector + ' .column {'
         + 'min-height: inherit;'
@@ -3282,14 +3305,18 @@ var run = function() {
         + '}');
 
     addRule(defaultSelector + ' #rightColumn {'
-        + 'overflow-y: scroll;'
+        + 'overflow-y: auto;'
         + 'height: 92%;'
         + 'width: 19%;'
         + '}');
 
-    addRule(defaultSelector + ' #gameLog .msg {'
-        + 'display: block;'
+    addRule('body #gamePageContainer #game #rightColumn {'
+        + 'overflow-y: auto'
         + '}');
+
+    // addRule(defaultSelector + ' #gameLog .msg {'
+    //     + 'display: block;'
+    //     + '}');
 
     addRule(defaultSelector + ' #gameLog {'
         + 'overflow-y: hidden !important;'
@@ -3406,7 +3433,7 @@ var run = function() {
 
     var loadFromKittenStorage = function () {
         var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
-        if (saved.version == 1) {
+        if (saved && saved.version == 1) {
             saved.version = 2;
             saved.reset = {
                 reset: false,
@@ -4768,18 +4795,20 @@ var run = function() {
                 textShadow: '3px 3px 4px gray'}
         }).data('option', option);
 
-        maxButton.on('click', function () {
-            var value;
-            value = window.prompt(i18n('ui.max.set', [option.label]), option.max);
+        (function (iname){
+            maxButton.on('click', function () {
+                var value;
+                value = window.prompt(i18n('ui.max.set', [iname]), option.max);
 
-            if (value !== null) {
-                option.max = parseInt(value);
-                kittenStorage.items[maxButton.attr('id')] = option.max;
-                saveToKittenStorage();
-                maxButton[0].title = option.max;
-                maxButton[0].innerText = i18n('ui.max', [option.max]);
-            }
-        });
+                if (value !== null) {
+                    option.max = parseInt(value);
+                    kittenStorage.items[maxButton.attr('id')] = option.max;
+                    saveToKittenStorage();
+                    maxButton[0].title = option.max;
+                    maxButton[0].innerText = i18n('ui.max', [option.max]);
+                }
+            })
+        })(iname);
 
         element.append(maxButton);
 
