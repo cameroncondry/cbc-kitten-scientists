@@ -2573,7 +2573,7 @@ var run = function() {
             if (!this.canCraft(name, amount)) return;
 
             var craft = this.getCraft(name);
-            var ratio = game.getResCraftRatio(craft);
+            var ratio = game.getResCraftRatio(craft.name);
 
             game.craft(craft.name, amount);
 
@@ -2622,7 +2622,7 @@ var run = function() {
             var materials = this.getMaterials(name);
 
             var craft = this.getCraft(name);
-            var ratio = game.getResCraftRatio(craft);
+            var ratio = game.getResCraftRatio(craft.name);
             var trigger = options.auto.craft.trigger;
             var optionVal = options.auto.options.enabled && options.auto.options.items.shipOverride.enabled;
 
@@ -2630,12 +2630,12 @@ var run = function() {
             if (!materials) return 0;
 
             if (name==='steel' && limited) {
-                var plateRatio=game.getResCraftRatio(this.getCraft('plate'));
+                var plateRatio=game.getResCraftRatio("plate");
                 if (this.getValueAvailable('plate')/this.getValueAvailable('steel') < ((plateRatio+1)/125)/((ratio+1)/100)) {
                     return 0;
                 }
             } else if (name==='plate' && limited) {
-                var steelRatio=game.getResCraftRatio(this.getCraft('steel'));
+                var steelRatio=game.getResCraftRatio("steel");
                 if (game.getResourcePerTick('coal', true) > 0) {
                     if (this.getValueAvailable('plate')/this.getValueAvailable('steel') > ((ratio+1)/125)/((steelRatio+1)/100)) {
                         var ironInTime = ((this.getResource('coal').maxValue*trigger - this.getValue('coal'))/game.getResourcePerTick('coal', true))*Math.max(game.getResourcePerTick('iron', true), 0);
