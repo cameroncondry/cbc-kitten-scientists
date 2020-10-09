@@ -678,6 +678,7 @@ var run = function() {
                     // Chronoforge has variant chrono.
                     temporalBattery:     {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
                     blastFurnace:        {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
+                    timeBoiler:          {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
                     temporalAccelerator: {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
                     temporalImpedance:   {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
                     ressourceRetrieval:  {require: false,          enabled: false, variant: 'chrono', checkForReset: true, triggerForReset: -1},
