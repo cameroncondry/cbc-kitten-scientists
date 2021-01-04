@@ -122,7 +122,7 @@ Automatically assigns kittens to selected jobs. If a job is marked **Limited**, 
 - **Feed Leviathans**: Automatically feed the leviathans race necrocorns to ensure they stay longer for possible trading.
 - **Hunt**: Automatically send your kittens hunting as you approach the catpower limit. This automation has a configurable trigger. The default value is `0.98`, which means the kittens will hunt when your catpower is at 98% of your catpower limit.
 - **Promote Leader**: Automatically promotes leader when they have enough experience and you have enough gold.
-- **Trade Blackcoin**: Automatically trade blackcoin with the leviathans at low prices and sells near the peak. (Has a **trigger** value, what does it do)
+- **Trade Blackcoin**: Automatically trade blackcoin with the leviathans at low prices and sells near the peak. The trigger value corresponds to the amount of relics needed before the exchange is made.
 - **Fix Cryochamber**: Automatically fixes used cryochambers if possible.
 - **Build Embassies (Beta)**: Automatically builds embassies, just like other buildings.
 - **View Full Width**: Uncheck to make the game look like it normally does when Kitten Scientists isn't active.
