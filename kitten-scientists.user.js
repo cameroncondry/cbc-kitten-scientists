@@ -16,7 +16,7 @@
 // Begin Kitten Scientist's Automation Engine
 // ==========================================
 
-var version = 'Kitten Scientists version 1.5.0';
+var kg_version = 'Kitten Scientists version 1.5.0';
 var address = '1HDV6VEnXH9m8PJuT4eQD7v8jRnucbneaq';
 
 // Game will be referenced in loadTest function
@@ -38,6 +38,7 @@ var run = function() {
             'option.embassies': 'Build Embassies (Beta)',
             'option.explore': 'Explore (Deprecated)',
             'option.style': 'View Full Width',
+            'option.steamworks': 'Turn on Steamworks',
 
             'filter.build': 'Building',
             'filter.craft': 'Crafting',
@@ -241,6 +242,7 @@ var run = function() {
             'option.embassies': '建造大使馆 (Beta)',
             'option.explore': '探索 (废弃)',
             'option.style': '占满屏幕',
+            'option.steamworks': '启动蒸汽工房',
 
             'filter.build': '建筑',
             'filter.craft': '工艺',
@@ -809,7 +811,8 @@ var run = function() {
                     fixCry:             {enabled: false,                   misc: true, label: i18n('option.fix.cry')},
                     buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: i18n('option.embassies')},
                     style:              {enabled: true,                    misc: true, label: i18n('option.style')},
-                    explore:            {enabled: false,                   misc: true, label: i18n('option.explore')}
+                    explore:            {enabled: false,                   misc: true, label: i18n('option.explore')},
+                    _steamworks:        {enabled: false,                   misc: true, label: i18n('option.steamworks')}
                 }
             },
             distribute: {
@@ -2067,6 +2070,7 @@ var run = function() {
         },
         miscOptions: function () {
             var craftManager = this.craftManager;
+            var buildManager = this.buildManager;
             var optionVals = options.auto.options.items;
 
             AutoEmbassy:
@@ -2137,6 +2141,15 @@ var run = function() {
                 if (fixed > 0) {
                     iactivity('act.fix.cry', [fixed], 'ks-fixCry');
                     storeForSummary('fix.cry', fixed);
+                }
+            }
+            
+            // auto turn on steamworks
+            if (optionVals._steamworks.enabled) {
+                var st = game.bld.get('steamworks');
+                if (st.val && st.on == 0) {
+                    var button = buildManager.getBuildButton('steamworks');
+                    button.controller.onAll(button.model);
                 }
             }
         },
@@ -4872,7 +4885,7 @@ var run = function() {
     var optionsListElement = $('<ul/>');
     var optionsTitleElement = $('<div/>', {
         css: { bottomBorder: '1px solid gray', marginBottom: '5px' },
-        text: version
+        text: kg_version
     });
 
     optionsElement.append(optionsTitleElement);
@@ -5079,8 +5092,8 @@ var run = function() {
     // If there are more UI options, split it to "updateUI"
     $('#toggle-style').trigger('change');
 
-    if (console && console.log) console.log(version + " loaded");
-    game._publish("kitten_scientists/ready", version);
+    if (console && console.log) console.log(kg_version + " loaded");
+    game._publish("kitten_scientists/ready", kg_version);
     
     if (kittenStorage.reset && kittenStorage.reset.reset) {
         // calc paragon and karma
