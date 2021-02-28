@@ -1460,7 +1460,7 @@ var run = function() {
                     var k = adoreIncreaceRatio;
                     var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
 
-                    if(epiphany >= epiphanyRecommend) {
+                    if(epiphany > epiphanyRecommend) {
 
                         // code copy from kittens game's religion.js: game.religion.transcend()
                         // game.religion.transcend() need confirm by player
@@ -1492,7 +1492,7 @@ var run = function() {
                     // game version: 1.4.8.1
                     var maxSolarRevolution = 10 + game.getEffect("solarRevolutionLimit")
                     var triggerSolarRevolution = maxSolarRevolution*option.adore.subTrigger;
-                    var epiphanyInc = worship / 1000000 * tt * tt * 1.01;
+                    var epiphanyInc = worship / 1000000 * (tt + 1) * (tt + 1) * 1.01;
                     var epiphanyAfterAdore = epiphany + epiphanyInc;
                     var worshipAfterAdore = 0.01 + faith.value*(1 + game.getUnlimitedDR(epiphanyAfterAdore, 0.1)*0.1);
                     var solarRevolutionAdterAdore = game.getLimitedDR(game.getUnlimitedDR(worshipAfterAdore, 1000)/100, maxSolarRevolution);
