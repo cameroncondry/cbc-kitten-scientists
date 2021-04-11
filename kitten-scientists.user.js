@@ -2518,7 +2518,7 @@ var run = function() {
             return game.bld.getBuildingExt(name);
         },
         getBuildButton: function (name, stage) {
-            var buttons = this.manager.tab.buttons;
+            var buttons = this.manager.tab.children;
             var build = this.getBuild(name);
             var label = typeof stage !== 'undefined' ? build.meta.stages[stage].label : build.meta.label;
 
