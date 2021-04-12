@@ -36,7 +36,6 @@ var run = function() {
             'option.hunt': 'Hunt',
             'option.crypto': 'Trade Blackcoin',
             'option.embassies': 'Build Embassies (Beta)',
-            'option.explore': 'Explore (Deprecated)',
             'option.style': 'View Full Width',
             'option.steamworks': 'Turn on Steamworks',
 
@@ -55,7 +54,6 @@ var run = function() {
             'dispose.necrocorn': 'Kittens disposed of inefficient necrocorns',
             'blackcoin.buy': 'Kittens sold your Relics and bought {0} Blackcoins',
             'blackcoin.sell': 'Kittens sold your Blackcoins and bought {0} Relics',
-            'act.explore': 'Your kittens started exploring node {0}-{1} of the map.',
             'act.feed': 'Kittens fed the Elders. The elders are pleased',
             'act.observe': 'Kitten Scientists have observed a star',
             'act.hunt': 'Sent kittens on {0} hunts',
@@ -240,7 +238,6 @@ var run = function() {
             'option.hunt': '狩猎',
             'option.crypto': '黑币交易',
             'option.embassies': '建造大使馆 (Beta)',
-            'option.explore': '探索 (废弃)',
             'option.style': '占满屏幕',
             'option.steamworks': '启动蒸汽工房',
 
@@ -259,7 +256,6 @@ var run = function() {
             'dispose.necrocorn': '小猫处理掉了影响效率的多余死灵兽',
             'blackcoin.buy': '小猫出售遗物并买入 {0} 黑币',
             'blackcoin.sell': '小猫出售黑币并买入了 {0} 遗物',
-            'act.explore': '小猫开始探索地图上的节点 {0}-{1}',
             'act.feed': '小猫向上古神献上祭品。上古神很高兴',
             'act.observe': '小猫珂学家观测到一颗流星',
             'act.hunt': '派出 {0} 波小猫去打猎',
@@ -811,7 +807,6 @@ var run = function() {
                     fixCry:             {enabled: false,                   misc: true, label: i18n('option.fix.cry')},
                     buildEmbassies:     {enabled: true, subTrigger: 0.9,   misc: true, label: i18n('option.embassies')},
                     style:              {enabled: true,                    misc: true, label: i18n('option.style')},
-                    explore:            {enabled: false,                   misc: true, label: i18n('option.explore')},
                     _steamworks:        {enabled: false,                   misc: true, label: i18n('option.steamworks')}
                 }
             },
@@ -937,7 +932,6 @@ var run = function() {
         this.tradeManager = new TradeManager();
         this.religionManager = new ReligionManager();
         this.timeManager = new TimeManager();
-        this.explorationManager = new ExplorationManager();
         this.villageManager = new TabManager('Village');
         this.cacheManager = new CacheManager();
     };
@@ -951,7 +945,6 @@ var run = function() {
         tradeManager: undefined,
         religionManager: undefined,
         timeManager: undefined,
-        explorationManager: undefined,
         villageManager: undefined,
         cacheManager: undefined,
         loop: undefined,
@@ -981,7 +974,6 @@ var run = function() {
             if (options.auto.faith.enabled)                                                 {this.worship()};
             if (options.auto.time.enabled)                                                  {this.chrono()};
             if (subOptions.enabled && subOptions.items.crypto.enabled)                      {this.crypto()};
-            if (subOptions.enabled && subOptions.items.explore.enabled)                     {this.explore()};
             if (subOptions.enabled && subOptions.items.autofeed.enabled)                    {this.autofeed()};
             if (subOptions.enabled && subOptions.items.promote.enabled)                     {this.promote()};
             if (options.auto.distribute.enabled)                                            {this.distribute()};
@@ -1220,7 +1212,7 @@ var run = function() {
             var optionVals = options.auto.timeCtrl.items;
 
             // Tempus Fugit
-            if (optionVals.accelerateTime.enabled && !game.time.isAccelerated) {
+            if (optionVals.accelerateTime.enabled && !game.time.isAccelerated && game.science.get("calendar").researched) {
                 var tf = game.resPool.get('temporalFlux')
                 if (tf.value >= tf.maxValue * optionVals.accelerateTime.subTrigger) {
                     game.time.isAccelerated = true;
@@ -1390,18 +1382,6 @@ var run = function() {
                 iactivity('blackcoin.sell', [exchangedRelic]);
             }
         },
-        explore: function () {
-            var manager = this.explorationManager;
-            var expeditionNode = game.village.map.expeditionNode;
-
-            if ( expeditionNode == null) {
-                manager.getCheapestNode();
-
-                manager.explore(manager.cheapestNodeX, manager.cheapestNodeY);
-
-                iactivity('act.explore', [manager.cheapestNodeX, manager.cheapestNodeY]);
-            }
-        },
         worship: function () {
             var builds = options.auto.faith.items;
             var manager = this.religionManager;
@@ -1460,7 +1440,7 @@ var run = function() {
                     var k = adoreIncreaceRatio;
                     var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
 
-                    if(epiphany >= epiphanyRecommend) {
+                    if(epiphany > epiphanyRecommend) {
 
                         // code copy from kittens game's religion.js: game.religion.transcend()
                         // game.religion.transcend() need confirm by player
@@ -1492,7 +1472,7 @@ var run = function() {
                     // game version: 1.4.8.1
                     var maxSolarRevolution = 10 + game.getEffect("solarRevolutionLimit")
                     var triggerSolarRevolution = maxSolarRevolution*option.adore.subTrigger;
-                    var epiphanyInc = worship / 1000000 * tt * tt * 1.01;
+                    var epiphanyInc = worship / 1000000 * (tt + 1) * (tt + 1) * 1.01;
                     var epiphanyAfterAdore = epiphany + epiphanyInc;
                     var worshipAfterAdore = 0.01 + faith.value*(1 + game.getUnlimitedDR(epiphanyAfterAdore, 0.1)*0.1);
                     var solarRevolutionAdterAdore = game.getLimitedDR(game.getUnlimitedDR(worshipAfterAdore, 1000)/100, maxSolarRevolution);
@@ -1930,7 +1910,9 @@ var run = function() {
         },
         hunt: function () {
             var manpower = this.craftManager.getResource('manpower');
-
+            if(!game.villageTab.huntBtn.model.visible) {
+                return;
+            }
             if (options.auto.options.items.hunt.subTrigger <= manpower.value / manpower.maxValue && manpower.value >= 100) {
                 // No way to send only some hunters. Thus, we hunt with everything
                 var huntCount = Math.floor(manpower.value/100);
@@ -2247,69 +2229,6 @@ var run = function() {
             }
 
             this.tab ? this.render() : warning('unable to find tab ' + name);
-        }
-    };
-
-    // Exploration Manager
-    // ===================
-
-    var ExplorationManager = function () {
-        this.manager = new TabManager('Village');
-    };
-
-    ExplorationManager.prototype = {
-        manager: undefined,
-        currentCheapestNode: null,
-        currentCheapestNodeValue: null,
-        cheapestNodeX: null,
-        cheapestNodeY: null,
-        explore: function(x, y) {
-            game.village.map.expeditionNode = {x, y};
-            game.village.map.explore(x, y);
-        },
-        getCheapestNode: function () {
-            var tileArray = game.village.map.villageData;
-            var tileKey = "";
-
-            this.currentCheapestNode = null;
-
-            for (var i in tileArray) {
-                tileKey = i;
-
-                // Discards locked nodes
-                if (i.unlocked == false) { break; }
-
-                // Discards junk nodes
-                if (tileKey.includes('-')) { break; }
-
-                // Acquire node coordinates
-                var regex = /(\d).(\d*)/g;
-                var keyMatch = regex.exec(tileKey);
-                var xCoord = parseInt(keyMatch[1]);
-                var yCoord = parseInt(keyMatch[2]);
-
-                if (this.currentCheapestNode == null) {
-                    this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
-                    this.currentCheapestNode = i;
-                    this.cheapestNodeX = xCoord;
-                    this.cheapestNodeY = yCoord;
-                }
-
-                if (this.currentCheapestNode != null && this.getNodeValue(xCoord, yCoord) < this.currentCheapestNodeValue) {
-                    this.currentCheapestNodeValue = this.getNodeValue(xCoord, yCoord)
-                    this.currentCheapestNode = i;
-                    this.cheapestNodeX = xCoord;
-                    this.cheapestNodeY = yCoord;
-                }
-            }
-        },
-        getNodeValue: function (x, y){
-            var nodePrice = game.village.map.toLevel(x, y);
-            var exploreCost = game.village.map.getExplorationPrice(x,y);
-
-            var tileValue = nodePrice / exploreCost;
-
-            return tileValue;
         }
     };
 
@@ -3089,7 +3008,7 @@ var run = function() {
             var rRatio = 1 + race.energy * 0.02;
             // tradeRatio
             // var tRatio = 1 + game.diplomacy.getTradeRatio();
-		    var tRatio = 1 + game.diplomacy.getTradeRatio() + game.diplomacy.calculateTradeBonusFromPolicies(race.name, game);
+		    var tRatio = 1 + game.diplomacy.getTradeRatio() + game.diplomacy.calculateTradeBonusFromPolicies(race.name, game) + game.challenges.getChallenge("pacifism").getTradeBonusEffect(game);
             // var successRat = (race.attitude === "hostile") ? Math.min(race.standing + standRat/100, 1) : 1;
             // var bonusRat = (race.attitude === "friendly") ? Math.min(race.standing + standRat/200, 1) : 0;
             // ref: var failedTradeAmount = race.standing < 0 ? this.game.math.binominalRandomInteger(totalTradeAmount, -(race.standing + standingRatio)) : 0;
