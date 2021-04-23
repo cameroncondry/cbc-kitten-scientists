@@ -4337,6 +4337,8 @@ var run = function() {
 
         for (var i in options.policies) {
             var policy = options.policies[i];
+            // typo in game code
+            if (policy == 'authocracy') policy = 'autocracy';
             items.push($('<div/>', {
                 id: 'policy-' + policy,
                 text: i18n('$policy.' + policy + '.label'),
