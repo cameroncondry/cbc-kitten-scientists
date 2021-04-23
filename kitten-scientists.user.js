@@ -71,6 +71,7 @@ var run = function() {
             'upgrade.building.amphitheatre': 'Upgraded amphitheatres to broadcast towers!',
             'upgrade.upgrade': 'Kittens have bought the upgrade {0}',
             'upgrade.tech': 'Kittens have bought the tech {0}',
+            'upgrade.policy': 'Kittens have passed {0}',
 
             'festival.hold': 'Kittens begin holding a festival',
             'festival.extend': 'Kittens extend the festival',
@@ -108,6 +109,9 @@ var run = function() {
             'ui.upgrade.races': 'Races',
             'ui.upgrade.missions': 'Missions',
             'ui.upgrade.buildings': 'Buildings',
+            'ui.upgrade.policies': 'Policies',
+            'ui.upgrade.policies.load': 'Load',
+            'ui.upgrade.policies.show': 'Show',
             
             'ui.faith.addtion': 'addition',
             'option.faith.best.unicorn': 'Build Best Unicorn Building First',
@@ -273,6 +277,7 @@ var run = function() {
             'upgrade.building.amphitheatre': '剧场 升级为 广播塔!',
             'upgrade.upgrade': '小猫发明了 {0}',
             'upgrade.tech': '小猫掌握了 {0}',
+            'upgrade.policy': '小猫通过了 {0} 法案',
 
             'festival.hold': '小猫开始举办节日',
             'festival.extend': '小猫延长了节日',
@@ -310,6 +315,9 @@ var run = function() {
             'ui.upgrade.races': '探险队出发!',
             'ui.upgrade.missions': '探索星球',
             'ui.upgrade.buildings': '建筑',
+            'ui.upgrade.policies': '政策',
+            'ui.upgrade.policies.load': '读取',
+            'ui.upgrade.policies.show': '列表',
 
             'ui.faith.addtion': '附加',
             'option.faith.best.unicorn': '优先最佳独角兽建筑',
@@ -438,6 +446,8 @@ var run = function() {
     }
 
     var i18n = function(key, args) {
+        // i18n('$xx') mean load string from game
+        // i18n('xx') mean load string from ks
         if (key[0] == "$")
             return i18ng(key.slice(1));
         value = i18nData[lang][key];
@@ -739,7 +749,7 @@ var run = function() {
                     tanker:     {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
                     parchment:  {require: false,         max: 0, limited: false, limRat: 0.5, enabled: true},
                     manuscript: {require: 'culture',     max: 0, limited: true,  limRat: 0.5, enabled: true},
-                    compedium: {require: 'science',      max: 0, limited: true,  limRat: 0.5, enabled: true},
+                    compedium:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
                     blueprint:  {require: 'science',     max: 0, limited: true,  limRat: 0.5, enabled: true},
                     kerosene:   {require: 'oil',         max: 0, limited: true,  limRat: 0.5, enabled: true},
                     megalith:   {require: false,         max: 0, limited: true,  limRat: 0.5, enabled: true},
@@ -788,9 +798,10 @@ var run = function() {
                 items: {
                     upgrades:  {enabled: true},
                     techs:     {enabled: true},
+                    policies:  {enabled: false},
                     races:     {enabled: true},
                     missions:  {enabled: true},
-                    buildings: {enabled: true}
+                    buildings: {enabled: true},
                 }
             },
             options: {
@@ -854,6 +865,7 @@ var run = function() {
                 furs:        {enabled: true,  stock: 1000, checkForReset: false, stockForReset: Infinity},
                 timeCrystal: {enabled: false, stock: 0,    checkForReset: true,  stockForReset: 500000}
             },
+            policies: [],
             cache: {
                 cache:    [],
                 cacheSum: {}
@@ -1606,6 +1618,43 @@ var run = function() {
                     }
                     upgradeManager.build(tech[upg], 'science');
                 }
+            }
+
+            if (upgrades.policies.enabled && gamePage.tabs[2].visible) {
+                    // write a function to make breaking big loop easier
+                    (function (){
+                        var policies = game.science.policies;
+                        var lastIndex = 0;
+                        var length = policies.length
+                        var toResearch = [];
+
+                        // A **little** more efficient than game.science.getPolicy if options.policies is right order
+                        for (var i in options.policies) {
+                            targetName = options.policies[i]
+                            for (var j in policies) {
+                                j = parseInt(j); // fuck js
+                                policy = policies[(j+lastIndex) % length];
+                                if (policy.name == targetName) {
+                                    lastIndex = j+1;
+                                    if (!policy.researched) {
+                                        if (policy.blocked)
+                                            return;
+                                        if (policy.unlocked) {
+                                            if (policy.requiredLeaderJob == undefined ||
+                                               (game.village.leader != null && game.village.leader.job == policy.requiredLeaderJob)
+                                            ){
+                                                toResearch.push(policy);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        for (var i in toResearch) {
+                            upgradeManager.build(toResearch[i], 'policy');
+                        }
+                    })();
             }
 
             if (upgrades.missions.enabled && gamePage.tabs[6].visible) {
@@ -2383,9 +2432,11 @@ var run = function() {
             if (variant === 'workshop') {
                 storeForSummary(label, 1, 'upgrade');
                 iactivity('upgrade.upgrade', [label], 'ks-upgrade');
-            } else {
+            } else if (variant === 'science') {
                 storeForSummary(label, 1, 'research');
                 iactivity('upgrade.tech', [label], 'ks-research');
+            } else if (variant === 'policy') {
+                iactivity('upgrade.policy', [label]);
             }
         },
         getBuildButton: function (upgrade, variant) {
@@ -2393,6 +2444,8 @@ var run = function() {
                 var buttons = this.workManager.tab.buttons;
             } else if (variant === 'science') {
                 var buttons = this.sciManager.tab.buttons;
+            } else if (variant === 'policy') {
+                var buttons = this.sciManager.tab.policyPanel.children;
             }
             for (var i in buttons) {
                 var haystack = buttons[i].model.name;
@@ -3318,7 +3371,7 @@ var run = function() {
     // Local Storage
     // =============
 
-    var kittenStorageVersion = 2;
+    var kittenStorageVersion = 3;
 
     var kittenStorage = {
         version: kittenStorageVersion,
@@ -3333,7 +3386,8 @@ var run = function() {
             pargonTotal: 0,
             karmaLastTime: 0,
             karmaTotal: 0
-        }
+        },
+        policies: []
     };
 
     var initializeKittenStorage = function () {
@@ -3367,13 +3421,19 @@ var run = function() {
             craft: options.auto.craft.trigger,
             trade: options.auto.trade.trigger
         };
+        kittenStorage.policies = options.policies;
 
         localStorage['cbc.kitten-scientists'] = JSON.stringify(kittenStorage);
     };
 
     var loadFromKittenStorage = function () {
         var saved = JSON.parse(localStorage['cbc.kitten-scientists'] || 'null');
-        if (saved && saved.version == 1) {
+        if (!saved || saved.version > kittenStorageVersion) {
+            initializeKittenStorage();
+            return;
+        }
+
+        if (saved.version == 1) {
             saved.version = 2;
             saved.reset = {
                 reset: false,
@@ -3384,7 +3444,13 @@ var run = function() {
                 karmaTotal: 0
             };
         }
-        if (saved && saved.version == kittenStorageVersion) {
+        
+        if (saved.version == 2) {
+            saved.version = 3;
+            saved.policies = [];
+        }
+
+        if (saved.version == kittenStorageVersion) {
             kittenStorage = saved;
 
             if (saved.toggles) {
@@ -3474,9 +3540,7 @@ var run = function() {
                 $('#trigger-craft')[0].title = options.auto.craft.trigger;
                 $('#trigger-trade')[0].title = options.auto.trade.trigger;
             }
-
-        } else {
-            initializeKittenStorage();
+            options.policies = saved.policies;
         }
     };
 
@@ -3960,7 +4024,7 @@ var run = function() {
                         list.append(getOptionsOption(itemName, auto.items[itemName]));
                         break;
                     case 'upgrade':
-                        list.append(getOption(itemName, auto.items[itemName], i18n('ui.upgrade.' + itemName)));
+                        list.append(getUpgradeOption(itemName, auto.items[itemName]));
                         break;
                     case 'distribute':
                         list.append(getDistributeOption(itemName, auto.items[itemName]));
@@ -4265,6 +4329,85 @@ var run = function() {
 
         element.append(input, label);
 
+        return element;
+    };
+    
+    var getPoliciesOptions = function (forReset) {
+        var items = [];
+
+        for (var i in options.policies) {
+            var policy = options.policies[i];
+            items.push($('<div/>', {
+                id: 'policy-' + policy,
+                text: i18n('$policy.' + policy + '.label'),
+                css: {cursor: 'pointer',
+                    textShadow: '3px 3px 4px gray'}
+            }));
+        }
+        return items;
+    };
+
+    var getUpgradeOption = function (name, option) {
+        var iname = i18n('ui.upgrade.' + name)
+        element = getOption(name, option, iname);
+
+        if (name == 'policies') {
+            var list = $('<ul/>', {
+                id: 'items-list-policies',
+                css: {display: 'none', paddingLeft: '20px'}
+            });
+
+            var loadButton = $('<div/>', {
+                id: 'toggle-upgrade-policies-load',
+                text: i18n('ui.upgrade.policies.load'),
+                css: {
+                    cursor:'pointer',
+                    display:'inline-block',
+                    float:'right',
+                    paddingRight:'5px',
+                    textShadow:'3px 3px 4px gray'}
+                }
+            );
+
+            var showButton = $('<div/>', {
+                id: 'toggle-upgrade-policies-show',
+                text: i18n('ui.upgrade.policies.show'),
+                css: {
+                    cursor:'pointer',
+                    display:'inline-block',
+                    float:'right',
+                    paddingRight:'5px',
+                    textShadow:'3px 3px 4px gray'}
+                }
+            );
+            // resetBuildList.append(getResetOption(item, 'build', options.auto.build.items[item]));
+
+            loadButton.on('click', function(){
+                var plist = [];
+                for (var i in game.science.policies) {
+                    var policy = game.science.policies[i];
+                    if (policy.researched) {
+                        plist.push(policy.name);
+                    }
+                }
+        
+                options.policies = plist;
+                saveToKittenStorage();
+
+                list.empty();
+                list.append(getPoliciesOptions());
+            });
+
+            showButton.on('click', function(){
+                list.toggle();
+                list.empty();
+                list.append(getPoliciesOptions());
+            });
+            
+            element.append(showButton, loadButton, list);
+        
+
+        }
         return element;
     };
 
