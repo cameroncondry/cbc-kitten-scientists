@@ -1635,7 +1635,7 @@ var run = function() {
                                 j = parseInt(j); // fuck js
                                 policy = policies[(j+lastIndex) % length];
                                 if (policy.name == targetName) {
-                                    lastIndex = j+1;
+                                    lastIndex = j+lastIndex+1;
                                     if (!policy.researched) {
                                         if (policy.blocked)
                                             return;
