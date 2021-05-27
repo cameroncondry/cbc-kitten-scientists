@@ -70,6 +70,8 @@ var run = function() {
             'upgrade.building.library': 'Upgraded libraries to data centers!',
             'upgrade.building.amphitheatre': 'Upgraded amphitheatres to broadcast towers!',
             'upgrade.upgrade': 'Kittens have bought the upgrade {0}',
+            'upgrade.limited': 'Optimize {0}',
+            'upgrade.unlimited': 'All {0}',
             'upgrade.tech': 'Kittens have bought the tech {0}',
             'upgrade.policy': 'Kittens have passed {0}',
 
@@ -90,8 +92,9 @@ var run = function() {
             'ui.trigger': 'trigger',
             'ui.trigger.set': 'Enter a new trigger value for {0}. Should be in the range of 0 to 1.',
             'ui.limit': 'Limited',
+            'ui.trigger.missions.set': 'Enter a new trigger value for missions. Should be in the range of 0 to 13. Corresponds to each planet sort',
             'ui.trigger.crypto.set': 'Enter a new trigger value for {0}. Corresponds to the amount of Relics needed before the exchange is made.',
-            'ui.engine':'Enable Scientists',
+            'ui.engine': 'Enable Scientists',
             'ui.build': 'Bonfire',
             'ui.space': 'Space',
             'ui.craft': 'Crafting',
@@ -156,7 +159,11 @@ var run = function() {
 
             'distribute.limited': 'Distribute to {0}: stop when reach max',
             'distribute.unlimited': 'Distribute to {0}: unlimited',
+            'distribute.leaderJob': 'Leader Job: {0} ',
+            'distribute.leaderTrait': 'Choose {0} Leader',
+            'distribute.makeLeader': 'Make Leader',
             'act.distribute': 'Distribute a kitten to {0}',
+            'act.distributeLeader': 'Make a {0} kitten leader',
             'ui.max.set': 'Maximum for {0}',
             'summary.distribute': 'Help {0} kittens to find job',
             'filter.distribute': 'Distribute',
@@ -276,6 +283,8 @@ var run = function() {
             'upgrade.building.library': '图书馆 升级为 数据中心!',
             'upgrade.building.amphitheatre': '剧场 升级为 广播塔!',
             'upgrade.upgrade': '小猫发明了 {0}',
+            'upgrade.limited': '优化 {0}',
+            'upgrade.unlimited': '全部 {0}',
             'upgrade.tech': '小猫掌握了 {0}',
             'upgrade.policy': '小猫通过了 {0} 法案',
 
@@ -296,8 +305,9 @@ var run = function() {
             'ui.trigger': '触发条件',
             'ui.trigger.set': '输入新的 {0} 触发值，取值范围为 0 到 1 的小数。',
             'ui.limit': '限制',
+            'ui.trigger.missions.set': '输入一个新的 探索星球 触发值,取值范围为 0 到 13 的整数。\n分别对应13颗星球。',
             'ui.trigger.crypto.set': '输入一个新的 {0} 触发值,\n遗物数量达到触发值时会进行黑笔交易。',
-            'ui.engine':'启用小猫珂学家',
+            'ui.engine': '启用小猫珂学家',
             'ui.build': '营火',
             'ui.space': '太空',
             'ui.craft': '工艺',
@@ -361,8 +371,12 @@ var run = function() {
             'craft.unlimited': '制作 {0} 不受限制',
 
             'distribute.limited': '分配 {0} 受限于最大值',
+            'distribute.leaderJob': '领袖工作为 {0} ',
+            'distribute.leaderTrait': '领袖的特质为 {0} ',
             'distribute.unlimited': '分配 {0} 不受限',
+            'distribute.makeLeader': '分配领袖',
             'act.distribute': '分配一只猫猫成为 {0}',
+            'act.distributeLeader': '分配一只 {0} 猫猫领袖',
             'ui.max.set': '设置 {0} 的最大值',
             'summary.distribute': '帮助 {0} 只猫猫找到工作',
             'filter.distribute': '猫口分配',
@@ -796,11 +810,11 @@ var run = function() {
                 //Should KS automatically upgrade?
                 enabled: false,
                 items: {
-                    upgrades:  {enabled: true},
+                    upgrades:  {enabled: true, limited: true},
                     techs:     {enabled: true},
                     policies:  {enabled: false},
                     races:     {enabled: true},
-                    missions:  {enabled: true},
+                    missions:  {enabled: true, subTrigger: 12},
                     buildings: {enabled: true},
                 }
             },
@@ -835,6 +849,7 @@ var run = function() {
                     priest:     {enabled: true, max: 1, limited: false},
                     geologist:  {enabled: true, max: 1, limited: false},
                     engineer:   {enabled: true, max: 1, limited: false},
+                    leader:     {enabled: true, leaderJob: 'farmer', leaderTrait: 'manager'},
                 }
 
             },
@@ -981,7 +996,7 @@ var run = function() {
             if (options.auto.build.enabled)                                                 {this.build()};
             if (options.auto.space.enabled)                                                 {this.space()};
             if (options.auto.craft.enabled)                                                 {this.craft()};
-            if (subOptions.enabled && subOptions.items.hunt.enabled)                        {this.hunt()};
+            if (subOptions.enabled && subOptions.items.hunt.enabled)                        {this.setHunt()};
             if (options.auto.trade.enabled)                                                 {this.trade()};
             if (options.auto.faith.enabled)                                                 {this.worship()};
             if (options.auto.time.enabled)                                                  {this.chrono()};
@@ -993,10 +1008,20 @@ var run = function() {
             if (subOptions.enabled)                                                         {this.miscOptions()};
             if (options.auto.timeCtrl.enabled && options.auto.timeCtrl.items.reset.enabled) {await this.reset()};
         },
+        halfInterval: async function() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    this.hunt();
+                }, Math.floor(options.interval / 2))
+            })
+        },
+        setHunt: async function() {
+            await this.halfInterval();
+        },
         reset: async function () {
 
             // check challenge
-            if (game.challenges.currentChallenge)
+            if (game.challenges.anyChallengeActive())
                 return;
 
             var checkedList = [];
@@ -1239,8 +1264,9 @@ var run = function() {
                 if (game.calendar.day < 0)
                     break TimeSkip;
 
+                var shatter = game.timeTab.cfPanel.children[0].children[0]; // check?
                 var timeCrystal = game.resPool.get('timeCrystal');
-                if (timeCrystal.value < optionVals.timeSkip.subTrigger)
+                if (timeCrystal.value < optionVals.timeSkip.subTrigger && !shatter.controller.hasResources(shatter.model))
                     break TimeSkip;
 
                 var season = game.calendar.season;
@@ -1277,7 +1303,6 @@ var run = function() {
                         willSkip += canSkip;
                 }
                 if (willSkip > 0) {
-                    var shatter = game.timeTab.cfPanel.children[0].children[0]; // check?
                     iactivity('act.time.skip', [willSkip], 'ks-timeSkip');
                     shatter.controller.doShatterAmt(shatter.model, willSkip);
                     storeForSummary('time.skip', willSkip);
@@ -1302,6 +1327,33 @@ var run = function() {
             }
         },
         distribute: function () {
+            var distributeItem = options.auto.distribute.items;
+            var leaderVals = distributeItem.leader;
+            if (leaderVals.enabled && game.science.get('civil').researched && !game.challenges.isActive("anarchy")) {
+                var leaderJobName = leaderVals.leaderJob;
+                var traitName = leaderVals.leaderTrait;
+                var optionsTheocracy = (options.policies ===  undefined) ? false : options.policies.some(obj => obj === 'theocracy');
+                if (optionsTheocracy || game.science.getPolicy('theocracy').researched) {leaderJobName = "priest";}
+                var distributeJob = game.village.getJob(leaderJobName);
+                if (game.village.leader == null || !(game.village.leader.job == leaderJobName && game.village.leader.trait.name == traitName)) {
+                    var traitKittens = game.village.sim.kittens.filter(kitten => kitten.trait.name == traitName);
+                    if (traitKittens.length != 0) {
+                        if (distributeJob.unlocked && distributeJob.value < game.village.getJobLimit(leaderJobName)) {
+                            var correctLeaderKitten = traitKittens.sort(function(a, b) {return b.rank - a.rank != 0 ? b.rank - a.rank : b.exp - a.exp;})[0];
+                            if (distributeJob.value >= distributeItem[leaderJobName].max && distributeItem[leaderJobName].limited && distributeJob.value) {
+                                game.village.sim.removeJob(leaderJobName, 1);
+                            }
+                            game.village.unassignJob(correctLeaderKitten);
+                            game.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
+                            game.village.assignJob(distributeJob, 1);
+                            this.villageManager.render();
+                            iactivity('act.distributeLeader', [i18n('$village.trait.' + traitName)], 'ks-distribute');
+                            storeForSummary('distribute', 1);
+                        }
+                    }
+                }
+            }
+
             var freeKittens = game.village.getFreeKittens();
             if (!freeKittens)
                 return;
@@ -1354,6 +1406,7 @@ var run = function() {
             var coinPrice = game.calendar.cryptoPrice;
             var previousRelic = game.resPool.get('relic').value;
             var previousCoin = game.resPool.get('blackcoin').value;
+            if((!game.science.get("blackchain").researched && !previousCoin > 0) && !game.diplomacy.get("leviathans").unlocked) {return;}
             var exchangedCoin = 0.0;
             var exchangedRelic = 0.0;
             var waitForBestPrice = false;
@@ -1385,7 +1438,7 @@ var run = function() {
                 if (typeof game.diplomacy.sellEcoin === 'function') {
                   game.diplomacy.sellEcoin();
                 } else {
-		  game.diplomacy.sellBcoin();
+                  game.diplomacy.sellBcoin();
                 }
 
                 currentRelic = game.resPool.get('relic').value;
@@ -1592,6 +1645,7 @@ var run = function() {
 
             if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
                 var work = game.workshop.upgrades;
+                var noup = ["factoryOptimization","factoryRobotics","spaceEngineers","aiEngineers","chronoEngineers","steelPlants","amFission","biofuel","gmo","factoryAutomation","invisibleBlackHand"];
                 workLoop:
                 for (var upg in work) {
                     if (work[upg].researched || !work[upg].unlocked) {continue;}
@@ -1600,6 +1654,11 @@ var run = function() {
                     prices = game.village.getEffectLeader("scientist", prices);
                     for (var resource in prices) {
                         if (craftManager.getValueAvailable(prices[resource].name, true) < prices[resource].val) {continue workLoop;}
+                    }
+                    if (upgrades.upgrades.limited){
+                        for (var name in noup) {
+                            if (work[upg].name == noup[name]) {continue workLoop;}
+                        }
                     }
                     upgradeManager.build(work[upg], 'workshop');
                 }
@@ -1625,12 +1684,12 @@ var run = function() {
                     (function (){
                         var policies = game.science.policies;
                         var lastIndex = 0;
-                        var length = policies.length
+                        var length = policies.length;
                         var toResearch = [];
 
                         // A **little** more efficient than game.science.getPolicy if options.policies is right order
                         for (var i in options.policies) {
-                            targetName = options.policies[i]
+                            targetName = options.policies[i];
                             for (var j in policies) {
                                 j = parseInt(j); // fuck js
                                 policy = policies[(j+lastIndex) % length];
@@ -1658,9 +1717,10 @@ var run = function() {
             }
 
             if (upgrades.missions.enabled && gamePage.tabs[6].visible) {
+                var missionsLength = Math.min(game.space.meta[0].meta.length, upgrades.missions.subTrigger);
                 var missions = game.space.meta[0].meta;
                 missionLoop:
-                for (var i = 0; i < missions.length; i++) {
+                for (var i = 0; i < missionsLength ; i++) {
                     if (!(missions[i].unlocked && missions[i].val < 1)) {continue;}
 
                     var model = this.spaceManager.manager.tab.GCPanel.children[i];
@@ -1793,7 +1853,7 @@ var run = function() {
                 if (libraryMeta.stage === 0) {
                     if (libraryMeta.stages[1].stageUnlocked) {
                         var enCon = (game.workshop.get('cryocomputing').researched) ? 1 : 2;
-                        if (game.challenges.currentChallenge == 'energy') {enCon *= 2;}
+                        if (game.challenges.isActive('energy')) {enCon *= 2 * (1 + game.getEffect("energyConsumptionIncrease"));}
                         var libToDat = 3;
                         if (game.workshop.get('uplink').researched) {
                             libToDat *= (1 + game.bld.get('biolab').val * game.getEffect('uplinkDCRatio'));
@@ -1801,25 +1861,27 @@ var run = function() {
                         if (game.workshop.get('machineLearning').researched) {
                             libToDat *= (1 + game.bld.get('aiCore').on * game.getEffect('dataCenterAIRatio'));
                         }
-                        if (game.resPool.energyProd >= game.resPool.energyCons + enCon*libraryMeta.val/libToDat) {
-                            var prices = libraryMeta.stages[1].prices;
-                            var priceRatio = bulkManager.getPriceRatio(libraryMeta, true);
-                            if (bulkManager.singleBuildPossible(libraryMeta, prices, 1)) {
-                                var button = buildManager.getBuildButton('library', 0);
-                                button.controller.sellInternal(button.model, 0);
-                                libraryMeta.on = 0
-                                libraryMeta.val = 0
-                                libraryMeta.stage = 1
-                                libraryMeta.calculateEffects(libraryMeta, game)
-                                iactivity('upgrade.building.library', [], 'ks-upgrade');
-                                game.ui.render();
-                                buildManager.build('library', 1, 1);
-                                game.ui.render();
-                                return;
+                        var scienceBldMax = game.bld.getEffect("scienceMax");
+                        if (game.resPool.get('compedium').value > scienceBldMax) {
+                            if (game.resPool.energyProd >= game.resPool.energyCons + enCon * libraryMeta.val / libToDat) {
+                                var prices = libraryMeta.stages[1].prices;
+                                var priceRatio = bulkManager.getPriceRatio(libraryMeta, true);
+                                if (bulkManager.singleBuildPossible(libraryMeta, prices, 1)) {
+                                    var button = buildManager.getBuildButton('library', 0);
+                                    button.controller.sellInternal(button.model, 0);
+                                    libraryMeta.on = 0
+                                    libraryMeta.val = 0
+                                    libraryMeta.stage = 1
+                                    libraryMeta.calculateEffects(libraryMeta, game)
+                                    iactivity('upgrade.building.library', [], 'ks-upgrade');
+                                    game.ui.render();
+                                    buildManager.build('library', 1, 1);
+                                    game.ui.render();
+                                    return;
+                                }
                             }
                         }
                     }
-
                 }
 
                 var amphitheatreMeta = game.bld.getBuildingExt('amphitheatre').meta;
@@ -1827,17 +1889,19 @@ var run = function() {
                     if (amphitheatreMeta.stages[1].stageUnlocked) {
                         var prices = amphitheatreMeta.stages[1].prices;
                         var priceRatio = bulkManager.getPriceRatio(amphitheatreMeta, true);
-                        if (bulkManager.singleBuildPossible(amphitheatreMeta, prices, 1)) {
-                            var button = buildManager.getBuildButton('amphitheatre', 0);
-                            button.controller.sellInternal(button.model, 0);
-                            amphitheatreMeta.on = 0
-                            amphitheatreMeta.val = 0
-                            amphitheatreMeta.stage = 1
-                            iactivity('upgrade.building.amphitheatre', [], 'ks-upgrade');
-                            game.ui.render();
-                            buildManager.build('amphitheatre', 1, 1);
-                            game.ui.render();
-                            return;
+                        if (game.getResourcePerTick('titanium', true) > 0) {
+                            if (bulkManager.singleBuildPossible(amphitheatreMeta, prices, 1)) {
+                                var button = buildManager.getBuildButton('amphitheatre', 0);
+                                button.controller.sellInternal(button.model, 0);
+                                amphitheatreMeta.on = 0
+                                amphitheatreMeta.val = 0
+                                amphitheatreMeta.stage = 1
+                                iactivity('upgrade.building.amphitheatre', [], 'ks-upgrade');
+                                game.ui.render();
+                                buildManager.build('amphitheatre', 1, 1);
+                                game.ui.render();
+                                return;
+                            }
                         }
                     }
                 }
@@ -1958,11 +2022,10 @@ var run = function() {
             }
         },
         hunt: function () {
+            if(game.ui.fastHuntContainer.style.visibility != "visible") {return;}
             var manpower = this.craftManager.getResource('manpower');
-            if(!game.villageTab.huntBtn.model.visible) {
-                return;
-            }
-            if (options.auto.options.items.hunt.subTrigger <= manpower.value / manpower.maxValue && manpower.value >= 100) {
+
+            if (options.auto.options.items.hunt.subTrigger <= manpower.value / manpower.maxValue) {
                 // No way to send only some hunters. Thus, we hunt with everything
                 var huntCount = Math.floor(manpower.value/100);
                 storeForSummary('hunt', huntCount);
@@ -2118,7 +2181,8 @@ var run = function() {
                         if (!racePanels[i].embassyButton) {continue;}
                         var name = racePanels[i].race.name;
                         var race = game.diplomacy.get(name);
-                        embassyBulk[name] = {'val': 0, 'basePrice': race.embassyPrices[0].val, 'currentEm': race.embassyLevel, 'priceSum': 0, 'race': race};
+                        var priceCoeficient = 1 - game.getEffect("embassyCostReduction");
+                        embassyBulk[name] = {'val': 0, 'basePrice': race.embassyPrices[0].val * priceCoeficient, 'currentEm': race.embassyLevel, 'priceSum': 0, 'race': race};
                         bulkTracker.push(name);
                     }
 
@@ -2130,7 +2194,7 @@ var run = function() {
                         for (var i=0; i < bulkTracker.length; i++) {
                             var name = bulkTracker[i];
                             var emBulk = embassyBulk[name];
-                            var nextPrice = emBulk.basePrice * Math.pow(1.15, emBulk.currentEm + emBulk.val);
+                            var nextPrice = emBulk.basePrice * Math.pow(1.15, emBulk.currentEm + emBulk.val + game.getEffect("embassyFakeBought"));
                             if (nextPrice <= cultureVal) {
                                 cultureVal -= nextPrice;
                                 emBulk.priceSum += nextPrice;
@@ -2166,9 +2230,10 @@ var run = function() {
             if (optionVals.fixCry.enabled && game.time.getVSU("usedCryochambers").val > 0) {
                 var fixed = 0;
                 var btn = this.timeManager.manager.tab.vsPanel.children[0].children[0]; //check?
-                // doFixCryochamber will check resources
-                while (btn.controller.doFixCryochamber(btn.model)) 
+                // buyItem will check resources
+                while (btn.controller.buyItem(btn.model, {}, function(callback) {return callback;})) {
                     fixed += 1;
+                }
                 if (fixed > 0) {
                     iactivity('act.fix.cry', [fixed], 'ks-fixCry');
                     storeForSummary('fix.cry', fixed);
@@ -2764,6 +2829,12 @@ var run = function() {
                 var consume = res && res.enabled && (res.consume != undefined) ? res.consume : options.consume;
 
                 value -= Math.min(this.getResource(name).maxValue * trigger, value) * (1 - consume);
+
+                if ('unobtainium' === name) {
+                    if (value < 1000 && this.getResource(name).value == this.getResource(name).maxValue && this.getResource(name).value>= 1000) {
+                        value = this.getResource(name).value;// fix unobtainium carfting to eludium
+                    }
+                }
             }
 
             return value;
@@ -2772,25 +2843,27 @@ var run = function() {
             var fieldProd = game.getEffect('catnipPerTickBase');
             if (worstWeather) {
                 fieldProd *= 0.1;
-            } else {
-                fieldProd *= game.calendar.getWeatherMod() + game.calendar.getCurSeason().modifiers['catnip'];
-            }
+                fieldProd *= 1 + game.getLimitedDR(game.getEffect("coldHarshness"),1);
+
+                if (game.science.getPolicy("communism").researched) {fieldProd = 0;}
+
+                } else {
+                    fieldProd *= game.calendar.getWeatherMod({name: "catnip"});
+                }
             var vilProd = (game.village.getResProduction().catnip) ? game.village.getResProduction().catnip * (1 + game.getEffect('catnipJobRatio')) : 0;
             var baseProd = fieldProd + vilProd;
+            var hydroponics = game.space.getBuilding('hydroponics');
+            var hydroponicsEffect = hydroponics.effects['catnipRatio'];
+            baseProd *= 1 + game.bld.getBuildingExt('aqueduct').meta.stages[0].effects['catnipRatio'] * aqueducts + hydroponicsEffect * hydroponics.val;
 
-            var hydroponics = game.space.getBuilding('hydroponics').val;
-            if (game.prestige.meta[0].meta[21].researched) {
-                if (game.calendar.cycle === 2) {hydroponics *= 2;}
-                if (game.calendar.cycle === 7) {hydroponics *= 0.5;}
-            }
-            baseProd *= 1 + 0.03 * aqueducts + 0.025 * hydroponics;
-
-            var paragonBonus = (game.challenges.currentChallenge == "winterIsComing") ? 0 : game.prestige.getParagonProductionRatio();
+            var paragonBonus = (game.challenges.isActive("winterIsComing")) ? 0 : game.prestige.getParagonProductionRatio();
             baseProd *= 1 + paragonBonus;
 
             baseProd *= 1 + game.religion.getSolarRevolutionRatio();
+            
+            //if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
 
-            if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
+            baseProd *= 1 + (game.getEffect('blsProductionBonus') * game.resPool.get('sorrow').value);
 
             baseProd = game.calendar.cycleEffectsFestival({catnip: baseProd})['catnip'];
 
@@ -2799,7 +2872,7 @@ var run = function() {
             baseDemand *= 1 + (game.getLimitedDR(pastures * -0.005 + uniPastures * -0.0015, 1.0));
             if (game.village.sim.kittens.length > 0 && game.village.happiness > 1) {
                 var happyCon = game.village.happiness - 1;
-                if (game.challenges.currentChallenge == "anarchy") {
+                if (game.challenges.isActive("anarchy")) {
                     baseDemand *= 1 + happyCon * (1 + game.getEffect("catnipDemandWorkerRatioGlobal"));
                 } else {
                     baseDemand *= 1 + happyCon * (1 + game.getEffect("catnipDemandWorkerRatioGlobal")) * (1 - game.village.getFreeKittens() / game.village.sim.kittens.length);
@@ -2838,6 +2911,7 @@ var run = function() {
                     || game.bld.getBuildingExt('chronosphere').meta.val <= data.val)) {continue;}
                 if (name === 'ressourceRetrieval' && data.val >= 100) {continue;}
                 var prices = (data.stages) ? data.stages[data.stage].prices : data.prices;
+                if (build.variant === 's') {prices = game.village.getEffectLeader("wise", dojo.clone(data.prices));}
                 var priceRatio = this.getPriceRatio(data, source);
                 if (!this.singleBuildPossible(data, prices, priceRatio, source)) {continue;}
                 var require = !build.require ? false : this.craftManager.getResource(build.require);
@@ -3304,7 +3378,7 @@ var run = function() {
         + '}');
 
     addRule('body #gamePageContainer #game #rightColumn {'
-        + 'overflow-y: auto'
+        + 'overflow-y: auto;'
         + '}');
 
     // addRule(defaultSelector + ' #gameLog .msg {'
@@ -3444,7 +3518,7 @@ var run = function() {
                 karmaTotal: 0
             };
         }
-        
+
         if (saved.version == 2) {
             saved.version = 3;
             saved.policies = [];
@@ -3501,6 +3575,10 @@ var run = function() {
                 } else {
                     if (name[1] == 'limited') {
                         option.limited = value;
+                    } else if (name[1] == 'leaderJob') {
+                        option[name[1]] = name[2];
+                    } else if (name[1] == 'leaderTrait') {
+                        option[name[1]] = name[2];
                     } else {
                         option[name[2]] = value;
                     }
@@ -4410,6 +4488,65 @@ var run = function() {
         
 
         }
+
+        if (option.subTrigger !== undefined && name == 'missions') {
+            var triggerButton = $('<div/>', {
+                id: 'set-' + name +'-subTrigger',
+                text: i18n('ui.trigger'),
+                title: option.subTrigger,
+                css: {cursor: 'pointer',
+                    display: 'inline-block',
+                    float: 'right',
+                    paddingRight: '5px',
+                    textShadow: '3px 3px 4px gray'}
+            }).data('option', option);
+        
+            triggerButton.on('click', function () {
+                var value;
+                if (name == 'missions'){value = window.prompt(i18n('ui.trigger.missions.set'), option.subTrigger);}
+                else{value = window.prompt(i18n('ui.trigger.set'), option.subTrigger);}
+        
+                if (value !== null) {
+                    option.subTrigger = parseFloat(value);
+                    kittenStorage.items[triggerButton.attr('id')] = option.subTrigger;
+                    saveToKittenStorage();
+                    triggerButton[0].title = option.subTrigger;
+                }
+            });
+        
+            element.append(triggerButton);
+        }
+
+        if (name == 'upgrades') {
+            var LimitedLabel = $('<label/>', {
+                'for': 'toggle-limited-' + name,
+                text: i18n('ui.limit')
+            });
+            
+            var LimitedInput = $('<input/>', {
+                id: 'toggle-limited-' + name,
+                type: 'checkbox'
+            }).data('option', option);
+
+            if (option.limited) {
+                LimitedInput.prop('checked', true);
+            }
+            
+            LimitedInput.on('change', function () {
+                if (LimitedInput.is(':checked') && option.limited == false) {
+                    option.limited = true;
+                    imessage('upgrade.limited', [iname]);
+                } else if ((!LimitedInput.is(':checked')) && option.limited == true) {
+                    option.limited = false;
+                    imessage('upgrade.unlimited', [iname]);
+                }
+                kittenStorage.items[LimitedInput.attr('id')] = option.limited;
+                saveToKittenStorage();
+            });
+
+            element.append(LimitedInput, LimitedLabel);
+        }
+        
         return element;
     };
 
@@ -4835,6 +4972,7 @@ var run = function() {
     };
 
     var getDistributeOption = function (name, option) {
+        if (name == "leader") {return getLeader(name, option);}
         var iname = ucfirst(i18n('$village.job.' + name));
 
         var element = getOption(name, option, iname);
@@ -4896,6 +5034,144 @@ var run = function() {
         })(iname);
 
         element.append(maxButton);
+
+        return element;
+    };
+
+    var getLeader = function (name, option) {
+        var iname = ucfirst(i18n('distribute.makeLeader'));
+        var element = getOption(name, option, iname);
+        element.css('borderBottom', '1px solid rgba(185, 185, 185, 0.7)');
+
+        var traitList = $('<ul/>', {
+            id: 'items-list-traits',
+            css: {display: 'none', paddingLeft: '20px'}
+        });
+
+        var traitShowButton = $('<div/>', {
+            id: 'toggle-leaderTrait' + name,
+            text: i18n('$village.trait.filter.all'),
+            css: {
+                cursor:'pointer',
+                display:'inline-block',
+                float:'right',
+                paddingRight:'5px',
+                textShadow:'3px 3px 4px gray'}
+        });
+
+        for (var i in com.nuclearunicorn.game.village.Kitten().traits){
+            traitList.append(getLeaderTrait(i, option));
+        }
+
+        traitShowButton.on('click', function () {
+            jobList.toggle(false);
+            traitList.toggle();
+        });
+
+        var jobList = $('<ul/>', {
+            id: 'items-list-jobs',
+            css: {display: 'none', paddingLeft: '20px'}
+        });
+
+        var jobShowButton = $('<div/>', {
+            id: 'toggle-leaderJob' + name,
+            text: i18n('$village.panel.job'),
+            css: {
+                cursor:'pointer',
+                display:'inline-block',
+                float:'right',
+                paddingRight:'5px',
+                textShadow:'3px 3px 4px gray'}
+        });
+
+        for (var i in game.village.jobs){
+            jobList.append(getLeaderJob(i, option));
+        }
+        
+        jobShowButton.on('click', function () {
+            traitList.toggle(false);
+            jobList.toggle();
+        });
+        
+        element.append(traitShowButton, jobShowButton, traitList, jobList);
+
+        return element;
+    };
+
+    var getLeaderJob = function (index, option) {
+        var job = game.village.jobs[index];
+
+        var element = $('<li/>');
+
+        var label = ($('<label/>', {
+            'for': 'toggle-leaderJob-' + job.name,
+            text: job.title,
+            css: {cursor: 'pointer',
+                textShadow: '3px 3px 4px gray'}
+        }));
+
+        var input = $('<input/>', {
+           id: 'toggle-leaderJob-' + job.name,
+           name: 'leaderJob',
+           value: job.name,
+           type: 'radio'
+        }).data('option', option);
+
+        if (input.prop("value") == option.leaderJob) {
+            input.prop("checked", true);
+        }
+
+        element.on('mouseup', function () {
+            var lastJobName = $("input[name='leaderJob']:checked").val();
+            delete kittenStorage.items['toggle-leaderJob-' + lastJobName];
+        });
+
+        input.on('change', function () {
+            imessage('distribute.leaderJob', [job.title]);
+            option.leaderJob = $("input[name='leaderJob']:checked").val();
+            kittenStorage.items['toggle-leaderJob-' + option.leaderJob] = true;
+            saveToKittenStorage();
+        });
+        element.append(input, label);
+
+        return element;
+    };
+
+    var getLeaderTrait = function (index, option) {
+        var trait = com.nuclearunicorn.game.village.Kitten().traits[index];
+
+        var element = $('<li/>');
+
+        var label = ($('<label/>', {
+            'for': 'toggle-leaderTrait-' + trait.name,
+            text: trait.title,
+            css: {cursor: 'pointer',
+                textShadow: '3px 3px 4px gray'}
+        }));
+
+        var input = $('<input/>', {
+           id: 'toggle-leaderTrait-' + trait.name,
+           name: 'leaderTrait',
+           value: trait.name,
+           type: 'radio'
+        }).data('option', option);
+
+        if (input.prop("value") == option.leaderTrait) {
+            input.prop("checked", true)
+        }
+
+        element.on('mouseup', function () {
+            var lastTraitName = $("input[name='leaderTrait']:checked").val();
+            delete kittenStorage.items['toggle-leaderTrait-' + lastTraitName];
+        });
+        
+        input.on('change', function () {
+            imessage('distribute.leaderTrait', [trait.title]);
+            option.leaderTrait = $(this).val();
+            kittenStorage.items['toggle-leaderTrait-' + option.leaderTrait]= true;
+            saveToKittenStorage();
+        });
+        element.append(input, label);
 
         return element;
     };

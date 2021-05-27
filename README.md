@@ -71,9 +71,10 @@ For each resource, you can set a *consumption rate* (60% by default) and a *stoc
 
 ### Unlocking
 
-- Workshop **upgrades** and **techs** are automatically bought when affordable, prioritizing the workshop if both are enabled.
+- Workshop **upgrades** and **techs** are automatically bought when affordable, prioritizing the workshop if both are enabled. When you enable the *Limited* option for upgrades, then will ignore some useless upgrades.
+- **Policies** can be automatically chosen last load policies list.
 - **Races** for trading are automatically explored as they become available.
-- Space **missions** can automatically be conducted.
+- Space **missions** can automatically be conducted. This automation has a configurable trigger. The default value is `12`, which means the kittens will launch 12 times.
 - **Buildings** can be set to be automatically upgraded to their second stage as soon as upgrading would not significantly impact income. 
 
 ### Trading
@@ -112,7 +113,8 @@ The automations in this section behave exactly like in the **Bonfire** and **Spa
 
 ### Kitten Resources
 
-Automatically assigns kittens to selected jobs. If a job is marked **Limited**, kittens will be distributed up to the designated **Max** amount.
+- Automatically assigns kittens to selected jobs. If a job is marked **Limited**, kittens will be distributed up to the designated **Max** amount.
+- Make Leader can be set to automatically make leader for selecting job and trait.
 
 ### Options
 
