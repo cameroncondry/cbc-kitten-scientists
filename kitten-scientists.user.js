@@ -1340,15 +1340,13 @@ var run = function() {
                     if (traitKittens.length != 0) {
                         if (distributeJob.unlocked && distributeJob.value < game.village.getJobLimit(leaderJobName)) {
                             var correctLeaderKitten = traitKittens.sort(function(a, b) {return b.rank - a.rank != 0 ? b.rank - a.rank : b.exp - a.exp;})[0];
-                            if (distributeJob.value < distributeItem[leaderJobName].max || !distributeItem[leaderJobName].limited) {
-                                game.village.unassignJob(correctLeaderKitten);
-                            } else {
+                            if (distributeJob.value >= distributeItem[leaderJobName].max && distributeItem[leaderJobName].limited && distributeJob.value) {
                                 game.village.sim.removeJob(leaderJobName, 1);
                             }
-                            correctLeaderKitten.job = leaderJobName;
-                            distributeJob.value += 1;
+                            game.village.unassignJob(correctLeaderKitten);
                             game.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
-                            game.villageTab.censusPanel.census.update();
+                            game.village.assignJob(distributeJob, 1);
+                            this.villageManager.render();
                             iactivity('act.distributeLeader', [i18n('$village.trait.' + traitName)], 'ks-distribute');
                             storeForSummary('distribute', 1);
                         }
