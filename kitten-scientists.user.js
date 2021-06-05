@@ -1343,9 +1343,13 @@ var run = function() {
                             if (distributeJob.value >= distributeItem[leaderJobName].max && distributeItem[leaderJobName].limited && distributeJob.value) {
                                 game.village.sim.removeJob(leaderJobName, 1);
                             }
-                            game.village.unassignJob(correctLeaderKitten);
-                            game.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
-                            game.village.assignJob(distributeJob, 1);
+                            var propGame = game.villageTab.censusPanel.census.game;
+                            propGame.village.unassignJob(correctLeaderKitten);
+                            game.village.getJob(leaderJobName).value++;
+                            correctLeaderKitten.jobs= leaderJobName;
+                            propGame.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
+                            game.village.leader.job = leaderJobName;
+                            game.workshopTab.updateTab();
                             this.villageManager.render();
                             iactivity('act.distributeLeader', [i18n('$village.trait.' + traitName)], 'ks-distribute');
                             storeForSummary('distribute', 1);
@@ -1645,7 +1649,7 @@ var run = function() {
 
             if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
                 var work = game.workshop.upgrades;
-                var noup = ["factoryOptimization","factoryRobotics","spaceEngineers","aiEngineers","chronoEngineers","steelPlants","amFission","biofuel","gmo","factoryAutomation","invisibleBlackHand"];
+                var noup = ["factoryOptimization","factoryRobotics","spaceEngineers","aiEngineers","chronoEngineers","steelPlants","amFission","biofuel","gmo","factoryAutomation","advancedAutomation","invisibleBlackHand"];
                 workLoop:
                 for (var upg in work) {
                     if (work[upg].researched || !work[upg].unlocked) {continue;}
