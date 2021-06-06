@@ -2863,7 +2863,7 @@ var run = function() {
             var paragonBonus = (game.challenges.isActive("winterIsComing")) ? 0 : game.prestige.getParagonProductionRatio();
             baseProd *= 1 + paragonBonus;
 
-            baseProd *= 1 + game.religion.getSolarRevolutionRatio();
+            baseProd *= 1 + game.religion.getSolarRevolutionRatio() * (1 + game.bld.pollutionEffects["solarRevolutionPollution"]);
             
             //if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
 
@@ -2871,11 +2871,13 @@ var run = function() {
 
             baseProd = game.calendar.cycleEffectsFestival({catnip: baseProd})['catnip'];
 
+            baseProd *= 1 + game.bld.pollutionEffects["catnipPollutionRatio"];
+
             var baseDemand = game.village.getResConsumption()['catnip'];
             var uniPastures = game.bld.getBuildingExt('unicornPasture').meta.val;
             baseDemand *= 1 + (game.getLimitedDR(pastures * -0.005 + uniPastures * -0.0015, 1.0));
             if (game.village.sim.kittens.length > 0 && game.village.happiness > 1) {
-                var happyCon = game.village.happiness - 1;
+                var happyCon = Math.max(game.village.happiness * (1 + game.getEffect("hapinnessConsumptionRatio")) - 1, 0);
                 if (game.challenges.isActive("anarchy")) {
                     baseDemand *= 1 + happyCon * (1 + game.getEffect("catnipDemandWorkerRatioGlobal"));
                 } else {
