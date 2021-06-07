@@ -1343,9 +1343,13 @@ var run = function() {
                             if (distributeJob.value >= distributeItem[leaderJobName].max && distributeItem[leaderJobName].limited && distributeJob.value) {
                                 game.village.sim.removeJob(leaderJobName, 1);
                             }
-                            game.village.unassignJob(correctLeaderKitten);
-                            game.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
-                            game.village.assignJob(distributeJob, 1);
+                            var propGame = game.villageTab.censusPanel.census.game;
+                            propGame.village.unassignJob(correctLeaderKitten);
+                            game.village.getJob(leaderJobName).value++;
+                            correctLeaderKitten.jobs= leaderJobName;
+                            propGame.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
+                            game.village.leader.job = leaderJobName;
+                            game.workshopTab.updateTab();
                             this.villageManager.render();
                             iactivity('act.distributeLeader', [i18n('$village.trait.' + traitName)], 'ks-distribute');
                             storeForSummary('distribute', 1);
@@ -1645,7 +1649,7 @@ var run = function() {
 
             if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
                 var work = game.workshop.upgrades;
-                var noup = ["factoryOptimization","factoryRobotics","spaceEngineers","aiEngineers","chronoEngineers","steelPlants","amFission","biofuel","gmo","factoryAutomation","invisibleBlackHand"];
+                var noup = ["factoryOptimization","factoryRobotics","spaceEngineers","aiEngineers","chronoEngineers","steelPlants","amFission","biofuel","gmo","factoryAutomation","advancedAutomation","invisibleBlackHand"];
                 workLoop:
                 for (var upg in work) {
                     if (work[upg].researched || !work[upg].unlocked) {continue;}
@@ -2859,7 +2863,7 @@ var run = function() {
             var paragonBonus = (game.challenges.isActive("winterIsComing")) ? 0 : game.prestige.getParagonProductionRatio();
             baseProd *= 1 + paragonBonus;
 
-            baseProd *= 1 + game.religion.getSolarRevolutionRatio();
+            baseProd *= 1 + game.religion.getSolarRevolutionRatio() * (1 + game.bld.pollutionEffects["solarRevolutionPollution"]);
             
             //if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
 
@@ -2867,11 +2871,13 @@ var run = function() {
 
             baseProd = game.calendar.cycleEffectsFestival({catnip: baseProd})['catnip'];
 
+            baseProd *= 1 + game.bld.pollutionEffects["catnipPollutionRatio"];
+
             var baseDemand = game.village.getResConsumption()['catnip'];
             var uniPastures = game.bld.getBuildingExt('unicornPasture').meta.val;
             baseDemand *= 1 + (game.getLimitedDR(pastures * -0.005 + uniPastures * -0.0015, 1.0));
             if (game.village.sim.kittens.length > 0 && game.village.happiness > 1) {
-                var happyCon = game.village.happiness - 1;
+                var happyCon = Math.max(game.village.happiness * (1 + game.getEffect("hapinnessConsumptionRatio")) - 1, 0);
                 if (game.challenges.isActive("anarchy")) {
                     baseDemand *= 1 + happyCon * (1 + game.getEffect("catnipDemandWorkerRatioGlobal"));
                 } else {
