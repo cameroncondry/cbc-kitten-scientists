@@ -3153,22 +3153,22 @@ var run = function() {
             var output = {};
             for (var s in race.sells) {
                 var item = race.sells[s];
-                if (!this.isValidTrade(item, race)) {continue;}
+                if (!this.isValidTrade(item, race)) { continue; }
                 var resource = this.craftManager.getResource(item.name);
                 var mean = 0;
                 var tradeChance = (race.embassyPrices) ? item.chance * (1 + game.getLimitedDR(0.01 * race.embassyLevel, 0.75)) : item.chance;
-                if (race.name == "zebras" && item.name == "titanium") {
-                    var shipCount = game.resPool.get("ship").value;
-                    var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
-                    var titanRat = 1 + shipCount / 50;
-                    mean = 1.5 * titanRat * (successRat * titanProb);
-                } else {
-                    var sRatio = (!item.seasons) ? 1 : 1 + item.seasons[game.calendar.getCurSeason().name];
-                    var normBought = (successRat - bonusRat) * Math.min(tradeChance/100, 1);
-                    var normBonus = bonusRat * Math.min(tradeChance/100, 1);
-                    mean = (normBought + 1.25 * normBonus) * item.value * rRatio * sRatio * tRatio;
-                }
+                var sRatio = (!item.seasons) ? 1 : 1 + item.seasons[game.calendar.getCurSeason().name];
+                var normBought = (successRat - bonusRat) * Math.min(tradeChance / 100, 1);
+                var normBonus = bonusRat * Math.min(tradeChance / 100, 1);
+                mean = (normBought + 1.25 * normBonus) * item.value * rRatio * sRatio * tRatio;
                 output[item.name] = mean;
+            }
+            if (race.name == "zebras") {
+                var shipCount = game.resPool.get("ship").value;
+                var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
+                var titanRat = 1 + shipCount / 50;
+                mean = 1.5 * titanRat * (successRat * titanProb);
+                output['titanium'] = mean;
             }
 
             var spiceChance = (race.embassyPrices) ? 0.35 * (1 + 0.01 * race.embassyLevel) : 0.35;
