@@ -897,7 +897,7 @@ var run = function() {
     var printoutput = function (args) {
         if (options.auto.filter.enabled) {
             for (var filt in options.auto.filter.items) {
-                var filter = options.auto.filter.items[filt]
+                var filter = options.auto.filter.items[filt];
                 if (filter.enabled && filter.variant === args[1]) {return;}
             }
         }
@@ -1566,7 +1566,7 @@ var run = function() {
                 } else {
                     var apocryphaBonus = game.religion.getFaithBonus();
                 }
-                var worshipInc = faith.value * (1 + apocryphaBonus)
+                var worshipInc = faith.value * (1 + apocryphaBonus);
                 storeForSummary('praise', worshipInc);
                 iactivity('act.praise', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worshipInc)], 'ks-praise');
                 game.religion.praise();
@@ -3969,11 +3969,11 @@ var run = function() {
 
         var addi = options.auto.faith.addition;
         for (var itemName in addi) {
-            node = getOption(itemName, addi[itemName]);
+            var node = getOption(itemName, addi[itemName]);
 
             if (itemName == 'bestUnicornBuilding') {
                 node.children('label').prop('title', i18n('option.faith.best.unicorn.desc'));
-                input = node.children('input');
+                var input = node.children('input');
                 input.unbind('change')
                 var bub = addi.bestUnicornBuilding;
                 input.on('change', function () {
@@ -4464,7 +4464,7 @@ var run = function() {
 
     var getUpgradeOption = function (name, option) {
         var iname = i18n('ui.upgrade.' + name)
-        element = getOption(name, option, iname);
+        var element = getOption(name, option, iname);
 
         if (name == 'policies') {
             var list = $('<ul/>', {
