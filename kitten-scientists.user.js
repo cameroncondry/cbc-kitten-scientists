@@ -3166,8 +3166,9 @@ var run = function() {
             if (race.name == "zebras") {
                 var shipCount = game.resPool.get("ship").value;
                 var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
-                var titanRat = 1 + shipCount / 50;
-                mean = 1.5 * titanRat * (successRat * titanProb);
+                var titanRat = 1.5 + shipCount * 0.03;
+                var zebraRelationModifierTitanium = game.getEffect("zebraRelationModifier") * game.bld.getBuildingExt("tradepost").meta.effects["tradeRatio"];
+                mean = titanRat * successRat * titanProb * (1 + zebraRelationModifierTitanium);
                 output['titanium'] = mean;
             }
 
