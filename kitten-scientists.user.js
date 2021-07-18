@@ -2716,12 +2716,12 @@ var run = function() {
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
 
-            if (name==='steel' && limited) {
+            if (name==='steel' && limited && options.auto.craft.items['plate'].enabled) {
                 var plateRatio=game.getResCraftRatio("plate");
                 if (this.getValueAvailable('plate')/this.getValueAvailable('steel') < ((plateRatio+1)/125)/((ratio+1)/100)) {
                     return 0;
                 }
-            } else if (name==='plate' && limited) {
+            } else if (name==='plate' && limited && options.auto.craft.items['steel'].enabled) {
                 var steelRatio=game.getResCraftRatio("steel");
                 if (game.getResourcePerTick('coal', true) > 0) {
                     if (this.getValueAvailable('plate')/this.getValueAvailable('steel') > ((ratio+1)/125)/((steelRatio+1)/100)) {
