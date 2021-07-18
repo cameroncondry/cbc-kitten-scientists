@@ -2501,8 +2501,28 @@ var run = function() {
 
             if (!button || !button.model.enabled) return;
 
+            if (variant === 'policy') {
+                if (game.village.leader != null && button.model.metadata.requiredLeaderJob && game.village.leader.job != button.model.metadata.requiredLeaderJob) {
+                    var jobTitle = game.village.getJob(button.model.metadata.requiredLeaderJob).title;
+                    game.msg($I("msg.policy.wrongLeaderJobForResearch", [button.model.metadata.label, jobTitle]), "important");
+                    return;
+                } else if (button.model.metadata.name == "transkittenism" && game.bld.getBuildingExt("aiCore").meta.effects["aiLevel"] >= 15) {
+                	game.msg($I("msg.policy.aiNotMerges"),"alert", "ai");
+                	return;
+                } else if (button.model.metadata.blocked === false) {
+                     for (var i = 0; i < button.model.metadata.blocks.length; i++) {
+                        if (game.science.getPolicy(button.model.metadata.blocks[i]).researched) {
+                            button.model.metadata.blocked = true;
+                            return;
+                        }
+                	}
+                } 
+            }
             //need to simulate a click so the game updates everything properly
-            button.domNode.click(upgrade);
+            button.controller.payPrice(button.model, {}, function() {});
+            button.controller.onPurchase(button.model, {}, function() {});
+            game.stats.getStat("totalClicks").val += 1;
+
             var label = upgrade.label;
 
             if (variant === 'workshop') {
