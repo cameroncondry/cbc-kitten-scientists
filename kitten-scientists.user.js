@@ -37,7 +37,7 @@ var run = function() {
             'option.crypto': 'Trade Blackcoin',
             'option.embassies': 'Build Embassies (Beta)',
             'option.style': 'View Full Width',
-            'option.steamworks': 'Turn on Steamworks',
+            'option.steamworks': 'Turn on Production buildings',
 
             'filter.build': 'Building',
             'filter.craft': 'Crafting',
@@ -2253,10 +2253,22 @@ var run = function() {
             
             // auto turn on steamworks
             if (optionVals._steamworks.enabled) {
-                var st = game.bld.get('steamworks');
+                var st = game.bld.getBuildingExt('steamworks').meta;
                 if (st.val && st.on == 0) {
-                    var button = buildManager.getBuildButton('steamworks');
-                    button.controller.onAll(button.model);
+                    var stButton = buildManager.getBuildButton('steamworks');
+                    stButton.controller.onAll(stButton.model);
+                }
+                var re = game.bld.getBuildingExt('reactor').meta;
+                var ur = game.getResourcePerTick("uranium",true);
+                if (re.val && re.on == 0 && ur > 0) {
+                    var reButton = buildManager.getBuildButton('reactor');
+                    reButton.controller.onAll(reButton.model);
+                }
+                var ma = game.bld.getBuildingExt('magneto').meta;
+                var oil = game.getResourcePerTick("oil",true);
+                if (ma.val && ma.on == 0 && oil > 0) {
+                    var maButton = buildManager.getBuildButton('magneto');
+                    maButton.controller.onAll(maButton.model);
                 }
             }
         },
