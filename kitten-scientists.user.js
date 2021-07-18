@@ -1700,8 +1700,9 @@ var run = function() {
                                 if (policy.name == targetName) {
                                     lastIndex = j+lastIndex+1;
                                     if (!policy.researched) {
-                                        if (policy.blocked)
-                                            return;
+                                        if (policy.blocked) {
+                                            continue;
+                                        }
                                         if (policy.unlocked) {
                                             if (policy.requiredLeaderJob == undefined ||
                                                (game.village.leader != null && game.village.leader.job == policy.requiredLeaderJob)
