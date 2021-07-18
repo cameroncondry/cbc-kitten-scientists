@@ -1327,6 +1327,7 @@ var run = function() {
             }
         },
         distribute: function () {
+            var refreshRequired = false;
             var distributeItem = options.auto.distribute.items;
             var leaderVals = distributeItem.leader;
             if (leaderVals.enabled && game.science.get('civil').researched && !game.challenges.isActive("anarchy")) {
@@ -1351,7 +1352,7 @@ var run = function() {
                             correctLeaderKitten.job= leaderJobName;
                             game.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
                             game.workshopTab.updateTab();
-                            this.villageManager.render();
+                            refreshRequired = true;
                             iactivity('act.distributeLeader', [i18n('$village.trait.' + traitName)], 'ks-distribute');
                             storeForSummary('distribute', 1);
                         }
@@ -1384,10 +1385,11 @@ var run = function() {
             }
             if (jobName) {
                 game.village.assignJob(game.village.getJob(jobName), 1);
-                this.villageManager.render();
+                refreshRequired = true;
                 iactivity('act.distribute', [i18n('$village.job.' + jobName)], 'ks-distribute');
                 storeForSummary('distribute', 1);
             }
+            if (refreshRequired) {this.villageManager.render();}
         },
         autofeed: function () {
             var levi = game.diplomacy.get("leviathans");
