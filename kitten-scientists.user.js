@@ -1646,11 +1646,10 @@ var run = function() {
             var bulkManager = this.bulkManager;
             var buildManager = this.buildManager;
 
-            upgradeManager.workManager.render();
             upgradeManager.sciManager.render();
-            upgradeManager.spaManager.render();
 
-            if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
+            if (upgrades.upgrades.enabled && gamePage.workshopTab.visible) {
+                upgradeManager.workManager.render();
                 var work = game.workshop.upgrades;
                 var noup = ["factoryOptimization","factoryRobotics","spaceEngineers","aiEngineers","chronoEngineers","steelPlants","amFission","biofuel","gmo","factoryAutomation","advancedAutomation","invisibleBlackHand"];
                 workLoop:
@@ -1671,7 +1670,7 @@ var run = function() {
                 }
             }
 
-            if (upgrades.techs.enabled && gamePage.tabs[2].visible) {
+            if (upgrades.techs.enabled && gamePage.libraryTab.visible) {
                 var tech = game.science.techs;
                 techLoop:
                 for (var upg in tech) {
@@ -1686,7 +1685,7 @@ var run = function() {
                 }
             }
 
-            if (upgrades.policies.enabled && gamePage.tabs[2].visible) {
+            if (upgrades.policies.enabled && gamePage.libraryTab.visible) {
                     // write a function to make breaking big loop easier
                     (function (){
                         var policies = game.science.policies;
@@ -1724,7 +1723,8 @@ var run = function() {
                     })();
             }
 
-            if (upgrades.missions.enabled && gamePage.tabs[6].visible) {
+            if (upgrades.missions.enabled && gamePage.spaceTab.visible) {
+                upgradeManager.spaManager.render();
                 var missionsLength = Math.min(game.space.meta[0].meta.length, upgrades.missions.subTrigger);
                 var missions = game.space.meta[0].meta;
                 missionLoop:
@@ -1745,7 +1745,7 @@ var run = function() {
                 }
             }
 
-            if (upgrades.races.enabled && gamePage.tabs[4].visible) {
+            if (upgrades.races.enabled && gamePage.diplomacyTab.visible) {
                 var maxRaces = (game.diplomacy.get('leviathans').unlocked) ? 8 : 7;
                 if (game.diplomacyTab.racePanels.length < maxRaces) {
                     var manpower = craftManager.getValueAvailable('manpower', true);
