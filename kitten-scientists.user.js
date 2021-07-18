@@ -1410,7 +1410,7 @@ var run = function() {
             var coinPrice = game.calendar.cryptoPrice;
             var previousRelic = game.resPool.get('relic').value;
             var previousCoin = game.resPool.get('blackcoin').value;
-            if((!game.science.get("blackchain").researched && !previousCoin > 0) && !game.diplomacy.get("leviathans").unlocked) {return;}
+            if((!game.science.get("blackchain").researched && !previousCoin > 0) || !game.diplomacy.get("leviathans").unlocked) {return;}
             var exchangedCoin = 0.0;
             var exchangedRelic = 0.0;
             var waitForBestPrice = false;
