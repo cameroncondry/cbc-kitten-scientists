@@ -1717,7 +1717,10 @@ var run = function() {
                                 }
                             }
                         }
-                        for (var i in toResearch) {
+                        for (var i = 0; i < toResearch.length; i++) {
+                            for (var resource of toResearch[i].prices) {
+                                if (craftManager.getValueAvailable(resource.name, true) < resource.val) {continue;}
+                            }
                             upgradeManager.build(toResearch[i], 'policy');
                         }
                     })();
