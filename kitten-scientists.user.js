@@ -37,7 +37,7 @@ var run = function() {
             'option.crypto': 'Trade Blackcoin',
             'option.embassies': 'Build Embassies (Beta)',
             'option.style': 'View Full Width',
-            'option.steamworks': 'Turn on Steamworks',
+            'option.steamworks': 'Turn on Production buildings',
 
             'filter.build': 'Building',
             'filter.craft': 'Crafting',
@@ -897,7 +897,7 @@ var run = function() {
     var printoutput = function (args) {
         if (options.auto.filter.enabled) {
             for (var filt in options.auto.filter.items) {
-                var filter = options.auto.filter.items[filt]
+                var filter = options.auto.filter.items[filt];
                 if (filter.enabled && filter.variant === args[1]) {return;}
             }
         }
@@ -1327,12 +1327,16 @@ var run = function() {
             }
         },
         distribute: function () {
+            var refreshRequired = false;
             var distributeItem = options.auto.distribute.items;
             var leaderVals = distributeItem.leader;
             if (leaderVals.enabled && game.science.get('civil').researched && !game.challenges.isActive("anarchy")) {
                 var leaderJobName = leaderVals.leaderJob;
                 var traitName = leaderVals.leaderTrait;
-                var optionsTheocracy = (options.policies ===  undefined) ? false : options.policies.some(obj => obj === 'theocracy');
+                var optionsTheocracy = false;
+                if (options.auto.upgrade.items.policies.enabled) {
+                    optionsTheocracy = (options.policies ===  undefined) ? false : options.policies.some(obj => obj === 'theocracy');
+                }
                 if (optionsTheocracy || game.science.getPolicy('theocracy').researched) {leaderJobName = "priest";}
                 var distributeJob = game.village.getJob(leaderJobName);
                 if (game.village.leader == null || !(game.village.leader.job == leaderJobName && game.village.leader.trait.name == traitName)) {
@@ -1343,14 +1347,12 @@ var run = function() {
                             if (distributeJob.value >= distributeItem[leaderJobName].max && distributeItem[leaderJobName].limited && distributeJob.value) {
                                 game.village.sim.removeJob(leaderJobName, 1);
                             }
-                            var propGame = game.villageTab.censusPanel.census.game;
-                            propGame.village.unassignJob(correctLeaderKitten);
+                            game.village.unassignJob(correctLeaderKitten);
                             game.village.getJob(leaderJobName).value++;
-                            correctLeaderKitten.jobs= leaderJobName;
-                            propGame.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
-                            game.village.leader.job = leaderJobName;
+                            correctLeaderKitten.job= leaderJobName;
+                            game.villageTab.censusPanel.census.makeLeader(correctLeaderKitten);
                             game.workshopTab.updateTab();
-                            this.villageManager.render();
+                            refreshRequired = true;
                             iactivity('act.distributeLeader', [i18n('$village.trait.' + traitName)], 'ks-distribute');
                             storeForSummary('distribute', 1);
                         }
@@ -1383,10 +1385,11 @@ var run = function() {
             }
             if (jobName) {
                 game.village.assignJob(game.village.getJob(jobName), 1);
-                this.villageManager.render();
+                refreshRequired = true;
                 iactivity('act.distribute', [i18n('$village.job.' + jobName)], 'ks-distribute');
                 storeForSummary('distribute', 1);
             }
+            if (refreshRequired) {this.villageManager.render();}
         },
         autofeed: function () {
             var levi = game.diplomacy.get("leviathans");
@@ -1410,7 +1413,7 @@ var run = function() {
             var coinPrice = game.calendar.cryptoPrice;
             var previousRelic = game.resPool.get('relic').value;
             var previousCoin = game.resPool.get('blackcoin').value;
-            if((!game.science.get("blackchain").researched && !previousCoin > 0) && !game.diplomacy.get("leviathans").unlocked) {return;}
+            if((!game.science.get("blackchain").researched && !previousCoin > 0) || !game.diplomacy.get("leviathans").unlocked) {return;}
             var exchangedCoin = 0.0;
             var exchangedRelic = 0.0;
             var waitForBestPrice = false;
@@ -1563,7 +1566,7 @@ var run = function() {
                 } else {
                     var apocryphaBonus = game.religion.getFaithBonus();
                 }
-                var worshipInc = faith.value * (1 + apocryphaBonus)
+                var worshipInc = faith.value * (1 + apocryphaBonus);
                 storeForSummary('praise', worshipInc);
                 iactivity('act.praise', [game.getDisplayValueExt(faith.value), game.getDisplayValueExt(worshipInc)], 'ks-praise');
                 game.religion.praise();
@@ -1643,11 +1646,10 @@ var run = function() {
             var bulkManager = this.bulkManager;
             var buildManager = this.buildManager;
 
-            upgradeManager.workManager.render();
             upgradeManager.sciManager.render();
-            upgradeManager.spaManager.render();
 
-            if (upgrades.upgrades.enabled && gamePage.tabs[3].visible) {
+            if (upgrades.upgrades.enabled && gamePage.workshopTab.visible) {
+                upgradeManager.workManager.render();
                 var work = game.workshop.upgrades;
                 var noup = ["factoryOptimization","factoryRobotics","spaceEngineers","aiEngineers","chronoEngineers","steelPlants","amFission","biofuel","gmo","factoryAutomation","advancedAutomation","invisibleBlackHand"];
                 workLoop:
@@ -1668,7 +1670,7 @@ var run = function() {
                 }
             }
 
-            if (upgrades.techs.enabled && gamePage.tabs[2].visible) {
+            if (upgrades.techs.enabled && gamePage.libraryTab.visible) {
                 var tech = game.science.techs;
                 techLoop:
                 for (var upg in tech) {
@@ -1683,7 +1685,7 @@ var run = function() {
                 }
             }
 
-            if (upgrades.policies.enabled && gamePage.tabs[2].visible) {
+            if (upgrades.policies.enabled && gamePage.libraryTab.visible) {
                     // write a function to make breaking big loop easier
                     (function (){
                         var policies = game.science.policies;
@@ -1700,8 +1702,9 @@ var run = function() {
                                 if (policy.name == targetName) {
                                     lastIndex = j+lastIndex+1;
                                     if (!policy.researched) {
-                                        if (policy.blocked)
-                                            return;
+                                        if (policy.blocked) {
+                                            continue;
+                                        }
                                         if (policy.unlocked) {
                                             if (policy.requiredLeaderJob == undefined ||
                                                (game.village.leader != null && game.village.leader.job == policy.requiredLeaderJob)
@@ -1714,13 +1717,17 @@ var run = function() {
                                 }
                             }
                         }
-                        for (var i in toResearch) {
+                        for (var i = 0; i < toResearch.length; i++) {
+                            for (var resource of toResearch[i].prices) {
+                                if (craftManager.getValueAvailable(resource.name, true) < resource.val) {continue;}
+                            }
                             upgradeManager.build(toResearch[i], 'policy');
                         }
                     })();
             }
 
-            if (upgrades.missions.enabled && gamePage.tabs[6].visible) {
+            if (upgrades.missions.enabled && gamePage.spaceTab.visible) {
+                upgradeManager.spaManager.render();
                 var missionsLength = Math.min(game.space.meta[0].meta.length, upgrades.missions.subTrigger);
                 var missions = game.space.meta[0].meta;
                 missionLoop:
@@ -1741,7 +1748,7 @@ var run = function() {
                 }
             }
 
-            if (upgrades.races.enabled && gamePage.tabs[4].visible) {
+            if (upgrades.races.enabled && gamePage.diplomacyTab.visible) {
                 var maxRaces = (game.diplomacy.get('leviathans').unlocked) ? 8 : 7;
                 if (game.diplomacyTab.racePanels.length < maxRaces) {
                     var manpower = craftManager.getValueAvailable('manpower', true);
@@ -2246,10 +2253,22 @@ var run = function() {
             
             // auto turn on steamworks
             if (optionVals._steamworks.enabled) {
-                var st = game.bld.get('steamworks');
+                var st = game.bld.getBuildingExt('steamworks').meta;
                 if (st.val && st.on == 0) {
-                    var button = buildManager.getBuildButton('steamworks');
-                    button.controller.onAll(button.model);
+                    var stButton = buildManager.getBuildButton('steamworks');
+                    stButton.controller.onAll(stButton.model);
+                }
+                var re = game.bld.getBuildingExt('reactor').meta;
+                var ur = game.getResourcePerTick("uranium",true);
+                if (re.val && re.on == 0 && ur > 0) {
+                    var reButton = buildManager.getBuildButton('reactor');
+                    reButton.controller.onAll(reButton.model);
+                }
+                var ma = game.bld.getBuildingExt('magneto').meta;
+                var oil = game.getResourcePerTick("oil",true);
+                if (ma.val && ma.on == 0 && oil > 0) {
+                    var maButton = buildManager.getBuildButton('magneto');
+                    maButton.controller.onAll(maButton.model);
                 }
             }
         },
@@ -2494,8 +2513,28 @@ var run = function() {
 
             if (!button || !button.model.enabled) return;
 
+            if (variant === 'policy') {
+                if (game.village.leader != null && button.model.metadata.requiredLeaderJob && game.village.leader.job != button.model.metadata.requiredLeaderJob) {
+                    var jobTitle = game.village.getJob(button.model.metadata.requiredLeaderJob).title;
+                    game.msg($I("msg.policy.wrongLeaderJobForResearch", [button.model.metadata.label, jobTitle]), "important");
+                    return;
+                } else if (button.model.metadata.name == "transkittenism" && game.bld.getBuildingExt("aiCore").meta.effects["aiLevel"] >= 15) {
+                	game.msg($I("msg.policy.aiNotMerges"),"alert", "ai");
+                	return;
+                } else if (button.model.metadata.blocked === false) {
+                     for (var i = 0; i < button.model.metadata.blocks.length; i++) {
+                        if (game.science.getPolicy(button.model.metadata.blocks[i]).researched) {
+                            button.model.metadata.blocked = true;
+                            return;
+                        }
+                	}
+                } 
+            }
             //need to simulate a click so the game updates everything properly
-            button.domNode.click(upgrade);
+            button.controller.payPrice(button.model, {}, function() {});
+            button.controller.onPurchase(button.model, {}, function() {});
+            game.stats.getStat("totalClicks").val += 1;
+
             var label = upgrade.label;
 
             if (variant === 'workshop') {
@@ -2549,7 +2588,10 @@ var run = function() {
             if (amount !== amountTemp) {warning(label + ' Amount ordered: '+amountTemp+' Amount Constructed: '+amount);}
             storeForSummary(label, amount, 'build');
 
-            if (amount === 1) {
+            if (amount === 0) {
+                // the few build 0 unicornPasture, should render for bldTab when getBestUnicornBuilding return unicornPasture 
+                return;
+            } else if (amount === 1) {
                 iactivity('act.build', [label], 'ks-build');
             } else {
                 iactivity('act.builds', [label, amount], 'ks-build');
@@ -2689,12 +2731,12 @@ var run = function() {
             // Safeguard if materials for craft cannot be determined.
             if (!materials) return 0;
 
-            if (name==='steel' && limited) {
+            if (name==='steel' && limited && options.auto.craft.items['plate'].enabled) {
                 var plateRatio=game.getResCraftRatio("plate");
                 if (this.getValueAvailable('plate')/this.getValueAvailable('steel') < ((plateRatio+1)/125)/((ratio+1)/100)) {
                     return 0;
                 }
-            } else if (name==='plate' && limited) {
+            } else if (name==='plate' && limited && options.auto.craft.items['steel'].enabled) {
                 var steelRatio=game.getResCraftRatio("steel");
                 if (game.getResourcePerTick('coal', true) > 0) {
                     if (this.getValueAvailable('plate')/this.getValueAvailable('steel') > ((ratio+1)/125)/((steelRatio+1)/100)) {
@@ -3166,8 +3208,9 @@ var run = function() {
             if (race.name == "zebras") {
                 var shipCount = game.resPool.get("ship").value;
                 var titanProb = Math.min(0.15 + shipCount * 0.0035, 1);
-                var titanRat = 1 + shipCount / 50;
-                mean = 1.5 * titanRat * (successRat * titanProb);
+                var titanRat = 1.5 + shipCount * 0.03;
+                var zebraRelationModifierTitanium = game.getEffect("zebraRelationModifier") * game.bld.getBuildingExt("tradepost").meta.effects["tradeRatio"];
+                mean = titanRat * successRat * titanProb * (1 + zebraRelationModifierTitanium);
                 output['titanium'] = mean;
             }
 
@@ -3190,7 +3233,8 @@ var run = function() {
 
             for (var i in materials) {
                 if (i === "manpower") {
-                    var total = this.craftManager.getValueAvailable(i, true) / materials[i];
+                    var manpowerValue = Math.max(this.craftManager.getValueAvailable(i, true) - 100, 0);
+                    var total = manpowerValue / materials[i];
                 } else {
                     var total = this.craftManager.getValueAvailable(i, limited, options.auto.trade.trigger) / materials[i];
                 }
@@ -3940,11 +3984,11 @@ var run = function() {
 
         var addi = options.auto.faith.addition;
         for (var itemName in addi) {
-            node = getOption(itemName, addi[itemName]);
+            var node = getOption(itemName, addi[itemName]);
 
             if (itemName == 'bestUnicornBuilding') {
                 node.children('label').prop('title', i18n('option.faith.best.unicorn.desc'));
-                input = node.children('input');
+                var input = node.children('input');
                 input.unbind('change')
                 var bub = addi.bestUnicornBuilding;
                 input.on('change', function () {
@@ -4435,7 +4479,7 @@ var run = function() {
 
     var getUpgradeOption = function (name, option) {
         var iname = i18n('ui.upgrade.' + name)
-        element = getOption(name, option, iname);
+        var element = getOption(name, option, iname);
 
         if (name == 'policies') {
             var list = $('<ul/>', {
