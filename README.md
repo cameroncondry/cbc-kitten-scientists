@@ -1,5 +1,7 @@
 # Kitten Scientists
 
+⚠ **The script has not been maintained in a while, you might want to check out https://github.com/kitten-science/kitten-scientists instead.**
+
 <p align="center"><img src="https://i.imgur.com/AWHGIGH.jpg" /></p>
 
 Kitten Scientists (KS) is a simple automation script for the complex [Kittens Game](http://kittensgame.com/web/).
